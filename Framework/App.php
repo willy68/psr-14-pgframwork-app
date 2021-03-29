@@ -252,7 +252,7 @@ class App implements RequestHandlerInterface
         $event = $this->dispatcher->dispatch($event, Events::REQUEST);
 
         if ($event->hasResponse()) {
-            return $event->getResponse();
+            return $this->filterResponse($event->getResponse(), $request);
         }
 
         /** @var RouteResult $result */
