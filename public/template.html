@@ -1,0 +1,343 @@
+<!DOCTYPE HTML>
+<HTML>
+
+<HEAD>
+	<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<META http-equiv="X-UA-Compatible" content="IE=8">
+	<TITLE>template.html</TITLE>
+	<META name="generator" content="FACTURE DYNAMIQUE">
+	<LINK rel="stylesheet" href="assets/facture.css" type="text/css" />
+</HEAD>
+
+<BODY>
+	<!--Div obligatoire, id="page1" class="page a4 pagebreak"
+			data-order: ordre des templates, id des templates
+			header: container présent uniquement sur la première page
+			thead: le tag container des lignes de facture,
+			footer: container suivant le thead sur chaques pages
+	-->
+	<DIV id="page1" class="page a4 pagebreak" data-order="header, thead, footer">
+
+		<HEADER id="header1">
+			<!--Template du header
+					id: obligatoire, doit correspondre au data-order de la div page
+					data-parent: obligatoire, id du container ou inserer le template
+			-->
+			<TEMPLATE id="header" data-parent="header1">
+				<table id="logo">
+					<tr>
+						<td class="tdlogo">
+							<IMG src="${ste.logo}" class="logo">
+						</td>
+						<td class="tdaddr pad-l pad-r">
+							<P class="paddr ft4">${ste.nom}</p>
+							<p class="paddr ft6">
+								${ste.adresse}<br>
+								<br>
+								${ste.cp} ${ste.ville}<br>
+								Portable : ${ste.portable} - Email : ${ste.email}
+							</p>
+						</td>
+					</tr>
+				</table>
+
+				<table cellpadding=0 cellspacing=0 class="t0 border">
+					<tr>
+						<td colspan=2 class="h54p w45p border-r">
+							<P class="paddr ft3">Facture</P>
+						</td>
+						<td rowspan=5 class="w55p vert-align-c">
+
+							<p style="margin: 0 0 0 10%;">
+								<span class="p6 ft4">${client.nom}</span><br>
+								<span class="p6 ft6">${adresse_client.adresse_1}</span><br>
+								<span class="p6 ft6">${adresse_client.adresse_2}</span><br>
+								<span class="p6 ft6">${adresse_client.adresse_3}</span><br>
+								<span class="p6 ft6">${adresse_client.cp}
+									${adresse_client.ville}</span>
+							</p>
+
+						</td>
+					</tr>
+					<tr>
+						<td colspan=2 class="h24 border-t border-b border-r">
+							<p class="p7 ft1">${ste.ville}, le ${facture.date_edition}</p>
+						</td>
+					</tr>
+					<tr>
+						<td class="h19 w15p">
+							<p class="p7 ft7"> Référence:</P>
+						</td>
+						<td class="w30p border-r">
+							<p class="p4 ft1">${facture.code_facture}</p>
+						</td>
+					</tr>
+					<tr>
+						<td class="h19">
+							<p class="p7 ft7">Du:</p>
+						</td>
+						<td class="border-r">
+							<p class="p4 ft1">${facture.created_at}</p>
+						</td>
+					</tr>
+					<tr>
+						<td class="h19">
+							<p class="p7 ft7">Code client:</p>
+						</td>
+						<td class="border-r">
+							<p class="p4 ft1">${client.code_client}</p>
+						</td>
+					</tr>
+				</table>
+
+				<table cellpadding=0 cellspacing=0 class="t3 border-l border-r border-b">
+					<tr>
+						<td class="w100p h19">
+							<p class="p7 ft7">Objet:</P>
+						</td>
+					</tr>
+					<tr>
+						<td class="w100p h48p p4 ft1">${facture.objet}</td>
+					</tr>
+				</table>
+			</TEMPLATE>
+		</HEADER>
+
+		<!--Template du container des lignes de facture (une table de préférence)
+				id: obligatoire, doit correspondre au data-order de la div page
+				data-wrapper: obligatoire et unique, id du container des lignes de facture
+				data-parent: obligatoire, id du container ou inserer le template (page(x) defaut)
+		-->
+		<TEMPLATE id="thead" data-wrapper="table1">
+			<TABLE id="table1" cellpadding=0 cellspacing=0 class="t1 border">
+				<TR>
+					<TD class="w10p h24 border-b border-r">
+						<P class="paddr ft7">Référence</P>
+					</TD>
+					<TD class="w50p h24 border-b border-r pad-l-5">
+						<P class="p4 ft7">Désignation</P>
+					</TD>
+					<TD class="w5p  h24 border-b border-r">
+						<P class="paddr ft7">Un</P>
+					</TD>
+					<TD class="w10p h24 border-b border-r">
+						<P class="paddr ft7">Prix unit.</P>
+					</TD>
+					<TD class="w10p h24 border-b border-r">
+						<P class="paddr ft7">Quantité</P>
+					</TD>
+					<TD class="w15p h24 border-b">
+						<P class="paddr ft7">Montant H.T.</P>
+					</TD>
+				</TR>
+			</TABLE>
+		</TEMPLATE>
+
+		<!--3 templates obligatoires des différents types de lignes de facture
+				inserer dans le container (thead) des lignes de facture
+				3 type:
+					id: tranche-debut
+					id: row
+					id: tranche-fin
+		-->
+		<TEMPLATE id="tranche-debut" data-obj="ligne">
+			<TR>
+				<TD class="border-r td1-tranche-debut">
+					<P class="no-margin">${ligne.num_ligne}</P>
+				</TD>
+				<TD class="border-r td1-tranche-debut">
+					<P class="no-margin">${ligne.libelle}</P>
+				</TD>
+				<td class="border-r td2-tranche-debut">
+					<p class="no-margin">${ligne.unite}</p>
+				</td>
+				<TD class="border-r td2-tranche-debut">
+					<P class="no-margin">${ligne.ht}</P>
+				</TD>
+				<TD class="border-r td2-tranche-debut">
+					<P class="no-margin">${ligne.quantite}</P>
+				</TD>
+				<TD class="td2-tranche-debut">
+					<P class="no-margin">${ligne.total_ht}</P>
+				</TD>
+			</TR>
+		</TEMPLATE>
+		<TEMPLATE id="row" data-obj="ligne">
+			<TR>
+				<TD class="border-r td1">
+					<P class="no-margin">${ligne.num_ligne}</P>
+				</TD>
+				<TD class="border-r td1">
+					<P class="no-margin">${ligne.libelle}</P>
+				</TD>
+				<td class="border-r td2">
+					<p class="no-margin">${ligne.unite}</p>
+				</td>
+				<TD class="border-r td2">
+					<P class="no-margin">${ligne.ht}</P>
+				</TD>
+				<TD class="border-r td2">
+					<P class="no-margin">${ligne.quantite}</P>
+				</TD>
+				<TD class="td2">
+					<P class="no-margin">${ligne.total_ht}</P>
+				</TD>
+			</TR>
+		</TEMPLATE>
+		<TEMPLATE id="tranche-fin" data-obj="ligne">
+			<TR>
+				<TD class="border-r td1-tranche-fin">
+					<P class="no-margin">${ligne.num_ligne}</P>
+				</TD>
+				<TD class="border-r td1-tranche-fin">
+					<P class="no-margin">${ligne.libelle}</P>
+				</TD>
+				<td class="border-r td2-tranche-fin">
+					<p class="no-margin">${ligne.unite}</p>
+				</td>
+				<TD class="border-r td2-tranche-fin">
+					<P class="no-margin">${ligne.ht}</P>
+				</TD>
+				<TD class="border-r td2-tranche-fin">
+					<P class="no-margin">${ligne.quantite}</P>
+				</TD>
+				<TD class="td2-tranche-fin">
+					<P class="no-margin">${ligne.total_ht}</P>
+				</TD>
+			</TR>
+		</TEMPLATE>
+
+		<!--Tag container du footer
+					id: obligatoire, doit correspondre au data-order de la div page
+					data-parent: obligatoire, id du container ou inserer le template
+		-->
+		<FOOTER id="footer1" class="footer">
+			<!--Template pour différent type de tva
+					si detail_tva est true
+					id: obligatoirement tva-tpl
+					data-obj: nom de l'objet de données des differentes tva (a voir!)
+					data-replace: remplace le tag avec l'id tva
+					data-parent: id de la template container du tag avec id tva (data-replace)
+
+					objet disponible: tva
+						tva.libelle tva.taux tva.total_tva
+						ex: 20.00%		20.00			570.00
+			-->
+			<template id="tva-tpl" data-replace="tva" data-obj="tva" data-parent="footer">
+				<TR>
+					<td class="h19"></td>
+					<td class="h19"></td>
+					<TD class="h19 border-l border-r pad-l-5">
+						<P class="p4 ft7"> Total ${tva.libelle}</P>
+					</TD>
+					<TD class="h19 border-r pad-r-5">
+						<P class="p15 ft1">${tva.total_tva}</P>
+					</TD>
+				</TR>
+			</template>
+
+			<!--Template du footer
+					id: obligatoire, doit correspondre au data-order de la div page
+					data-parent: obligatoire, id du container ou inserer le template
+			-->
+			<TEMPLATE id="footer" data-parent="footer1">
+				<TABLE cellpadding=0 cellspacing=0 class="t2">
+					<TR>
+						<td class="w20p h19"></td>
+						<td class="w35p h19"></td>
+						<TD class="w30p h19 border-l border-t border-r pad-l-5">
+							<P class="p4 ft7">Total H.T.</P>
+						</TD>
+						<TD class="w15p h19 border-r border-t pad-r-5">
+							<P class="p15 ft1">
+								${facture.total_ht}
+							</P>
+						</TD>
+					</TR>
+					<TR id="tva">
+						<td class="h19"></td>
+						<td class="h19"></td>
+						<TD class="h19 border-l border-r pad-l-5">
+							<P class="p4 ft7"> Total T.V.A.</P>
+						</TD>
+						<TD class="h19 border-r pad-r-5">
+							<P class="p15 ft1">
+								${facture.total_tva}
+							</P>
+						</TD>
+					</TR>
+					<TR>
+						<td class="h19"></td>
+						<td class="h19"></td>
+						<TD class="h19 border-l border-r pad-l-5">
+							<P class="p4 ft7">Total T.T.C.</P>
+						</TD>
+						<TD class="h19 border-t border-r pad-r-5">
+							<P class="p15 ft15">
+								${facture.total_ttc}
+							</P>
+						</TD>
+					</TR>
+
+					<TR>
+						<td class="h19"></td>
+						<td class="h19"></td>
+						<TD class="h19 border-l border-r pad-l-5">
+							<P class="p4 ft7"> Acompte</P>
+						</TD>
+						<TD class="h19 border-r pad-r-5">
+							<P class="p15 ft1">
+								${facture.acompte}
+							</P>
+						</TD>
+					</TR>
+
+					<TR>
+						<td class="h19"></td>
+						<td class="h19"></td>
+						<TD class="h19 border-l border-r pad-l-5">
+							<P class="p4 ft7">Net à payer (Euros)</P>
+						</TD>
+						<TD class="h19 border-r  border-t pad-r-5">
+							<P class="p15 ft15">
+								${facture.total_net}
+							</P>
+						</TD>
+					</TR>
+					<TR>
+						<td class="h19"></td>
+						<TD class="h19 border-l border-t pad-l-5">
+							<P class="p4 ft7">Règlement : </P>
+						</TD>
+						<td class="border-t border-r h19 pad-l-5">
+							<p class="p4 ft1">Comptant + 20 J</p>
+						</td>
+						<td class="border-t h19"></td>
+					</TR>
+					<TR>
+						<td class="h19"></td>
+						<TD class="h19 border-l border-b pad-l-5">
+							<P class="p4 ft7">Echéance de 100,00 % au 19/02/17</P>
+						</TD>
+						<TD class="h19 border-b border-r pad-l-5">
+							<P class="p4 ft1">
+								${facture.total_net}
+							</P>
+						</TD>
+						<td class="h19"></td>
+					</TR>
+				</TABLE>
+				<P class="p4 ft19 txt-align-c margin-t-5">
+					${ste.nom} - SIRET : ${ste.siret} - APE : ${ste.ape} - N° T.V.A : ${ste.tva_intracom} - Tel
+					${ste.portable} -
+					Email ${ste.email}
+				</P>
+				<P class="ft1 p15">page 1/1</P>
+			</TEMPLATE>
+		</FOOTER>
+	</DIV>
+	<SCRIPT src="/assets/jquery-3.3.1.js" ></SCRIPT>
+	<SCRIPT src="assets/template.js"></SCRIPT>
+</BODY>
+
+</HTML>

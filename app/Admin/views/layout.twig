@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<!-- saved from url=(0061)https://getbootstrap.com/docs/4.4/examples/starter-template/# -->
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Jekyll v3.8.6">
+  <title>{% block title "Mon blog" %}</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/assets/bootstrap.min.css" rel="stylesheet">
+  <link href="/assets/flatpickr.css" rel="stylesheet">
+  <!-- Favicons -->
+  <meta name="theme-color" content="#563d7c">
+
+
+  <style>
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+  </style>
+  <!-- Custom styles for this template -->
+  <link href="/assets/starter-template.css" rel="stylesheet">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="{{ path('admin') }}">Administration</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+      aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+      <ul class="navbar-nav mr-auto">
+        {{ admin_menu() }}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ path('blog.index') }}">Blog</a>
+        </li>
+      </ul>
+      {% if current_user() %}
+      <div class="navbar-test mr-2 text-white">{{ current_user().username }}</div>
+        <form class="form-inline mr-2 my-2 my-lg-0" action="{{ path('auth.logout') }}" method="POST">
+          {{ csrf_input() }}
+          <button class="btn btn-secondary mr-2 mr-sm-0" type="submit">Se deconnecter</button>
+        </form>
+      {% else %}
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ path('auth.login') }}">Se connecter</a>
+          </li>
+        </ul>
+      {% endif %}
+      {#<form class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+      </form>#}
+    </div>
+  </nav>
+  <main role="main" class="container">
+
+    {% if flash('success') %}
+    
+    <div class="alert alert-success">
+      {{ flash('success') }}
+    </div>
+    
+    {% endif %}
+
+    {% if flash('error') %}
+    
+    <div class="alert alert-danger">
+      {{ flash('error') }}
+    </div>
+    
+    {% endif %}
+
+    {% block body %}{% endblock %}
+
+  </main><!-- /.container -->
+
+  <script src="/assets/jquery-3.4.1.slim.min.js"
+    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+    crossorigin="anonymous"></script>
+  <script src="/assets/bootstrap.bundle.min.js"
+    integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm"
+    crossorigin="anonymous"></script>
+  <script src="/assets/flatpickr.js"></script>
+  <script src="/assets/fr.js"></script>
+    <script>
+      flatpickr('.datepicker', {
+        enableTime: true,
+        altInput: true,
+        altFormat: 'j F Y, H:i',
+        dateFormat: 'Y-m-d H:i:S',
+        locale: 'fr'
+      });
+    </script>
+</body>
+
+</html>

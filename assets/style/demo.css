@@ -1,0 +1,43 @@
+.fixed-header table tr.active td {
+  background-color:#4285f4 !important;
+  color: white;
+}
+
+.fixed-header table tr td {
+  cursor: pointer;
+}
+
+.fixed-header{
+  display: block;
+  overflow-y: auto;
+  font-size: 0.9rem;
+  height: 16em;
+  outline: none;
+}
+
+.fixed-header thead {
+  position: sticky;
+  top: 0;
+  background: #4285f4 !important;
+  border-top: none;
+  border-bottom: none;
+  box-shadow: 0px 1px 0 #dee2e6;
+}
+
+.fixed-header thead th{
+  position: sticky;
+  top: 0;
+  background: #4285f4 !important;
+}
+
+.ft-08 {
+  font-size: 0.8rem;
+}
+
+.ft-09 {
+  font-size: 0.9rem;
+}
+
+.fw-400 {
+  font-weight: 400;
+}

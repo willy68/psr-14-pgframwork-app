@@ -1,0 +1,11 @@
+{
+    "package": {
+        "name": "willy68/pgframework-app",
+        "version": "0.0.1",
+        "source": {
+          "url": "https://github.com/willy68/pgframework-app.git",
+          "type": "git",
+          "reference": "master"
+        }
+    }
+ }

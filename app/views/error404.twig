@@ -1,0 +1,18 @@
+{% extends 'layout404.twig' %}
+
+{% block title 'Erreur 404' %}
+
+{% block body %}
+<div class="jumbotron text-center">
+  <h1>Erreur 404</h1>
+</div>
+
+{% if message %}
+  <h4> {{message}} </h4>
+{% endif %}
+<p>
+  Cette vue peut être modifiée a votre goût.
+  Elle est appelée automatiquement, mais il ne faut pas la renommer!
+</p>
+
+{% endblock %}

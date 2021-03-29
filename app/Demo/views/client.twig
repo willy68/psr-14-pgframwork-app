@@ -1,0 +1,67 @@
+{% extends "layout.twig" %}
+
+{% block title "Demo de React Client"%}
+
+{% block body %}
+
+	<div class="jumbotron">
+
+		<div class="text-center">
+			<h1>Bienvenue dans le demo React/Client</h1>
+		</div>
+
+	</div>
+
+	{% if client %}
+		<div class="card">
+			<div class="card-header primary white-text">
+				<h6 class="fw-400 mb-0">
+					Details du clients {{ client.nom }}
+				</h6>
+			</div>
+			<div class="card-body p-0">
+        <input type="text" value="{{ client.code_client }}">
+        <input type="text" value="{{ client.nom }}">
+        <input type="text" value="{{ client.email }}">
+        {% if client.adresses %}
+        <card>
+          <card-body>
+            <card-title>
+              <h4>Adresse</h4>
+            </card-title>
+            <card-text>
+              {% if client.adresses[0].adresse_1 %}
+              {{ client.adresse[0].adresse_1 }} <br>
+              {% endif %}
+              {% if client.adresses[0].adresse_2 %}
+              <span>
+                {{ client.adresses[0].adresse_2 }} <br>
+              </span>
+              {% endif %}
+              {% if client.adresses[0].adresse_3 %}
+              <span>
+                {{ client.adresses[0].adresse_3 }} <br>
+              </span>
+              {% endif %}
+              {% if client.adresses[0].cp %}
+              {{ client.adresses[0].cp }}
+              {% endif %}
+              {% if client.adresses[0].ville %}
+              {{ client.adresses[0].ville }} <br>
+              {% endif %}
+              {% if client.adresses[0].pays %}
+              {{ client.adresses[0].pays }} <br>
+              {% endif %}
+            </card-text>
+            <div class="flex-row">
+              <a class="btn btn-primary">Modifier</a>
+              <a class="btn btn-danger">Supprimer</a>
+            </div>
+          </card-body>
+        </card>
+        {% endif %}
+			</div>
+		</div>
+	{% endif %}
+
+{% endblock %}
