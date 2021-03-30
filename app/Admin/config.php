@@ -18,7 +18,6 @@ return [
         [
             [
                 'route.prefix' => \DI\get('admin.prefix'),
-                'group.prefix' => \DI\get('admin.prefix') . "/posts",
                 'route.url' => null,
                 'route.name' => null,
                 'listeners' => [

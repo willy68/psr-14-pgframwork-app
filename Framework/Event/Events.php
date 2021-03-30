@@ -9,4 +9,5 @@ class Events
     public const PARAMETERS = 'event.parameters';
     public const VIEW = 'event.view';
     public const RESPONSE = 'event.response';
+    public const EXCEPTION = 'event.exception';
 }

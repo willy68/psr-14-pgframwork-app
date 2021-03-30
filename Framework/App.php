@@ -14,6 +14,7 @@ use Mezzio\Router\RouteCollector;
 use Framework\Event\ResponseEvent;
 use GuzzleHttp\Psr7\ServerRequest;
 use League\Event\ListenerPriority;
+use Framework\Event\ExceptionEvent;
 use Framework\Event\ControllerEvent;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -243,7 +244,13 @@ class App implements RequestHandlerInterface
             $request = ServerRequest::fromGlobals();
         }
 
-        return $this->handleEvent($request);
+        try {
+            return $this->handleEvent($request);
+        } catch (\Exception $e) {
+            return $this->handleException($e, $request);
+        }
+
+        //return $this->handle($request);
     }
 
     private function handleEvent(ServerRequestInterface $request): ResponseInterface
@@ -291,7 +298,7 @@ class App implements RequestHandlerInterface
         }
 
         // view
-        if (!$response instanceof Response) {
+        if (!$response instanceof ResponseInterface) {
             $event = new ViewEvent($this, $event->getRequest(), $response);
             $event = $this->dispatcher->dispatch($event);
 
@@ -323,6 +330,29 @@ class App implements RequestHandlerInterface
         $event = $this->dispatcher->dispatch($event, Events::RESPONSE);
 
         return $event->getResponse();
+    }
+
+    private function handleException(\Throwable $e, ServerRequestInterface $request)
+    {
+        $event = new ExceptionEvent($this, $request, $e);
+        $this->dispatcher->dispatch($event, Events::EXCEPTION);
+
+        // a listener might have replaced the exception
+        $e = $event->getException();
+
+        if (!$event->hasResponse()) {
+            //$this->finishRequest($request, $type);
+
+            throw $e;
+        }
+
+        $response = $event->getResponse();
+
+        try {
+            return $this->filterResponse($response, $request);
+        } catch (\Exception $e) {
+            return $response;
+        }
     }
 
     /**
