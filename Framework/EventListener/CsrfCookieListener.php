@@ -10,7 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 use Grafikart\Csrf\InvalidCsrfException;
 use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
-use GuzzleHttp\Psr7\Response;
+use Framework\Session\SessionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class CsrfCookieListener
@@ -18,6 +18,7 @@ class CsrfCookieListener
     protected $config = [
         'cookieName' => 'XSRF-TOKEN',
         'header' => 'X-CSRF-TOKEN',
+        'session.key' => 'csrf.tokens',
         'field' => '_csrf',
         'expiry' => 0,
         'secure' => false,
@@ -25,10 +26,28 @@ class CsrfCookieListener
         'samesite' => null,
     ];
 
+    /**
+     * @var array|\ArrayAccess
+     */
+    private $session;
+
     protected $tokenField;
 
-    public function __construct()
-    {
+    /**
+     * CsrfMiddleware constructor.
+     *
+     * @param array|\ArrayAccess $session
+     * @param int                $limit      Limit the number of token to store in the session
+     * @param string             $sessionKey
+     * @param string             $formKey
+     */
+    public function __construct(
+        SessionInterface &$session,
+        string $sessionKey = 'csrf.tokens'
+    ) {
+        $this->testSession($session);
+        $this->session = &$session;
+        $this->config['session.key'] = $sessionKey;
     }
 
     /**
@@ -48,6 +67,7 @@ class CsrfCookieListener
 
         if (is_string($cookie) && strlen($cookie) > 0) {
             $request = $request->withAttribute($this->config['field'], $cookie);
+            $event->setRequest($request);
         }
 
         if (\in_array($method, ['GET', 'HEAD'], true) && null === $cookie) {
@@ -59,18 +79,21 @@ class CsrfCookieListener
         }
 
         if (\in_array($method, ['DELETE', 'PATCH', 'POST', 'PUT'], true)) {
-            $body = $request->getParsedBody();
+            $body = $request->getParsedBody() ?: [];
             if ((\is_array($body) || $body instanceof \ArrayAccess) && !empty($body)) {
                 $token = $body[$this->config['field']];
                 $this->validateToken($token, $cookie);
             }
 
-            if (!$request->hasHeader($this->config['header'])) {
+            else if (!$request->hasHeader($this->config['header'])) {
                 throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
+            } else {
+                $headerCookie = $request->getHeaderLine($this->config['header']);
+                $this->validateToken($headerCookie, $cookie);
             }
-            $headerCookie = $request->getHeaderLine($this->config['header']);
-            $this->validateToken($headerCookie, $cookie);
+
         }
+        $this->session[$this->config['session.key']] = $this->tokenField;
 
     }
 
@@ -109,6 +132,20 @@ class CsrfCookieListener
         }
     }
 
+    /**
+     * Test if the session acts as an array.
+     *
+     * @param $session
+     *
+     * @throws \TypeError
+     */
+    private function testSession($session): void
+    {
+        if (!\is_array($session) && !$session instanceof \ArrayAccess) {
+            throw new \TypeError('session is not an array');
+        }
+    }
+
     public function getFormKey(): string
     {
         return $this->config['field'];
@@ -116,6 +153,6 @@ class CsrfCookieListener
 
     public function generateToken(): string
     {
-        return $this->tokenField;
+        return $this->session[$this->config['session.key']];
     }
 }

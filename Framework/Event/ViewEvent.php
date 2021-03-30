@@ -10,9 +10,9 @@ class ViewEvent extends RequestEvent
 {
     public const NAME = Events::VIEW;
 
-    private ResponseInterface $response;
+    private $response;
 
-    public function __construct(App $app, ServerRequestInterface $request, ResponseInterface $response)
+    public function __construct(App $app, ServerRequestInterface $request, $response)
     {
         parent::__construct($app, $request);
         $this->response = $response;

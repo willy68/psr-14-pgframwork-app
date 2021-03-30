@@ -8,6 +8,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
 use Framework\Security\Security;
+use Framework\Session\SessionInterface;
 use Grafikart\Csrf\InvalidCsrfException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -18,6 +19,7 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
     protected $config = [
         'cookieName' => 'XSRF-TOKEN',
         'header' => 'X-CSRF-TOKEN',
+        'session.key' => 'csrf.tokens',
         'field' => '_csrf',
         'expiry' => 0,
         'secure' => false,
@@ -25,10 +27,28 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
         'samesite' => null,
     ];
 
+    /**
+     * @var array|\ArrayAccess
+     */
+    private $session;
+
     protected $tokenField;
 
-    public function __construct()
-    {
+    /**
+     * CsrfMiddleware constructor.
+     *
+     * @param array|\ArrayAccess $session
+     * @param int                $limit      Limit the number of token to store in the session
+     * @param string             $sessionKey
+     * @param string             $formKey
+     */
+    public function __construct(
+        SessionInterface &$session,
+        string $sessionKey = 'csrf.tokens'
+    ) {
+        $this->testSession($session);
+        $this->session = &$session;
+        $this->config['session.key'] = $sessionKey;
     }
 
     /**
@@ -66,7 +86,7 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
         }
 
         if (\in_array($method, ['DELETE', 'PATCH', 'POST', 'PUT'], true)) {
-            $body = $request->getParsedBody();
+            $body = $request->getParsedBody() ?: [];
             if ((\is_array($body) || $body instanceof \ArrayAccess) && !empty($body)) {
                 $token = $body[$this->config['field']];
                 $this->validateToken($token, $cookie);
@@ -80,6 +100,7 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
             $this->validateToken($headerCookie, $cookie);
         }
 
+        $this->session[$this->config['session.key']] = $this->tokenField;
         return $handler->handle($request);
     }
 
@@ -100,6 +121,20 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
         }
     }
 
+    /**
+     * Test if the session acts as an array.
+     *
+     * @param $session
+     *
+     * @throws \TypeError
+     */
+    private function testSession($session): void
+    {
+        if (!\is_array($session) && !$session instanceof \ArrayAccess) {
+            throw new \TypeError('session is not an array');
+        }
+    }
+
     public function getFormKey(): string
     {
         return $this->config['field'];
@@ -107,6 +142,6 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
 
     public function generateToken(): string
     {
-        return $this->tokenField;
+        return $this->session[$this->config['session.key']];
     }
 }

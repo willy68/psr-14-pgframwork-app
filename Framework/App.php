@@ -262,7 +262,7 @@ class App implements RequestHandlerInterface
 
         $controller = $this->callableResolver->resolve($controller);
 
-        $event = new ControllerEvent($this, $controller, $request);
+        $event = new ControllerEvent($this, $controller, $event->getRequest());
         $event = $this->dispatcher->dispatch($event);
         $controller = $event->getController();
 
@@ -270,7 +270,7 @@ class App implements RequestHandlerInterface
 
         // controller arguments
         if ($container instanceof \DI\Container) {
-            $container->set(ServerRequestInterface::class, $request);
+            $container->set(ServerRequestInterface::class, $event->getRequest());
         } else {
             // Limitation: $request must be named "$request"
             $params = array_merge(["request" => $request] , $params);
@@ -279,11 +279,10 @@ class App implements RequestHandlerInterface
         $callableReflection = CallableReflection::create($controller);
         $params = $this->paramsResolver->getParameters($callableReflection, $params, []);
         
-        $event = new ControllerParamsEvent($this, $controller, $params, $request);
+        $event = new ControllerParamsEvent($this, $controller, $params, $event->getRequest());
         $event = $this->dispatcher->dispatch($event);
         $controller = $event->getController();
         $params = $event->getParams();
-
         // call controller
         $response = $controller(...$params);
 
@@ -293,7 +292,7 @@ class App implements RequestHandlerInterface
 
         // view
         if (!$response instanceof Response) {
-            $event = new ViewEvent($this, $request, $response);
+            $event = new ViewEvent($this, $event->getRequest(), $response);
             $event = $this->dispatcher->dispatch($event);
 
             if ($event->hasResponse()) {

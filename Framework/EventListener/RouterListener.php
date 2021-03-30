@@ -62,7 +62,6 @@ class RouterListener implements Listener
             },
             $request
         );
-
         $event->setRequest($request->withAttribute(get_class($result), $result));
     }
 
