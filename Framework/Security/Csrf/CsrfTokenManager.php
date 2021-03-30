@@ -14,14 +14,16 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
     public function __construct(
         TokenStorageInterface $storage,
         TokenGeneratorInterface $generator,
-        string $sessionKey = 'csrf.tokens'
+        string $sessionKey = 'csrf.tokens',
+        string $formKey = '_csrf'
     ) {
         $this->storage = $storage;
         $this->generator = $generator;
         $this->sessionKey = $sessionKey;
+        $this->formKey = $formKey;
     }
 
-    public function getToken(): string
+    public function getToken(string $key): string
     {
         if ($this->storage->hasToken($this->sessionKey)) {
             return $this->storage->getToken($this->sessionKey);
@@ -33,49 +35,35 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
     }
 
     /**
-     * Generate and store a random token.
-     *
-     * @throws \Exception
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function generateToken(): string
+    public function refreshToken(string $key)
     {
-        $token = bin2hex(random_bytes(16));
-        $tokens = $this->session[$this->sessionKey] ?? [];
-        $tokens[] = $token;
-        $this->session[$this->sessionKey] = $this->limitTokens($tokens);
+        $value = $this->generator->generateToken();
 
-        return $token;
+        $this->storage->setToken($key, $value);
+
+        return $value;
     }
 
     /**
-     * Test if the session acts as an array.
-     *
-     * @param $session
-     *
-     * @throws \TypeError
+     * {@inheritdoc}
      */
-    private function testSession($session): void
+    public function removeToken(string $key)
     {
-        if (!\is_array($session) && !$session instanceof \ArrayAccess) {
-            throw new \TypeError('session is not an array');
+        return $this->storage->removeToken($key);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isTokenValid(string $key, string $token)
+    {
+        if (!$this->storage->hasToken($key)) {
+            return false;
         }
-    }
 
-    /**
-     * Remove a token from session.
-     *
-     * @param string $token
-     */
-    private function removeToken(string $token): void
-    {
-        $this->session[$this->sessionKey] = array_filter(
-            $this->session[$this->sessionKey] ?? [],
-            function ($t) use ($token) {
-                return $token !== $t;
-            }
-        );
+        return hash_equals($this->storage->getToken($key), $token);
     }
 
     /**
@@ -87,18 +75,11 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
     }
 
     /**
-     * Limit the number of tokens.
-     *
-     * @param array $tokens
-     *
-     * @return array
+     * @return string
      */
-    private function limitTokens(array $tokens): array
+    public function getFormKey(): string
     {
-        if (\count($tokens) > $this->limit) {
-            array_shift($tokens);
-        }
-
-        return $tokens;
+        return $this->formKey;
     }
+
 }
