@@ -7,6 +7,7 @@ use Framework\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
 class CsrfTokenManager implements CsrfTokenManagerInterface
 {
+
     private $storage;
     private $generator;
     private $sessionKey;
@@ -23,47 +24,49 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
         $this->formKey = $formKey;
     }
 
-    public function getToken(string $key): string
+    public function getToken(string $tokenId): string
     {
-        if ($this->storage->hasToken($this->sessionKey)) {
-            return $this->storage->getToken($this->sessionKey);
+        if ($this->storage->hasToken($tokenId)) {
+            return $this->storage->getToken($tokenId);
         }
 
-        $token = $this->generator->generateToken();
-        $this->storage->setToken($token, $this->sessionKey);
+        $token = $tokenId . self::delimiter . $this->generator->generateToken();
+        $this->storage->setToken($tokenId, $token);
         return $token;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function refreshToken(string $key)
+    public function refreshToken(string $tokenId): string
     {
-        $value = $this->generator->generateToken();
+        $token = $tokenId . self::delimiter . $this->generator->generateToken();
 
-        $this->storage->setToken($key, $value);
+        $this->storage->setToken($tokenId, $token);
 
-        return $value;
+        return $token;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function removeToken(string $key)
+    public function removeToken(string $tokenId): string
     {
-        return $this->storage->removeToken($key);
+        return $this->storage->removeToken($tokenId);
+        return $tokenId;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function isTokenValid(string $key, string $token)
+    public function isTokenValid(string $token): bool
     {
-        if (!$this->storage->hasToken($key)) {
+        [$tokenId, ] = explode(self::delimiter, $token);
+        if (!$this->storage->hasToken($tokenId)) {
             return false;
         }
 
-        return hash_equals($this->storage->getToken($key), $token);
+        return hash_equals($this->storage->getToken($tokenId), $token);
     }
 
     /**

@@ -3,24 +3,26 @@
 namespace Framework\Twig;
 
 use Exception;
+use Framework\EventListener\CsrfCookieListener;
 use Twig\TwigFunction;
-use Framework\Middleware\CsrfGetCookieMiddleware;
 
 class CsrfExtension extends \Twig\Extension\AbstractExtension
 {
 
     /**
-     * @var CsrfGetCookieMiddleware
+     * 
+     *
+     * @var CsrfCookieListener
      */
-    private $middleware;
+    private $csrfListener;
 
     /**
-     * CsrfExtension constructor.
-     * @param CsrfGetCookieMiddleware $middleware
+     *
+     * @param CsrfCookieListener $csrfListener
      */
-    public function __construct(CsrfGetCookieMiddleware $middleware)
+    public function __construct(CsrfCookieListener $csrfListener)
     {
-        $this->middleware = $middleware;
+        $this->csrfListener = $csrfListener;
     }
 
     /**
@@ -40,7 +42,7 @@ class CsrfExtension extends \Twig\Extension\AbstractExtension
     public function csrfInput()
     {
         return "<input type=\"hidden\" " .
-        "name=\"{$this->middleware->getFormKey()}\" " .
-        "value=\"{$this->middleware->generateToken()}\"/>";
+        "name=\"{$this->csrfListener->getFormKey()}\" " .
+        "value=\"{$this->csrfListener->getToken()}\"/>";
     }
 }

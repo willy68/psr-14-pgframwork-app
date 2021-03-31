@@ -2,11 +2,13 @@
 
 namespace Framework\Security\Csrf\TokenStorage;
 
+use Framework\Session\SessionInterface;
+
 class TokenSessionStorage implements TokenStorageInterface
 {
 
     /**
-     * @var array|\ArrayAccess
+     * @var array|\ArrayAccess|SessionInterface
      */
     private $session;
 
@@ -16,11 +18,6 @@ class TokenSessionStorage implements TokenStorageInterface
     private $sessionKey;
 
     /**
-     * @var string
-     */
-    private $formKey;
-
-    /**
      * @var int
      */
     private $limit;
@@ -28,36 +25,52 @@ class TokenSessionStorage implements TokenStorageInterface
     /**
      * CsrfMiddleware constructor.
      *
-     * @param array|\ArrayAccess $session
+     * @param array|\ArrayAccess|SessionInterface $session
      * @param int                $limit      Limit the number of token to store in the session
      * @param string             $sessionKey
      * @param string             $formKey
      */
     public function __construct(
-        &$session
+        SessionInterface &$session,
+        int $limit = 50,
+        string $sessionKey = 'csrf.tokens'
     ) {
         $this->testSession($session);
         $this->session = &$session;
+        $this->sessionKey = $sessionKey;
+        $this->limit = $limit;
     }
 
-    public function hasToken(string $key): bool
+    public function hasToken(string $tokenId): bool
     {
-        return array_key_exists($key, $this->session);
+        return isset($this->session[$this->sessionKey][$tokenId]);
     }
 
-    public function getToken(string $key): string
+    public function getToken(string $tokenId): ?string
     {
-        return $this->session[$this->sessionKey];
+        if (!$this->hasToken($tokenId)) {
+            return null;
+        }
+
+        return (string) $this->session[$this->sessionKey][$tokenId];
     }
 
-    public function setToken(string $token, string $key): void
+    public function setToken(string $tokenId, string $token): void
     {
-        $this->session[$key] = $token;
+        $tokens = $this->session[$this->sessionKey] ?? [];
+        $tokens[$tokenId] = $token;
+        $this->session[$this->sessionKey] = $this->limitTokens($tokens);
     }
 
-    public function removeToken(string $key): void
+    public function removeToken(string $tokenId): ?string
     {
-        $this->session[$key] = null;
+        if (!$this->hasToken($tokenId)) {
+            return null;
+        }
+
+        $token = (string) $this->session[$this->sessionKey][$tokenId];
+        unset($this->session[$this->sessionKey][$tokenId]);
+        return $token;
     }
 
     /**
@@ -80,6 +93,22 @@ class TokenSessionStorage implements TokenStorageInterface
     public function getSessionKey(): string
     {
         return $this->sessionKey;
+    }
+
+    /**
+     * Limit the number of tokens.
+     *
+     * @param array $tokens
+     *
+     * @return array
+     */
+    private function limitTokens(array $tokens): array
+    {
+        if (\count($tokens) > $this->limit) {
+            array_shift($tokens);
+        }
+
+        return $tokens;
     }
 
 }

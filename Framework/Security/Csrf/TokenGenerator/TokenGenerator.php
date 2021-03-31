@@ -17,20 +17,4 @@ class TokenGenerator implements TokenGeneratorInterface
 
         return $token;
     }
-
-    /**
-     * Limit the number of tokens.
-     *
-     * @param array $tokens
-     *
-     * @return array
-     */
-    private function limitTokens(array $tokens): array
-    {
-        if (\count($tokens) > $this->limit) {
-            array_shift($tokens);
-        }
-
-        return $tokens;
-    }
 }

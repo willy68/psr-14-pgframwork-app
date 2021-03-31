@@ -316,7 +316,7 @@ class App implements RequestHandlerInterface
             }
         }
 
-        return $this->filterResponse($response, $request);
+        return $this->filterResponse($response, $event->getRequest());
     }
     /**
      * Filters a response object.

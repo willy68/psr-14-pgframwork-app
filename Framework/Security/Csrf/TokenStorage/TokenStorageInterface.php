@@ -4,11 +4,11 @@ namespace Framework\Security\Csrf\TokenStorage;
 
 interface TokenStorageInterface
 {
-    public function hasToken(string $key): bool;
+    public function hasToken(string $tokenId): bool;
 
-    public function getToken(string $key): string;
+    public function getToken(string $tokenId): ?string;
 
-    public function setToken(string $token, string $key): void;
+    public function setToken(string $tokenId, string $token): void;
 
-    public function removeToken(string$key): void;
+    public function removeToken(string $tokenId): ?string;
 }

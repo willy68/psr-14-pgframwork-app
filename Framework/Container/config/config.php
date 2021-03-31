@@ -23,6 +23,12 @@ use Framework\Environnement\Environnement;
 use Framework\Invoker\CallableResolverFactory;
 use Framework\Invoker\InvokerFactory;
 use Framework\Invoker\ResolverChainFactory;
+use Framework\Security\Csrf\CsrfTokenManager;
+use Framework\Security\Csrf\CsrfTokenManagerInterface;
+use Framework\Security\Csrf\TokenGenerator\TokenGenerator;
+use Framework\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
+use Framework\Security\Csrf\TokenStorage\TokenSessionStorage;
+use Framework\Security\Csrf\TokenStorage\TokenStorageInterface;
 use Framework\Validator\Filter\StriptagsFilter;
 use Framework\Validator\Filter\TrimFilter;
 use Framework\Validator\Rules\{
@@ -91,6 +97,13 @@ return [
     SessionInterface::class => create(PHPSession::class),
     CsrfMiddleware::class =>
     create()->constructor(get(SessionInterface::class)),
+    TokenStorageInterface::class => 
+    create(TokenSessionStorage::class)->constructor(get(SessionInterface::class)),
+    TokenGeneratorInterface::class => create(TokenGenerator::class),
+    CsrfTokenManagerInterface::class => 
+    create(CsrfTokenManager::class)->constructor(
+        get(TokenStorageInterface::class), 
+        get(TokenGeneratorInterface::class)),
     JwtAuthentication::class => factory(JwtMiddlewareFactory::class),
     Invoker::class => factory(InvokerFactory::class),
     ParameterResolver::class => factory(ResolverChainFactory::class),
