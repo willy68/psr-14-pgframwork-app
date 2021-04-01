@@ -62,7 +62,6 @@ class CsrfCookieListener
         $cookie = FigRequestCookies::get($request, $this->config['cookieName'])->getValue();
 
         if (is_string($cookie) && strlen($cookie) > 0) {
-            $request = $request->withAttribute($this->config['field'], $cookie);
             [$this->tokenId,] = explode(CsrfTokenManagerInterface::delimiter, $cookie);
         }
 
@@ -104,15 +103,17 @@ class CsrfCookieListener
         $request = $event->getRequest();
         $token = $request->getAttribute($this->config['field']);
 
-        $setCookie = SetCookie::create('XSRF-TOKEN')
-            ->withValue($token)
-            // ->withExpires(time() + 3600)
-            ->withPath('/')
-            ->withDomain(null)
-            ->withSecure(false)
-            ->withHttpOnly(false);
-        $response = FigResponseCookies::set($response, $setCookie);
-        $event->setResponse($response);
+        if (null !== $token) {
+            $setCookie = SetCookie::create('XSRF-TOKEN')
+                ->withValue($token)
+                // ->withExpires(time() + 3600)
+                ->withPath('/')
+                ->withDomain(null)
+                ->withSecure(false)
+                ->withHttpOnly(false);
+            $response = FigResponseCookies::set($response, $setCookie);
+            $event->setResponse($response);
+        }
     }
 
     protected function validateToken($token, $cookie)
