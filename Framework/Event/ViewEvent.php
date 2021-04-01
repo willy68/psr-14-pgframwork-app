@@ -3,38 +3,28 @@
 namespace Framework\Event;
 
 use Framework\App;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ViewEvent extends RequestEvent
 {
     public const NAME = Events::VIEW;
 
-    private $response;
+    private $result;
 
-    public function __construct(App $app, ServerRequestInterface $request, $response)
+    public function __construct(App $app, ServerRequestInterface $request, $result)
     {
         parent::__construct($app, $request);
-        $this->response = $response;
+        $this->result = $result;
     }
 
-    public function getResponse(): ResponseInterface
+    public function getResult()
     {
-        return $this->response;
+        return $this->result;
     }
 
-    public function setResponse(ResponseInterface $response)
+    public function setResult($result)
     {
-        $this->response = $response;
+        $this->result = $result;
     }
 
-    public function setNullResponse()
-    {
-        $this->response = null;
-    }
-
-    public function hasResponse(): bool
-    {
-        return $this->response !== null;
-    }
 }

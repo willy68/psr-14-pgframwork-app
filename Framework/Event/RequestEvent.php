@@ -10,7 +10,7 @@ class RequestEvent extends AppEvent
 {
     private ServerRequestInterface $request;
 
-    private $response;
+    protected $response;
 
     public function __construct(App $app, ServerRequestInterface $request)
     {
