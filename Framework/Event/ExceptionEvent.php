@@ -7,6 +7,8 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class ExceptionEvent extends RequestEvent
 {
+    public const NAME = Events::EXCEPTION;
+
     private $exception;
 
     public function __construct(App $app, ServerRequestInterface $request, \Throwable $e)

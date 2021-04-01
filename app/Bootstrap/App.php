@@ -18,6 +18,7 @@ use Framework\Middleware\DispatcherMiddleware;
 use Framework\EventListener\CsrfCookieListener;
 use Framework\Middleware\PageNotFoundMiddleware;
 use Framework\EventListener\ActiveRecordListener;
+use Framework\EventListener\InvalidCsrfListener;
 use Framework\EventListener\PageNotFoundListener;
 use Framework\Middleware\TrailingSlashMiddleware;
 use Framework\Middleware\MethodNotAllowedMiddleware;
@@ -54,7 +55,8 @@ return [
         ActiveRecordListener::class => [Events::REQUEST, ListenerPriority::HIGH],
         //CsrfCookieListener::class . "::onRequestEvent" => [Events::REQUEST, ListenerPriority::HIGH],
         //CsrfCookieListener::class . "::onResponseEvent" => [Events::RESPONSE, ListenerPriority::HIGH]
-        CsrfListener::class . "::onRequestEvent" => [Events::REQUEST, ListenerPriority::HIGH]
+        CsrfListener::class . "::onRequestEvent" => [Events::REQUEST, ListenerPriority::HIGH],
+        InvalidCsrfListener::class . "::onException" => [Events::EXCEPTION, ListenerPriority::HIGH]
     ],
 
     /* DI Base configuration. Place your own on the list */

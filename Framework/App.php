@@ -335,7 +335,7 @@ class App implements RequestHandlerInterface
     private function handleException(\Throwable $e, ServerRequestInterface $request)
     {
         $event = new ExceptionEvent($this, $request, $e);
-        $this->dispatcher->dispatch($event, Events::EXCEPTION);
+        $this->dispatcher->dispatch($event);
 
         // a listener might have replaced the exception
         $e = $event->getException();
