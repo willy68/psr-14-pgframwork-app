@@ -23,6 +23,7 @@ use Framework\EventListener\PageNotFoundListener;
 use Framework\Middleware\TrailingSlashMiddleware;
 use Framework\Middleware\MethodNotAllowedMiddleware;
 use Framework\EventListener\MethodNotAllowedListener;
+use Framework\EventListener\StringResponseListener;
 
 return [
     /* Application modules. Place your own on the list */
@@ -56,7 +57,8 @@ return [
         //CsrfCookieListener::class . "::onRequestEvent" => [Events::REQUEST, ListenerPriority::HIGH],
         //CsrfCookieListener::class . "::onResponseEvent" => [Events::RESPONSE, ListenerPriority::HIGH]
         CsrfListener::class . "::onRequestEvent" => [Events::REQUEST, ListenerPriority::HIGH],
-        InvalidCsrfListener::class . "::onException" => [Events::EXCEPTION, ListenerPriority::HIGH]
+        InvalidCsrfListener::class . "::onException" => [Events::EXCEPTION, ListenerPriority::HIGH],
+        StringResponseListener::class . "::onView" => [Events::VIEW, ListenerPriority::HIGH],
     ],
 
     /* DI Base configuration. Place your own on the list */

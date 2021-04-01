@@ -290,12 +290,9 @@ class App implements RequestHandlerInterface
         $event = $this->dispatcher->dispatch($event);
         $controller = $event->getController();
         $params = $event->getParams();
+
         // call controller
         $response = $controller(...$params);
-
-        if (is_string($response)) {
-            $response = new Response(200, [], $response);
-        }
 
         // view
         if (!$response instanceof ResponseInterface) {
