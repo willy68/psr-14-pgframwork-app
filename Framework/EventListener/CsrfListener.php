@@ -2,6 +2,7 @@
 
 namespace Framework\EventListener;
 
+use Framework\Event\RequestEvent;
 use Framework\Security\Security;
 use Grafikart\Csrf\NoCsrfException;
 use Grafikart\Csrf\InvalidCsrfException;
@@ -50,10 +51,8 @@ class CsrfListener
      * @param object $event
      * @return void
      */
-    public function onRequestEvent(object $event)
+    public function onRequestEvent(RequestEvent $event)
     {
-        /** @var RequestEvent $event */
-        /** @var ServerRequestInterface $request */
         $request = $event->getRequest();
         $method = $request->getMethod();
 

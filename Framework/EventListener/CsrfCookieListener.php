@@ -6,12 +6,10 @@ use Framework\Security\Security;
 use Dflydev\FigCookies\SetCookie;
 use Framework\Event\RequestEvent;
 use Framework\Event\ResponseEvent;
-use Psr\Http\Message\ResponseInterface;
 use Grafikart\Csrf\InvalidCsrfException;
 use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
 use Framework\Security\Csrf\CsrfTokenManagerInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 class CsrfCookieListener
 {
@@ -52,10 +50,8 @@ class CsrfCookieListener
      * @param object $event
      * @return void
      */
-    public function onRequestEvent(object $event)
+    public function onRequestEvent(RequestEvent $event)
     {
-        /** @var RequestEvent $event */
-        /** @var ServerRequestInterface $request */
         $request = $event->getRequest();
         $method = $request->getMethod();
 
@@ -94,12 +90,9 @@ class CsrfCookieListener
      * @param object $event
      * @return void
      */
-    public function onResponseEvent(object $event)
+    public function onResponseEvent(ResponseEvent $event)
     {
-        /** @var ResponseEvent $event */
-        /** @var ResponseInterface $response */
         $response = $event->getResponse();
-        /** @var ServerRequestInterface $request */
         $request = $event->getRequest();
         $token = $request->getAttribute($this->config['field']);
 

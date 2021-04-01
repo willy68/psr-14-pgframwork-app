@@ -17,8 +17,7 @@ return [
     'firewall.event.rules' => \DI\add([
         [
             [
-                'route.prefix' => \DI\get('admin.prefix'),
-                'route.url' => null,
+                'path' => \DI\get('admin.prefix'),
                 'route.name' => null,
                 'listeners' => [
                     'CookieLoggingListener::class' => [Events::REQUEST, ListenerPriority::HIGH],
