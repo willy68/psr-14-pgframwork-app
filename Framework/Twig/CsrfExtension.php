@@ -3,7 +3,7 @@
 namespace Framework\Twig;
 
 use Exception;
-use Framework\EventListener\CsrfCookieListener;
+use Framework\EventListener\CsrfListener;
 use Twig\TwigFunction;
 
 class CsrfExtension extends \Twig\Extension\AbstractExtension
@@ -12,7 +12,7 @@ class CsrfExtension extends \Twig\Extension\AbstractExtension
     /**
      * 
      *
-     * @var CsrfCookieListener
+     * @var CsrfListener
      */
     private $csrfListener;
 
@@ -20,7 +20,7 @@ class CsrfExtension extends \Twig\Extension\AbstractExtension
      *
      * @param CsrfCookieListener $csrfListener
      */
-    public function __construct(CsrfCookieListener $csrfListener)
+    public function __construct(CsrfListener $csrfListener)
     {
         $this->csrfListener = $csrfListener;
     }
