@@ -18,6 +18,10 @@ use Framework\Auth\Repository\TokenRepositoryInterface;
 use Framework\Auth\Service\UtilToken;
 use Framework\Auth\Service\UtilTokenInterface;
 use Framework\Environnement\Environnement;
+use Framework\Event\Events;
+use Framework\Security\Firewall\EventListener\ForbidenListener;
+use Framework\Security\Firewall\EventListener\RememberMeLogoutListener;
+use League\Event\ListenerPriority;
 
 use function DI\{
     add,
@@ -40,5 +44,16 @@ return [
     UtilTokenInterface::class => \DI\get(UtilToken::class),
     UserRepositoryInterface::class => \DI\get(ActiveRecordUserRepository::class),
     TokenRepositoryInterface::class => \DI\get(UserTokenRepository::class),
-    ForbidenMiddleware::class => \DI\autowire()->constructorParameter('loginPath', \DI\get('auth.login'))
+    ForbidenMiddleware::class => \DI\autowire()->constructorParameter('loginPath', \DI\get('auth.login')),
+    ForbidenListener::class => \DI\autowire()->constructorParameter('loginPath', \DI\get('auth.login')),
+    'firewall.event.rules' => \DI\add([
+        [
+            'path' => '^/logout',
+            'listeners' => [],
+            // Events::REQUEST ne sera jamais appelé!
+            'main.listeners' => [
+                RememberMeLogoutListener::class . '::onResponseEvent' => [Events::RESPONSE, ListenerPriority::NORMAL],
+            ]
+        ]
+    ])
 ];

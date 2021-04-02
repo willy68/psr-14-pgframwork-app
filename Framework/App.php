@@ -4,8 +4,6 @@ namespace Framework;
 
 use Exception;
 use DI\ContainerBuilder;
-use Framework\Event\Events;
-use GuzzleHttp\Psr7\Response;
 use Invoker\CallableResolver;
 use Framework\Event\ViewEvent;
 use Mezzio\Router\RouteResult;
@@ -101,23 +99,15 @@ class App implements RequestHandlerInterface
         ?EventDispatcherInterface $dispatcher = null,
         ?CallableResolver $callableResolver = null,
         ?ParameterResolver $paramsResolver = null
-    )
-    {
+    ) {
         $this->config[] = __DIR__ . '/Container/config/config.php';
         $this->config = \array_merge($this->config, $config);
+
         self::$app = $this;
 
-        if (null !== $dispatcher) {
-            $this->dispatcher = $dispatcher;
-        }
-
-        if (null !== $callableResolver) {
-            $this->callableResolver = $callableResolver;
-        }
-
-        if (null !== $paramsResolver) {
-            $this->paramsResolver = $paramsResolver;
-        }
+        $this->dispatcher = $dispatcher;
+        $this->callableResolver = $callableResolver;
+        $this->paramsResolver = $paramsResolver;
     }
 
     /**
@@ -232,7 +222,8 @@ class App implements RequestHandlerInterface
         foreach ($this->modules as $module) {
             if (!empty($module::ANNOTATIONS)) {
                 $loader = new DirectoryLoader(
-                    $container->get(RouteCollector::class));
+                    $container->get(RouteCollector::class)
+                );
                 foreach ($module::ANNOTATIONS as $dir) {
                     $loader->load($dir);
                 }
@@ -256,7 +247,7 @@ class App implements RequestHandlerInterface
     private function handleEvent(ServerRequestInterface $request): ResponseInterface
     {
         $event = new RequestEvent($this, $request);
-        $event = $this->dispatcher->dispatch($event, Events::REQUEST);
+        $event = $this->dispatcher->dispatch($event);
 
         if ($event->hasResponse()) {
             return $this->filterResponse($event->getResponse(), $request);
@@ -280,12 +271,12 @@ class App implements RequestHandlerInterface
             $container->set(ServerRequestInterface::class, $event->getRequest());
         } else {
             // Limitation: $request must be named "$request"
-            $params = array_merge(["request" => $request] , $params);
+            $params = array_merge(["request" => $request], $params);
         }
 
         $callableReflection = CallableReflection::create($controller);
         $params = $this->paramsResolver->getParameters($callableReflection, $params, []);
-        
+
         $event = new ControllerParamsEvent($this, $controller, $params, $event->getRequest());
         $event = $this->dispatcher->dispatch($event);
         $controller = $event->getController();
@@ -309,7 +300,7 @@ class App implements RequestHandlerInterface
                     $msg .= ' Did you forget to add a return statement somewhere in your controller?';
                 }
 
-                //throw new ControllerDoesNotReturnResponseException($msg, $controller, __FILE__, __LINE__ - 17);
+                throw new Exception($msg . get_class($controller) . ' ' . __FILE__ . ' ' . (__LINE__ - 17));
             }
         }
 
@@ -324,7 +315,7 @@ class App implements RequestHandlerInterface
     {
         $event = new ResponseEvent($this, $request, $response);
 
-        $event = $this->dispatcher->dispatch($event, Events::RESPONSE);
+        $event = $this->dispatcher->dispatch($event);
 
         return $event->getResponse();
     }

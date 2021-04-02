@@ -15,7 +15,6 @@ use Framework\EventListener\RouterListener;
 use Framework\Middleware\ApiHeadMiddleware;
 use Framework\Middleware\ApiOptionsMiddleware;
 use Framework\Middleware\DispatcherMiddleware;
-use Framework\EventListener\CsrfCookieListener;
 use Framework\Middleware\PageNotFoundMiddleware;
 use Framework\EventListener\ActiveRecordListener;
 use Framework\EventListener\InvalidCsrfListener;
@@ -24,6 +23,7 @@ use Framework\Middleware\TrailingSlashMiddleware;
 use Framework\Middleware\MethodNotAllowedMiddleware;
 use Framework\EventListener\MethodNotAllowedListener;
 use Framework\EventListener\StringResponseListener;
+use Framework\Security\Firewall\Firewall;
 
 return [
     /* Application modules. Place your own on the list */
@@ -54,8 +54,7 @@ return [
         MethodNotAllowedListener::class => [Events::REQUEST, ListenerPriority::HIGH],
         PageNotFoundListener::class => [Events::REQUEST, ListenerPriority::HIGH],
         ActiveRecordListener::class => [Events::REQUEST, ListenerPriority::HIGH],
-        //CsrfCookieListener::class . "::onRequestEvent" => [Events::REQUEST, ListenerPriority::HIGH],
-        //CsrfCookieListener::class . "::onResponseEvent" => [Events::RESPONSE, ListenerPriority::HIGH]
+        Firewall::class . "::onRequestEvent" => [Events::REQUEST, ListenerPriority::HIGH],
         CsrfListener::class . "::onRequestEvent" => [Events::REQUEST, ListenerPriority::HIGH],
         InvalidCsrfListener::class . "::onException" => [Events::EXCEPTION, ListenerPriority::HIGH],
         StringResponseListener::class . "::onView" => [Events::VIEW, ListenerPriority::HIGH],
