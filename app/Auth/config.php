@@ -49,7 +49,6 @@ return [
     'firewall.event.rules' => \DI\add([
         [
             'path' => '^/logout',
-            'listeners' => [],
             // Events::REQUEST ne sera jamais appelé!
             'main.listeners' => [
                 RememberMeLogoutListener::class . '::onResponseEvent' => [Events::RESPONSE, ListenerPriority::NORMAL],
