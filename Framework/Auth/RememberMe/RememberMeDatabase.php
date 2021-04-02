@@ -90,7 +90,7 @@ class RememberMeDatabase extends AbstractRememberMe
             return null;
         }
 
-        [$series, $username, $randomPassword] = $cookieParts;
+        [$series, , $randomPassword] = $cookieParts;
         $token = $this->tokenRepository->getTokenBySeries($series);
 
         $user = $this->userRepository->getUser($this->options['field'], $token->getCredential());
@@ -113,7 +113,6 @@ class RememberMeDatabase extends AbstractRememberMe
 
             //["series', 'credential', 'random_password', 'expiration_date']
             $this->tokenRepository->updateToken(['expiration_date' => new \DateTime()], $token->getId());
-
         }
         return $user;
     }
@@ -133,11 +132,11 @@ class RememberMeDatabase extends AbstractRememberMe
 
             $cookieParts = $this->decodeCookie($cookie->getValue());
             if (3 === \count($cookieParts)) {
-    
+
                 [$series] = $cookieParts;
-    
+
                 $token = $this->tokenRepository->getTokenBySeries($series);
-    
+
                 if ($token) {
                     // Delete token from database
                     $this->tokenRepository->deleteToken($token->getId());

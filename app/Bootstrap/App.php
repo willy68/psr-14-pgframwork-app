@@ -9,21 +9,22 @@ use Framework\Event\Events;
 use App\Api\ApiClientModule;
 use League\Event\ListenerPriority;
 use Framework\EventListener\CsrfListener;
+use Framework\Security\Firewall\Firewall;
 use Framework\Middleware\MethodMiddleware;
 use Framework\Middleware\RouterMiddleware;
 use Framework\EventListener\RouterListener;
 use Framework\Middleware\ApiHeadMiddleware;
 use Framework\Middleware\ApiOptionsMiddleware;
 use Framework\Middleware\DispatcherMiddleware;
+use Framework\EventListener\InvalidCsrfListener;
 use Framework\Middleware\PageNotFoundMiddleware;
 use Framework\EventListener\ActiveRecordListener;
-use Framework\EventListener\InvalidCsrfListener;
 use Framework\EventListener\PageNotFoundListener;
 use Framework\Middleware\TrailingSlashMiddleware;
+use Framework\EventListener\RecordNotFoundListener;
+use Framework\EventListener\StringResponseListener;
 use Framework\Middleware\MethodNotAllowedMiddleware;
 use Framework\EventListener\MethodNotAllowedListener;
-use Framework\EventListener\StringResponseListener;
-use Framework\Security\Firewall\Firewall;
 
 return [
     /* Application modules. Place your own on the list */
@@ -57,6 +58,7 @@ return [
         Firewall::class . "::onRequestEvent" => [Events::REQUEST, ListenerPriority::HIGH],
         CsrfListener::class . "::onRequestEvent" => [Events::REQUEST, ListenerPriority::HIGH],
         InvalidCsrfListener::class . "::onException" => [Events::EXCEPTION, ListenerPriority::HIGH],
+        RecordNotFoundListener::class . "::onException" => [Events::EXCEPTION, ListenerPriority::HIGH],
         StringResponseListener::class . "::onView" => [Events::VIEW, ListenerPriority::HIGH],
     ],
 
