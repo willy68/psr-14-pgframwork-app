@@ -23,6 +23,8 @@ use Framework\Environnement\Environnement;
 use Framework\Invoker\CallableResolverFactory;
 use Framework\Invoker\InvokerFactory;
 use Framework\Invoker\ResolverChainFactory;
+use Framework\Router\RequestMatcher;
+use Framework\Router\RequestMatcherInterface;
 use Framework\Security\Csrf\CsrfTokenManager;
 use Framework\Security\Csrf\CsrfTokenManagerInterface;
 use Framework\Security\Csrf\TokenGenerator\TokenGenerator;
@@ -95,6 +97,7 @@ return [
         'striptags' => StriptagsFilter::class
     ]),
     SessionInterface::class => create(PHPSession::class),
+    RequestMatcherInterface::class => create(RequestMatcher::class),
     CsrfMiddleware::class =>
     create()->constructor(get(SessionInterface::class)),
     TokenStorageInterface::class => 

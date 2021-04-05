@@ -33,5 +33,20 @@ return [
                 ForbidenListener::class . '::onException' => [Events::EXCEPTION, ListenerPriority::HIGH]
             ]
         ]
+    ]),
+    'security.voters' => \DI\add([]),
+    'security.voters.rules' => \DI\add([
+        [
+            'path' => '^/admin/posts/(\d+)',
+            'attributes' => [],
+            // Events::REQUEST ne sera jamais appelé!
+            'main.listeners' => []
+        ],
+        [
+            'path' => '^/admin/categories/(\d+)',
+            'attributes' => [],
+            // Events::REQUEST ne sera jamais appelé!
+            'main.listeners' => []
+        ]
     ])
 ];
