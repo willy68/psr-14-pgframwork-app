@@ -7,7 +7,7 @@ use Psr\Container\ContainerInterface;
 
 class AccessMapFactory
 {
-    public function __invoke(ContainerInterface $c): AccessMapInterface
+    public function __invoke(ContainerInterface $c)
     {
         $accessMap = new AccessMap();
         if ($c->has('security.voters.rules')) {

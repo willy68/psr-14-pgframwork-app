@@ -25,6 +25,8 @@ use Framework\Invoker\InvokerFactory;
 use Framework\Invoker\ResolverChainFactory;
 use Framework\Router\RequestMatcher;
 use Framework\Router\RequestMatcherInterface;
+use Framework\Security\Authorization\VoterManagerFactory;
+use Framework\Security\Authorization\VoterManagerInterface;
 use Framework\Security\Csrf\CsrfTokenManager;
 use Framework\Security\Csrf\CsrfTokenManagerInterface;
 use Framework\Security\Csrf\TokenGenerator\TokenGenerator;
@@ -32,6 +34,7 @@ use Framework\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Framework\Security\Csrf\TokenStorage\TokenSessionStorage;
 use Framework\Security\Csrf\TokenStorage\TokenStorageInterface;
 use Framework\Security\Firewall\AccessMapFactory;
+use Framework\Security\Firewall\AccessMapInterface;
 use Framework\Validator\Filter\StriptagsFilter;
 use Framework\Validator\Filter\TrimFilter;
 use Framework\Validator\Rules\{
@@ -99,6 +102,8 @@ return [
     ]),
     'security.voters' => \DI\add([]),
     AccessMapInterface::class => factory(AccessMapFactory::class),
+    'security.voters.strategy' => VoterManagerInterface::STRATEGY_AFFIRMATIVE,
+    VoterManagerInterface::class => factory(VoterManagerFactory::class),
     SessionInterface::class => create(PHPSession::class),
     RequestMatcherInterface::class => create(RequestMatcher::class),
     CsrfMiddleware::class =>

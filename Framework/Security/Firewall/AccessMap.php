@@ -39,7 +39,7 @@ class AccessMap implements AccessMapInterface
     public function getPatterns(ServerRequestInterface $request)
     {
         foreach ($this->map as $elements) {
-            if (null === $elements[0] || $elements[0]->matches($request)) {
+            if (null === $elements[0] || $elements[0]->match($request)) {
                 return [$elements[1], $elements[2]];
             }
         }

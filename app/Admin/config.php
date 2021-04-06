@@ -4,6 +4,7 @@ use App\Admin\AdminModule;
 use Framework\Event\Events;
 use App\Admin\DashboardAction;
 use App\Admin\AdminTwigExtension;
+use Framework\Security\Firewall\EventListener\AuthorizationListener;
 use League\Event\ListenerPriority;
 use Framework\Security\Firewall\FirewallEvents;
 use Framework\Security\Firewall\EventListener\ForbidenListener;
@@ -37,6 +38,12 @@ return [
                 RememberMeResumeListener::class . '::onResponseEvent' => [Events::RESPONSE, ListenerPriority::NORMAL],
                 ForbidenListener::class . '::onException' => [Events::EXCEPTION, ListenerPriority::HIGH]
             ]
+        ],
+        [
+            'path' => '^/admin/posts/(\d+)',
+            'listeners' => [
+                AuthorizationListener::class . '::onAuthorization' => [FirewallEvents::AUTHORIZATION, ListenerPriority::LOW]
+            ],
         ]
     ]),
     'security.voters' => \DI\add([]),
