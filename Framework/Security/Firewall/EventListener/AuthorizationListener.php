@@ -3,58 +3,62 @@
 namespace Framework\Security\Firewall\EventListener;
 
 use Framework\Auth;
-use Framework\Router\RequestMatcher;
-use Framework\Security\Authorization\VoterManagerInterface;
+use Framework\Auth\ForbiddenException;
+use Invoker\CallableResolver;
+use League\Event\EventDispatcher;
+use League\Event\ListenerPriority;
+use Framework\Security\Firewall\AccessMapInterface;
 use Framework\Security\Firewall\Event\AuthorizationEvent;
-use Psr\Http\Message\ServerRequestInterface;
+use Framework\Security\Authorization\VoterManagerInterface;
 
 class AuthorizationListener
 {
     protected $auth;
-
     protected $voterManager;
+    protected $map;
 
-    public function __construct(Auth $auth, VoterManagerInterface $voterManager)
-    {
+    public function __construct(
+        Auth $auth,
+        VoterManagerInterface $voterManager,
+        AccessMapInterface $map
+    ) {
         $this->auth = $auth;
         $this->voterManager = $voterManager;
-    }
-
-    public function support(ServerRequestInterface $request): bool
-    {
-        $requestMatcher = new RequestMatcher();
-
-
-        return false;
+        $this->map = $map;
     }
 
     public function onAuthorization(AuthorizationEvent $event)
     {
-
         $request = $event->getRequest();
 
-        if (!$this->support($request)) {
-            return;
+        /** @var EventDispatcher $dispatcher */
+        $dispatcher = $event->getApp()->getDispatcher();
+
+        /** @var CallableResolver $callableResolver*/
+        $callableResolver = $event->getApp()->getContainer()->get(CallableResolver::class);
+
+        [$attributes, $listeners] = $this->map->getPatterns($request);
+
+        foreach ($listeners as $listener => $eventName) {
+            $priority = ListenerPriority::NORMAL;
+            if (is_array($eventName)) {
+                [$eventName, $priority] = $eventName;
+            }
+            $dispatcher->subscribeTo(
+                $eventName,
+                $callableResolver->resolve($listener),
+                $priority
+            );
         }
 
-        $attributes = $request->getAttribute('_access_control_attributes');
-        $request = $request->withoutAttribute('_access_control_attributes');
-
-        if (!$attributes || $event instanceof AuthorizationEvent) {
-            return;
-        }
-
-        if ($event instanceof AuthorizationEvent && null === $user = $this->auth->getUser()) {
-            throw new \Exception('A Token was not found in the TokenStorage.');
+        if (null === $this->auth->getUser()) {
+            throw new ForbiddenException('User not found.');
         }
 
         if (!$this->voterManager->decide($this->auth, $attributes, $request, true)) {
-            $exception = new \Exception();
-            //$exception->setAttributes($attributes);
-            //$exception->setSubject($request);
-
+            $exception = new ForbiddenException('Vous n\'avez pas l\'authorisation pour executer cette action');
             throw $exception;
         }
-        $event->setRequest($request);  
+        $event->setRequest($request);
     }
 }

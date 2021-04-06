@@ -381,6 +381,11 @@ class App implements RequestHandlerInterface
         return $this->modules;
     }
 
+    public function getDispatcher()
+    {
+        return $this->dispatcher;
+    }
+
     /**
      * Undocumented function
      *
