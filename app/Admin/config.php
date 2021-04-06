@@ -22,6 +22,11 @@ return [
     'firewall.event.rules' => \DI\add([
         [
             'path' => '^/admin',
+            // Other RequestMatcher rules
+            //'method' => [],
+            //'host' => null,
+            //'schemes' => [],
+            //'port' => null,
             'listeners' => [
                 RememberMeLoginListener::class . '::onAuthenticationEvent' => [FirewallEvents::AUTHENTICATION, ListenerPriority::HIGH],
                 LoggedInListener::class . '::onAuthenticationEvent' => [FirewallEvents::AUTHENTICATION, ListenerPriority::HIGH],
@@ -38,6 +43,11 @@ return [
     'security.voters.rules' => \DI\add([
         [
             'path' => '^/admin/posts/(\d+)',
+            // Other RequestMatcher rules
+            //'method' => ['GET','POST'],
+            //'host' => localhost,
+            //'schemes' => ['https','http'],
+            //'port' => 8000,
             'attributes' => [],
             // Events::REQUEST ne sera jamais appelé!
             'main.listeners' => []

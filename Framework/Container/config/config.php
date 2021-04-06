@@ -96,6 +96,7 @@ return [
         'trim' => TrimFilter::class,
         'striptags' => StriptagsFilter::class
     ]),
+    'security.voters' => \DI\add([]),
     SessionInterface::class => create(PHPSession::class),
     RequestMatcherInterface::class => create(RequestMatcher::class),
     CsrfMiddleware::class =>

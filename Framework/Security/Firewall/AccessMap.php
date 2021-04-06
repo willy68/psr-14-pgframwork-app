@@ -11,8 +11,8 @@
 
 namespace Framework\Security\Firewall;
 
-use Framework\Router\RequestMatcherInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Framework\Router\RequestMatcherInterface;
 
 /**
  * AccessMap allows configuration of different access control rules for
@@ -25,12 +25,12 @@ class AccessMap implements AccessMapInterface
     private $map = [];
 
     /**
-     * @param array       $attributes An array of attributes to pass to the access decision manager (like roles)
-     * @param string|null $channel    The channel to enforce (http, https, or null)
+     * @param array     $attributes An array of attributes to pass to the access decision manager (like roles)
+     * @param array     $listeners  Main listeners (ResponseEvent or ExceptionEvent)
      */
-    public function add(RequestMatcherInterface $requestMatcher, array $attributes = [], $channel = null)
+    public function add(RequestMatcherInterface $requestMatcher, array $attributes = [], $listeners = [])
     {
-        $this->map[] = [$requestMatcher, $attributes, $channel];
+        $this->map[] = [$requestMatcher, $attributes, $listeners];
     }
 
     /**

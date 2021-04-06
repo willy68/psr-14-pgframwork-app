@@ -2,10 +2,9 @@
 
 namespace Framework\Router;
 
-use Fig\Http\Message\RequestMethodInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class RequestMatcher implements RequestMethodInterface
+class RequestMatcher implements RequestMatcherInterface
 {
     protected $path;
     protected $method = [];
