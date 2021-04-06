@@ -29,6 +29,10 @@ class AuthorizationListener
 
     public function onAuthorization(AuthorizationEvent $event)
     {
+        if (null === $this->auth->getUser()) {
+            throw new ForbiddenException('User not found.');
+        }
+
         $request = $event->getRequest();
 
         /** @var EventDispatcher $dispatcher */
@@ -49,10 +53,6 @@ class AuthorizationListener
                 $callableResolver->resolve($listener),
                 $priority
             );
-        }
-
-        if (null === $this->auth->getUser()) {
-            throw new ForbiddenException('User not found.');
         }
 
         if (!$this->voterManager->decide($this->auth, $attributes, $request, true)) {

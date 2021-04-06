@@ -31,6 +31,7 @@ use Framework\Security\Csrf\TokenGenerator\TokenGenerator;
 use Framework\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Framework\Security\Csrf\TokenStorage\TokenSessionStorage;
 use Framework\Security\Csrf\TokenStorage\TokenStorageInterface;
+use Framework\Security\Firewall\AccessMapFactory;
 use Framework\Validator\Filter\StriptagsFilter;
 use Framework\Validator\Filter\TrimFilter;
 use Framework\Validator\Rules\{
@@ -97,6 +98,7 @@ return [
         'striptags' => StriptagsFilter::class
     ]),
     'security.voters' => \DI\add([]),
+    AccessMapInterface::class => factory(AccessMapFactory::class),
     SessionInterface::class => create(PHPSession::class),
     RequestMatcherInterface::class => create(RequestMatcher::class),
     CsrfMiddleware::class =>
