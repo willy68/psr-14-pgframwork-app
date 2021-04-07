@@ -7,6 +7,7 @@ use Framework\Security\Firewall\EventListener\ForbidenListener;
 use Framework\Security\Firewall\EventListener\LoggedInListener;
 use Framework\Security\Firewall\EventListener\AuthorizationListener;
 use Framework\Security\Firewall\EventListener\RememberMeLoginListener;
+use Framework\Security\Firewall\EventListener\RememberMeLogoutListener;
 use Framework\Security\Firewall\EventListener\RememberMeResumeListener;
 
 return [

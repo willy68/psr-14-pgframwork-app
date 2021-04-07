@@ -3,10 +3,11 @@
 namespace Framework\Security\Firewall\EventListener;
 
 use Framework\Auth;
-use Framework\Auth\ForbiddenException;
+use Framework\Event\Events;
 use Invoker\CallableResolver;
 use League\Event\EventDispatcher;
 use League\Event\ListenerPriority;
+use Framework\Auth\ForbiddenException;
 use Framework\Security\Firewall\AccessMapInterface;
 use Framework\Security\Firewall\Event\AuthorizationEvent;
 use Framework\Security\Authorization\VoterManagerInterface;
@@ -49,6 +50,7 @@ class AuthorizationListener
 
         foreach ($listeners as $listener => $eventName) {
             $priority = ListenerPriority::NORMAL;
+            $eventName = Events::REQUEST;
             if (is_array($eventName)) {
                 [$eventName, $priority] = $eventName;
             }
@@ -59,9 +61,8 @@ class AuthorizationListener
             );
         }
 
-        if (!$this->voterManager->decide($this->auth, $attributes, $request, true)) {
-            $exception = new ForbiddenException('Vous n\'avez pas l\'authorisation pour executer cette action');
-            throw $exception;
+        if (!$this->voterManager->decide($this->auth, $attributes, $request)) {
+            throw new ForbiddenException('Vous n\'avez pas l\'authorisation pour executer cette action');
         }
         $event->setRequest($request);
     }

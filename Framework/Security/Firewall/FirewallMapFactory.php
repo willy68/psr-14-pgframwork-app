@@ -5,14 +5,14 @@ namespace Framework\Security\Firewall;
 use Framework\Router\RequestMatcher;
 use Psr\Container\ContainerInterface;
 
-class AccessMapFactory
+class FirewallMapFactory
 {
     public function __invoke(ContainerInterface $c)
     {
-        $map = new AccessMap;
+        $map = new FirewallMap;
 
-        if ($c->has('security.voters.rules')) {
-            $rules = $c->get('security.voters.rules');
+        if ($c->has('firewall.event.rules')) {
+            $rules = $c->get('firewall.event.rules');
 
             foreach ($rules as $rule) {
                 $map->add(
@@ -23,7 +23,7 @@ class AccessMapFactory
                         $rule['schemes'] ?? null,
                         $rule['port'] ?? null
                     ),
-                    $rule['attributes'] ?? [],
+                    $rule['listeners'] ?? [],
                     $rule['main.listeners'] ?? []
                 );
             }

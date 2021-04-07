@@ -35,6 +35,9 @@ use Framework\Security\Csrf\TokenStorage\TokenSessionStorage;
 use Framework\Security\Csrf\TokenStorage\TokenStorageInterface;
 use Framework\Security\Firewall\AccessMapFactory;
 use Framework\Security\Firewall\AccessMapInterface;
+use Framework\Security\Firewall\Firewall;
+use Framework\Security\Firewall\FirewallMapFactory;
+use Framework\Security\Firewall\FirewallMapInterface;
 use Framework\Validator\Filter\StriptagsFilter;
 use Framework\Validator\Filter\TrimFilter;
 use Framework\Validator\Rules\{
@@ -100,6 +103,8 @@ return [
         'trim' => TrimFilter::class,
         'striptags' => StriptagsFilter::class
     ]),
+    FirewallMapInterface::class => factory(FirewallMapFactory::class),
+    'firewall.event.rules' => \DI\add([]),
     'security.voters' => \DI\add([]),
     AccessMapInterface::class => factory(AccessMapFactory::class),
     'security.voters.strategy' => VoterManagerInterface::STRATEGY_AFFIRMATIVE,
