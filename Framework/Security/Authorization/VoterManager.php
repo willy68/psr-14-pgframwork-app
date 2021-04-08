@@ -49,9 +49,9 @@ class VoterManager implements VoterManagerInterface
      *
      * {@inheritdoc}
      */
-    public function decide(Auth $auth, array $attributes, $subject = null/*, bool $allowMultipleAttributes = false*/)
+    public function decide(Auth $auth, array $attributes, $subject = null)
     {
-        $allowMultipleAttributes = 3 < \func_num_args() && func_get_arg(3);
+        $allowMultipleAttributes = !(3 < \func_num_args() && func_get_arg(3));
 
         // Special case for AccessListener, do not remove the right side of the condition before 6.0
         if (\count($attributes) > 1 && !$allowMultipleAttributes) {
@@ -71,7 +71,7 @@ class VoterManager implements VoterManagerInterface
     {
         $deny = 0;
         foreach ($this->voters as $voter) {
-            $result = $voter->vote($auth, $subject, $attributes);
+            $result = $voter->vote($auth, $attributes, $subject);
 
             if (VoterInterface::ACCESS_GRANTED === $result) {
                 return true;
@@ -110,7 +110,7 @@ class VoterManager implements VoterManagerInterface
         $grant = 0;
         $deny = 0;
         foreach ($this->voters as $voter) {
-            $result = $voter->vote($auth, $subject, $attributes);
+            $result = $voter->vote($auth, $attributes, $subject);
 
             if (VoterInterface::ACCESS_GRANTED === $result) {
                 ++$grant;
@@ -147,7 +147,7 @@ class VoterManager implements VoterManagerInterface
         $grant = 0;
         foreach ($this->voters as $voter) {
             foreach ($attributes as $attribute) {
-                $result = $voter->vote($auth, $subject, [$attribute]);
+                $result = $voter->vote($auth, [$attribute], $subject);
 
                 if (VoterInterface::ACCESS_DENIED === $result) {
                     return false;
@@ -179,7 +179,7 @@ class VoterManager implements VoterManagerInterface
     private function decidePriority(Auth $auth, array $attributes, $subject = null)
     {
         foreach ($this->voters as $voter) {
-            $result = $voter->vote($voter, $subject, $attributes);
+            $result = $voter->vote($auth, $attributes, $subject);
 
             if (VoterInterface::ACCESS_GRANTED === $result) {
                 return true;

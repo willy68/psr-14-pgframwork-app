@@ -1,6 +1,7 @@
 <?php
 
 use Framework\Event\Events;
+use Framework\Security\Authorization\Voter\VoterRoles;
 use League\Event\ListenerPriority;
 use Framework\Security\Firewall\FirewallEvents;
 use Framework\Security\Firewall\EventListener\ForbidenListener;
@@ -12,6 +13,16 @@ use Framework\Security\Firewall\EventListener\RememberMeResumeListener;
 
 return [
     'firewall.event.rules' => \DI\add([
+        [
+            'path' => '^/admin/posts/(\d+)',
+            'listeners' => [
+                AuthorizationListener::class . '::onAuthorization' => [FirewallEvents::AUTHORIZATION, ListenerPriority::LOW]
+            ],
+            // Events::REQUEST ne sera jamais appelé!
+            'main.listeners' => [
+                ForbidenListener::class . '::onException' => [Events::EXCEPTION, ListenerPriority::HIGH]
+            ]
+        ],
         [
             'path' => '^/admin',
             // Other RequestMatcher rules
@@ -37,14 +48,10 @@ return [
                 RememberMeLogoutListener::class . '::onResponseEvent' => [Events::RESPONSE, ListenerPriority::NORMAL],
             ]
         ],
-        [
-            'path' => '^/admin/posts/(\d+)',
-            'listeners' => [
-                AuthorizationListener::class . '::onAuthorization' => [FirewallEvents::AUTHORIZATION, ListenerPriority::LOW]
-            ],
-        ]
     ]),
-    'security.voters' => \DI\add([]),
+    'security.voters' => \DI\add([
+        \DI\get(VoterRoles::class),
+    ]),
     'security.voters.rules' => \DI\add([
         [
             'path' => '^/admin/posts/(\d+)',
@@ -53,7 +60,9 @@ return [
             //'host' => localhost,
             //'schemes' => ['https','http'],
             //'port' => 8000,
-            'attributes' => [],
+            'attributes' => [
+                'admin',
+            ],
             // Events::REQUEST ne sera jamais appelé!
             'main.listeners' => []
         ],

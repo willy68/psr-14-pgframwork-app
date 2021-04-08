@@ -42,6 +42,9 @@ class User implements AuthUser
      */
     public function getRoles(): array
     {
+        if (is_string($this->roles)) {
+            return json_decode($this->roles);
+        }
         return $this->roles;
     }
 

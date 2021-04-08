@@ -52,4 +52,8 @@ abstract class AbstractVoter implements VoterInterface
 
        return $vote;
    }
+
+   abstract public function canVote(string $attribute, $subject = null): bool;
+
+   abstract public function voteOnAttribute(Auth $auth, string $attribute, $subject = null);
 }

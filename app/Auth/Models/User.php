@@ -11,6 +11,8 @@ class User extends Model implements AuthUser
 
     public static $table_name = 'users';
 
+    public static $before_save = array('encodeRoles'); # new OR updated records
+
     /**
      *
      * @return int
@@ -37,7 +39,17 @@ class User extends Model implements AuthUser
      */
     public function getRoles(): array
     {
+        if (is_string($this->roles)) {
+            return json_decode($this->roles);
+        }
         return $this->roles;
+    }
+
+    public function encodeRoles()
+    {
+        if (is_array($this->roles)) {
+            $this->roles = json_encode($this->roles);
+        }
     }
 
     /**
