@@ -52,7 +52,14 @@ class ForbidenListener
 
     public function redirectAdminHome(ServerRequestInterface $request): ResponseInterface
     {
+        $uri = '/admin';
+        $server = $request->getServerParams();
+
+        if (isset($server['HTTP_REFERER'])) {
+            $uri = $server['HTTP_REFERER'];
+        }
+
         (new FlashService($this->session))->error('Vous n\'avez pas l\'authorisation pour executer cette action');
-        return new ResponseRedirect('/admin');
+        return new ResponseRedirect($uri);
     }
 }

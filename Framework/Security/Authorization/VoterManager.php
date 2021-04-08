@@ -45,19 +45,11 @@ class VoterManager implements VoterManagerInterface
     }
 
     /**
-     * @param bool $allowMultipleAttributes Whether to allow passing multiple values to the $attributes array
      *
      * {@inheritdoc}
      */
     public function decide(Auth $auth, array $attributes, $subject = null)
     {
-        $allowMultipleAttributes = !(3 < \func_num_args() && func_get_arg(3));
-
-        // Special case for AccessListener, do not remove the right side of the condition before 6.0
-        if (\count($attributes) > 1 && !$allowMultipleAttributes) {
-            throw new \InvalidArgumentException(sprintf('Passing more than one Security attribute to "%s()" is not supported.', __METHOD__));
-        }
-
         return $this->{$this->strategy}($auth, $attributes, $subject);
     }
 
