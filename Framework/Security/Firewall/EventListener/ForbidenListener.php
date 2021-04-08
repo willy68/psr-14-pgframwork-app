@@ -52,7 +52,7 @@ class ForbidenListener
 
     public function redirectAdminHome(ServerRequestInterface $request): ResponseInterface
     {
-        $uri = '/admin';
+        $uri = $this->loginPath;
         $server = $request->getServerParams();
 
         if (isset($server['HTTP_REFERER'])) {

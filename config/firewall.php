@@ -63,14 +63,10 @@ return [
             'attributes' => [
                 'admin',
             ],
-            // Events::REQUEST ne sera jamais appelé!
-            'main.listeners' => []
         ],
         [
             'path' => '^/admin/categories/(\d+)',
             'attributes' => [],
-            // Events::REQUEST ne sera jamais appelé!
-            'main.listeners' => []
         ]
     ])
 ];

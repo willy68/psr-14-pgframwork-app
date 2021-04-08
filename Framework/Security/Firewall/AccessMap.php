@@ -26,11 +26,10 @@ class AccessMap implements AccessMapInterface
 
     /**
      * @param array     $attributes An array of attributes to pass to the access decision manager (like roles)
-     * @param array     $listeners  Main listeners (ResponseEvent or ExceptionEvent)
      */
-    public function add(RequestMatcherInterface $requestMatcher, array $attributes = [], $listeners = [])
+    public function add(RequestMatcherInterface $requestMatcher, array $attributes = [])
     {
-        $this->map[] = [$requestMatcher, $attributes, $listeners];
+        $this->map[] = [$requestMatcher, $attributes];
     }
 
     /**
@@ -40,10 +39,10 @@ class AccessMap implements AccessMapInterface
     {
         foreach ($this->map as $elements) {
             if (null === $elements[0] || $elements[0]->match($request)) {
-                return [$elements[1], $elements[2]];
+                return [$elements[1]];
             }
         }
 
-        return [null, null];
+        return [null];
     }
 }

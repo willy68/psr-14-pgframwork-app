@@ -23,8 +23,7 @@ class AccessMapFactory
                         $rule['schemes'] ?? null,
                         $rule['port'] ?? null
                     ),
-                    $rule['attributes'] ?? [],
-                    $rule['main.listeners'] ?? []
+                    $rule['attributes'] ?? []
                 );
             }
         }
