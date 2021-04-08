@@ -3,10 +3,6 @@
 namespace Framework\Security\Firewall\EventListener;
 
 use Framework\Auth;
-use Framework\Event\Events;
-use Invoker\CallableResolver;
-use League\Event\EventDispatcher;
-use League\Event\ListenerPriority;
 use Framework\Auth\ForbiddenException;
 use Framework\Auth\FailedAccessException;
 use Framework\Security\Firewall\AccessMapInterface;
