@@ -7,7 +7,7 @@
  */
 return [
     'views.path' => dirname(__DIR__) . '/app/views',
-    'twig.entrypoints' => dirname(__DIR__) . '/public/assets/js',
+    'twig.entrypoints' => dirname(__DIR__) . '/public/assets/js/entrypoints.json',
     'twig.extensions' => \DI\add([
         /** Add your extensions here */
 

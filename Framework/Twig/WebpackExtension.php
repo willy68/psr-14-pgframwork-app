@@ -17,14 +17,9 @@ class WebpackExtension extends AbstractExtension
      */
     private $entryPoints;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(string $entryPoints)
     {
-        if ($container->has('twig.entrypoints')) {
-            $this->entryPoints =  $container->get('twig.entrypoints') . '/entrypoints.json';
-        }
-        else {
-            throw new InvalidArgumentException("Cette extension twig ne peut être utiliser!");
-        }
+            $this->entryPoints =  $entryPoints;
     }
 
     /**
@@ -69,13 +64,14 @@ HTML;
 
     protected function readJsonFile(string $file, string $entryName): array
     {
+        $scriptTag = [];
+
         if (!file_exists($file)) {
-            throw new InvalidArgumentException("Cette extension twig ne peut être utiliser, fichier invalide!");
+            return $scriptTag;
         }
 
         $entry = json_decode(file_get_contents($file), true);
 
-        $scriptTag = [];
         if (is_array($entry) && array_key_exists('entrypoints', $entry) && is_array($entry['entrypoints'])) {
             if (array_key_exists($entryName, $entry['entrypoints'])) {
                 $scriptTag = $entry['entrypoints'][$entryName];

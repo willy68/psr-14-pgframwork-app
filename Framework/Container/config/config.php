@@ -74,6 +74,9 @@ return [
     //'env' => env('ENV', 'production'),
     'app' => Environnement::getEnv('APP', 'web'),
     'jwt.secret' => Environnement::getEnv('APP_KEY', 'abcdefghijklmnop123456789'),
+    'twig.entrypoints' => '',
+    WebpackExtension::class => \DI\autowire()
+        ->constructorParameter('entryPoints', get('twig.entrypoints')),
     'twig.extensions' => [
         get(RouterTwigExtension::class),
         get(PagerFantaExtension::class),
