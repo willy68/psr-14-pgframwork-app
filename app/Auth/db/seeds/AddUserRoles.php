@@ -16,7 +16,7 @@ class AddUserRoles extends AbstractSeed
     public function run()
     {
         $admin = $this->fetchRow('SELECT * FROM users WHERE username = "admin"');
-        $admin['roles'] = json_encode(['user', 'admin']);
+        $admin['roles'] = json_encode(['ROLE_USER', 'ROLE_ADMIN']);
 
         $this->fetchRow("UPDATE users SET roles='{$admin['roles']}' WHERE id={$admin['id']}");
 
@@ -25,7 +25,7 @@ class AddUserRoles extends AbstractSeed
                 'username' => 'willy',
                 'email'    => 'willy@willy.fr',
                 'password' => password_hash('willy', PASSWORD_DEFAULT, []),
-                'roles' => json_encode(['user'])
+                'roles' => json_encode(['ROLE_USER'])
             ])
             ->save();
     }

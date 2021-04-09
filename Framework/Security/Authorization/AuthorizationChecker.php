@@ -11,7 +11,7 @@ class AuthorizationChecker implements AuthorizationCheckerInterface
     private $voterManager;
     private $exceptionOnNoUser;
 
-    public function __construct(Auth $auth, VoterManagerInterface $voterManager, bool $exceptionOnNoUser = true)
+    public function __construct(Auth $auth, VoterManagerInterface $voterManager, bool $exceptionOnNoUser = false)
     {
         $this->auth = $auth;
         $this->voterManager = $voterManager;

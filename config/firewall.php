@@ -61,7 +61,7 @@ return [
             //'schemes' => ['https','http'],
             //'port' => 8000,
             'attributes' => [
-                'admin',
+                'ROLE_ADMIN',
             ],
         ],
         [
