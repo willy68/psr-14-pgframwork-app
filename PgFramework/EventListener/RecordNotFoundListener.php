@@ -26,7 +26,7 @@ class RecordNotFoundListener
         $this->renderer = $renderer;
     }
 
-    public function onException(ExceptionEvent $event)
+    public function __invoke(ExceptionEvent $event)
     {
         $e = $event->getException();
         if ($e instanceof RecordNotFound) {

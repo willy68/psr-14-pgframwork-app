@@ -51,7 +51,7 @@ class CsrfListener
      * @param object $event
      * @return void
      */
-    public function onRequestEvent(RequestEvent $event)
+    public function __invoke(RequestEvent $event)
     {
         $request = $event->getRequest();
         $method = $request->getMethod();

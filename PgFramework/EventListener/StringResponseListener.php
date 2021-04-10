@@ -7,7 +7,7 @@ use PgFramework\Event\ViewEvent;
 
 class StringResponseListener
 {
-    public function onView(ViewEvent $event)
+    public function __invoke(ViewEvent $event)
     {
         $result = $event->getResult();
 

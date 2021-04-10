@@ -36,7 +36,7 @@ class Firewall extends EventDispatcher
         $this->callableResolver = $callableResolver;
     }
 
-    public function onRequestEvent(RequestEvent $event)
+    public function __invoke(RequestEvent $event)
     {
         $request = $event->getRequest();
 

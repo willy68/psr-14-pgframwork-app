@@ -27,7 +27,7 @@ class InvalidCsrfListener
         $this->flashService = $flashService;
     }
 
-    public function onException(ExceptionEvent $event)
+    public function __invoke(ExceptionEvent $event)
     {
         $e = $event->getException();
         $request = $event->getRequest();
