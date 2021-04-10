@@ -2,8 +2,8 @@
 
 namespace App\Auth\Actions;
 
-use Framework\Router\Annotation\Route;
-use Framework\Renderer\RendererInterface;
+use PgFramework\Router\Annotation\Route;
+use PgFramework\Renderer\RendererInterface;
 
 /**
  * @Route("/login", name="auth.login", methods={"GET"})

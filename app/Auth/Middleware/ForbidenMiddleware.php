@@ -2,12 +2,12 @@
 
 namespace App\Auth\Middleware;
 
-use Framework\Auth\User;
-use Framework\Session\FlashService;
-use Framework\Auth\ForbiddenException;
-use Framework\Session\SessionInterface;
+use PgFramework\Auth\User;
+use PgFramework\Session\FlashService;
+use PgFramework\Auth\ForbiddenException;
+use PgFramework\Session\SessionInterface;
 use Psr\Http\Message\ResponseInterface;
-use Framework\Response\ResponseRedirect;
+use PgFramework\Response\ResponseRedirect;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;

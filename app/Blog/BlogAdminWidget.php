@@ -4,7 +4,7 @@ namespace App\Blog;
 
 use App\Blog\Models\Posts;
 use App\Admin\AdminWidgetInterface;
-use Framework\Renderer\RendererInterface;
+use PgFramework\Renderer\RendererInterface;
 
 class BlogAdminWidget implements AdminWidgetInterface
 {

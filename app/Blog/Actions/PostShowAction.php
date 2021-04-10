@@ -5,10 +5,10 @@ namespace App\Blog\Actions;
 use App\Blog\Models\Posts;
 use App\Blog\Models\Categories;
 use Mezzio\Router\RouterInterface;
-use Framework\Router\Annotation\Route;
-use Framework\Actions\RouterAwareAction;
-use Framework\Renderer\RendererInterface;
-use Framework\Invoker\Annotation\ParameterConverter;
+use PgFramework\Router\Annotation\Route;
+use PgFramework\Actions\RouterAwareAction;
+use PgFramework\Renderer\RendererInterface;
+use PgFramework\Invoker\Annotation\ParameterConverter;
 
 /**
  * @Route("/blog")

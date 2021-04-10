@@ -1,6 +1,6 @@
 <?php
 
-use Framework\Environnement\Environnement;
+use PgFramework\Environnement\Environnement;
 use Middlewares\Whoops;
 use Symfony\Component\Dotenv\Dotenv;
 
@@ -17,7 +17,7 @@ $dotenv->bootEnv($basePath . '/.env');
 
 $bootstrap = require 'App.php';
 
-$app = (new Framework\App($bootstrap['config']))
+$app = (new PgFramework\App($bootstrap['config']))
     ->addModules($bootstrap['modules']);
 
 if (Environnement::getEnv('APP_ENV', 'production') === 'dev') {

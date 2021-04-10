@@ -2,7 +2,7 @@
 
 namespace App\Auth;
 
-use Framework\Auth\User as AuthUser;
+use PgFramework\Auth\User as AuthUser;
 
 class User implements AuthUser
 {

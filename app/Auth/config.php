@@ -1,6 +1,6 @@
 <?php
 
-use Framework\{
+use PgFramework\{
     Auth,
     Auth\AuthSession,
     Auth\User
@@ -11,14 +11,14 @@ use App\Auth\{
     Middleware\ForbidenMiddleware,
     UserTokenRepository
 };
-use Framework\Auth\Repository\UserRepositoryInterface;
-use Framework\Auth\RememberMe\RememberMeDatabase;
-use Framework\Auth\RememberMe\RememberMeInterface;
-use Framework\Auth\Repository\TokenRepositoryInterface;
-use Framework\Auth\Service\UtilToken;
-use Framework\Auth\Service\UtilTokenInterface;
-use Framework\Environnement\Environnement;
-use Framework\Security\Firewall\EventListener\ForbidenListener;
+use PgFramework\Auth\Repository\UserRepositoryInterface;
+use PgFramework\Auth\RememberMe\RememberMeDatabase;
+use PgFramework\Auth\RememberMe\RememberMeInterface;
+use PgFramework\Auth\Repository\TokenRepositoryInterface;
+use PgFramework\Auth\Service\UtilToken;
+use PgFramework\Auth\Service\UtilTokenInterface;
+use PgFramework\Environnement\Environnement;
+use PgFramework\Security\Firewall\EventListener\ForbidenListener;
 
 use function DI\{
     add,

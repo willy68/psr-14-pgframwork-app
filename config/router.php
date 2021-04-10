@@ -1,9 +1,9 @@
 <?php
 
 use App\Middleware\RecordNotFoundMiddleware;
-use Framework\Middleware\ActiveRecordMiddleware;
-use Framework\Middleware\CsrfGetCookieMiddleware;
-use Framework\Middleware\InvalidCsrfMiddleware;
+use PgFramework\Middleware\ActiveRecordMiddleware;
+use PgFramework\Middleware\CsrfGetCookieMiddleware;
+use PgFramework\Middleware\InvalidCsrfMiddleware;
 
 /**
  * Add your own router middlewares

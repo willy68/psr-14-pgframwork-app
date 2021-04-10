@@ -6,7 +6,7 @@ $basePath = dirname(__DIR__);
 
 require $basePath . '/vendor/autoload.php';
 
-/** @var \Framework\App $app */
+/** @var \PgFramework\App $app */
 $app = require $basePath . '/app/Bootstrap/Bootstrap.php';
 
 if (php_sapi_name() !== 'cli') {

@@ -2,8 +2,8 @@
 
 namespace App\Demo;
 
-use Framework\Module;
-use Framework\Renderer\RendererInterface;
+use PgFramework\Module;
+use PgFramework\Renderer\RendererInterface;
 
 class DemoModule extends Module
 {

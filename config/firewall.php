@@ -1,15 +1,15 @@
 <?php
 
-use Framework\Event\Events;
-use Framework\Security\Authorization\Voter\VoterRoles;
+use PgFramework\Event\Events;
+use PgFramework\Security\Authorization\Voter\VoterRoles;
 use League\Event\ListenerPriority;
-use Framework\Security\Firewall\FirewallEvents;
-use Framework\Security\Firewall\EventListener\ForbidenListener;
-use Framework\Security\Firewall\EventListener\LoggedInListener;
-use Framework\Security\Firewall\EventListener\AuthorizationListener;
-use Framework\Security\Firewall\EventListener\RememberMeLoginListener;
-use Framework\Security\Firewall\EventListener\RememberMeLogoutListener;
-use Framework\Security\Firewall\EventListener\RememberMeResumeListener;
+use PgFramework\Security\Firewall\FirewallEvents;
+use PgFramework\Security\Firewall\EventListener\ForbidenListener;
+use PgFramework\Security\Firewall\EventListener\LoggedInListener;
+use PgFramework\Security\Firewall\EventListener\AuthorizationListener;
+use PgFramework\Security\Firewall\EventListener\RememberMeLoginListener;
+use PgFramework\Security\Firewall\EventListener\RememberMeLogoutListener;
+use PgFramework\Security\Firewall\EventListener\RememberMeResumeListener;
 
 return [
     'firewall.event.rules' => \DI\add([

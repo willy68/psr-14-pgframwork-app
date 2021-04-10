@@ -5,26 +5,26 @@ use App\Auth\AuthModule;
 use App\Blog\BlogModule;
 use App\Demo\DemoModule;
 use App\Admin\AdminModule;
-use Framework\Event\Events;
+use PgFramework\Event\Events;
 use App\Api\ApiClientModule;
 use League\Event\ListenerPriority;
-use Framework\EventListener\CsrfListener;
-use Framework\Security\Firewall\Firewall;
-use Framework\Middleware\MethodMiddleware;
-use Framework\Middleware\RouterMiddleware;
-use Framework\EventListener\RouterListener;
-use Framework\Middleware\ApiHeadMiddleware;
-use Framework\Middleware\ApiOptionsMiddleware;
-use Framework\Middleware\DispatcherMiddleware;
-use Framework\EventListener\InvalidCsrfListener;
-use Framework\Middleware\PageNotFoundMiddleware;
-use Framework\EventListener\ActiveRecordListener;
-use Framework\EventListener\PageNotFoundListener;
-use Framework\Middleware\TrailingSlashMiddleware;
-use Framework\EventListener\RecordNotFoundListener;
-use Framework\EventListener\StringResponseListener;
-use Framework\Middleware\MethodNotAllowedMiddleware;
-use Framework\EventListener\MethodNotAllowedListener;
+use PgFramework\EventListener\CsrfListener;
+use PgFramework\Security\Firewall\Firewall;
+use PgFramework\Middleware\MethodMiddleware;
+use PgFramework\Middleware\RouterMiddleware;
+use PgFramework\EventListener\RouterListener;
+use PgFramework\Middleware\ApiHeadMiddleware;
+use PgFramework\Middleware\ApiOptionsMiddleware;
+use PgFramework\Middleware\DispatcherMiddleware;
+use PgFramework\EventListener\InvalidCsrfListener;
+use PgFramework\Middleware\PageNotFoundMiddleware;
+use PgFramework\EventListener\ActiveRecordListener;
+use PgFramework\EventListener\PageNotFoundListener;
+use PgFramework\Middleware\TrailingSlashMiddleware;
+use PgFramework\EventListener\RecordNotFoundListener;
+use PgFramework\EventListener\StringResponseListener;
+use PgFramework\Middleware\MethodNotAllowedMiddleware;
+use PgFramework\EventListener\MethodNotAllowedListener;
 
 return [
     /* Application modules. Place your own on the list */
@@ -33,8 +33,8 @@ return [
         AdminModule::class,
         BlogModule::class,
         AuthModule::class,
-        //ApiModule::class,
-        //ApiClientModule::class,
+        ApiModule::class,
+        ApiClientModule::class,
     ],
 
     /* Base middlewares PageNotFound must be the last.

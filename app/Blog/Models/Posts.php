@@ -2,8 +2,8 @@
 
 namespace App\Blog\Models;
 
-use Framework\Database\ActiveRecord\PaginatedModel;
-use Framework\Database\Query;
+use PgFramework\Database\ActiveRecord\PaginatedModel;
+use PgFramework\Database\Query;
 
 class Posts extends PaginatedModel
 {
@@ -22,7 +22,7 @@ class Posts extends PaginatedModel
     /**
      * set paginated options conditions
      *
-     * @param \Framework\Database\Query $query
+     * @param \PgFramework\Database\Query $query
      * @return string Class name
      */
     public static function setPaginatedQuery(Query $query): string

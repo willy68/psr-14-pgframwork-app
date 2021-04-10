@@ -4,12 +4,12 @@ namespace App\Demo\Controller;
 
 use App\Models\Client;
 use App\Auth\Models\User;
-use Framework\Router\Annotation\Route;
-use Framework\Validator\ValidationRules;
-use Framework\Renderer\RendererInterface;
+use PgFramework\Router\Annotation\Route;
+use PgFramework\Validator\ValidationRules;
+use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Framework\Invoker\Annotation\ParameterConverter;
-use Framework\Database\ActiveRecord\ActiveRecordQuery;
+use PgFramework\Invoker\Annotation\ParameterConverter;
+use PgFramework\Database\ActiveRecord\ActiveRecordQuery;
 
 class DemoController
 {
@@ -66,7 +66,7 @@ class DemoController
      * @ParameterConverter("client", options={"id"="id", "include"="adresses"})
      *
      * @param \App\Models\Client $client
-     * @param \Framework\Renderer\RendererInterface $renderer
+     * @param \PgFramework\Renderer\RendererInterface $renderer
      * @return string
      */
     public function demoClient(Client $client, RendererInterface $renderer): string

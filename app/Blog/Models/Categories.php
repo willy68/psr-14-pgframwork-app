@@ -2,8 +2,8 @@
 
 namespace App\Blog\Models;
 
-use Framework\Database\ActiveRecord\PaginatedModel;
-use Framework\Database\Query;
+use PgFramework\Database\ActiveRecord\PaginatedModel;
+use PgFramework\Database\Query;
 
 class Categories extends PaginatedModel
 {

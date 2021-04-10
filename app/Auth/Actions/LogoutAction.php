@@ -2,10 +2,10 @@
 
 namespace App\Auth\Actions;
 
-use Framework\Auth\AuthSession;
-use Framework\Session\FlashService;
-use Framework\Router\Annotation\Route;
-use Framework\Response\ResponseRedirect;
+use PgFramework\Auth\AuthSession;
+use PgFramework\Session\FlashService;
+use PgFramework\Router\Annotation\Route;
+use PgFramework\Response\ResponseRedirect;
 
 /**
  * @Route("/logout", name="auth.logout", methods={"POST"})

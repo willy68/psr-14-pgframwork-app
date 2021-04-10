@@ -2,16 +2,16 @@
 
 namespace App\Admin;
 
-use Framework\Module;
+use PgFramework\Module;
 use Mezzio\Router\FastRouteRouter;
 use Mezzio\Router\RouterInterface;
 use App\Blog\Actions\PostCrudAction;
-use Framework\Renderer\TwigRenderer;
-use Framework\Auth\LoggedInMiddleware;
+use PgFramework\Renderer\TwigRenderer;
+use PgFramework\Auth\LoggedInMiddleware;
 use App\Blog\Actions\CategoryCrudAction;
-use Framework\Renderer\RendererInterface;
+use PgFramework\Renderer\RendererInterface;
 use App\Auth\Middleware\ForbidenMiddleware;
-use Framework\Auth\Middleware\CookieLoginMiddleware;
+use PgFramework\Auth\Middleware\CookieLoginMiddleware;
 
 class AdminModule extends Module
 {

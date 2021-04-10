@@ -1,7 +1,7 @@
 <?php
 
 use Psr\Container\ContainerInterface;
-use Framework\Environnement\Environnement;
+use PgFramework\Environnement\Environnement;
 
 return [
     'database.sgdb' => Environnement::getEnv('DATABASE_SGDB', 'mysql'),

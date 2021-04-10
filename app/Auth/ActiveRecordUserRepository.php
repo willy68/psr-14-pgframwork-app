@@ -3,8 +3,8 @@
 namespace App\Auth;
 
 use App\Auth\Models\User;
-use Framework\Auth\User as AuthUser;
-use Framework\Auth\Repository\UserRepositoryInterface;
+use PgFramework\Auth\User as AuthUser;
+use PgFramework\Auth\Repository\UserRepositoryInterface;
 
 class ActiveRecordUserRepository implements UserRepositoryInterface
 {

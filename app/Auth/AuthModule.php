@@ -2,9 +2,9 @@
 
 namespace App\Auth;
 
-use Framework\Module;
-use Framework\Renderer\RendererInterface;
-use Framework\Auth\Middleware\CookieLogoutMiddleware;
+use PgFramework\Module;
+use PgFramework\Renderer\RendererInterface;
+use PgFramework\Auth\Middleware\CookieLogoutMiddleware;
 use Mezzio\Router\RouteCollector;
 
 class AuthModule extends Module

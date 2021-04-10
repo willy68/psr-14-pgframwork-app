@@ -4,11 +4,11 @@ namespace App\Blog\Actions;
 
 use App\Blog\Models\Categories;
 use App\Blog\Table\CategoryTable;
-use Framework\Actions\CrudAction;
-use Framework\Validator\Validator;
+use PgFramework\Actions\CrudAction;
+use PgFramework\Validator\Validator;
 use Mezzio\Router\RouterInterface;
-use Framework\Session\FlashService;
-use Framework\Renderer\RendererInterface;
+use PgFramework\Session\FlashService;
+use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class CategoryCrudAction extends CrudAction

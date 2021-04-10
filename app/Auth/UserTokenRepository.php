@@ -3,9 +3,9 @@
 namespace App\Auth;
 
 use App\Auth\Models\UserToken;
-use Framework\Auth\TokenInterface;
+use PgFramework\Auth\TokenInterface;
 use ActiveRecord\Exceptions\RecordNotFound;
-use Framework\Auth\Repository\TokenRepositoryInterface;
+use PgFramework\Auth\Repository\TokenRepositoryInterface;
 
 class UserTokenRepository implements TokenRepositoryInterface
 {
@@ -62,7 +62,7 @@ class UserTokenRepository implements TokenRepositoryInterface
      * @inheritDoc
      *
      * @param array $token
-     * @return \Framework\Auth\TokenInterface|null
+     * @return \PgFramework\Auth\TokenInterface|null
      */
     public function saveToken(array $token): ?TokenInterface
     {

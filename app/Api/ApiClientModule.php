@@ -2,7 +2,7 @@
 
 namespace App\Api;
 
-use Framework\Module;
+use PgFramework\Module;
 use Mezzio\Router\RouteGroup;
 use Mezzio\Router\FastRouteRouter;
 use Mezzio\Router\RouterInterface;
@@ -10,8 +10,8 @@ use App\Api\Client\ClientController;
 use Tuupola\Middleware\JwtAuthentication;
 use App\Api\Client\Adresse\AdresseController;
 use App\Api\Client\Civilite\CiviliteController;
-use Framework\Middleware\ContentTypeJsonMiddleware;
-use Framework\Middleware\CorsAllowOriginMiddleware;
+use PgFramework\Middleware\ContentTypeJsonMiddleware;
+use PgFramework\Middleware\CorsAllowOriginMiddleware;
 use App\Api\Client\AdresseType\AdresseTypeController;
 
 class ApiClientModule extends Module

@@ -2,9 +2,9 @@
 
 namespace App\Blog;
 
-use Framework\Module;
-use Framework\Renderer\TwigRenderer;
-use Framework\Renderer\RendererInterface;
+use PgFramework\Module;
+use PgFramework\Renderer\TwigRenderer;
+use PgFramework\Renderer\RendererInterface;
 
 class BlogModule extends Module
 {

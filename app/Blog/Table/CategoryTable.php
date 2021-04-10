@@ -2,7 +2,7 @@
 
 namespace App\Blog\Table;
 
-use Framework\Database\Table;
+use PgFramework\Database\Table;
 
 /**
  *

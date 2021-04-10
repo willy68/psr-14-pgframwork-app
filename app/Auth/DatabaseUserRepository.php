@@ -4,9 +4,9 @@ namespace App\Auth;
 
 use App\Auth\User;
 use App\Auth\Table\UserTable;
-use Framework\Auth\User as AuthUser;
-use Framework\Auth\Repository\UserRepositoryInterface;
-use Framework\Database\NoRecordException;
+use PgFramework\Auth\User as AuthUser;
+use PgFramework\Auth\Repository\UserRepositoryInterface;
+use PgFramework\Database\NoRecordException;
 
 class DatabaseUserRepository implements UserRepositoryInterface
 {

@@ -3,7 +3,7 @@
 namespace App\Auth\Models;
 
 use ActiveRecord\Model;
-use Framework\Auth\User as AuthUser;
+use PgFramework\Auth\User as AuthUser;
 
 class User extends Model implements AuthUser
 {

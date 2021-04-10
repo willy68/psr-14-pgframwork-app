@@ -4,15 +4,15 @@ namespace App\Blog\Actions;
 
 use Mezzio\Router\RouterInterface;
 use App\Blog\PostUpload;
-use Framework\Validator\Validator;
+use PgFramework\Validator\Validator;
 use App\Blog\Entity\Post;
 use App\Blog\Models\Posts;
 use App\Blog\Table\PostTable;
 use App\Blog\Models\Categories;
 use App\Blog\Table\CategoryTable;
-use Framework\Actions\CrudAction;
-use Framework\Session\FlashService;
-use Framework\Renderer\RendererInterface;
+use PgFramework\Actions\CrudAction;
+use PgFramework\Session\FlashService;
+use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class PostCrudAction extends CrudAction

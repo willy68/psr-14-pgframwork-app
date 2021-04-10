@@ -4,8 +4,8 @@ namespace App\Blog\Actions;
 
 use App\Blog\Models\Posts;
 use App\Blog\Models\Categories;
-use Framework\Router\Annotation\Route;
-use Framework\Renderer\RendererInterface;
+use PgFramework\Router\Annotation\Route;
+use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 /**

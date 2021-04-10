@@ -3,7 +3,7 @@
 namespace App\Auth\Models;
 
 use ActiveRecord\Model;
-use Framework\Auth\TokenInterface;
+use PgFramework\Auth\TokenInterface;
 
 class UserToken extends Model implements TokenInterface
 {

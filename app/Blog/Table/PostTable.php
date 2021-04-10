@@ -3,8 +3,8 @@
 namespace App\Blog\Table;
 
 use App\Blog\Entity\Post;
-use Framework\Database\Table;
-use Framework\Database\Query;
+use PgFramework\Database\Table;
+use PgFramework\Database\Query;
 
 /**
  *

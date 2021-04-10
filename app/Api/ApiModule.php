@@ -2,7 +2,7 @@
 
 namespace App\Api;
 
-use Framework\Module;
+use PgFramework\Module;
 use Mezzio\Router\RouteGroup;
 use App\Api\User\UserController;
 use Mezzio\Router\FastRouteRouter;
@@ -13,8 +13,8 @@ use App\Api\Cpville\CpvilleController;
 use Tuupola\Middleware\JwtAuthentication;
 use App\Api\Entreprise\EntrepriseController;
 use App\Api\DernierCode\DernierCodeController;
-use Framework\Middleware\ContentTypeJsonMiddleware;
-use Framework\Middleware\CorsAllowOriginMiddleware;
+use PgFramework\Middleware\ContentTypeJsonMiddleware;
+use PgFramework\Middleware\CorsAllowOriginMiddleware;
 
 class ApiModule extends Module
 {

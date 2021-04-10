@@ -5,7 +5,7 @@ namespace App\Middleware;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use Framework\Renderer\RendererInterface;
+use PgFramework\Renderer\RendererInterface;
 use ActiveRecord\Exceptions\RecordNotFound;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
