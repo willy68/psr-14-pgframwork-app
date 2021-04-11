@@ -5,8 +5,8 @@ use App\Auth\AuthModule;
 use App\Blog\BlogModule;
 use App\Demo\DemoModule;
 use App\Admin\AdminModule;
-use PgFramework\Event\Events;
 use App\Api\ApiClientModule;
+use PgFramework\Event\Events;
 use League\Event\ListenerPriority;
 use PgFramework\EventListener\CsrfListener;
 use PgFramework\Security\Firewall\Firewall;
@@ -16,17 +16,18 @@ use PgFramework\EventListener\RouterListener;
 use PgFramework\Middleware\ApiHeadMiddleware;
 use PgFramework\Middleware\ApiOptionsMiddleware;
 use PgFramework\Middleware\DispatcherMiddleware;
+use PgFramework\EventListener\CsrfCookieListener;
+use PgFramework\EventListener\MethodHeadListener;
 use PgFramework\EventListener\InvalidCsrfListener;
 use PgFramework\Middleware\PageNotFoundMiddleware;
 use PgFramework\EventListener\ActiveRecordListener;
-use PgFramework\EventListener\MethodHeadListener;
 use PgFramework\EventListener\PageNotFoundListener;
 use PgFramework\Middleware\TrailingSlashMiddleware;
+use PgFramework\EventListener\MethodOptionsListener;
 use PgFramework\EventListener\RecordNotFoundListener;
 use PgFramework\EventListener\StringResponseListener;
 use PgFramework\Middleware\MethodNotAllowedMiddleware;
 use PgFramework\EventListener\MethodNotAllowedListener;
-use PgFramework\EventListener\MethodOptionsListener;
 
 return [
     /* Application modules. Place your own on the list */
@@ -60,11 +61,13 @@ return [
         PageNotFoundListener::class => [Events::REQUEST, ListenerPriority::HIGH],
         ActiveRecordListener::class => [Events::REQUEST, ListenerPriority::HIGH],
         Firewall::class => [Events::REQUEST, ListenerPriority::HIGH],
+        //CsrfCookieListener::class . '::onRequest' => [Events::REQUEST, ListenerPriority::HIGH],
         CsrfListener::class => [Events::REQUEST, ListenerPriority::HIGH],
         InvalidCsrfListener::class => [Events::EXCEPTION, ListenerPriority::HIGH],
         RecordNotFoundListener::class => [Events::EXCEPTION, ListenerPriority::HIGH],
         StringResponseListener::class => [Events::VIEW, ListenerPriority::HIGH],
         MethodHeadListener::class . '::onResponse' => [Events::RESPONSE, ListenerPriority::LOW],
+        //CsrfCookieListener::class . '::onResponse' => [Events::RESPONSE, ListenerPriority::LOW],
     ],
 
     /* DI Base configuration. Place your own on the list */

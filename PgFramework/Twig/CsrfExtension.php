@@ -3,26 +3,21 @@
 namespace PgFramework\Twig;
 
 use Exception;
-use PgFramework\EventListener\CsrfListener;
+use PgFramework\Security\Csrf\CsrfTokenManager;
 use Twig\TwigFunction;
 
 class CsrfExtension extends \Twig\Extension\AbstractExtension
 {
 
-    /**
-     * 
-     *
-     * @var CsrfListener
-     */
-    private $csrfListener;
+    private $tokenManager;
 
     /**
      *
      * @param CsrfCookieListener $csrfListener
      */
-    public function __construct(CsrfListener $csrfListener)
+    public function __construct(CsrfTokenManager $tokenManager)
     {
-        $this->csrfListener = $csrfListener;
+        $this->tokenManager = $tokenManager;
     }
 
     /**
@@ -42,7 +37,7 @@ class CsrfExtension extends \Twig\Extension\AbstractExtension
     public function csrfInput()
     {
         return "<input type=\"hidden\" " .
-        "name=\"{$this->csrfListener->getFormKey()}\" " .
-        "value=\"{$this->csrfListener->getToken()}\"/>";
+        "name=\"{$this->tokenManager->getFormKey()}\" " .
+        "value=\"{$this->tokenManager->getToken()}\"/>";
     }
 }

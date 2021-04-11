@@ -14,7 +14,7 @@ interface CsrfTokenManagerInterface
     *
     * @return string The CSRF token
     */
-   public function getToken(string $tokenId): string;
+   public function getToken(?string $tokenId = null): string;
 
    /**
     * Generates a new token value.

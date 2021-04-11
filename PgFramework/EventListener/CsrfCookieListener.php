@@ -11,7 +11,7 @@ use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
 use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
 
-class CsrfCookieListener
+class CsrfCookieListener implements CsrfListenerInterface
 {
     protected $config = [
         'cookieName' => 'XSRF-TOKEN',
@@ -28,7 +28,7 @@ class CsrfCookieListener
      *
      * @var string
      */
-    protected $tokenId;
+    protected $tokenId = null;
 
     /**
      *
@@ -50,7 +50,7 @@ class CsrfCookieListener
      * @param object $event
      * @return void
      */
-    public function onRequestEvent(RequestEvent $event)
+    public function onRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
         $method = $request->getMethod();
@@ -58,11 +58,11 @@ class CsrfCookieListener
         $cookie = FigRequestCookies::get($request, $this->config['cookieName'])->getValue();
 
         if (is_string($cookie) && strlen($cookie) > 0) {
-            [$this->tokenId,] = explode(CsrfTokenManagerInterface::delimiter, $cookie);
+            [$this->tokenId] = explode(CsrfTokenManagerInterface::delimiter, $cookie);
         }
 
         if (\in_array($method, ['GET', 'HEAD'], true) && strlen($cookie) === 0) {
-            $token = $this->generateToken();
+            $token = $this->getToken();
             $request = $request->withAttribute($this->config['field'], $token);
         }
 
@@ -78,7 +78,7 @@ class CsrfCookieListener
                 $this->validateToken($headerCookie, $cookie);
             }
 
-            [$this->tokenId,] = explode(CsrfTokenManagerInterface::delimiter, $cookie);
+            [$this->tokenId] = explode(CsrfTokenManagerInterface::delimiter, $cookie);
             $token = $this->tokenManager->refreshToken($this->tokenId);
             $request = $request->withAttribute($this->config['field'], $token);
         }
@@ -90,7 +90,7 @@ class CsrfCookieListener
      * @param object $event
      * @return void
      */
-    public function onResponseEvent(ResponseEvent $event)
+    public function onResponse(ResponseEvent $event)
     {
         $response = $event->getResponse();
         $request = $event->getRequest();
@@ -135,9 +135,9 @@ class CsrfCookieListener
 
     public function getToken(): string
     {
-        if (null === $this->tokenId) {
+        /*if (null === $this->tokenId) {
             return $this->generateToken();
-        }
+        }*/
         return $this->tokenManager->getToken($this->tokenId);
     }
 }

@@ -8,7 +8,7 @@ use Grafikart\Csrf\NoCsrfException;
 use Grafikart\Csrf\InvalidCsrfException;
 use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
 
-class CsrfListener
+class CsrfListener implements CsrfListenerInterface
 {
     /**
      * @var string
@@ -66,7 +66,7 @@ class CsrfListener
                 throw new InvalidCsrfException();
             }
 
-            [$tokenId, ] = explode(CsrfTokenManagerInterface::delimiter, $params[$this->formKey]);
+            [$tokenId] = explode(CsrfTokenManagerInterface::delimiter, $params[$this->formKey]);
             $this->tokenManager->removeToken($tokenId);
         }
     }
@@ -89,7 +89,6 @@ class CsrfListener
 
     public function getToken(): string
     {
-        $tokenId = bin2hex(Security::randomBytes(8));
-        return $this->tokenManager->getToken($tokenId);
+        return $this->tokenManager->getToken();
     }
 }

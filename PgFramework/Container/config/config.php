@@ -62,6 +62,8 @@ use League\Event\EventDispatcher;
 use Mezzio\Router\FastRouteRouter;
 use Mezzio\Router\RouteCollector;
 use Mezzio\Router\RouterInterface;
+use PgFramework\EventListener\CsrfListener;
+use PgFramework\EventListener\CsrfListenerInterface;
 use Tuupola\Middleware\JwtAuthentication;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -74,9 +76,12 @@ return [
     //'env' => env('ENV', 'production'),
     'app' => Environnement::getEnv('APP', 'web'),
     'jwt.secret' => Environnement::getEnv('APP_KEY', 'abcdefghijklmnop123456789'),
+    CsrfListenerInterface::class => get(CsrfListener::class),
     'twig.entrypoints' => '',
     WebpackExtension::class => \DI\autowire()
         ->constructorParameter('entryPoints', get('twig.entrypoints')),
+    //CsrfExtension::class => create()
+    //    ->constructor(get(CsrfListenerInterface::class)),
     'twig.extensions' => [
         get(RouterTwigExtension::class),
         get(PagerFantaExtension::class),
