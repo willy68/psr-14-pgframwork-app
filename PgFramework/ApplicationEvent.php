@@ -27,7 +27,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 /**
  * Application
  */
-class ApplicationEvent implements ApplicationInterface
+class ApplicationEvent extends AbstractApplication
 {
     public const PROXY_DIRECTORY = 'tmp/proxies';
 
@@ -78,13 +78,6 @@ class ApplicationEvent implements ApplicationInterface
     private $listeners = [];
 
     /**
-     * Self static
-     *
-     * @var ApplicationInterface
-     */
-    private static $app = null;
-
-    /**
      * App constructor
      *
      * @param array $config
@@ -103,16 +96,6 @@ class ApplicationEvent implements ApplicationInterface
         $this->dispatcher = $dispatcher;
         $this->callableResolver = $callableResolver;
         $this->paramsResolver = $paramsResolver;
-    }
-
-    /**
-     * Get Self instance
-     *
-     * @return ApplicationInterface|null
-     */
-    public static function getApp(): ?ApplicationInterface
-    {
-        return self::$app;
     }
 
     /**

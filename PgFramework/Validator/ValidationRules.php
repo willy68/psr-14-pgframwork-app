@@ -2,7 +2,7 @@
 
 namespace PgFramework\Validator;
 
-use PgFramework\App;
+use PgFramework\AbstractApplication;
 
 /**
  * new ValidationRules( 'auteur', 'required|max:50|min:3|filter:trim');
@@ -116,7 +116,7 @@ class ValidationRules
     public function isValid($var): bool
     {
         $valid = true;
-        $container = App::getApp()->getContainer();
+        $container = AbstractApplication::getApp()->getContainer();
         $validations = $container->get('form.validations');
         $filters = $container->get('form.filters');
 

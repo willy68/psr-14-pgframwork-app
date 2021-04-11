@@ -20,7 +20,7 @@ use PgFramework\Validator\Rules\EmailConfirmValidation;
 
 class ValidationsRules
 {
-    static public $validations = [
+    public static $validations = [
         'required' => RequiredValidation::class,
         'min' => MinValidation::class,
         'max' => MaxValidation::class,
@@ -36,17 +36,17 @@ class ValidationsRules
         'unique' => UniqueValidation::class
     ];
 
-    static public $filters = [
+    public static $filters = [
         'trim' => TrimFilter::class,
         'striptags' => StriptagsFilter::class
     ];
 
-    static public function getValidations()
+    public static function getValidations()
     {
         return static::$validations;
     }
 
-    static public function getFilters()
+    public static function getFilters()
     {
         return static::$filters;
     }

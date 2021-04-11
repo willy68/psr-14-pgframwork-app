@@ -18,7 +18,7 @@ use PgFramework\Middleware\Stack\MiddlewareAwareStackTrait;
 /**
  * Application
  */
-class ApplicationMiddleware implements ApplicationInterface, RequestHandlerInterface
+class ApplicationMiddleware extends AbstractApplication implements RequestHandlerInterface
 {
     use MiddlewareAwareStackTrait;
 
@@ -47,13 +47,6 @@ class ApplicationMiddleware implements ApplicationInterface, RequestHandlerInter
     private $modules = [];
 
     /**
-     * Self static
-     *
-     * @var ApplicationInterface
-     */
-    private static $app = null;
-
-    /**
      * App constructor
      *
      * @param array $config
@@ -64,16 +57,6 @@ class ApplicationMiddleware implements ApplicationInterface, RequestHandlerInter
         $this->config = \array_merge($this->config, $config);
 
         self::$app = $this;
-    }
-
-    /**
-     * Get Self instance
-     *
-     * @return ApplicationInterface|null
-     */
-    public static function getApp(): ?ApplicationInterface
-    {
-        return self::$app;
     }
 
     /**

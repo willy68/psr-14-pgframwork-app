@@ -8,7 +8,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 interface ApplicationInterface
 {
-
     /**
      *
      * @param  ServerRequestInterface|null $request
