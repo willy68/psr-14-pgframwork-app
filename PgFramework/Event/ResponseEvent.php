@@ -3,6 +3,7 @@
 namespace PgFramework\Event;
 
 use PgFramework\App;
+use PgFramework\ApplicationInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -14,7 +15,7 @@ class ResponseEvent extends AppEvent
 
     private $response;
 
-    public function __construct(App $app, ServerRequestInterface $request, ResponseInterface $response)
+    public function __construct(ApplicationInterface $app, ServerRequestInterface $request, ResponseInterface $response)
     {
         parent::__construct($app);
         $this->request = $request;

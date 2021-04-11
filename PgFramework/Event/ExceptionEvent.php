@@ -2,7 +2,7 @@
 
 namespace PgFramework\Event;
 
-use PgFramework\App;
+use PgFramework\ApplicationInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ExceptionEvent extends RequestEvent
@@ -11,7 +11,7 @@ class ExceptionEvent extends RequestEvent
 
     private $exception;
 
-    public function __construct(App $app, ServerRequestInterface $request, \Throwable $e)
+    public function __construct(ApplicationInterface $app, ServerRequestInterface $request, \Throwable $e)
     {
         parent::__construct($app, $request);
         $this->exception = $e;

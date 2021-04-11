@@ -22,7 +22,7 @@ trait MiddlewareAwareStackTrait
     /**
      * Add middleware
      *
-     * @param string|MiddlewareInterface $middleware
+     * @param string|MiddlewareInterface|callable $middleware
      * @return self
      */
     public function middleware($middleware): self
@@ -34,7 +34,7 @@ trait MiddlewareAwareStackTrait
     /**
      * Add middlewares array
      *
-     * @param string[]|MiddlewareInterface[] $middlewares
+     * @param string[]|MiddlewareInterface[]|callable[] $middlewares
      * @return self
      */
     public function middlewares(array $middlewares): self
@@ -48,7 +48,7 @@ trait MiddlewareAwareStackTrait
     /**
      * Add middleware in first
      *
-     * @param string|MiddlewareInterface $middleware
+     * @param string|MiddlewareInterface|callable $middleware
      * @return self
      */
     public function prependMiddleware($middleware): self
@@ -78,9 +78,9 @@ trait MiddlewareAwareStackTrait
      * Undocumented function
      *
      * @param ContainerInterface $c
-     * @return MiddlewareInterface|null
+     * @return mixed|MiddlewareInterface|null
      */
-    public function shiftMiddleware(ContainerInterface $c): ?MiddlewareInterface
+    public function shiftMiddleware(ContainerInterface $c)
     {
         $middleware =  array_shift($this->middleware);
         if ($middleware === null) {

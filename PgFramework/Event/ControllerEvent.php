@@ -2,7 +2,7 @@
 
 namespace PgFramework\Event;
 
-use PgFramework\App;
+use PgFramework\ApplicationInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ControllerEvent extends RequestEvent
@@ -11,7 +11,7 @@ class ControllerEvent extends RequestEvent
 
     private $controller;
 
-    public function __construct(App $app, callable $controller, ServerRequestInterface $request)
+    public function __construct(ApplicationInterface $app, callable $controller, ServerRequestInterface $request)
     {
         parent::__construct($app, $request);
         $this->controller = $controller;

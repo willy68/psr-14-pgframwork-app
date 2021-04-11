@@ -3,6 +3,7 @@
 namespace PgFramework\Event;
 
 use PgFramework\App;
+use PgFramework\ApplicationInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ControllerParamsEvent extends ControllerEvent
@@ -11,7 +12,7 @@ class ControllerParamsEvent extends ControllerEvent
 
     private $params;
 
-    public function __construct(App $app, callable $controller, array $params, ServerRequestInterface $request)
+    public function __construct(ApplicationInterface $app, callable $controller, array $params, ServerRequestInterface $request)
     {
         parent::__construct($app, $controller, $request);
         $this->params = $params;

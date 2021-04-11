@@ -16,24 +16,19 @@ use PgFramework\Event\ExceptionEvent;
 use PgFramework\Event\ControllerEvent;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use PgFramework\Environnement\Environnement;
 use PgFramework\Event\ControllerParamsEvent;
 use Invoker\Reflection\CallableReflection;
 use PgFramework\Router\Loader\DirectoryLoader;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 use Invoker\ParameterResolver\ParameterResolver;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use PgFramework\Middleware\Stack\MiddlewareAwareStackTrait;
 
 /**
  * Application
  */
-class App implements ApplicationInterface, RequestHandlerInterface
+class ApplicationEvent implements ApplicationInterface
 {
-    use MiddlewareAwareStackTrait;
-
     public const PROXY_DIRECTORY = 'tmp/proxies';
 
     public const COMPILED_CONTAINER_DIRECTORY = 'tmp/di';
@@ -85,7 +80,7 @@ class App implements ApplicationInterface, RequestHandlerInterface
     /**
      * Self static
      *
-     * @var App
+     * @var ApplicationInterface
      */
     private static $app = null;
 
@@ -155,38 +150,6 @@ class App implements ApplicationInterface, RequestHandlerInterface
     /**
      * Undocumented function
      *
-     * @param string $routePrefix
-     * @param string|null $middleware
-     * @return self
-     */
-    public function pipe(string $routePrefix, ?string $middleware = null): self
-    {
-        /** MiddlewareAwareStackTrait::lazyPipe */
-        return $this->lazyPipe($routePrefix, $middleware, $this->getContainer());
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @param ServerRequestInterface $request
-     * @return ResponseInterface
-     * @throws Exception
-     */
-    public function handle(ServerRequestInterface $request): ResponseInterface
-    {
-        $middleware = $this->getMiddleware();
-        if (is_null($middleware)) {
-            throw new Exception('Aucun middleware n\'a intercepté cette requête');
-        } elseif ($middleware instanceof MiddlewareInterface) {
-            return $middleware->process($request, $this);
-        } elseif (is_callable($middleware)) {
-            return call_user_func_array($middleware, [$request, [$this, 'handle']]);
-        }
-    }
-
-    /**
-     * Undocumented function
-     *
      * @param  ServerRequestInterface|null $request
      * @return ResponseInterface
      * @throws Exception
@@ -240,8 +203,6 @@ class App implements ApplicationInterface, RequestHandlerInterface
         } catch (\Exception $e) {
             return $this->handleException($e, $request);
         }
-
-        //return $this->handle($request);
     }
 
     private function handleEvent(ServerRequestInterface $request): ResponseInterface
@@ -384,17 +345,5 @@ class App implements ApplicationInterface, RequestHandlerInterface
     public function getDispatcher()
     {
         return $this->dispatcher;
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @return object
-     * @throws Exception
-     */
-
-    private function getMiddleware()
-    {
-        return $this->shiftMiddleware($this->getContainer());
     }
 }
