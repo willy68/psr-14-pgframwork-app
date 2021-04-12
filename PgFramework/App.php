@@ -254,7 +254,7 @@ class App extends AbstractApplication implements RequestHandlerInterface
             $container->set(ServerRequestInterface::class, $event->getRequest());
         } else {
             // Limitation: $request must be named "$request"
-            $params = array_merge(["request" => $request], $params);
+            $params = array_merge(["request" => $event->getRequest()], $params);
         }
 
         $callableReflection = CallableReflection::create($controller);
