@@ -16,10 +16,13 @@ return [
         [
             'path' => '^/admin/posts/(\d+)',
             'listeners' => [
+                RememberMeLoginListener::class . '::onAuthenticationEvent' => [FirewallEvents::AUTHENTICATION, ListenerPriority::HIGH],
+                LoggedInListener::class . '::onAuthenticationEvent' => [FirewallEvents::AUTHENTICATION, ListenerPriority::HIGH],
                 AuthorizationListener::class . '::onAuthorization' => [FirewallEvents::AUTHORIZATION, ListenerPriority::LOW]
             ],
             // Events::REQUEST ne sera jamais appelé!
             'main.listeners' => [
+                RememberMeResumeListener::class . '::onResponseEvent' => [Events::RESPONSE, ListenerPriority::NORMAL],
                 ForbidenListener::class . '::onException' => [Events::EXCEPTION, ListenerPriority::HIGH]
             ]
         ],
