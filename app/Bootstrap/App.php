@@ -61,13 +61,13 @@ return [
         PageNotFoundListener::class => [Events::REQUEST, ListenerPriority::HIGH],
         ActiveRecordListener::class => [Events::REQUEST, ListenerPriority::HIGH],
         Firewall::class => [Events::REQUEST, ListenerPriority::HIGH],
-        //CsrfCookieListener::class . '::onRequest' => [Events::REQUEST, ListenerPriority::HIGH],
-        CsrfListener::class => [Events::REQUEST, ListenerPriority::HIGH],
+        CsrfCookieListener::class . '::onRequest' => [Events::REQUEST, ListenerPriority::HIGH],
+        //CsrfListener::class => [Events::REQUEST, ListenerPriority::HIGH],
         InvalidCsrfListener::class => [Events::EXCEPTION, ListenerPriority::HIGH],
         RecordNotFoundListener::class => [Events::EXCEPTION, ListenerPriority::HIGH],
         StringResponseListener::class => [Events::VIEW, ListenerPriority::HIGH],
         MethodHeadListener::class . '::onResponse' => [Events::RESPONSE, ListenerPriority::LOW],
-        //CsrfCookieListener::class . '::onResponse' => [Events::RESPONSE, ListenerPriority::LOW],
+        CsrfCookieListener::class . '::onResponse' => [Events::RESPONSE, ListenerPriority::LOW],
     ],
 
     /* DI Base configuration. Place your own on the list */

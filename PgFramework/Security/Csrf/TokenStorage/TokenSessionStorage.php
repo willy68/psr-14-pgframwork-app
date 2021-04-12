@@ -22,6 +22,8 @@ class TokenSessionStorage implements TokenStorageInterface
      */
     private $limit;
 
+    private $lastIdField = 'csrf.lastid';
+
     /**
      * CsrfMiddleware constructor.
      *
@@ -46,13 +48,22 @@ class TokenSessionStorage implements TokenStorageInterface
         return isset($this->session[$this->sessionKey][$tokenId]);
     }
 
-    public function getToken(string $tokenId): ?string
+    public function getToken(?string $tokenId = null): ?string
     {
-        if (!$this->hasToken($tokenId)) {
-            return null;
+        if (null !== $tokenId) {
+            if (!$this->hasToken($tokenId)) {
+                return null;
+            }
+            return (string) $this->session[$this->sessionKey][$tokenId];
         }
 
-        return (string) $this->session[$this->sessionKey][$tokenId];
+        // Try last insert id
+        $tokenId = $this->session[$this->lastIdField] ?? null;
+        if ($tokenId) {
+            return (string) $this->session[$this->sessionKey][$tokenId];
+        }
+
+        return null;
     }
 
     public function setToken(string $tokenId, string $token): void
@@ -60,6 +71,7 @@ class TokenSessionStorage implements TokenStorageInterface
         $tokens = $this->session[$this->sessionKey] ?? [];
         $tokens[$tokenId] = $token;
         $this->session[$this->sessionKey] = $this->limitTokens($tokens);
+        $this->session[$this->lastIdField] = $tokenId;
     }
 
     public function removeToken(string $tokenId): ?string
@@ -72,6 +84,11 @@ class TokenSessionStorage implements TokenStorageInterface
         $tokens = $this->session[$this->sessionKey];
         unset($tokens[$tokenId]);
         $this->session[$this->sessionKey] = $tokens;
+
+        if ($tokenId === $this->session[$this->lastIdField]) {
+            unset($this->session[$this->lastIdField]);
+        }
+
         return $token;
     }
 
@@ -112,5 +129,4 @@ class TokenSessionStorage implements TokenStorageInterface
 
         return $tokens;
     }
-
 }

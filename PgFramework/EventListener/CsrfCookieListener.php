@@ -26,12 +26,6 @@ class CsrfCookieListener implements CsrfListenerInterface
 
     /**
      *
-     * @var string
-     */
-    protected $tokenId = null;
-
-    /**
-     *
      * @var CsrfTokenManagerInterface
      */
     private $tokenManager;
@@ -57,10 +51,6 @@ class CsrfCookieListener implements CsrfListenerInterface
 
         $cookie = FigRequestCookies::get($request, $this->config['cookieName'])->getValue();
 
-        if (is_string($cookie) && strlen($cookie) > 0) {
-            [$this->tokenId] = explode(CsrfTokenManagerInterface::delimiter, $cookie);
-        }
-
         if (\in_array($method, ['GET', 'HEAD'], true) && strlen($cookie) === 0) {
             $token = $this->getToken();
             $request = $request->withAttribute($this->config['field'], $token);
@@ -78,8 +68,8 @@ class CsrfCookieListener implements CsrfListenerInterface
                 $this->validateToken($headerCookie, $cookie);
             }
 
-            [$this->tokenId] = explode(CsrfTokenManagerInterface::delimiter, $cookie);
-            $token = $this->tokenManager->refreshToken($this->tokenId);
+            [$tokenId] = explode(CsrfTokenManagerInterface::delimiter, $cookie);
+            $token = $this->tokenManager->refreshToken($tokenId);
             $request = $request->withAttribute($this->config['field'], $token);
         }
         $event->setRequest($request);
@@ -127,17 +117,9 @@ class CsrfCookieListener implements CsrfListenerInterface
         return $this->config['field'];
     }
 
-    public function generateToken(): string
-    {
-        $this->tokenId = bin2hex(Security::randomBytes(8));
-        return $this->tokenManager->getToken($this->tokenId);
-    }
-
     public function getToken(): string
     {
-        /*if (null === $this->tokenId) {
-            return $this->generateToken();
-        }*/
+        $this->tokenId = bin2hex(Security::randomBytes(8));
         return $this->tokenManager->getToken($this->tokenId);
     }
 }

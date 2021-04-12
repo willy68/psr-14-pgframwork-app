@@ -3,7 +3,6 @@
 namespace PgFramework\EventListener;
 
 use PgFramework\Event\RequestEvent;
-use PgFramework\Security\Security;
 use Grafikart\Csrf\NoCsrfException;
 use Grafikart\Csrf\InvalidCsrfException;
 use PgFramework\Security\Csrf\CsrfTokenManagerInterface;

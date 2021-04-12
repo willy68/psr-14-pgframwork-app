@@ -6,7 +6,7 @@ interface TokenStorageInterface
 {
     public function hasToken(string $tokenId): bool;
 
-    public function getToken(string $tokenId): ?string;
+    public function getToken(?string $tokenId = null): ?string;
 
     public function setToken(string $tokenId, string $token): void;
 

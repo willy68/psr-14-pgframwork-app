@@ -12,7 +12,6 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
     private $storage;
     private $generator;
     private $sessionKey;
-    private $lastTokenId = null;
 
     public function __construct(
         TokenStorageInterface $storage,
@@ -28,14 +27,20 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
 
     public function getToken(?string $tokenId = null): string
     {
-        if (null !== $tokenId && $this->storage->hasToken($tokenId)) {
-            return $this->storage->getToken($tokenId);
-        }
-        if (null !== $this->lastTokenId) {
-            return $this->storage->getToken($this->lastTokenId);
+        if (null !== $tokenId) {
+            if ($this->storage->hasToken($tokenId)) {
+                return $this->storage->getToken($tokenId);
+            }
+            // Create new one for this id
+            return $this->generateToken($tokenId);
         }
 
-        return $this->generateToken($tokenId);
+        // Get last token
+        $token = $this->storage->getToken();
+        if (null === $token) {
+            return $this->generateToken();
+        }
+        return $token;
     }
 
     /**
@@ -98,7 +103,6 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
             $token = $tokenId . self::delimiter . $this->generator->generateToken();
         }
 
-        $this->lastTokenId = $tokenId;
         $this->storage->setToken($tokenId, $token);
         return $token;
     }
