@@ -48,11 +48,7 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
      */
     public function refreshToken(string $tokenId): string
     {
-        $token = $tokenId . self::delimiter . $this->generator->generateToken();
-
-        $this->storage->setToken($tokenId, $token);
-
-        return $token;
+        return $this->generateToken($tokenId);
     }
 
     /**
