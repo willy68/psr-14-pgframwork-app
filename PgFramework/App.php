@@ -233,7 +233,7 @@ class App extends AbstractApplication implements RequestHandlerInterface
         $event = $this->dispatcher->dispatch($event);
 
         if ($event->hasResponse()) {
-            return $this->filterResponse($event->getResponse(), $request);
+            return $this->filterResponse($event->getResponse(), $event->getRequest());
         }
 
         /** @var RouteResult $result */

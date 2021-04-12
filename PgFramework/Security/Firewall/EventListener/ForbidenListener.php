@@ -2,17 +2,33 @@
 
 namespace PgFramework\Security\Firewall\EventListener;
 
+use Dflydev\FigCookies\SetCookie;
 use PgFramework\Event\ExceptionEvent;
 use PgFramework\Session\FlashService;
+use Psr\Http\Message\ResponseInterface;
 use PgFramework\Auth\ForbiddenException;
 use PgFramework\Session\SessionInterface;
-use Psr\Http\Message\ResponseInterface;
+use Dflydev\FigCookies\FigResponseCookies;
 use PgFramework\Response\ResponseRedirect;
 use PgFramework\Auth\FailedAccessException;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ForbidenListener
 {
+
+    /**
+     * Cookie options
+     *
+     * @var array
+     */
+    protected $options = [
+        'name' => 'auth_login',
+        'path' => '/',
+        'domain' => null,
+        'secure' => false,
+        'httpOnly' => true,
+        'samesite' => null,
+    ];
 
     private $loginPath;
 
@@ -33,7 +49,14 @@ class ForbidenListener
         $e = $event->getException();
         $request = $event->getRequest();
         if ($e instanceof ForbiddenException) {
-            $event->setResponse($this->redirectLogin($request));
+            $response = $this->redirectLogin($request);
+
+            // Todo create CancelRememberMeCookieListener
+            if ($request->getAttribute('cancel.rememberme.cookie')) {
+                $response = $this->cancelCookie($response);
+            }
+
+            $event->setResponse($response);
             return;
         }
 
@@ -43,14 +66,14 @@ class ForbidenListener
         }
     }
 
-    public function redirectLogin(ServerRequestInterface $request): ResponseInterface
+    protected function redirectLogin(ServerRequestInterface $request): ResponseInterface
     {
         $this->session->set('auth.redirect', $request->getUri()->getPath());
         (new FlashService($this->session))->error('Vous devez posseder un compte pour accéder à cette page');
         return new ResponseRedirect($this->loginPath);
     }
 
-    public function redirectAdminHome(ServerRequestInterface $request): ResponseInterface
+    protected function redirectAdminHome(ServerRequestInterface $request): ResponseInterface
     {
         $uri = $this->loginPath;
         $server = $request->getServerParams();
@@ -61,5 +84,19 @@ class ForbidenListener
 
         (new FlashService($this->session))->error('Vous n\'avez pas l\'authorisation pour executer cette action');
         return new ResponseRedirect($uri);
+    }
+
+    protected function cancelCookie(ResponseInterface $response): ResponseInterface
+    {
+        // Delete cookie
+        $cookiePassword = SetCookie::create($this->options['name'])
+            ->withValue('')
+            ->withExpires(time() - 3600)
+            ->withPath($this->options['path'])
+            ->withDomain($this->options['domain'])
+            ->withSecure($this->options['secure'])
+            ->withHttpOnly($this->options['httpOnly']);
+        return FigResponseCookies::set($response, $cookiePassword);
+
     }
 }

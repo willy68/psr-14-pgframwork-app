@@ -20,7 +20,7 @@ class CsrfCookieListener implements CsrfListenerInterface
         'field' => '_csrf',
         'expiry' => 0,
         'secure' => false,
-        'httponly' => false,
+        'httponly' => true,
         'samesite' => null,
     ];
 

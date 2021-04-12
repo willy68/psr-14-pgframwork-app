@@ -3,6 +3,7 @@
 namespace PgFramework\Security\Firewall\EventListener;
 
 use PgFramework\Auth;
+use PgFramework\Event\ResponseEvent;
 use PgFramework\Auth\ForbiddenException;
 use PgFramework\Auth\RememberMe\RememberMeInterface;
 use PgFramework\Security\Firewall\Event\AuthenticationEvent;
@@ -39,8 +40,16 @@ class RememberMeLoginListener
         }
         $user = $this->cookie->autoLogin($request);
         if (!$user) {
+            $event->setRequest($request->withAttribute('cancel.rememberme.cookie', true));
             throw new ForbiddenException("Cookie invalid");
         }
         $this->auth->setUser($user);
+    }
+
+    public function onResponseEvent(ResponseEvent $event)
+    {
+        $request = $event->getRequest();
+        $response = $event->getResponse();
+        $event->setResponse($this->cookie->resume($request, $response));
     }
 }
