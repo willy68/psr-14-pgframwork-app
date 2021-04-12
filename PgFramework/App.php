@@ -83,6 +83,12 @@ class App extends AbstractApplication implements RequestHandlerInterface
     private $listeners = [];
 
     /**
+     *
+     * @var ServerRequestInterface
+     */
+    private $request;
+
+    /**
      * App constructor
      *
      * @param array $config
@@ -215,13 +221,13 @@ class App extends AbstractApplication implements RequestHandlerInterface
         }
 
         if ($request === null) {
-            $request = ServerRequest::fromGlobals();
+            $this->request = ServerRequest::fromGlobals();
         }
 
         try {
-            return $this->handleEvent($request);
+            return $this->handleEvent($this->request);
         } catch (\Exception $e) {
-            return $this->handleException($e, $request);
+            return $this->handleException($e, $this->request);
         }
 
         //return $this->handle($request);
@@ -303,7 +309,7 @@ class App extends AbstractApplication implements RequestHandlerInterface
         return $event->getResponse();
     }
 
-    private function handleException(\Throwable $e, ServerRequestInterface $request)
+    private function handleException(\Throwable $e, ServerRequestInterface $request): ResponseInterface
     {
         $event = new ExceptionEvent($this, $request, $e);
         $this->dispatcher->dispatch($event);
@@ -379,5 +385,29 @@ class App extends AbstractApplication implements RequestHandlerInterface
     private function getMiddleware()
     {
         return $this->shiftMiddleware($this->getContainer());
+    }
+
+    /**
+     * Get the value of request
+     *
+     * @return  ServerRequestInterface
+     */ 
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * Set the value of request
+     *
+     * @param  ServerRequestInterface  $request
+     *
+     * @return  self
+     */ 
+    public function setRequest(ServerRequestInterface $request)
+    {
+        $this->request = $request;
+
+        return $this;
     }
 }

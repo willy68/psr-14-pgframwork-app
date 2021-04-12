@@ -10,12 +10,12 @@ class AppEvent extends StoppableEvent
 
     private $app;
 
-    public function __construct(ApplicationInterface $app)
+    public function __construct($app)
     {
         $this->app = $app;
     }
 
-    public function getApp(): ApplicationInterface
+    public function getApp()
     {
         return $this->app;
     }
