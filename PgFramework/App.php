@@ -312,7 +312,7 @@ class App extends AbstractApplication implements RequestHandlerInterface
     private function handleException(\Throwable $e, ServerRequestInterface $request): ResponseInterface
     {
         $event = new ExceptionEvent($this, $request, $e);
-        $this->dispatcher->dispatch($event);
+        $event = $this->dispatcher->dispatch($event);
 
         // a listener might have replaced the exception
         $e = $event->getException();
