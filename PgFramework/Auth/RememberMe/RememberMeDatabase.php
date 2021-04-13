@@ -203,18 +203,6 @@ class RememberMeDatabase extends AbstractRememberMe
         if ($cookie && $cookie->getValue()) {
             // Set new random password cookie
             $response = FigResponseCookies::set($response, $cookie);
-        } else {
-            $cookie = FigRequestCookies::get($request, $this->options['name']);
-            if ($cookie->getValue()) {
-                $setCookie = SetCookie::create($this->options['name'])
-                    ->withValue($cookie->getValue())
-                    ->withExpires(time() + $this->options['lifetime'])
-                    ->withPath($this->options['path'])
-                    ->withDomain($this->options['domain'])
-                    ->withSecure($this->options['secure'])
-                    ->withHttpOnly($this->options['httpOnly']);
-                $response = FigResponseCookies::set($response, $setCookie);
-            }
         }
         return $response;
     }
