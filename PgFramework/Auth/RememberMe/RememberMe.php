@@ -53,18 +53,18 @@ class RememberMe extends AbstractRememberMe
             $cookieParts = $this->decodeCookie($cookieValue);
 
             if (4 !== \count($cookieParts)) {
-                return $request->withAttribute('cancel.rememberme.cookie', true);
+                return $this->cancelCookie($request);
             }
 
-            [$username, $userClass, $expires, $hash] = $cookieParts;
+            [$username,, $expires, $hash] = $cookieParts;
 
             if (false === $username = base64_decode($username, true)) {
-                return $request->withAttribute('cancel.rememberme.cookie', true);
+                return $this->cancelCookie($request);
             }
 
             $user = $this->userRepository->getUser($this->options['field'], $username);
 
-            if (true === hash_equals(hash_hmac($this->algo, $username . $user->getPassword() . $userClass . $expires, $this->salt), $hash)) {
+            if (true === $this->validateToken($user, $expires, $hash)) {
                 $cookieValue = $this->getCookieHash(
                     $user->getUsername(),
                     $user->getPassword(),
@@ -85,7 +85,7 @@ class RememberMe extends AbstractRememberMe
                     ->withAttribute($this->options['attribute'], $cookie);
             }
         }
-        return $request->withAttribute('cancel.rememberme.cookie', true);
+        return $this->cancelCookie($request);
     }
 
     /**
@@ -123,7 +123,7 @@ class RememberMe extends AbstractRememberMe
         // Get $cookie
         $cookie = $request->getAttribute($this->options['attribute']);
 
-        if ($cookie && $cookie->getValue()) {
+        if ($cookie) {
             // Set new random password cookie
             $response = FigResponseCookies::set($response, $cookie);
         } else {
@@ -155,5 +155,29 @@ class RememberMe extends AbstractRememberMe
             $expires,
             hash_hmac($this->algo, $credential . $password . $userClass . $expires, $this->salt)
         ]);
+    }
+
+    protected function validateToken($user, $expires, $hash): bool
+    {
+        return true === hash_equals(
+            hash_hmac(
+                $this->algo,
+                $user->getUsername() . $user->getPassword() . get_class($user) . $expires,
+                $this->salt
+            ),
+            $hash
+        );
+    }
+
+    protected function cancelCookie(ServerRequestInterface $request): ServerRequestInterface
+    {
+        $cookie = SetCookie::create($this->options['name'])
+            ->withValue('')
+            ->withExpires(time() - 3600)
+            ->withPath($this->options['path'])
+            ->withDomain($this->options['domain'])
+            ->withSecure($this->options['secure'])
+            ->withHttpOnly($this->options['httpOnly']);
+        return $request->withAttribute($this->options['attribute'], $cookie);
     }
 }

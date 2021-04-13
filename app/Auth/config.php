@@ -11,6 +11,7 @@ use App\Auth\{
     Middleware\ForbidenMiddleware,
     UserTokenRepository
 };
+use PgFramework\Auth\RememberMe\RememberMe;
 use PgFramework\Auth\Repository\UserRepositoryInterface;
 use PgFramework\Auth\RememberMe\RememberMeDatabase;
 use PgFramework\Auth\RememberMe\RememberMeInterface;
@@ -37,6 +38,8 @@ return [
     })->parameter('auth', get(Auth::class)),
     RememberMeInterface::class => \DI\get(RememberMeDatabase::class),
     RememberMeDatabase::class =>
+    \DI\autowire()->constructorParameter('salt', Environnement::getEnv('APP_KEY', 'abcdefghijklmnop123456789')),
+    RememberMe::class =>
     \DI\autowire()->constructorParameter('salt', Environnement::getEnv('APP_KEY', 'abcdefghijklmnop123456789')),
     UtilTokenInterface::class => \DI\get(UtilToken::class),
     UserRepositoryInterface::class => \DI\get(ActiveRecordUserRepository::class),

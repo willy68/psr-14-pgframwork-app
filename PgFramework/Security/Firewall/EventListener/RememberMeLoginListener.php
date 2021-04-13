@@ -39,11 +39,10 @@ class RememberMeLoginListener
             return;
         }
         $request = $this->cookie->autoLogin($request);
+        $event->setRequest($request);
         if (!($user = $request->getAttribute('_user'))) {
-            $event->setRequest($request);
             throw new ForbiddenException("Cookie invalid");
         }
-        $event->setRequest($request);
         $this->auth->setUser($user);
     }
 
@@ -52,6 +51,5 @@ class RememberMeLoginListener
         $request = $event->getRequest();
         $response = $event->getResponse();
         $event->setResponse($this->cookie->resume($request, $response));
-        $event->setRequest($request);
     }
 }
