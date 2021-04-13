@@ -76,27 +76,42 @@ class RememberMeDatabase extends AbstractRememberMe
      * vérifie le token en base de données s'il est valide
      *
      * @param ServerRequestInterface $request
-     * @return User|null
+     * @return ServerRequestInterface
      */
-    public function autoLogin(ServerRequestInterface $request): ?User
+    public function autoLogin(ServerRequestInterface $request): ServerRequestInterface
     {
+        $authenticate = true;
+
         $cookie = FigRequestCookies::get($request, $this->options['name']);
         if (!$cookie->getValue()) {
-            return null;
+            return $request->withAttribute('cancel.rememberme.cookie', true);
         }
 
-        $cookieParts = $this->decodeCookie($cookie->getValue());
-        if (3 !== \count($cookieParts)) {
-            return null;
+        try {
+            $cookieParts = $this->decodeCookie($cookie->getValue());
+            if (3 !== \count($cookieParts)) {
+                throw new \Exception();
+            }
+
+            [$series,, $randomPassword] = $cookieParts;
+            $token = $this->tokenRepository->getTokenBySeries($series);
+
+            if (!$token) {
+                $authenticate = false;
+            }
+        } catch (\Exception $e) {
+            $authenticate = false;
+        } catch (\TypeError $e) {
+            $authenticate = false;
         }
 
-        [$series, , $randomPassword] = $cookieParts;
-        $token = $this->tokenRepository->getTokenBySeries($series);
+        if (!$authenticate) {
+            return $request->withAttribute('cancel.rememberme.cookie', true);
+        }
 
         $user = $this->userRepository->getUser($this->options['field'], $token->getCredential());
         if ($user) {
 
-            $authenticate = true;
             //password corrupted
             if (!hash_equals($token->getRandomPassword(), $randomPassword)) {
                 $authenticate = false;
@@ -108,13 +123,31 @@ class RememberMeDatabase extends AbstractRememberMe
             // Remove token from database
             if (!$authenticate) {
                 $this->tokenRepository->deleteToken($token->getId());
-                return null;
+                return $request->withAttribute('cancel.rememberme.cookie', true);
             }
 
             //["series', 'credential', 'random_password', 'expiration_date']
-            $this->tokenRepository->updateToken(['expiration_date' => new \DateTime()], $token->getId());
+            $randomPassword = base64_encode(random_bytes(64));
+            $this->tokenRepository->updateToken(
+                [
+                    'random_password' => $randomPassword,
+                    'expiration_date' => new \DateTime()
+                ],
+                $token->getId()
+            );
+
+            $cookie = SetCookie::create($this->options['name'])
+            ->withValue($this->encodeCookie([$series, $user->getUsername(), $randomPassword]))
+            ->withExpires(time() +  $this->options['lifetime'])
+            ->withPath($this->options['path'])
+            ->withDomain($this->options['domain'])
+            ->withSecure($this->options['secure'])
+            ->withHttpOnly($this->options['httpOnly']);
+
+            $request = $request->withAttribute($this->options['attribute'], $cookie);
         }
-        return $user;
+        /** @var ServerRequestInterface $request */
+        return $request->withAttribute('_user', $user);
     }
 
     /**
@@ -164,18 +197,24 @@ class RememberMeDatabase extends AbstractRememberMe
      */
     public function resume(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        // Get $credential
-        $cookie = FigRequestCookies::get($request, $this->options['name']);
-        if ($cookie->getValue()) {
+        // Get $cookie
+        $cookie = $request->getAttribute($this->options['attribute']);
+
+        if ($cookie && $cookie->getValue()) {
             // Set new random password cookie
-            $cookie = SetCookie::create($this->options['name'])
-                ->withValue($cookie->getValue())
-                ->withExpires(time() +  $this->options['lifetime'])
-                ->withPath($this->options['path'])
-                ->withDomain($this->options['domain'])
-                ->withSecure($this->options['secure'])
-                ->withHttpOnly($this->options['httpOnly']);
             $response = FigResponseCookies::set($response, $cookie);
+        } else {
+            $cookie = FigRequestCookies::get($request, $this->options['name']);
+            if ($cookie->getValue()) {
+                $setCookie = SetCookie::create($this->options['name'])
+                    ->withValue($cookie->getValue())
+                    ->withExpires(time() + $this->options['lifetime'])
+                    ->withPath($this->options['path'])
+                    ->withDomain($this->options['domain'])
+                    ->withSecure($this->options['secure'])
+                    ->withHttpOnly($this->options['httpOnly']);
+                $response = FigResponseCookies::set($response, $setCookie);
+            }
         }
         return $response;
     }

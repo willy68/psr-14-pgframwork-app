@@ -28,9 +28,9 @@ interface RememberMeInterface
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param string $salt
-     * @return \PgFramework\Auth\User|null
+     * @return ServerRequestInterface with _user attribute or not
      */
-    public function autoLogin(ServerRequestInterface $request): ?User;
+    public function autoLogin(ServerRequestInterface $request): ServerRequestInterface;
 
     /**
      * Déconnecte l'utilisateur et invalide le cookie dans la response

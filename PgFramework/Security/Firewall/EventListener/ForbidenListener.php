@@ -2,6 +2,7 @@
 
 namespace PgFramework\Security\Firewall\EventListener;
 
+use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\SetCookie;
 use PgFramework\Event\ExceptionEvent;
 use PgFramework\Session\FlashService;
@@ -48,14 +49,15 @@ class ForbidenListener
     {
         $e = $event->getException();
         $request = $event->getRequest();
+
         if ($e instanceof ForbiddenException) {
             $response = $this->redirectLogin($request);
 
             // Todo create CancelRememberMeCookieListener
             if ($request->getAttribute('cancel.rememberme.cookie')) {
                 $response = $this->cancelCookie($response);
+                $event->setRequest(FigRequestCookies::remove($request, $this->options['name']));
             }
-
             $event->setResponse($response);
             return;
         }

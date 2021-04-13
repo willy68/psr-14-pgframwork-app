@@ -67,20 +67,20 @@ class Firewall extends EventDispatcher
         }
 
         $firewallEvent = new AuthenticationEvent($event->getApp(), $request);
-        $this->dispatch($firewallEvent);
+        $firewallEvent = $this->dispatch($firewallEvent);
+        $event->setRequest($firewallEvent->getRequest());
 
         if ($firewallEvent->hasResponse()) {
             $event->setResponse($firewallEvent->getResponse());
-            $event->setRequest($firewallEvent->getRequest());
             return;
         }
 
         $firewallEvent = new AuthorizationEvent($event->getApp(), $firewallEvent->getRequest());
-        $this->dispatch($firewallEvent);
+        $firewallEvent = $this->dispatch($firewallEvent);
+        $event->setRequest($firewallEvent->getRequest());
 
         if ($firewallEvent->hasResponse()) {
             $event->setResponse($firewallEvent->getResponse());
-            $event->setRequest($firewallEvent->getRequest());
         }
     }
 }

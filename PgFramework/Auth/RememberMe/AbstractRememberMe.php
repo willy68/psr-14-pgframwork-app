@@ -36,6 +36,7 @@ abstract class AbstractRememberMe implements RememberMeInterface
      */
     protected $options = [
         'name' => 'auth_login',
+        'attribute' => '_rememberme.cookie',
         'field' => 'username',
         'lifetime' => 3600 * 24 * 3,
         'path' => '/',

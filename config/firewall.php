@@ -15,11 +15,11 @@ return [
         [
             'default.listeners' => [
                 RememberMeLoginListener::class . '::onAuthenticationEvent' => [FirewallEvents::AUTHENTICATION, ListenerPriority::HIGH],
-                LoggedInListener::class . '::onAuthenticationEvent' => [FirewallEvents::AUTHENTICATION, ListenerPriority::HIGH],
+                LoggedInListener::class . '::onAuthenticationEvent' => [FirewallEvents::AUTHENTICATION, ListenerPriority::NORMAL],
             ],
             'default.main.listeners' => [
+                ForbidenListener::class . '::onException' => [Events::EXCEPTION, ListenerPriority::HIGH],
                 RememberMeLoginListener::class . '::onResponseEvent' => [Events::RESPONSE, ListenerPriority::NORMAL],
-                ForbidenListener::class . '::onException' => [Events::EXCEPTION, ListenerPriority::HIGH]
             ]
         ],
         [
