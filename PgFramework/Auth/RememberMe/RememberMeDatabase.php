@@ -113,7 +113,7 @@ class RememberMeDatabase extends AbstractRememberMe
         if ($user) {
 
             //password corrupted
-            if (!hash_equals($token->getRandomPassword(), $randomPassword)) {
+            if (!hash_equals(base64_decode($token->getRandomPassword()), base64_decode($randomPassword))) {
                 $authenticate = false;
             }
             // expiration outdated
