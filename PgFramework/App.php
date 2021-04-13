@@ -326,7 +326,7 @@ class App extends AbstractApplication implements RequestHandlerInterface
         $response = $event->getResponse();
 
         try {
-            return $this->filterResponse($response, $request);
+            return $this->filterResponse($response, $event->getRequest());
         } catch (\Exception $e) {
             return $response;
         }

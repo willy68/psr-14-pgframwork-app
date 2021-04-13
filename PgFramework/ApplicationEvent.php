@@ -78,6 +78,12 @@ class ApplicationEvent extends AbstractApplication
     private $listeners = [];
 
     /**
+     *
+     * @var ServerRequestInterface
+     */
+    private $request;
+
+    /**
      * App constructor
      *
      * @param array $config
@@ -178,14 +184,16 @@ class ApplicationEvent extends AbstractApplication
         }
 
         if ($request === null) {
-            $request = ServerRequest::fromGlobals();
+            $this->request = ServerRequest::fromGlobals();
         }
 
         try {
-            return $this->handleEvent($request);
+            return $this->handleEvent($this->request);
         } catch (\Exception $e) {
-            return $this->handleException($e, $request);
+            return $this->handleException($e, $this->request);
         }
+
+        //return $this->handle($request);
     }
 
     private function handleEvent(ServerRequestInterface $request): ResponseInterface
@@ -194,7 +202,7 @@ class ApplicationEvent extends AbstractApplication
         $event = $this->dispatcher->dispatch($event);
 
         if ($event->hasResponse()) {
-            return $this->filterResponse($event->getResponse(), $request);
+            return $this->filterResponse($event->getResponse(), $event->getRequest());
         }
 
         /** @var RouteResult $result */
@@ -215,7 +223,7 @@ class ApplicationEvent extends AbstractApplication
             $container->set(ServerRequestInterface::class, $event->getRequest());
         } else {
             // Limitation: $request must be named "$request"
-            $params = array_merge(["request" => $request], $params);
+            $params = array_merge(["request" => $event->getRequest()], $params);
         }
 
         $callableReflection = CallableReflection::create($controller);
@@ -264,7 +272,7 @@ class ApplicationEvent extends AbstractApplication
         return $event->getResponse();
     }
 
-    private function handleException(\Throwable $e, ServerRequestInterface $request)
+    private function handleException(\Throwable $e, ServerRequestInterface $request): ResponseInterface
     {
         $event = new ExceptionEvent($this, $request, $e);
         $this->dispatcher->dispatch($event);
@@ -281,7 +289,7 @@ class ApplicationEvent extends AbstractApplication
         $response = $event->getResponse();
 
         try {
-            return $this->filterResponse($response, $request);
+            return $this->filterResponse($response, $event->getRequest());
         } catch (\Exception $e) {
             return $response;
         }
@@ -328,5 +336,29 @@ class ApplicationEvent extends AbstractApplication
     public function getDispatcher()
     {
         return $this->dispatcher;
+    }
+
+    /**
+     * Get the value of request
+     *
+     * @return  ServerRequestInterface
+     */ 
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * Set the value of request
+     *
+     * @param  ServerRequestInterface  $request
+     *
+     * @return  self
+     */ 
+    public function setRequest(ServerRequestInterface $request)
+    {
+        $this->request = $request;
+
+        return $this;
     }
 }
