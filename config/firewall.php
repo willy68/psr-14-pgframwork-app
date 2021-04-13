@@ -29,6 +29,12 @@ return [
             ],
         ],
         [
+            'path' => '^/api/clients',
+            'listeners' => [
+                AuthorizationListener::class . '::onAuthorization' => [FirewallEvents::AUTHORIZATION, ListenerPriority::LOW]
+            ],
+        ],
+        [
             'path' => '^/admin',
             // Other RequestMatcher rules
             //'method' => [],
@@ -62,6 +68,12 @@ return [
         [
             'path' => '^/admin/categories/(\d+)',
             'attributes' => [],
+        ],
+        [
+            'path' => '^/api/clients',
+            'attributes' => [
+                'ROLE_ADMIN',
+            ],
         ]
     ])
 ];
