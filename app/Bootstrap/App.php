@@ -21,6 +21,8 @@ use PgFramework\EventListener\MethodHeadListener;
 use PgFramework\EventListener\InvalidCsrfListener;
 use PgFramework\Middleware\PageNotFoundMiddleware;
 use PgFramework\EventListener\ActiveRecordListener;
+use PgFramework\EventListener\BodyParserListener;
+use PgFramework\EventListener\ContentTypeJsonListener;
 use PgFramework\EventListener\PageNotFoundListener;
 use PgFramework\Middleware\TrailingSlashMiddleware;
 use PgFramework\EventListener\MethodOptionsListener;
@@ -60,6 +62,7 @@ return [
         MethodNotAllowedListener::class => [Events::REQUEST, ListenerPriority::HIGH],
         PageNotFoundListener::class => [Events::REQUEST, ListenerPriority::HIGH],
         ActiveRecordListener::class => [Events::REQUEST, ListenerPriority::HIGH],
+        BodyParserListener::class => [Events::REQUEST, ListenerPriority::HIGH],
         CsrfCookieListener::class . '::onRequest' => [Events::REQUEST, ListenerPriority::HIGH],
         //CsrfListener::class => [Events::REQUEST, ListenerPriority::HIGH],
         Firewall::class => [Events::REQUEST, ListenerPriority::HIGH],
@@ -68,6 +71,7 @@ return [
         StringResponseListener::class => [Events::VIEW, ListenerPriority::HIGH],
         MethodHeadListener::class . '::onResponse' => [Events::RESPONSE, ListenerPriority::LOW],
         CsrfCookieListener::class . '::onResponse' => [Events::RESPONSE, ListenerPriority::LOW],
+        ContentTypeJsonListener::class => [Events::RESPONSE, ListenerPriority::LOW],
     ],
 
     /* DI Base configuration. Place your own on the list */
