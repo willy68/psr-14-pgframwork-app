@@ -225,14 +225,14 @@ class App extends AbstractApplication implements RequestHandlerInterface
         if ($request === null) {
             $this->request = ServerRequest::fromGlobals();
         }
-/*
+
         try {
             return $this->handleEvent($this->request);
         } catch (\Exception $e) {
             return $this->handleException($e, $this->request);
         }
-*/
-        return $this->handle($this->request);
+
+        //return $this->handle($this->request);
     }
 
     private function handleEvent(ServerRequestInterface $request): ResponseInterface
