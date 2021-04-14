@@ -7,10 +7,9 @@ use Mezzio\Router\FastRouteRouter;
 use Mezzio\Router\RouterInterface;
 use App\Blog\Actions\PostCrudAction;
 use PgFramework\Renderer\TwigRenderer;
-use PgFramework\Auth\LoggedInMiddleware;
 use App\Blog\Actions\CategoryCrudAction;
+use PgFramework\Auth\LoggedInMiddleware;
 use PgFramework\Renderer\RendererInterface;
-use App\Auth\Middleware\ForbidenMiddleware;
 use PgFramework\Auth\Middleware\CookieLoginMiddleware;
 
 class AdminModule extends Module
@@ -31,11 +30,9 @@ class AdminModule extends Module
         $renderer->addPath('admin', __DIR__ . '/views');
         /** @var FastRouteRouter $router */
         $router->crud("$prefix/posts", PostCrudAction::class, 'blog.admin')
-            ->middleware(ForbidenMiddleware::class)
             ->middleware(CookieLoginMiddleware::class)
             ->middleware(LoggedInMiddleware::class);
         $router->crud("$prefix/categories", CategoryCrudAction::class, 'blog.admin.category')
-            ->middleware(ForbidenMiddleware::class)
             ->middleware(CookieLoginMiddleware::class)
             ->middleware(LoggedInMiddleware::class);
         if ($renderer instanceof TwigRenderer) {

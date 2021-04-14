@@ -2,8 +2,10 @@
 
 namespace PgFramework\Security\Firewall\EventListener;
 
+use GuzzleHttp\Psr7\Response;
 use PgFramework\Event\ExceptionEvent;
 use PgFramework\Session\FlashService;
+use PgFramework\HttpUtils\RequestUtils;
 use Psr\Http\Message\ResponseInterface;
 use PgFramework\Auth\ForbiddenException;
 use PgFramework\Session\SessionInterface;
@@ -34,11 +36,19 @@ class ForbidenListener
         $request = $event->getRequest();
 
         if ($e instanceof ForbiddenException) {
+            if (RequestUtils::isJson($request)) {
+                $event->setResponse(new Response(403, [], $e->getMessage() . ' ' . $e->getCode()));
+                return;
+            }
             $event->setResponse($this->redirectLogin($request));
             return;
         }
 
         if ($e instanceof FailedAccessException) {
+            if (RequestUtils::isJson($request)) {
+                $event->setResponse(new Response(403, [], $e->getMessage() . ' ' . $e->getCode()));
+                return;
+            }
             $event->setResponse($this->redirectAdminHome($request));
             return;
         }

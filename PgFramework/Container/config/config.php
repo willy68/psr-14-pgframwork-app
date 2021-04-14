@@ -35,7 +35,6 @@ use PgFramework\Security\Csrf\TokenStorage\TokenSessionStorage;
 use PgFramework\Security\Csrf\TokenStorage\TokenStorageInterface;
 use PgFramework\Security\Firewall\AccessMapFactory;
 use PgFramework\Security\Firewall\AccessMapInterface;
-use PgFramework\Security\Firewall\Firewall;
 use PgFramework\Security\Firewall\FirewallMapFactory;
 use PgFramework\Security\Firewall\FirewallMapInterface;
 use PgFramework\Validator\Filter\StriptagsFilter;

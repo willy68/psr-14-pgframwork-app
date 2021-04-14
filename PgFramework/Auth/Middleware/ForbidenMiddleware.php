@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Auth\Middleware;
+namespace PgFramework\Auth\Middleware;
 
 use PgFramework\Auth\User;
+use GuzzleHttp\Psr7\Response;
 use PgFramework\Session\FlashService;
+use PgFramework\HttpUtils\RequestUtils;
 use Psr\Http\Message\ResponseInterface;
 use PgFramework\Auth\ForbiddenException;
 use Psr\Http\Server\MiddlewareInterface;
@@ -36,11 +38,20 @@ class ForbidenMiddleware implements MiddlewareInterface
         try {
             return $handler->handle($request);
         } catch (ForbiddenException $e) {
+            if (RequestUtils::isJson($request)) {
+                Return new Response(403, [], $e->getMessage() . ' ' . $e->getCode());
+            }
             return $this->redirectLogin($request);
         } catch (FailedAccessException $e) {
+            if (RequestUtils::isJson($request)) {
+                Return new Response(403, [], $e->getMessage() . ' ' . $e->getCode());
+            }
             return $this->redirectAdminHome($request);
         } catch (\TypeError $error) {
             if (strpos($error->getMessage(), User::class) !== false) {
+                if (RequestUtils::isJson($request)) {
+                    Return new Response(403, [], $error->getMessage() . ' ' . $error->getCode());
+                }
                 return $this->redirectLogin($request);
             }
         }

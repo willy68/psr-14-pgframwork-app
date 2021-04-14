@@ -8,9 +8,9 @@ use PgFramework\{
 use App\Auth\{
     ActiveRecordUserRepository,
     Twig\AuthTwigExtension,
-    Middleware\ForbidenMiddleware,
     UserTokenRepository
 };
+use PgFramework\Auth\Middleware\ForbidenMiddleware;
 use PgFramework\Auth\RememberMe\RememberMe;
 use PgFramework\Auth\Repository\UserRepositoryInterface;
 use PgFramework\Auth\RememberMe\RememberMeDatabase;

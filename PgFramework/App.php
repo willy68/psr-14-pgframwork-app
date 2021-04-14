@@ -182,6 +182,8 @@ class App extends AbstractApplication implements RequestHandlerInterface
      */
     public function run(?ServerRequestInterface $request = null): ResponseInterface
     {
+        $this->request = $request;
+
         $container = $this->getContainer();
 
         if (!$this->callableResolver) {
@@ -223,14 +225,14 @@ class App extends AbstractApplication implements RequestHandlerInterface
         if ($request === null) {
             $this->request = ServerRequest::fromGlobals();
         }
-
+/*
         try {
             return $this->handleEvent($this->request);
         } catch (\Exception $e) {
             return $this->handleException($e, $this->request);
         }
-
-        //return $this->handle($request);
+*/
+        return $this->handle($this->request);
     }
 
     private function handleEvent(ServerRequestInterface $request): ResponseInterface

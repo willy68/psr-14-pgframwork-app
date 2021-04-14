@@ -1,12 +1,15 @@
 <?php
 
-namespace PgFramework\EventListener;
+namespace PgFramework\Middleware;
 
-use PgFramework\Event\RequestEvent;
+use Psr\Http\Message\ResponseInterface;
 use Grafikart\Csrf\InvalidCsrfException;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
 
-class CsrfListener implements CsrfListenerInterface
+class SessionCsrfMiddleware implements MiddlewareInterface
 {
 
     /**
@@ -39,9 +42,8 @@ class CsrfListener implements CsrfListenerInterface
      * @param object $event
      * @return void
      */
-    public function __invoke(RequestEvent $event)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $request = $event->getRequest();
         $method = $request->getMethod();
 
         if (\in_array($method, ['DELETE', 'PATCH', 'POST', 'PUT'], true)) {
@@ -57,13 +59,6 @@ class CsrfListener implements CsrfListenerInterface
             [$tokenId] = explode(CsrfTokenManagerInterface::delimiter, $params[$this->formKey]);
             $this->tokenManager->removeToken($tokenId);
         }
-    }
-
-    /**
-     * @return string
-     */
-    public function getFormKey(): string
-    {
-        return $this->formKey;
+        return $handler->handle($request);
     }
 }

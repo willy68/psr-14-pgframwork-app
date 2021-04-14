@@ -145,6 +145,8 @@ class ApplicationEvent extends AbstractApplication
      */
     public function run(?ServerRequestInterface $request = null): ResponseInterface
     {
+        $this->request = $request;
+
         $container = $this->getContainer();
 
         if (!$this->callableResolver) {
@@ -192,8 +194,6 @@ class ApplicationEvent extends AbstractApplication
         } catch (\Exception $e) {
             return $this->handleException($e, $this->request);
         }
-
-        //return $this->handle($request);
     }
 
     private function handleEvent(ServerRequestInterface $request): ResponseInterface
@@ -275,7 +275,7 @@ class ApplicationEvent extends AbstractApplication
     private function handleException(\Throwable $e, ServerRequestInterface $request): ResponseInterface
     {
         $event = new ExceptionEvent($this, $request, $e);
-        $this->dispatcher->dispatch($event);
+        $event = $this->dispatcher->dispatch($event);
 
         // a listener might have replaced the exception
         $e = $event->getException();
