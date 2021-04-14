@@ -10,6 +10,7 @@ use Dflydev\FigCookies\FigResponseCookies;
 use PgFramework\Security\Security;
 use PgFramework\Session\SessionInterface;
 use Grafikart\Csrf\InvalidCsrfException;
+use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
@@ -23,16 +24,15 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
         'field' => '_csrf',
         'expiry' => 0,
         'secure' => false,
-        'httponly' => false,
+        'httponly' => true,
         'samesite' => null,
     ];
 
     /**
-     * @var array|\ArrayAccess
+     *
+     * @var CsrfTokenManagerInterface
      */
-    private $session;
-
-    protected $tokenField;
+    private $tokenManager;
 
     /**
      * CsrfMiddleware constructor.
@@ -42,13 +42,9 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
      * @param string             $sessionKey
      * @param string             $formKey
      */
-    public function __construct(
-        SessionInterface &$session,
-        string $sessionKey = 'csrf.tokens'
-    ) {
-        $this->testSession($session);
-        $this->session = &$session;
-        $this->config['session.key'] = $sessionKey;
+    public function __construct(CsrfTokenManagerInterface $tokenManager)
+    {
+        $this->tokenManager = $tokenManager;
     }
 
     /**
@@ -61,16 +57,15 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
         $method = $request->getMethod();
 
         $cookie = FigRequestCookies::get($request, $this->config['cookieName'])->getValue();
-        $this->tokenField = $cookie;
 
         if (is_string($cookie) && strlen($cookie) > 0) {
+            [$tokenId] = explode(CsrfTokenManagerInterface::delimiter, $cookie);
+            $cookie = $this->tokenManager->getToken($tokenId); 
             $request = $request->withAttribute($this->config['field'], $cookie);
         }
 
-        if (\in_array($method, ['GET', 'HEAD'], true) && null === $cookie) {
-
-            $token = Security::saltToken(Security::createToken());
-            $this->tokenField = $token;
+        if (\in_array($method, ['GET', 'HEAD'], true) && strlen($cookie) === 0) {
+            $token = $this->getToken();
             $request = $request->withAttribute($this->config['field'], $token);
 
             $response = $handler->handle($request);
@@ -90,17 +85,26 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
             if ((\is_array($body) || $body instanceof \ArrayAccess) && !empty($body)) {
                 $token = $body[$this->config['field']];
                 $this->validateToken($token, $cookie);
+
                 return $handler->handle($request);
+
+
+            } else if (!$request->hasHeader($this->config['header'])) {
+
+                throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
+
+            } else {
+
+                $headerCookie = $request->getHeaderLine($this->config['header']);
+                $this->validateToken($headerCookie, $cookie);
+            
             }
 
-            if (!$request->hasHeader($this->config['header'])) {
-                throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
-            }
-            $headerCookie = $request->getHeaderLine($this->config['header']);
-            $this->validateToken($headerCookie, $cookie);
+            [$tokenId] = explode(CsrfTokenManagerInterface::delimiter, $cookie);
+            $token = $this->tokenManager->refreshToken($tokenId);
+            $request = $request->withAttribute($this->config['field'], $token);
         }
 
-        $this->session[$this->config['session.key']] = $this->tokenField;
         return $handler->handle($request);
     }
 
@@ -109,29 +113,11 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
         if (!$cookie) {
             throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
         }
-
-        $cookie = Security::unsaltToken($cookie);
-        if (!Security::verifyToken($cookie)) {
-            throw new InvalidCsrfException('Le cookie Csrf est incorrect');
+        if (!$this->tokenManager->isTokenValid($token)) {
+            throw new InvalidCsrfException('Le Csrf est incorrect');
         }
-
-        $csrfField = Security::unsaltToken($token);
-        if (!hash_equals($csrfField, $cookie)) {
+        if (!hash_equals($token, $cookie)) {
             throw new InvalidCsrfException('Le cookie Csrf est incorrect');
-        }
-    }
-
-    /**
-     * Test if the session acts as an array.
-     *
-     * @param $session
-     *
-     * @throws \TypeError
-     */
-    private function testSession($session): void
-    {
-        if (!\is_array($session) && !$session instanceof \ArrayAccess) {
-            throw new \TypeError('session is not an array');
         }
     }
 
@@ -140,8 +126,9 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
         return $this->config['field'];
     }
 
-    public function generateToken(): string
+    public function getToken(): string
     {
-        return $this->session[$this->config['session.key']];
+        $this->tokenId = bin2hex(Security::randomBytes(8));
+        return $this->tokenManager->getToken($this->tokenId);
     }
 }

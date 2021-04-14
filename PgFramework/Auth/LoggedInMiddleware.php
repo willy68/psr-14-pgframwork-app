@@ -40,6 +40,6 @@ class LoggedInMiddleware implements MiddlewareInterface
         if (!$user) {
             throw new ForbiddenException();
         }
-        return $handler->handle($request->withAttribute('user', $user));
+        return $handler->handle($request->withAttribute('_user', $user));
     }
 }

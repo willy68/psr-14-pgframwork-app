@@ -125,7 +125,7 @@ class CsrfCookieListener implements CsrfListenerInterface
 
     public function getToken(): string
     {
-        $this->tokenId = bin2hex(Security::randomBytes(8));
-        return $this->tokenManager->getToken($this->tokenId);
+        $tokenId = bin2hex(Security::randomBytes(8));
+        return $this->tokenManager->getToken($tokenId);
     }
 }

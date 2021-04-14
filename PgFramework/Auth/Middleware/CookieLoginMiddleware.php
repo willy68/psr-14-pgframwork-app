@@ -37,8 +37,8 @@ class CookieLoginMiddleware implements MiddlewareInterface
         if ($user) {
             return $handler->handle($request);
         }
-        $user = $this->cookie->autoLogin($request);
-        if (!$user) {
+        $request = $this->cookie->autoLogin($request);
+        if (!($user = $request->getAttribute('_user'))) {
             throw new ForbiddenException("Cookie invalid");
         }
         $this->auth->setUser($user);

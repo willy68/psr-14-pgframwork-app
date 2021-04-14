@@ -30,6 +30,6 @@ class LoggedInListener
         if (!$user) {
             throw new ForbiddenException('Vous n\'êtes pas connecté');
         }
-        $event->setRequest($request->withAttribute('user', $user));
+        $event->setRequest($request->withAttribute('_user', $user));
     }
 }
