@@ -13,6 +13,7 @@ use App\Api\Client\Civilite\CiviliteController;
 use PgFramework\Middleware\ContentTypeJsonMiddleware;
 use PgFramework\Middleware\CorsAllowOriginMiddleware;
 use App\Api\Client\AdresseType\AdresseTypeController;
+use PgFramework\Middleware\BodyParserMiddleware;
 
 class ApiClientModule extends Module
 {
@@ -150,6 +151,7 @@ class ApiClientModule extends Module
             );
         })
             // ->middleware(JwtAuthentication::class)
+            ->middleware(BodyParserMiddleware::class)
             ->middleware(CorsAllowOriginMiddleware::class)
             ->middleware(ContentTypeJsonMiddleware::class);
     }

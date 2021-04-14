@@ -29,9 +29,9 @@ return [
             ],
         ],
         [
-            'path' => '^/api/clients',
+            'path' => '^/api*',
             'listeners' => [
-                AuthorizationListener::class . '::onAuthorization' => [FirewallEvents::AUTHORIZATION, ListenerPriority::LOW]
+                AuthorizationListener::class . '::onAuthorization' => [FirewallEvents::AUTHORIZATION, ListenerPriority::LOW],
             ],
         ],
         [
@@ -70,7 +70,7 @@ return [
             'attributes' => [],
         ],
         [
-            'path' => '^/api/clients',
+            'path' => '^/api*',
             'attributes' => [
                 'ROLE_ADMIN',
             ],

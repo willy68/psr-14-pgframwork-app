@@ -18,6 +18,6 @@ class ContentTypeJsonMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $response = $handler->handle($request);
-        return $response->withAddedHeader('Content-type', 'application/json,application/*+json;charset=UTF-8');
+        return $response->withAddedHeader('Content-type', 'application/json;charset=UTF-8');
     }
 }

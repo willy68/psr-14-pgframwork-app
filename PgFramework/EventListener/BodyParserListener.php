@@ -14,16 +14,11 @@ declare(strict_types=1);
  * @since         3.6.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace PgFramework\Middleware;
+namespace PgFramework\EventListener;
 
-use Cake\Utility\Exception\XmlException;
-use Cake\Utility\Xml;
 use Closure;
 use InvalidArgumentException;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
-use Psr\Http\Server\RequestHandlerInterface;
+use PgFramework\Event\RequestEvent;
 
 /**
  * Parse encoded request body data.
@@ -33,7 +28,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  *
  * You can also add your own request body parsers using the `addParser()` method.
  */
-class BodyParserMiddleware implements MiddlewareInterface
+class BodyParserListener
 {
     /**
      * Registered Parsers
@@ -63,17 +58,11 @@ class BodyParserMiddleware implements MiddlewareInterface
      */
     public function __construct(array $options = [])
     {
-        $options += ['json' => true, 'xml' => false, 'methods' => $this->methods];
+        $options += ['json' => true, 'methods' => $this->methods];
         if ($options['json']) {
             $this->addParser(
                 ['application/json', 'text/json'],
                 Closure::fromCallable([$this, 'decodeJson'])
-            );
-        }
-        if ($options['xml']) {
-            $this->addParser(
-                ['application/xml', 'text/xml'],
-                Closure::fromCallable([$this, 'decodeXml'])
             );
         }
         if ($options['methods']) {
@@ -149,19 +138,19 @@ class BodyParserMiddleware implements MiddlewareInterface
      *
      * Will modify the request adding a parsed body if the content-type is known.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request The request.
-     * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
-     * @return \Psr\Http\Message\ResponseInterface A response.
+     * @param RequestEvent $event
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    public function __invoke(RequestEvent $event)
     {
+        $request = $event->getRequest();
+
         if (!in_array($request->getMethod(), $this->methods, true)) {
-            return $handler->handle($request);
+            return;
         }
         [$type] = explode(';', $request->getHeaderLine('Content-Type'));
         $type = strtolower($type);
         if (!isset($this->parsers[$type])) {
-            return $handler->handle($request);
+            return;
         }
 
         $parser = $this->parsers[$type];
@@ -171,7 +160,7 @@ class BodyParserMiddleware implements MiddlewareInterface
         }
         $request = $request->withParsedBody($result);
 
-        return $handler->handle($request);
+        $event->setRequest($request);
     }
 
     /**
@@ -191,26 +180,5 @@ class BodyParserMiddleware implements MiddlewareInterface
         }
 
         return null;
-    }
-
-    /**
-     * Decode XML into an array.
-     *
-     * @param string $body The request body to decode
-     * @return array
-     */
-    protected function decodeXml(string $body): array
-    {
-        try {
-            $xml = Xml::build($body, ['return' => 'domdocument', 'readFile' => false]);
-            // We might not get child nodes if there are nested inline entities.
-            if ((int)$xml->childNodes->length > 0) {
-                return Xml::toArray($xml);
-            }
-
-            return [];
-        } catch (XmlException $e) {
-            return [];
-        }
     }
 }

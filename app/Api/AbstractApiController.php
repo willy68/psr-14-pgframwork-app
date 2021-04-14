@@ -6,6 +6,7 @@ use ActiveRecord\Model;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use ActiveRecord\Exceptions\RecordNotFound;
+use PgFramework\HttpUtils\RequestUtils;
 use Psr\Http\Message\ServerRequestInterface;
 
 class AbstractApiController
@@ -177,8 +178,11 @@ class AbstractApiController
      */
     protected function getParams(ServerRequestInterface $request, array $fields): array
     {
-        $params = json_decode((string) $request->getBody(), true);
-        if (is_null($params)) {
+        $params = $request->getParsedBody();
+        if (is_string($params)) {
+            $params = RequestUtils::getPostParams($request);
+        }
+        if (empty($params)) {
             return [];
         }
         return array_filter($params, function ($key) use ($fields) {

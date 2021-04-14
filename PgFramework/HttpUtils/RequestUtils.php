@@ -38,7 +38,11 @@ class RequestUtils
     public static function getPostParams(ServerRequestInterface $request): array
     {
         if (static::isJson($request)) {
-            return json_decode($request->getBody()->getContents(), true);
+            $decoded = json_decode($request->getBody()->getContents(), true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return (array)$decoded;
+            }
+            return [];
         }
         return $request->getParsedBody();
     }

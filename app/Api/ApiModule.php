@@ -13,6 +13,7 @@ use App\Api\Cpville\CpvilleController;
 use Tuupola\Middleware\JwtAuthentication;
 use App\Api\Entreprise\EntrepriseController;
 use App\Api\DernierCode\DernierCodeController;
+use PgFramework\Middleware\BodyParserMiddleware;
 use PgFramework\Middleware\ContentTypeJsonMiddleware;
 use PgFramework\Middleware\CorsAllowOriginMiddleware;
 
@@ -74,6 +75,7 @@ class ApiModule extends Module
                 'cp.get.search'
             );
         })
+            ->middleware(BodyParserMiddleware::class)
             ->middleware(CorsAllowOriginMiddleware::class)
             ->middleware(ContentTypeJsonMiddleware::class);
 
@@ -208,6 +210,7 @@ class ApiModule extends Module
             );
         })
             // ->middleware(JwtAuthentication::class)
+            ->middleware(BodyParserMiddleware::class)
             ->middleware(CorsAllowOriginMiddleware::class)
             ->middleware(ContentTypeJsonMiddleware::class);
     }
