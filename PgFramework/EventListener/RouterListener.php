@@ -46,6 +46,7 @@ class RouterListener implements Listener
         $result = $this->router->match($request);
 
         if ($result->isFailure()) {
+            $event->setRequest($request);
             return;
         }
 
@@ -80,6 +81,7 @@ class RouterListener implements Listener
     {
         $parseBody = $request->getParsedBody();
         if (
+            is_array($parseBody) &&
             array_key_exists('_method', $parseBody) &&
             in_array($parseBody['_method'], ['DELETE', 'PUT', 'PATCH'])
         ) {

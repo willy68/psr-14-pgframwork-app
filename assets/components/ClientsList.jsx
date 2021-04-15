@@ -10,7 +10,12 @@ export default function ClientsList({url}) {
   });
 
   useEffect(async () => {
-    const clients = await findClients();
+    let clients = null;
+    try{
+      clients = await findClients();
+    } catch (e) {
+      clients = [];
+    }
     setState(s => ({ ...s, clients: clients }));
   }, [])
 

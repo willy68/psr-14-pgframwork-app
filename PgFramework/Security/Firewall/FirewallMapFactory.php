@@ -11,8 +11,8 @@ class FirewallMapFactory
     {
         $map = new FirewallMap;
 
-        if ($c->has('firewall.event.rules')) {
-            $rules = $c->get('firewall.event.rules');
+        if ($c->has('security.firewall.rules')) {
+            $rules = $c->get('security.firewall.rules');
             $defaultListeners = [];
             $defaultMainListeners = [];
             foreach ($rules as $rule) {
@@ -22,6 +22,9 @@ class FirewallMapFactory
                     continue;
                 }
 
+                $defaultListeners = isset($rule['listeners']) ? array_merge($defaultListeners, $rule['listeners']) : $defaultListeners;
+                $defaultMainListeners = isset($rule['main.listeners']) ? array_merge($defaultMainListeners, $rule['main.listeners']) : $defaultMainListeners;
+
                 $map->add(
                     new RequestMatcher(
                         $rule['path'] ?? null,
@@ -30,8 +33,8 @@ class FirewallMapFactory
                         $rule['schemes'] ?? null,
                         $rule['port'] ?? null
                     ),
-                    isset($rule['listeners']) ? array_merge($defaultListeners, $rule['listeners']) : $defaultListeners,
-                    isset($rule['main.listeners']) ? array_merge($defaultMainListeners, $rule['main.listeners']) : $defaultMainListeners
+                    $defaultListeners,
+                    $defaultMainListeners
                 );
             }
         }

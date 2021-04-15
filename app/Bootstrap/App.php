@@ -66,12 +66,12 @@ return [
         CsrfCookieListener::class . '::onRequest' => [Events::REQUEST, ListenerPriority::HIGH],
         //CsrfListener::class => [Events::REQUEST, ListenerPriority::HIGH],
         Firewall::class => [Events::REQUEST, ListenerPriority::HIGH],
-        InvalidCsrfListener::class => [Events::EXCEPTION, ListenerPriority::HIGH],
-        RecordNotFoundListener::class => [Events::EXCEPTION, ListenerPriority::HIGH],
         StringResponseListener::class => [Events::VIEW, ListenerPriority::HIGH],
         MethodHeadListener::class . '::onResponse' => [Events::RESPONSE, ListenerPriority::LOW],
         CsrfCookieListener::class . '::onResponse' => [Events::RESPONSE, ListenerPriority::LOW],
         ContentTypeJsonListener::class => [Events::RESPONSE, ListenerPriority::LOW],
+        InvalidCsrfListener::class => [Events::EXCEPTION, ListenerPriority::HIGH],
+        RecordNotFoundListener::class => [Events::EXCEPTION, ListenerPriority::HIGH],
     ],
 
     /* DI Base configuration. Place your own on the list */

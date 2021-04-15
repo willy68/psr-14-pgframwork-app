@@ -5,17 +5,15 @@ use League\Event\ListenerPriority;
 use PgFramework\Security\Firewall\FirewallEvents;
 use PgFramework\Security\Authorization\Voter\VoterRoles;
 use PgFramework\Security\Firewall\EventListener\ForbidenListener;
-use PgFramework\Security\Firewall\EventListener\LoggedInListener;
 use PgFramework\Security\Firewall\EventListener\AuthorizationListener;
 use PgFramework\Security\Firewall\EventListener\RememberMeLoginListener;
 use PgFramework\Security\Firewall\EventListener\RememberMeLogoutListener;
 
 return [
-    'firewall.event.rules' => \DI\add([
+    'security.firewall.rules' => \DI\add([
         [
             'default.listeners' => [
                 RememberMeLoginListener::class . '::onAuthenticationEvent' => [FirewallEvents::AUTHENTICATION, ListenerPriority::HIGH],
-                LoggedInListener::class . '::onAuthenticationEvent' => [FirewallEvents::AUTHENTICATION, ListenerPriority::NORMAL],
             ],
             'default.main.listeners' => [
                 ForbidenListener::class . '::onException' => [Events::EXCEPTION, ListenerPriority::HIGH],
@@ -25,14 +23,14 @@ return [
         [
             'path' => '^/admin/posts/(\d+)',
             'listeners' => [
-                AuthorizationListener::class . '::onAuthorization' => [FirewallEvents::AUTHORIZATION, ListenerPriority::LOW]
-            ],
+                AuthorizationListener::class . '::onAuthorization' => [FirewallEvents::AUTHORIZATION, ListenerPriority::LOW],
+            ]
         ],
         [
             'path' => '^/api*',
             'listeners' => [
                 AuthorizationListener::class . '::onAuthorization' => [FirewallEvents::AUTHORIZATION, ListenerPriority::LOW],
-            ],
+            ]
         ],
         [
             'path' => '^/admin',
@@ -41,6 +39,10 @@ return [
             //'host' => null,
             //'schemes' => [],
             //'port' => null,
+            //'listeners' => [
+            //],
+            //'main.listeners' => [
+            //]
         ],
         [
             'path' => '^/logout',
@@ -49,6 +51,9 @@ return [
                 RememberMeLogoutListener::class . '::onResponseEvent' => [Events::RESPONSE, ListenerPriority::NORMAL],
             ]
         ],
+    ]),
+    'security.authorization.listeners' => \DI\add([
+        AuthorizationListener::class . '::onAuthorization' => [FirewallEvents::AUTHORIZATION, ListenerPriority::LOW],
     ]),
     'security.voters' => \DI\add([
         \DI\get(VoterRoles::class),

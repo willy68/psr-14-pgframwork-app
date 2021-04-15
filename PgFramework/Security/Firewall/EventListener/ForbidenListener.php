@@ -37,7 +37,7 @@ class ForbidenListener
 
         if ($e instanceof ForbiddenException) {
             if (RequestUtils::isJson($request)) {
-                $event->setResponse(new Response(403, [], $e->getMessage() . ' ' . $e->getCode()));
+                $event->setResponse(new Response(403, [], json_encode($e->getMessage() . ' ' . $e->getCode())));
                 return;
             }
             $event->setResponse($this->redirectLogin($request));
@@ -46,7 +46,7 @@ class ForbidenListener
 
         if ($e instanceof FailedAccessException) {
             if (RequestUtils::isJson($request)) {
-                $event->setResponse(new Response(403, [], $e->getMessage() . ' ' . $e->getCode()));
+                $event->setResponse(new Response(403, [], json_encode($e->getMessage() . ' ' . $e->getCode())));
                 return;
             }
             $event->setResponse($this->redirectAdminHome($request));
