@@ -34,7 +34,7 @@ class InvalidCsrfListener
 
         if ($e instanceof InvalidCsrfException) {
             if (RequestUtils::isJson($request)) {
-                $event->setResponse(new Response(403, [], $e->getMessage() . ' ' . $e->getCode()));
+                $event->setResponse(new Response(403, [], json_encode($e->getMessage() . ' ' . $e->getCode())));
                 return;
             }
             $this->flashService->error('Vous n\'avez pas de token valid pour executer cette action');

@@ -22,6 +22,11 @@ class FirewallMapFactory
                     continue;
                 }
 
+                if (isset($rule['no.default.listeners']) && $rule['no.default.listeners'] === true) {
+                    $defaultListeners = [];
+                    $defaultMainListeners = [];
+                }
+
                 $defaultListeners = isset($rule['listeners']) ? array_merge($defaultListeners, $rule['listeners']) : $defaultListeners;
                 $defaultMainListeners = isset($rule['main.listeners']) ? array_merge($defaultMainListeners, $rule['main.listeners']) : $defaultMainListeners;
 

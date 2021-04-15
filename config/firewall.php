@@ -2,7 +2,8 @@
 
 use PgFramework\Event\Events;
 use League\Event\ListenerPriority;
-use PgFramework\Security\Firewall\FirewallEvents;
+use PgFramework\EventListener\BodyParserListener;
+use PgFramework\EventListener\ContentTypeJsonListener;
 use PgFramework\Security\Authorization\Voter\VoterRoles;
 use PgFramework\Security\Firewall\EventListener\ForbidenListener;
 use PgFramework\Security\Firewall\EventListener\AuthorizationListener;
@@ -13,23 +14,28 @@ return [
     'security.firewall.rules' => \DI\add([
         [
             'default.listeners' => [
-                RememberMeLoginListener::class . '::onAuthenticationEvent' => [FirewallEvents::AUTHENTICATION, ListenerPriority::HIGH],
+                RememberMeLoginListener::class . '::onAuthentication' => [Events::REQUEST, ListenerPriority::HIGH],
             ],
             'default.main.listeners' => [
                 ForbidenListener::class . '::onException' => [Events::EXCEPTION, ListenerPriority::HIGH],
-                RememberMeLoginListener::class . '::onResponseEvent' => [Events::RESPONSE, ListenerPriority::NORMAL],
+                RememberMeLoginListener::class . '::onResponse' => [Events::RESPONSE, ListenerPriority::NORMAL],
             ]
         ],
         [
             'path' => '^/admin/posts/(\d+)',
             'listeners' => [
-                AuthorizationListener::class . '::onAuthorization' => [FirewallEvents::AUTHORIZATION, ListenerPriority::LOW],
+                AuthorizationListener::class . '::onAuthorization' => [Events::REQUEST, ListenerPriority::LOW],
             ]
         ],
         [
-            'path' => '^/api*',
+            'path' => '^/api',
+            'no.default.listeners' => true,
             'listeners' => [
-                AuthorizationListener::class . '::onAuthorization' => [FirewallEvents::AUTHORIZATION, ListenerPriority::LOW],
+                //AuthorizationListener::class . '::onAuthorization' => [Events::REQUEST, ListenerPriority::NORMAL],
+                BodyParserListener::class => [Events::REQUEST, ListenerPriority::LOW],
+            ],
+            'main.listeners' => [
+                ContentTypeJsonListener::class => [Events::RESPONSE, ListenerPriority::LOW],
             ]
         ],
         [
@@ -48,12 +54,12 @@ return [
             'path' => '^/logout',
             // Events::REQUEST ne sera jamais appelé!
             'main.listeners' => [
-                RememberMeLogoutListener::class . '::onResponseEvent' => [Events::RESPONSE, ListenerPriority::NORMAL],
+                RememberMeLogoutListener::class . '::onResponse' => [Events::RESPONSE, ListenerPriority::NORMAL],
             ]
         ],
     ]),
     'security.authorization.listeners' => \DI\add([
-        AuthorizationListener::class . '::onAuthorization' => [FirewallEvents::AUTHORIZATION, ListenerPriority::LOW],
+        AuthorizationListener::class . '::onAuthorization' => [Events::REQUEST, ListenerPriority::LOW],
     ]),
     'security.voters' => \DI\add([
         \DI\get(VoterRoles::class),
@@ -74,11 +80,5 @@ return [
             'path' => '^/admin/categories/(\d+)',
             'attributes' => [],
         ],
-        [
-            'path' => '^/api*',
-            'attributes' => [
-                'ROLE_ADMIN',
-            ],
-        ]
     ])
 ];

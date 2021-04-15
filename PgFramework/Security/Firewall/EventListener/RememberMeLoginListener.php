@@ -6,7 +6,7 @@ use PgFramework\Auth;
 use PgFramework\Event\ResponseEvent;
 use PgFramework\Auth\ForbiddenException;
 use PgFramework\Auth\RememberMe\RememberMeInterface;
-use PgFramework\Security\Firewall\Event\AuthenticationEvent;
+use PgFramework\Event\RequestEvent;
 
 class RememberMeLoginListener
 {
@@ -30,7 +30,7 @@ class RememberMeLoginListener
         $this->cookie = $cookie;
     }
 
-    public function onAuthenticationEvent(AuthenticationEvent $event)
+    public function onAuthentication(RequestEvent $event)
     {
         $request = $event->getRequest();
 
@@ -46,7 +46,7 @@ class RememberMeLoginListener
         $this->auth->setUser($user);
     }
 
-    public function onResponseEvent(ResponseEvent $event)
+    public function onResponse(ResponseEvent $event)
     {
         $request = $event->getRequest();
         $response = $event->getResponse();

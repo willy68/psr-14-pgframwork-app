@@ -4,7 +4,7 @@ namespace PgFramework\Security\Firewall\EventListener;
 
 use PgFramework\Auth;
 use PgFramework\Auth\ForbiddenException;
-use PgFramework\Security\Firewall\Event\AuthenticationEvent;
+use PgFramework\Event\RequestEvent;
 
 class LoggedInListener
 {
@@ -23,7 +23,7 @@ class LoggedInListener
     /**
      * @throws ForbiddenException
      */
-    public function onAuthenticationEvent(AuthenticationEvent $event)
+    public function onAuthenticationEvent(RequestEvent $event)
     {
         $request = $event->getRequest();
         $user = $this->auth->getUser();

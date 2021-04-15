@@ -27,7 +27,7 @@ class RememberMeLogoutListener
         $this->cookie = $cookie;
     }
 
-    public function onResponseEvent(ResponseEvent $event)
+    public function onResponse(ResponseEvent $event)
     {
         $response = $event->getResponse();
         $request = $event->getRequest();

@@ -8,8 +8,6 @@ use League\Event\EventDispatcher;
 use League\Event\ListenerPriority;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
-use PgFramework\Security\Firewall\Event\AuthorizationEvent;
-use PgFramework\Security\Firewall\Event\AuthenticationEvent;
 
 class Firewall extends EventDispatcher
 {
@@ -66,21 +64,11 @@ class Firewall extends EventDispatcher
             );
         }
 
-        $firewallEvent = new AuthenticationEvent($event->getApp(), $request);
-        $firewallEvent = $this->dispatch($firewallEvent);
-        $event->setRequest($firewallEvent->getRequest());
+        $event = $this->dispatch($event);
 
-        if ($firewallEvent->hasResponse()) {
-            $event->setResponse($firewallEvent->getResponse());
+        if ($event->hasResponse()) {
+            $event->setResponse($event->getResponse());
             return;
-        }
-
-        $firewallEvent = new AuthorizationEvent($event->getApp(), $firewallEvent->getRequest());
-        $firewallEvent = $this->dispatch($firewallEvent);
-        $event->setRequest($firewallEvent->getRequest());
-
-        if ($firewallEvent->hasResponse()) {
-            $event->setResponse($firewallEvent->getResponse());
         }
     }
 }

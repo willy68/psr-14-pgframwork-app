@@ -5,8 +5,8 @@ namespace PgFramework\Security\Firewall\EventListener;
 use PgFramework\Auth;
 use PgFramework\Auth\ForbiddenException;
 use PgFramework\Auth\FailedAccessException;
+use PgFramework\Event\RequestEvent;
 use PgFramework\Security\Firewall\AccessMapInterface;
-use PgFramework\Security\Firewall\Event\AuthorizationEvent;
 use PgFramework\Security\Authorization\VoterManagerInterface;
 
 class AuthorizationListener
@@ -25,7 +25,7 @@ class AuthorizationListener
         $this->map = $map;
     }
 
-    public function onAuthorization(AuthorizationEvent $event)
+    public function onAuthorization(RequestEvent $event)
     {
         $request = $event->getRequest();
 
