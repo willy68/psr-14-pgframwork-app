@@ -22,13 +22,16 @@ class FirewallMapFactory
                     continue;
                 }
 
+                $listeners = $defaultListeners;
+                $mainListeners = $defaultMainListeners;
+
                 if (isset($rule['no.default.listeners']) && $rule['no.default.listeners'] === true) {
-                    $defaultListeners = [];
-                    $defaultMainListeners = [];
+                    $listeners = [];
+                    $mainListeners = [];
                 }
 
-                $defaultListeners = isset($rule['listeners']) ? array_merge($defaultListeners, $rule['listeners']) : $defaultListeners;
-                $defaultMainListeners = isset($rule['main.listeners']) ? array_merge($defaultMainListeners, $rule['main.listeners']) : $defaultMainListeners;
+                $listeners = isset($rule['listeners']) ? array_merge($listeners, $rule['listeners']) : $listeners;
+                $mainListeners = isset($rule['main.listeners']) ? array_merge($mainListeners, $rule['main.listeners']) : $mainListeners;
 
                 $map->add(
                     new RequestMatcher(
@@ -38,8 +41,8 @@ class FirewallMapFactory
                         $rule['schemes'] ?? null,
                         $rule['port'] ?? null
                     ),
-                    $defaultListeners,
-                    $defaultMainListeners
+                    $listeners,
+                    $mainListeners
                 );
             }
         }
