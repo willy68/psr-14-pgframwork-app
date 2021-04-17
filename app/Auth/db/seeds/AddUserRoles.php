@@ -16,9 +16,9 @@ class AddUserRoles extends AbstractSeed
     public function run()
     {
         $admin = $this->fetchRow('SELECT * FROM users WHERE username = "admin"');
-        $admin['roles'] = json_encode(['ROLE_USER', 'ROLE_ADMIN']);
+        $roles = json_encode(['ROLE_USER', 'ROLE_ADMIN']);
 
-        $this->fetchRow("UPDATE users SET roles='{$admin['roles']}' WHERE id={$admin['id']}");
+        $admin = $this->fetchRow("UPDATE users SET roles='{$roles}' WHERE id={$admin['id']}");
 
         $this->table('users')
             ->insert([
