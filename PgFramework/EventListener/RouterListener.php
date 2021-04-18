@@ -2,14 +2,13 @@
 
 namespace PgFramework\EventListener;
 
-use League\Event\Listener;
 use GuzzleHttp\Psr7\Response;
 use PgFramework\Event\RequestEvent;
 use Mezzio\Router\RouterInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class RouterListener implements Listener
+class RouterListener
 {
 
     /**
@@ -26,10 +25,8 @@ class RouterListener implements Listener
         $this->router = $router;
     }
 
-    public function __invoke(object $event): void
+    public function __invoke(RequestEvent $event): void
     {
-        /** @var RequestEvent $event */
-        /** @var ServerRequestInterface $request */
         $request = $event->getRequest();
 
         // Redirect if trailing slash on url

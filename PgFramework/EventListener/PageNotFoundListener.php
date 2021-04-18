@@ -2,14 +2,12 @@
 
 namespace PgFramework\EventListener;
 
-use League\Event\Listener;
 use GuzzleHttp\Psr7\Response;
 use Mezzio\Router\RouteResult;
 use PgFramework\Event\RequestEvent;
 use PgFramework\Renderer\RendererInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
-class PageNotFoundListener implements Listener
+class PageNotFoundListener
 {
     /**
      *
@@ -26,10 +24,8 @@ class PageNotFoundListener implements Listener
         $this->renderer = $renderer;
     }
 
-    public function __invoke(object $event): void
+    public function __invoke(RequestEvent $event): void
     {
-        /** @var RequestEvent $event */
-        /** @var ServerRequestInterface $request */
         $request = $event->getRequest();
 
         $routeResult = $request->getAttribute(RouteResult::class);

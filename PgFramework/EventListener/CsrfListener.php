@@ -6,7 +6,7 @@ use PgFramework\Event\RequestEvent;
 use Grafikart\Csrf\InvalidCsrfException;
 use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
 
-class CsrfListener implements CsrfListenerInterface
+class CsrfListener
 {
 
     /**

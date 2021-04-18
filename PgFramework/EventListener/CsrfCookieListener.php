@@ -11,7 +11,7 @@ use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
 use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
 
-class CsrfCookieListener implements CsrfListenerInterface
+class CsrfCookieListener
 {
     protected $config = [
         'cookieName' => 'XSRF-TOKEN',

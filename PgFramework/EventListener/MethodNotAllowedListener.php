@@ -2,20 +2,16 @@
 
 namespace PgFramework\EventListener;
 
-use League\Event\Listener;
 use GuzzleHttp\Psr7\Response;
 use Mezzio\Router\RouteResult;
 use PgFramework\Event\RequestEvent;
-use Psr\Http\Message\ServerRequestInterface;
 use Fig\Http\Message\StatusCodeInterface as StatusCode;
 
-class MethodNotAllowedListener implements Listener
+class MethodNotAllowedListener
 {
 
-    public function __invoke(object $event): void
+    public function __invoke(RequestEvent $event): void
     {
-        /** @var RequestEvent $event */
-        /** @var ServerRequestInterface $request */
         $request = $event->getRequest();
 
         /** @var RouteResult $routeResult */
