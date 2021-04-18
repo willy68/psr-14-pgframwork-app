@@ -3,9 +3,10 @@
 namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Response;
-use PgFramework\Renderer\RendererInterface;
-use ActiveRecord\Exceptions\RecordNotFound;
 use PgFramework\Event\ExceptionEvent;
+use PgFramework\HttpUtils\RequestUtils;
+use ActiveRecord\Exceptions\RecordNotFound;
+use PgFramework\Renderer\RendererInterface;
 
 class RecordNotFoundListener
 {
@@ -30,6 +31,10 @@ class RecordNotFoundListener
     {
         $e = $event->getException();
         if ($e instanceof RecordNotFound) {
+            if (RequestUtils::isJson($event->getRequest())) {
+                $event->setResponse(new Response(404, [], json_encode($e->getMessage())));
+                return;
+            }
             $event->setResponse(new Response(404, [], $this->renderer->render(
                 'error404',
                 ['message' => $e->getMessage()]
