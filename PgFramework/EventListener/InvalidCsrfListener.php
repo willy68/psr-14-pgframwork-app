@@ -8,8 +8,10 @@ use PgFramework\Session\FlashService;
 use PgFramework\HttpUtils\RequestUtils;
 use PgFramework\Response\ResponseRedirect;
 use Grafikart\Csrf\InvalidCsrfException;
+use League\Event\ListenerPriority;
+use PgFramework\EventDispatcher\EventSubscriberInterface;
 
-class InvalidCsrfListener
+class InvalidCsrfListener implements EventSubscriberInterface
 {
     /**
      * Undocumented variable
@@ -40,5 +42,12 @@ class InvalidCsrfListener
             $this->flashService->error('Vous n\'avez pas de token valid pour executer cette action');
             $event->setResponse(new ResponseRedirect('/'));
         }
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            ExceptionEvent::class => ListenerPriority::HIGH
+        ];
     }
 }

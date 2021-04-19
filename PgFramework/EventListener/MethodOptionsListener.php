@@ -6,8 +6,11 @@ use GuzzleHttp\Psr7\Response;
 use Mezzio\Router\RouteResult;
 use PgFramework\Event\RequestEvent;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
+use League\Event\ListenerPriority;
+use PgFramework\Event\ResponseEvent;
+use PgFramework\EventDispatcher\EventSubscriberInterface;
 
-class MethodOptionsListener
+class MethodOptionsListener implements EventSubscriberInterface
 {
     public function __invoke(RequestEvent $event)
     {
@@ -47,5 +50,12 @@ class MethodOptionsListener
             'Access-Control-Allow-Credentials' => 'true',
             'Content-Type' => 'application/json,application/*+json;charset=UTF-8'
         ]));
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            RequestEvent::class => ListenerPriority::HIGH
+        ];
     }
 }

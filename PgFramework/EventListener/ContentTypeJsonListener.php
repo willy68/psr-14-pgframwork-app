@@ -2,10 +2,12 @@
 
 namespace PgFramework\EventListener;
 
+use League\Event\ListenerPriority;
 use PgFramework\Event\ResponseEvent;
+use PgFramework\EventDispatcher\EventSubscriberInterface;
 use PgFramework\HttpUtils\RequestUtils;
 
-class ContentTypeJsonListener
+class ContentTypeJsonListener implements EventSubscriberInterface
 {
     public function __invoke(ResponseEvent $event)
     {
@@ -18,5 +20,12 @@ class ContentTypeJsonListener
                     ->withAddedHeader('Cross-Origin-Opener-Policy', 'cross-origin')
             );
         }
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            ResponseEvent::class => ListenerPriority::LOW
+        ];
     }
 }

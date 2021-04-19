@@ -3,12 +3,14 @@
 namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Response;
+use League\Event\ListenerPriority;
 use PgFramework\Event\RequestEvent;
 use Mezzio\Router\RouterInterface;
+use PgFramework\EventDispatcher\EventSubscriberInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class RouterListener
+class RouterListener implements EventSubscriberInterface
 {
 
     /**
@@ -68,8 +70,8 @@ class RouterListener
         $uri = $request->getUri()->getPath();
         if (!empty($uri) && $uri !== '/' && $uri[strlen($uri) - 1] === '/') {
             return (new Response())
-            ->withStatus(301)
-            ->withHeader('Location', substr($uri, 0, -1));
+                ->withStatus(301)
+                ->withHeader('Location', substr($uri, 0, -1));
         }
         return null;
     }
@@ -85,5 +87,12 @@ class RouterListener
             $request = $request->withMethod($parseBody['_method']);
         }
         return $request;
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            RequestEvent::class => ListenerPriority::HIGH
+        ];
     }
 }

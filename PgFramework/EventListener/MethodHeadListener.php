@@ -8,8 +8,10 @@ use PgFramework\Event\RequestEvent;
 use PgFramework\Event\ResponseEvent;
 use Psr\Http\Message\StreamInterface;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
+use League\Event\ListenerPriority;
+use PgFramework\EventDispatcher\EventSubscriberInterface;
 
-class MethodHeadListener
+class MethodHeadListener implements EventSubscriberInterface
 {
     public const FORWARDED_HTTP_METHOD_ATTRIBUTE = 'forwarded_http_method';
 
@@ -69,5 +71,13 @@ class MethodHeadListener
             $body = Utils::streamFor(null);
             $event->setResponse($response->withBody($body));
         }
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            RequestEvent::class => ['onRequest', ListenerPriority::HIGH],
+            ResponseEvent::class => ['onResponse', ListenerPriority::LOW]
+        ];
     }
 }

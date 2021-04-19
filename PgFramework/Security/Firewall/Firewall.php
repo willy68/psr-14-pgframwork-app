@@ -3,13 +3,14 @@
 namespace PgFramework\Security\Firewall;
 
 use Invoker\CallableResolver;
-use PgFramework\Event\RequestEvent;
-use League\Event\EventDispatcher;
 use League\Event\ListenerPriority;
+use PgFramework\Event\RequestEvent;
+use PgFramework\EventDispatcher\EventDispatcher;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
+use PgFramework\EventDispatcher\EventSubscriberInterface;
 
-class Firewall extends EventDispatcher
+class Firewall extends EventDispatcher implements EventSubscriberInterface
 {
 
     /**
@@ -28,7 +29,7 @@ class Firewall extends EventDispatcher
         CallableResolver $callableResolver,
         ListenerProviderInterface $listenerProvider = null
     ) {
-        parent::__construct($listenerProvider);
+        parent::__construct($callableResolver, $listenerProvider);
         $this->mainDispatcher = $mainDispatcher;
         $this->map = $map;
         $this->callableResolver = $callableResolver;
@@ -70,5 +71,12 @@ class Firewall extends EventDispatcher
             $event->setResponse($event->getResponse());
             return;
         }
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            RequestEvent::class => ListenerPriority::HIGH
+        ];
     }
 }

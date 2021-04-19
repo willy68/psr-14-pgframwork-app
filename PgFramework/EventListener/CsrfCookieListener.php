@@ -2,16 +2,18 @@
 
 namespace PgFramework\EventListener;
 
-use PgFramework\Security\Security;
 use Dflydev\FigCookies\SetCookie;
+use League\Event\ListenerPriority;
+use PgFramework\Security\Security;
 use PgFramework\Event\RequestEvent;
 use PgFramework\Event\ResponseEvent;
 use Grafikart\Csrf\InvalidCsrfException;
 use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
 use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
+use PgFramework\EventDispatcher\EventSubscriberInterface;
 
-class CsrfCookieListener
+class CsrfCookieListener implements EventSubscriberInterface
 {
     protected $config = [
         'cookieName' => 'XSRF-TOKEN',
@@ -127,5 +129,13 @@ class CsrfCookieListener
     {
         $tokenId = bin2hex(Security::randomBytes(8));
         return $this->tokenManager->getToken($tokenId);
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            RequestEvent::class => ['onRequest', ListenerPriority::HIGH],
+            ResponseEvent::class => ['onResponse', ListenerPriority::LOW]
+        ];
     }
 }

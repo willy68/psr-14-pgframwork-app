@@ -3,9 +3,11 @@
 namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Response;
+use League\Event\ListenerPriority;
 use PgFramework\Event\ViewEvent;
+use PgFramework\EventDispatcher\EventSubscriberInterface;
 
-class StringResponseListener
+class StringResponseListener implements EventSubscriberInterface
 {
     public function __invoke(ViewEvent $event)
     {
@@ -14,5 +16,12 @@ class StringResponseListener
         if (is_string($result)) {
             $event->setResponse(new Response(200, [], $result));
         }
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            ViewEvent::class => ListenerPriority::HIGH
+        ];
     }
 }

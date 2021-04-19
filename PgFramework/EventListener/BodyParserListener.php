@@ -18,7 +18,9 @@ namespace PgFramework\EventListener;
 
 use Closure;
 use InvalidArgumentException;
+use League\Event\ListenerPriority;
 use PgFramework\Event\RequestEvent;
+use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Parse encoded request body data.
@@ -28,7 +30,7 @@ use PgFramework\Event\RequestEvent;
  *
  * You can also add your own request body parsers using the `addParser()` method.
  */
-class BodyParserListener
+class BodyParserListener implements EventSubscriberInterface
 {
     /**
      * Registered Parsers
@@ -180,5 +182,12 @@ class BodyParserListener
         }
 
         return null;
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            RequestEvent::class => ListenerPriority::LOW
+        ];
     }
 }

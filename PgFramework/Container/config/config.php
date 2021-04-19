@@ -57,10 +57,10 @@ use PgFramework\Validator\Rules\{
 use Invoker\CallableResolver;
 use Invoker\Invoker;
 use Invoker\ParameterResolver\ParameterResolver;
-use League\Event\EventDispatcher;
 use Mezzio\Router\FastRouteRouter;
 use Mezzio\Router\RouteCollector;
 use Mezzio\Router\RouterInterface;
+use PgFramework\EventDispatcher\EventDispatcher;
 use PgFramework\EventListener\CsrfListener;
 use PgFramework\EventListener\CsrfListenerInterface;
 use Tuupola\Middleware\JwtAuthentication;
@@ -131,8 +131,8 @@ return [
     Invoker::class => factory(InvokerFactory::class),
     ParameterResolver::class => factory(ResolverChainFactory::class),
     CallableResolver::class => factory(CallableResolverFactory::class),
-    EventDispatcherInterface::class => function ():  EventDispatcherInterface {
-        return new EventDispatcher();
+    EventDispatcherInterface::class => function (ContainerInterface $c): EventDispatcherInterface {
+        return new EventDispatcher($c->get(CallableResolver::class));
     },
     RouterInterface::class => factory(FastRouteRouterFactory::class),
     FastRouteRouter::class => factory(FastRouteRouterFactory::class),

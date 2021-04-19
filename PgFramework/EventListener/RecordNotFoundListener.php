@@ -6,9 +6,11 @@ use GuzzleHttp\Psr7\Response;
 use PgFramework\Event\ExceptionEvent;
 use PgFramework\HttpUtils\RequestUtils;
 use ActiveRecord\Exceptions\RecordNotFound;
+use League\Event\ListenerPriority;
+use PgFramework\EventDispatcher\EventSubscriberInterface;
 use PgFramework\Renderer\RendererInterface;
 
-class RecordNotFoundListener
+class RecordNotFoundListener implements EventSubscriberInterface
 {
 
     /**
@@ -40,5 +42,12 @@ class RecordNotFoundListener
                 ['message' => $e->getMessage()]
             )));
         }
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            ExceptionEvent::class => ListenerPriority::HIGH
+        ];
     }
 }

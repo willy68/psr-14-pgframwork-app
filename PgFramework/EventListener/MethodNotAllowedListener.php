@@ -4,10 +4,12 @@ namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Response;
 use Mezzio\Router\RouteResult;
+use League\Event\ListenerPriority;
 use PgFramework\Event\RequestEvent;
 use Fig\Http\Message\StatusCodeInterface as StatusCode;
+use PgFramework\EventDispatcher\EventSubscriberInterface;
 
-class MethodNotAllowedListener
+class MethodNotAllowedListener implements EventSubscriberInterface
 {
 
     public function __invoke(RequestEvent $event): void
@@ -23,5 +25,12 @@ class MethodNotAllowedListener
                 ->withHeader('Allow', implode(',', $routeResult->getAllowedMethods()))
             );
         }
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            RequestEvent::class => ListenerPriority::HIGH
+        ];
     }
 }
