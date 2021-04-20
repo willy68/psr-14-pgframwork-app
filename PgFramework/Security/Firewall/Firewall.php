@@ -21,8 +21,6 @@ class Firewall extends EventDispatcher implements EventSubscriberInterface
 
     protected $map;
 
-    protected $callableResolver;
-
     public function __construct(
         EventDispatcherInterface $mainDispatcher,
         FirewallMapInterface $map,
@@ -32,7 +30,6 @@ class Firewall extends EventDispatcher implements EventSubscriberInterface
         parent::__construct($callableResolver, $listenerProvider);
         $this->mainDispatcher = $mainDispatcher;
         $this->map = $map;
-        $this->callableResolver = $callableResolver;
     }
 
     public function __invoke(RequestEvent $event)
