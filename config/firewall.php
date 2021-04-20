@@ -17,21 +17,21 @@ return [
                 RememberMeLoginListener::class . '::onAuthentication' => [Events::REQUEST, ListenerPriority::HIGH],
             ],
             'default.main.listeners' => [
-                ForbidenListener::class . '::onException' => [Events::EXCEPTION, ListenerPriority::HIGH],
+                ForbidenListener::class => [Events::EXCEPTION, ListenerPriority::HIGH],
                 RememberMeLoginListener::class . '::onResponse' => [Events::RESPONSE, ListenerPriority::NORMAL],
             ]
         ],
         [
             'path' => '^/admin/posts/(\d+)',
             'listeners' => [
-                AuthorizationListener::class . '::onAuthorization' => [Events::REQUEST, ListenerPriority::LOW],
+                AuthorizationListener::class => [Events::REQUEST, ListenerPriority::LOW],
             ]
         ],
         [
             'path' => '^/api',
             'no.default.listeners' => true,
             'listeners' => [
-                //AuthorizationListener::class . '::onAuthorization' => [Events::REQUEST, ListenerPriority::NORMAL],
+                //AuthorizationListener::class => [Events::REQUEST, ListenerPriority::NORMAL],
                 BodyParserListener::class => [Events::REQUEST, ListenerPriority::LOW],
             ],
             'main.listeners' => [
@@ -54,12 +54,12 @@ return [
             'path' => '^/logout',
             // Events::REQUEST ne sera jamais appelé!
             'main.listeners' => [
-                RememberMeLogoutListener::class . '::onResponse' => [Events::RESPONSE, ListenerPriority::NORMAL],
+                RememberMeLogoutListener::class => [Events::RESPONSE, ListenerPriority::NORMAL],
             ]
         ],
     ]),
     'security.authorization.listeners' => \DI\add([
-        AuthorizationListener::class . '::onAuthorization' => [Events::REQUEST, ListenerPriority::LOW],
+        AuthorizationListener::class => [Events::REQUEST, ListenerPriority::LOW],
     ]),
     'security.voters' => \DI\add([
         \DI\get(VoterRoles::class),

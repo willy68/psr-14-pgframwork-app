@@ -3,6 +3,8 @@
 namespace PgFramework\Security\Firewall\EventListener;
 
 use GuzzleHttp\Psr7\Response;
+use PgFramework\Event\Events;
+use League\Event\ListenerPriority;
 use PgFramework\Event\ExceptionEvent;
 use PgFramework\Session\FlashService;
 use PgFramework\HttpUtils\RequestUtils;
@@ -12,8 +14,9 @@ use PgFramework\Session\SessionInterface;
 use PgFramework\Response\ResponseRedirect;
 use PgFramework\Auth\FailedAccessException;
 use Psr\Http\Message\ServerRequestInterface;
+use PgFramework\EventDispatcher\EventSubscriberInterface;
 
-class ForbidenListener
+class ForbidenListener implements EventSubscriberInterface
 {
 
     private $loginPath;
@@ -30,7 +33,7 @@ class ForbidenListener
         $this->session = $session;
     }
 
-    public function onException(ExceptionEvent $event)
+    public function __invoke(ExceptionEvent $event)
     {
         $e = $event->getException();
         $request = $event->getRequest();
@@ -72,5 +75,12 @@ class ForbidenListener
 
         (new FlashService($this->session))->error('Vous n\'avez pas l\'authorisation pour executer cette action');
         return new ResponseRedirect($uri);
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            Events::EXCEPTION => ListenerPriority::HIGH
+        ];
     }
 }

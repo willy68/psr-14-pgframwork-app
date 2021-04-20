@@ -3,12 +3,15 @@
 namespace PgFramework\Security\Firewall\EventListener;
 
 use PgFramework\Auth;
+use PgFramework\Event\Events;
+use League\Event\ListenerPriority;
+use PgFramework\Event\RequestEvent;
 use PgFramework\Event\ResponseEvent;
 use PgFramework\Auth\ForbiddenException;
 use PgFramework\Auth\RememberMe\RememberMeInterface;
-use PgFramework\Event\RequestEvent;
+use PgFramework\EventDispatcher\EventSubscriberInterface;
 
-class RememberMeLoginListener
+class RememberMeLoginListener implements EventSubscriberInterface
 {
 
     /**
@@ -51,5 +54,13 @@ class RememberMeLoginListener
         $request = $event->getRequest();
         $response = $event->getResponse();
         $event->setResponse($this->cookie->resume($request, $response));
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            Events::REQUEST => ['onAuthentication', ListenerPriority::HIGH],
+            Events::RESPONSE => ['onResponse', ListenerPriority::HIGH]
+        ];
     }
 }

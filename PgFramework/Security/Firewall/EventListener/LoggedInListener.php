@@ -3,10 +3,13 @@
 namespace PgFramework\Security\Firewall\EventListener;
 
 use PgFramework\Auth;
-use PgFramework\Auth\ForbiddenException;
+use PgFramework\Event\Events;
+use League\Event\ListenerPriority;
 use PgFramework\Event\RequestEvent;
+use PgFramework\Auth\ForbiddenException;
+use PgFramework\EventDispatcher\EventSubscriberInterface;
 
-class LoggedInListener
+class LoggedInListener implements EventSubscriberInterface
 {
 
     private $auth;
@@ -23,7 +26,7 @@ class LoggedInListener
     /**
      * @throws ForbiddenException
      */
-    public function onAuthenticationEvent(RequestEvent $event)
+    public function __invoke(RequestEvent $event)
     {
         $request = $event->getRequest();
         $user = $this->auth->getUser();
@@ -31,5 +34,12 @@ class LoggedInListener
             throw new ForbiddenException('Vous n\'êtes pas connecté');
         }
         $event->setRequest($request->withAttribute('_user', $user));
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            Events::REQUEST => ListenerPriority::HIGH
+        ];
     }
 }

@@ -3,13 +3,16 @@
 namespace PgFramework\Security\Firewall\EventListener;
 
 use PgFramework\Auth;
+use PgFramework\Event\Events;
+use League\Event\ListenerPriority;
+use PgFramework\Event\RequestEvent;
 use PgFramework\Auth\ForbiddenException;
 use PgFramework\Auth\FailedAccessException;
-use PgFramework\Event\RequestEvent;
 use PgFramework\Security\Firewall\AccessMapInterface;
+use PgFramework\EventDispatcher\EventSubscriberInterface;
 use PgFramework\Security\Authorization\VoterManagerInterface;
 
-class AuthorizationListener
+class AuthorizationListener implements EventSubscriberInterface
 {
     protected $auth;
     protected $voterManager;
@@ -25,7 +28,7 @@ class AuthorizationListener
         $this->map = $map;
     }
 
-    public function onAuthorization(RequestEvent $event)
+    public function __invoke(RequestEvent $event)
     {
         $request = $event->getRequest();
 
@@ -43,5 +46,12 @@ class AuthorizationListener
             throw new FailedAccessException('Vous n\'avez pas l\'authorisation pour executer cette action');
         }
         $event->setRequest($request);
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            Events::REQUEST => ListenerPriority::LOW
+        ];
     }
 }
