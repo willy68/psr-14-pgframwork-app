@@ -60,7 +60,7 @@ class RememberMeLoginListener implements EventSubscriberInterface
     {
         return [
             Events::REQUEST => ['onAuthentication', ListenerPriority::HIGH],
-            Events::RESPONSE => ['onResponse', ListenerPriority::HIGH]
+            Events::RESPONSE => ['onResponse', ListenerPriority::LOW]
         ];
     }
 }

@@ -39,8 +39,8 @@ class Firewall extends EventDispatcher implements EventSubscriberInterface
 
         [$listeners, $mainListeners] = $this->map->getListeners($request);
 
-        foreach ($listeners as $listener => $eventName) {
-            $priority = ListenerPriority::NORMAL;
+        foreach ($listeners as $listener /*=> $eventName*/) {
+            /*$priority = ListenerPriority::NORMAL;
             if (is_array($eventName)) {
                 [$eventName, $priority] = $eventName;
             }
@@ -48,11 +48,12 @@ class Firewall extends EventDispatcher implements EventSubscriberInterface
                 $eventName,
                 $this->callableResolver->resolve($listener),
                 $priority
-            );
+            );*/
+            $this->addSubscriber($listener);
         }
 
-        foreach ($mainListeners as $listener => $eventName) {
-            $priority = ListenerPriority::NORMAL;
+        foreach ($mainListeners as $listener /*=> $eventName*/) {
+            /*$priority = ListenerPriority::NORMAL;
             if (is_array($eventName)) {
                 [$eventName, $priority] = $eventName;
             }
@@ -60,7 +61,8 @@ class Firewall extends EventDispatcher implements EventSubscriberInterface
                 $eventName,
                 $this->callableResolver->resolve($listener),
                 $priority
-            );
+            );*/
+            $this->mainDispatcher->addSubscriber($listener);
         }
 
         $event = $this->dispatch($event);

@@ -14,28 +14,28 @@ return [
     'security.firewall.rules' => \DI\add([
         [
             'default.listeners' => [
-                RememberMeLoginListener::class . '::onAuthentication' => [Events::REQUEST, ListenerPriority::HIGH],
+                RememberMeLoginListener::class /*. '::onAuthentication' => [Events::REQUEST, ListenerPriority::HIGH]*/,
             ],
             'default.main.listeners' => [
-                ForbidenListener::class => [Events::EXCEPTION, ListenerPriority::HIGH],
-                RememberMeLoginListener::class . '::onResponse' => [Events::RESPONSE, ListenerPriority::NORMAL],
+                ForbidenListener::class /*=> [Events::EXCEPTION, ListenerPriority::HIGH]*/,
+                RememberMeLoginListener::class /*. '::onResponse' => [Events::RESPONSE, ListenerPriority::NORMAL]*/,
             ]
         ],
         [
             'path' => '^/admin/posts/(\d+)',
             'listeners' => [
-                AuthorizationListener::class => [Events::REQUEST, ListenerPriority::LOW],
+                AuthorizationListener::class /*=> [Events::REQUEST, ListenerPriority::LOW]*/,
             ]
         ],
         [
             'path' => '^/api',
             'no.default.listeners' => true,
             'listeners' => [
-                //AuthorizationListener::class => [Events::REQUEST, ListenerPriority::NORMAL],
-                BodyParserListener::class => [Events::REQUEST, ListenerPriority::LOW],
+                //AuthorizationListener::class /*=> [Events::REQUEST, ListenerPriority::NORMAL]*/,
+                BodyParserListener::class /*=> [Events::REQUEST, ListenerPriority::LOW]*/,
             ],
             'main.listeners' => [
-                ContentTypeJsonListener::class => [Events::RESPONSE, ListenerPriority::LOW],
+                ContentTypeJsonListener::class /*=> [Events::RESPONSE, ListenerPriority::LOW]*/,
             ]
         ],
         [
@@ -54,12 +54,12 @@ return [
             'path' => '^/logout',
             // Events::REQUEST ne sera jamais appelé!
             'main.listeners' => [
-                RememberMeLogoutListener::class => [Events::RESPONSE, ListenerPriority::NORMAL],
+                RememberMeLogoutListener::class /*=> [Events::RESPONSE, ListenerPriority::NORMAL]*/,
             ]
         ],
     ]),
     'security.authorization.listeners' => \DI\add([
-        AuthorizationListener::class => [Events::REQUEST, ListenerPriority::LOW],
+        AuthorizationListener::class /*=> [Events::REQUEST, ListenerPriority::LOW]*/,
     ]),
     'security.voters' => \DI\add([
         \DI\get(VoterRoles::class),
