@@ -7,6 +7,7 @@ use Mezzio\Router\RouteResult;
 use PgFramework\Event\RequestEvent;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use League\Event\ListenerPriority;
+use PgFramework\Event\Events;
 use PgFramework\Event\ResponseEvent;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
@@ -55,7 +56,7 @@ class MethodOptionsListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            RequestEvent::class => ListenerPriority::HIGH
+            Events::REQUEST => ListenerPriority::HIGH
         ];
     }
 }

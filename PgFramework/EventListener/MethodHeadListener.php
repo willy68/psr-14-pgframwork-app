@@ -9,6 +9,7 @@ use PgFramework\Event\ResponseEvent;
 use Psr\Http\Message\StreamInterface;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use League\Event\ListenerPriority;
+use PgFramework\Event\Events;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class MethodHeadListener implements EventSubscriberInterface
@@ -76,8 +77,8 @@ class MethodHeadListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            RequestEvent::class => ['onRequest', ListenerPriority::HIGH],
-            ResponseEvent::class => ['onResponse', ListenerPriority::LOW]
+            Events::REQUEST => ['onRequest', ListenerPriority::HIGH],
+            Events::RESPONSE => ['onResponse', ListenerPriority::LOW]
         ];
     }
 }

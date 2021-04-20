@@ -5,6 +5,7 @@ namespace PgFramework\EventListener;
 use League\Event\ListenerPriority;
 use PgFramework\Event\RequestEvent;
 use Grafikart\Csrf\InvalidCsrfException;
+use PgFramework\Event\Events;
 use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
@@ -72,7 +73,7 @@ class CsrfListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            RequestEvent::class => ListenerPriority::HIGH
+            Events::REQUEST => ListenerPriority::HIGH
         ];
     }
 }

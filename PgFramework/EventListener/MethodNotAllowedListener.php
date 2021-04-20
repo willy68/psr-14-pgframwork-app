@@ -7,6 +7,7 @@ use Mezzio\Router\RouteResult;
 use League\Event\ListenerPriority;
 use PgFramework\Event\RequestEvent;
 use Fig\Http\Message\StatusCodeInterface as StatusCode;
+use PgFramework\Event\Events;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class MethodNotAllowedListener implements EventSubscriberInterface
@@ -30,7 +31,7 @@ class MethodNotAllowedListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            RequestEvent::class => ListenerPriority::HIGH
+            Events::REQUEST => ListenerPriority::HIGH
         ];
     }
 }

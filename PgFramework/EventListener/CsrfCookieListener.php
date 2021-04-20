@@ -10,6 +10,7 @@ use PgFramework\Event\ResponseEvent;
 use Grafikart\Csrf\InvalidCsrfException;
 use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
+use PgFramework\Event\Events;
 use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
@@ -134,8 +135,8 @@ class CsrfCookieListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            RequestEvent::class => ['onRequest', ListenerPriority::HIGH],
-            ResponseEvent::class => ['onResponse', ListenerPriority::LOW]
+            Events::REQUEST => ['onRequest', ListenerPriority::HIGH],
+            Events::RESPONSE => ['onResponse', ListenerPriority::LOW]
         ];
     }
 }

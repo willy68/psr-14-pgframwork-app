@@ -3,6 +3,7 @@
 namespace PgFramework\EventListener;
 
 use League\Event\ListenerPriority;
+use PgFramework\Event\Events;
 use PgFramework\Event\RequestEvent;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
@@ -17,7 +18,7 @@ class ActiveRecordListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            RequestEvent::class => ListenerPriority::HIGH
+            Events::REQUEST => ListenerPriority::HIGH
         ];
     }
 }

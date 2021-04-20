@@ -7,6 +7,7 @@ use PgFramework\Event\ExceptionEvent;
 use PgFramework\HttpUtils\RequestUtils;
 use ActiveRecord\Exceptions\RecordNotFound;
 use League\Event\ListenerPriority;
+use PgFramework\Event\Events;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 use PgFramework\Renderer\RendererInterface;
 
@@ -47,7 +48,7 @@ class RecordNotFoundListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            ExceptionEvent::class => ListenerPriority::HIGH
+            Events::EXCEPTION => ListenerPriority::HIGH
         ];
     }
 }

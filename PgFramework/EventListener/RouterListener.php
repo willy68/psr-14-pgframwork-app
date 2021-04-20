@@ -6,6 +6,7 @@ use GuzzleHttp\Psr7\Response;
 use League\Event\ListenerPriority;
 use PgFramework\Event\RequestEvent;
 use Mezzio\Router\RouterInterface;
+use PgFramework\Event\Events;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -92,7 +93,7 @@ class RouterListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            RequestEvent::class => ListenerPriority::HIGH
+            Events::REQUEST => ListenerPriority::HIGH
         ];
     }
 }

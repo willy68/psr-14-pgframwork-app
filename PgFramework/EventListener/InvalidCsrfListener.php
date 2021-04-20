@@ -9,6 +9,7 @@ use PgFramework\HttpUtils\RequestUtils;
 use PgFramework\Response\ResponseRedirect;
 use Grafikart\Csrf\InvalidCsrfException;
 use League\Event\ListenerPriority;
+use PgFramework\Event\Events;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class InvalidCsrfListener implements EventSubscriberInterface
@@ -47,7 +48,7 @@ class InvalidCsrfListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            ExceptionEvent::class => ListenerPriority::HIGH
+            Events::EXCEPTION => ListenerPriority::HIGH
         ];
     }
 }
