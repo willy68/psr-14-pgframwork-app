@@ -54,7 +54,7 @@ return [
         DispatcherMiddleware::class,
         PageNotFoundMiddleware::class,
     ],
-
+/*
     'listeners' => [
         RouterListener::class => [Events::REQUEST, ListenerPriority::HIGH],
         MethodHeadListener::class . '::onRequest' => [Events::REQUEST, ListenerPriority::HIGH],
@@ -70,6 +70,21 @@ return [
         CsrfCookieListener::class . '::onResponse' => [Events::RESPONSE, ListenerPriority::LOW],
         InvalidCsrfListener::class => [Events::EXCEPTION, ListenerPriority::HIGH],
         RecordNotFoundListener::class => [Events::EXCEPTION, ListenerPriority::HIGH],
+    ],
+*/
+    'listeners' => [
+        RouterListener::class,
+        MethodHeadListener::class,
+        MethodOptionsListener::class,
+        MethodNotAllowedListener::class,
+        PageNotFoundListener::class,
+        ActiveRecordListener::class,
+        CsrfCookieListener::class,
+        //CsrfListener::class,
+        Firewall::class,
+        StringResponseListener::class,
+        InvalidCsrfListener::class,
+        RecordNotFoundListener::class,
     ],
 
     /* DI Base configuration. Place your own on the list */
