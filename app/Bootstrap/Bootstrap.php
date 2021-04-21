@@ -17,8 +17,10 @@ $dotenv->bootEnv($basePath . '/.env');
 
 $bootstrap = require 'App.php';
 
-$app = (new PgFramework\App($bootstrap['config']))
-    ->addModules($bootstrap['modules']);
+$app = (new PgFramework\ApplicationEvent($bootstrap['config']))
+    ->addModules($bootstrap['modules'])
+    //->middlewares($bootstrap['middlewares'])
+    ->addListeners($bootstrap['listeners']);
 
 if (Environnement::getEnv('APP_ENV', 'production') === 'dev') {
     //$app->pipe(Whoops::class);
@@ -26,9 +28,5 @@ if (Environnement::getEnv('APP_ENV', 'production') === 'dev') {
     $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
     $whoops->register();
 }
-
-$app->middlewares($bootstrap['middlewares']);
-
-$app->addListeners($bootstrap['listeners']);
 
 return $app;

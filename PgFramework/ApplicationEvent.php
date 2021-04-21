@@ -5,22 +5,22 @@ namespace PgFramework;
 use Exception;
 use DI\ContainerBuilder;
 use Invoker\CallableResolver;
-use PgFramework\Event\ViewEvent;
 use Mezzio\Router\RouteResult;
-use PgFramework\Event\RequestEvent;
+use PgFramework\Event\ViewEvent;
 use Mezzio\Router\RouteCollector;
-use PgFramework\Event\ResponseEvent;
 use GuzzleHttp\Psr7\ServerRequest;
-use League\Event\ListenerPriority;
+use PgFramework\Event\RequestEvent;
+use PgFramework\AbstractApplication;
+use PgFramework\Event\ResponseEvent;
 use PgFramework\Event\ExceptionEvent;
-use PgFramework\Event\ControllerEvent;
 use Psr\Container\ContainerInterface;
+use PgFramework\Event\ControllerEvent;
 use Psr\Http\Message\ResponseInterface;
+use Invoker\Reflection\CallableReflection;
 use PgFramework\Environnement\Environnement;
 use PgFramework\Event\ControllerParamsEvent;
-use Invoker\Reflection\CallableReflection;
-use PgFramework\Router\Loader\DirectoryLoader;
 use Psr\Http\Message\ServerRequestInterface;
+use PgFramework\Router\Loader\DirectoryLoader;
 use Invoker\ParameterResolver\ParameterResolver;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -161,16 +161,8 @@ class ApplicationEvent extends AbstractApplication
             $this->dispatcher = $container->get(EventDispatcherInterface::class);
         }
 
-        foreach ($this->listeners as $listener => $eventName) {
-            $priority = ListenerPriority::NORMAL;
-            if (is_array($eventName)) {
-                [$eventName, $priority] = $eventName;
-            }
-            $this->dispatcher->subscribeTo(
-                $eventName,
-                $this->callableResolver->resolve($listener),
-                $priority
-            );
+        foreach ($this->listeners as $listener) {
+            $this->dispatcher->addSubscriber($listener);
         }
 
         foreach ($this->modules as $module) {
