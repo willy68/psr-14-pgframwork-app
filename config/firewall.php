@@ -1,7 +1,5 @@
 <?php
 
-use PgFramework\Event\Events;
-use League\Event\ListenerPriority;
 use PgFramework\EventListener\BodyParserListener;
 use PgFramework\EventListener\ContentTypeJsonListener;
 use PgFramework\Security\Authorization\Voter\VoterRoles;
@@ -14,31 +12,31 @@ return [
     'security.firewall.rules' => \DI\add([
         [
             'default.listeners' => [
-                RememberMeLoginListener::class /*. '::onAuthentication' => [Events::REQUEST, ListenerPriority::HIGH]*/,
+                RememberMeLoginListener::class,
             ],
             'default.main.listeners' => [
-                ForbidenListener::class /*=> [Events::EXCEPTION, ListenerPriority::HIGH]*/,
-                RememberMeLoginListener::class /*. '::onResponse' => [Events::RESPONSE, ListenerPriority::NORMAL]*/,
+                ForbidenListener::class,
+                RememberMeLoginListener::class,
             ]
         ],
-        [
+        [ // Use default listeners and specific voters rules
             'path' => '^/admin/posts/(\d+)',
             'listeners' => [
-                AuthorizationListener::class /*=> [Events::REQUEST, ListenerPriority::LOW]*/,
+                AuthorizationListener::class,
             ]
         ],
-        [
+        [ // Don't use default listeners
             'path' => '^/api',
             'no.default.listeners' => true,
             'listeners' => [
-                //AuthorizationListener::class /*=> [Events::REQUEST, ListenerPriority::NORMAL]*/,
-                BodyParserListener::class /*=> [Events::REQUEST, ListenerPriority::LOW]*/,
+                //AuthorizationListener::class,
+                BodyParserListener::class,
             ],
             'main.listeners' => [
-                ContentTypeJsonListener::class /*=> [Events::RESPONSE, ListenerPriority::LOW]*/,
+                ContentTypeJsonListener::class,
             ]
         ],
-        [
+        [ // Use only default listeners
             'path' => '^/admin',
             // Other RequestMatcher rules
             //'method' => [],
@@ -54,12 +52,12 @@ return [
             'path' => '^/logout',
             // Events::REQUEST ne sera jamais appelé!
             'main.listeners' => [
-                RememberMeLogoutListener::class /*=> [Events::RESPONSE, ListenerPriority::NORMAL]*/,
+                RememberMeLogoutListener::class,
             ]
         ],
     ]),
     'security.authorization.listeners' => \DI\add([
-        AuthorizationListener::class /*=> [Events::REQUEST, ListenerPriority::LOW]*/,
+        AuthorizationListener::class,
     ]),
     'security.voters' => \DI\add([
         \DI\get(VoterRoles::class),

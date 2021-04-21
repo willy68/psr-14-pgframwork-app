@@ -198,16 +198,7 @@ class App extends AbstractApplication implements RequestHandlerInterface
             $this->dispatcher = $container->get(EventDispatcherInterface::class);
         }
 
-        foreach ($this->listeners as $listener /*=> $eventName*/) {
-        /*    $priority = ListenerPriority::NORMAL;
-            if (is_array($eventName)) {
-                [$eventName, $priority] = $eventName;
-            }
-            $this->dispatcher->subscribeTo(
-                $eventName,
-                $this->callableResolver->resolve($listener),
-                $priority
-            );*/
+        foreach ($this->listeners as $listener) {
             $this->dispatcher->addSubscriber($listener);
         }
 
