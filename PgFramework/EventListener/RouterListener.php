@@ -45,13 +45,13 @@ class RouterListener implements EventSubscriberInterface
 
         $result = $this->router->match($request);
 
-        if ($result->isFailure()) {
-            $event->setRequest($request);
+        if ($result->isMethodFailure()) {
+            $event->setRequest($request->withAttribute(get_class($result), $result));
             return;
         }
 
-        if ($result->isMethodFailure()) {
-            $event->setRequest($request->withAttribute(get_class($result), $result));
+        if ($result->isFailure()) {
+            $event->setRequest($request);
             return;
         }
 

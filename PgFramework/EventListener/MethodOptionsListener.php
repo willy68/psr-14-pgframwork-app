@@ -36,6 +36,10 @@ class MethodOptionsListener implements EventSubscriberInterface
             return;
         }
 
+        $origin = $request->getHeaderLine('origin');
+        if (empty($origin)) {
+            $origin = '*';
+        }
         $event->setResponse(new Response(200, [
             'Access-Control-Allow-Headers' =>
                 'X-CSRF-TOKEN,' .
@@ -47,7 +51,7 @@ class MethodOptionsListener implements EventSubscriberInterface
                 'Client-Security-Token,' .
                 'User-Agent',
             'Access-Control-Allow-Methods' => $result->getAllowedMethods(),
-            'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Origin' => $origin,
             'Access-Control-Allow-Credentials' => 'true',
             'Content-Type' => 'application/json,application/*+json;charset=UTF-8'
         ]));

@@ -14,10 +14,14 @@ class ContentTypeJsonListener implements EventSubscriberInterface
     {
         $request = $event->getRequest();
         if (RequestUtils::isJson($request)) {
+            $origin = $request->getHeaderLine('origin');
+            if (empty($origin)) {
+                $origin = '*';
+            }
             $response = $event->getResponse();
             $event->setResponse(
                 $response->withAddedHeader('Content-type', 'application/json;charset=UTF-8')
-                    ->withAddedHeader('Access-Control-Allow-Origin', '*')
+                    ->withAddedHeader('Access-Control-Allow-Origin', $origin)
                     ->withAddedHeader('Cross-Origin-Embedder-Policy', 'require-corp')
                     ->withAddedHeader('Cross-Origin-Opener-Policy', 'cross-origin')
             );
