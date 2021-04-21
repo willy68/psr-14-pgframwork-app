@@ -17,6 +17,7 @@ class ContentTypeJsonListener implements EventSubscriberInterface
             $response = $event->getResponse();
             $event->setResponse(
                 $response->withAddedHeader('Content-type', 'application/json;charset=UTF-8')
+                    ->withAddedHeader('Access-Control-Allow-Origin', '*')
                     ->withAddedHeader('Cross-Origin-Embedder-Policy', 'require-corp')
                     ->withAddedHeader('Cross-Origin-Opener-Policy', 'cross-origin')
             );
