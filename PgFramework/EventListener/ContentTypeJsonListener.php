@@ -2,11 +2,11 @@
 
 namespace PgFramework\EventListener;
 
-use League\Event\ListenerPriority;
 use PgFramework\Event\Events;
+use League\Event\ListenerPriority;
 use PgFramework\Event\ResponseEvent;
-use PgFramework\EventDispatcher\EventSubscriberInterface;
 use PgFramework\HttpUtils\RequestUtils;
+use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class ContentTypeJsonListener implements EventSubscriberInterface
 {
@@ -16,7 +16,8 @@ class ContentTypeJsonListener implements EventSubscriberInterface
         if (RequestUtils::isJson($request)) {
             $origin = $request->getHeaderLine('origin');
             if (empty($origin)) {
-                $origin = '*';
+                $origin = $request->getUri()->getHost() . 
+                    ($request->getUri()->getPort() ? ':' . $request->getUri()->getPort() : '');
             }
             $response = $event->getResponse();
             $event->setResponse(

@@ -38,7 +38,9 @@ class MethodOptionsListener implements EventSubscriberInterface
 
         $origin = $request->getHeaderLine('origin');
         if (empty($origin)) {
-            $origin = '*';
+            $origin = 
+            $origin = $request->getUri()->getHost() . 
+                ($request->getUri()->getPort() ? ':' . $request->getUri()->getPort() : '');
         }
         $event->setResponse(new Response(200, [
             'Access-Control-Allow-Headers' =>

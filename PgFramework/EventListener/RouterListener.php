@@ -3,13 +3,14 @@
 namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Response;
-use League\Event\ListenerPriority;
-use PgFramework\Event\RequestEvent;
-use Mezzio\Router\RouterInterface;
 use PgFramework\Event\Events;
-use PgFramework\EventDispatcher\EventSubscriberInterface;
+use League\Event\ListenerPriority;
+use Mezzio\Router\RouterInterface;
+use PgFramework\Event\RequestEvent;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use PgFramework\Router\Exception\PageNotFoundException;
+use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class RouterListener implements EventSubscriberInterface
 {
@@ -52,7 +53,7 @@ class RouterListener implements EventSubscriberInterface
 
         if ($result->isFailure()) {
             $event->setRequest($request);
-            return;
+            throw new PageNotFoundException();
         }
 
         $params = $result->getMatchedParams();

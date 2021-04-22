@@ -3,11 +3,11 @@
 namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Response;
-use Mezzio\Router\RouteResult;
-use League\Event\ListenerPriority;
 use PgFramework\Event\Events;
-use PgFramework\Event\RequestEvent;
+use League\Event\ListenerPriority;
+use PgFramework\Event\ExceptionEvent;
 use PgFramework\Renderer\RendererInterface;
+use PgFramework\Router\Exception\PageNotFoundException;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class PageNotFoundListener implements EventSubscriberInterface
@@ -27,13 +27,10 @@ class PageNotFoundListener implements EventSubscriberInterface
         $this->renderer = $renderer;
     }
 
-    public function __invoke(RequestEvent $event): void
+    public function __invoke(ExceptionEvent $event): void
     {
-        $request = $event->getRequest();
-
-        $routeResult = $request->getAttribute(RouteResult::class);
-
-        if (null === $routeResult) {
+        $e = $event->getException();
+        if ($e instanceof PageNotFoundException) {
             $event->setResponse(new Response(404, [], $this->renderer->render('error404')));
         }
     }
@@ -41,7 +38,7 @@ class PageNotFoundListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::REQUEST => ListenerPriority::HIGH
+            Events::EXCEPTION => ListenerPriority::HIGH
         ];
     }
 }
