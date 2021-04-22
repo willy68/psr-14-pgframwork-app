@@ -25,17 +25,6 @@ return [
                 AuthorizationListener::class,
             ]
         ],
-        [ // Don't use default listeners
-            'path' => '^/api',
-            'no.default.listeners' => true,
-            'listeners' => [
-                //AuthorizationListener::class,
-                BodyParserListener::class,
-            ],
-            'main.listeners' => [
-                ContentTypeJsonListener::class,
-            ]
-        ],
         [ // Use only default listeners
             'path' => '^/admin',
             // Other RequestMatcher rules

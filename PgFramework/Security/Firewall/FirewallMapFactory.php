@@ -15,6 +15,7 @@ class FirewallMapFactory
             $rules = $c->get('security.firewall.rules');
             $defaultListeners = [];
             $defaultMainListeners = [];
+
             foreach ($rules as $rule) {
                 if (isset($rule['default.listeners']) || isset($rule['default.main.listeners'])) {
                     $defaultListeners = $rule['default.listeners'] ?? [];

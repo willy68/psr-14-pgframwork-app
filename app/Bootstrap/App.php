@@ -74,6 +74,7 @@ return [
     'config' => [
         dirname(dirname(__DIR__)) . '/config/config.php',
         dirname(dirname(__DIR__)) . '/config/firewall.php',
+        dirname(dirname(__DIR__)) . '/config/routes.php',
         dirname(dirname(__DIR__)) . '/config/router.php',
         dirname(dirname(__DIR__)) . '/config/database.php',
         dirname(dirname(__DIR__)) . '/config/twig.php',

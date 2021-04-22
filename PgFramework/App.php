@@ -5,24 +5,25 @@ namespace PgFramework;
 use Exception;
 use DI\ContainerBuilder;
 use Invoker\CallableResolver;
-use PgFramework\Event\ViewEvent;
 use Mezzio\Router\RouteResult;
-use PgFramework\Event\RequestEvent;
+use PgFramework\Event\ViewEvent;
 use Mezzio\Router\RouteCollector;
-use PgFramework\Event\ResponseEvent;
 use GuzzleHttp\Psr7\ServerRequest;
 use League\Event\ListenerPriority;
+use PgFramework\Event\RequestEvent;
+use PgFramework\Event\ResponseEvent;
 use PgFramework\Event\ExceptionEvent;
-use PgFramework\Event\ControllerEvent;
 use Psr\Container\ContainerInterface;
+use PgFramework\Event\ControllerEvent;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use Invoker\Reflection\CallableReflection;
+use PgFramework\Router\RoutesMapInterface;
 use PgFramework\Environnement\Environnement;
 use PgFramework\Event\ControllerParamsEvent;
-use Invoker\Reflection\CallableReflection;
-use PgFramework\Router\Loader\DirectoryLoader;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use PgFramework\Router\Loader\DirectoryLoader;
 use Invoker\ParameterResolver\ParameterResolver;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use PgFramework\Middleware\Stack\MiddlewareAwareStackTrait;
@@ -183,6 +184,9 @@ class App extends AbstractApplication implements RequestHandlerInterface
     public function run(?ServerRequestInterface $request = null): ResponseInterface
     {
         $this->request = $request;
+        if ($request === null) {
+            $this->request = ServerRequest::fromGlobals();
+        }
 
         $container = $this->getContainer();
 
@@ -196,6 +200,12 @@ class App extends AbstractApplication implements RequestHandlerInterface
 
         if (!$this->dispatcher) {
             $this->dispatcher = $container->get(EventDispatcherInterface::class);
+        }
+
+        $map = $container->get(RoutesMapInterface::class);
+        [$listeners] = $map->getListeners($this->request);
+        if (null !== $listeners) {
+            $this->listeners = array_merge($this->listeners, $listeners);
         }
 
         foreach ($this->listeners as $listener) {
@@ -212,10 +222,6 @@ class App extends AbstractApplication implements RequestHandlerInterface
                 }
             }
             $module = $container->get($module);
-        }
-
-        if ($request === null) {
-            $this->request = ServerRequest::fromGlobals();
         }
 
         try {

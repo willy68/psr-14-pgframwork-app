@@ -22,6 +22,7 @@ use PgFramework\Event\ControllerParamsEvent;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Router\Loader\DirectoryLoader;
 use Invoker\ParameterResolver\ParameterResolver;
+use PgFramework\Router\RoutesMapInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -146,6 +147,9 @@ class ApplicationEvent extends AbstractApplication
     public function run(?ServerRequestInterface $request = null): ResponseInterface
     {
         $this->request = $request;
+        if ($request === null) {
+            $this->request = ServerRequest::fromGlobals();
+        }
 
         $container = $this->getContainer();
 
@@ -159,6 +163,12 @@ class ApplicationEvent extends AbstractApplication
 
         if (!$this->dispatcher) {
             $this->dispatcher = $container->get(EventDispatcherInterface::class);
+        }
+
+        $map = $container->get(RoutesMapInterface::class);
+        [$listeners] = $map->getListeners($this->request);
+        if (null !== $listeners) {
+            $this->listeners = array_merge($this->listeners, $listeners);
         }
 
         foreach ($this->listeners as $listener) {
@@ -175,10 +185,6 @@ class ApplicationEvent extends AbstractApplication
                 }
             }
             $module = $container->get($module);
-        }
-
-        if ($request === null) {
-            $this->request = ServerRequest::fromGlobals();
         }
 
         try {

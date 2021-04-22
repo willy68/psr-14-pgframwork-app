@@ -63,6 +63,8 @@ use Mezzio\Router\RouterInterface;
 use PgFramework\EventDispatcher\EventDispatcher;
 use PgFramework\EventListener\CsrfListener;
 use PgFramework\EventListener\CsrfListenerInterface;
+use PgFramework\Router\RoutesMapFactory;
+use PgFramework\Router\RoutesMapInterface;
 use Tuupola\Middleware\JwtAuthentication;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -111,7 +113,7 @@ return [
         'striptags' => StriptagsFilter::class
     ]),
     FirewallMapInterface::class => factory(FirewallMapFactory::class),
-    'firewall.event.rules' => \DI\add([]),
+    'security.firewall.rules' => \DI\add([]),
     'security.voters' => \DI\add([]),
     AccessMapInterface::class => factory(AccessMapFactory::class),
     'security.voters.strategy' => VoterManagerInterface::STRATEGY_AFFIRMATIVE,
@@ -134,6 +136,8 @@ return [
     EventDispatcherInterface::class => function (ContainerInterface $c): EventDispatcherInterface {
         return new EventDispatcher($c->get(CallableResolver::class));
     },
+    'routes.listeners' => \DI\add([]),
+    RoutesMapInterface::class => factory(RoutesMapFactory::class),
     RouterInterface::class => factory(FastRouteRouterFactory::class),
     FastRouteRouter::class => factory(FastRouteRouterFactory::class),
     'duplicate.route' => true,
