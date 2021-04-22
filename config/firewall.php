@@ -1,7 +1,5 @@
 <?php
 
-use PgFramework\EventListener\BodyParserListener;
-use PgFramework\EventListener\ContentTypeJsonListener;
 use PgFramework\Security\Authorization\Voter\VoterRoles;
 use PgFramework\Security\Firewall\EventListener\ForbidenListener;
 use PgFramework\Security\Firewall\EventListener\AuthorizationListener;
