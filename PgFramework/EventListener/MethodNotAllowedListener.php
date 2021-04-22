@@ -20,6 +20,10 @@ class MethodNotAllowedListener implements EventSubscriberInterface
         /** @var RouteResult $routeResult */
         $routeResult = $request->getAttribute(RouteResult::class);
 
+        if (null === $routeResult) {
+            return;
+        }
+
         if ($routeResult->isMethodFailure()) {
             $event->setResponse( (new Response())
                 ->withStatus(StatusCode::STATUS_METHOD_NOT_ALLOWED)
