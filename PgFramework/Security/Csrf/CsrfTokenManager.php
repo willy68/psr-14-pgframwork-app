@@ -73,8 +73,11 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
 
         $knownToken = Security::unsaltToken($knownToken);
         $token = Security::unsaltToken($token);
+        if (false === Security::verifyToken($token)) {
+            return false;
+        }
 
-        return hash_equals($knownToken, $token);
+        return hash_equals(base64_decode($knownToken), base64_decode($token));
     }
 
     /**
