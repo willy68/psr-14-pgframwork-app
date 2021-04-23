@@ -6,7 +6,6 @@ use App\Blog\BlogModule;
 use App\Demo\DemoModule;
 use App\Admin\AdminModule;
 use App\Api\ApiClientModule;
-use PgFramework\EventListener\CsrfListener;
 use PgFramework\Security\Firewall\Firewall;
 use PgFramework\Middleware\MethodMiddleware;
 use PgFramework\Middleware\RouterMiddleware;
@@ -16,7 +15,6 @@ use PgFramework\Middleware\ApiOptionsMiddleware;
 use PgFramework\Middleware\DispatcherMiddleware;
 use PgFramework\EventListener\CsrfCookieListener;
 use PgFramework\EventListener\MethodHeadListener;
-use PgFramework\EventListener\InvalidCsrfListener;
 use PgFramework\Middleware\PageNotFoundMiddleware;
 use PgFramework\EventListener\ActiveRecordListener;
 use PgFramework\EventListener\PageNotFoundListener;
@@ -59,10 +57,8 @@ return [
         PageNotFoundListener::class,
         ActiveRecordListener::class,
         CsrfCookieListener::class,
-        //CsrfListener::class,
         Firewall::class,
         StringResponseListener::class,
-        InvalidCsrfListener::class,
         RecordNotFoundListener::class,
     ],
 

@@ -56,7 +56,7 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
      */
     public function removeToken(string $tokenId): string
     {
-        return $this->storage->removeToken($tokenId);
+        $this->storage->removeToken($tokenId);
         return $tokenId;
     }
 

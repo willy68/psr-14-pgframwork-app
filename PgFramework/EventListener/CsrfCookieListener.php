@@ -2,15 +2,20 @@
 
 namespace PgFramework\EventListener;
 
+use GuzzleHttp\Psr7\Response;
+use PgFramework\Event\Events;
 use Dflydev\FigCookies\SetCookie;
 use League\Event\ListenerPriority;
 use PgFramework\Security\Security;
 use PgFramework\Event\RequestEvent;
 use PgFramework\Event\ResponseEvent;
+use PgFramework\Event\ExceptionEvent;
+use PgFramework\Session\FlashService;
+use PgFramework\HttpUtils\RequestUtils;
 use Grafikart\Csrf\InvalidCsrfException;
 use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
-use PgFramework\Event\Events;
+use PgFramework\Response\ResponseRedirect;
 use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
@@ -27,6 +32,13 @@ class CsrfCookieListener implements EventSubscriberInterface
     ];
 
     /**
+     * Undocumented variable
+     *
+     * @var FlashService
+     */
+    private $flashService;
+
+    /**
      *
      * @var CsrfTokenManagerInterface
      */
@@ -36,9 +48,10 @@ class CsrfCookieListener implements EventSubscriberInterface
      *
      * @param CsrfTokenManagerInterface $tokenManager
      */
-    public function __construct(CsrfTokenManagerInterface $tokenManager, array $config = [])
+    public function __construct(CsrfTokenManagerInterface $tokenManager, FlashService $flashService, array $config = [])
     {
         $this->tokenManager = $tokenManager;
+        $this->flashService = $flashService;
         $this->config = array_merge($this->config, $config);
     }
 
@@ -69,6 +82,7 @@ class CsrfCookieListener implements EventSubscriberInterface
 
         if (\in_array($method, ['DELETE', 'PATCH', 'POST', 'PUT'], true)) {
             $body = $request->getParsedBody() ?: [];
+
             if ((\is_array($body) || $body instanceof \ArrayAccess) && !empty($body)) {
                 $token = $body[$this->config['field']] ?? null;
                 $this->validateToken($token, $cookie);
@@ -110,6 +124,36 @@ class CsrfCookieListener implements EventSubscriberInterface
         }
     }
 
+    public function onException(ExceptionEvent $event)
+    {
+        $e = $event->getException();
+        $request = $event->getRequest();
+        $token = $request->getAttribute($this->config['field']);
+        [$tokenId] = explode(CsrfTokenManagerInterface::delimiter, $token);
+
+        if ($e instanceof InvalidCsrfException) {
+            $this->tokenManager->removeToken($tokenId);
+
+            if (RequestUtils::isJson($request)) {
+                $response = new Response(403, [], json_encode($e->getMessage()));
+            } else {
+                $this->flashService->error('Vous n\'avez pas de token valid pour executer cette action');
+                $response = new ResponseRedirect('/');
+            }
+
+            $setCookie = SetCookie::create($this->config['cookieName'])
+                ->withValue('')
+                ->withExpires(time() - 3600)
+                ->withPath('/')
+                ->withDomain(null)
+                ->withSecure($this->config['secure'])
+                ->withHttpOnly($this->config['httponly']);
+            $response = FigResponseCookies::set($response, $setCookie);
+
+            $event->setResponse($response);
+        }
+    }
+
     protected function validateToken($token, $cookie)
     {
         if (!$token) {
@@ -144,7 +188,8 @@ class CsrfCookieListener implements EventSubscriberInterface
     {
         return [
             Events::REQUEST => ['onRequest', ListenerPriority::HIGH],
-            Events::RESPONSE => ['onResponse', ListenerPriority::LOW]
+            Events::RESPONSE => ['onResponse', ListenerPriority::LOW],
+            Events::EXCEPTION => ['onException', ListenerPriority::NORMAL]
         ];
     }
 }
