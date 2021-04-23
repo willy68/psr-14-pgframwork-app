@@ -19,7 +19,6 @@ class CsrfCookieListener implements EventSubscriberInterface
     protected $config = [
         'cookieName' => 'XSRF-TOKEN',
         'header' => 'X-CSRF-TOKEN',
-        'session.key' => 'csrf.tokens',
         'field' => '_csrf',
         'expiry' => 0,
         'secure' => false,
@@ -37,9 +36,10 @@ class CsrfCookieListener implements EventSubscriberInterface
      *
      * @param CsrfTokenManagerInterface $tokenManager
      */
-    public function __construct(CsrfTokenManagerInterface $tokenManager)
+    public function __construct(CsrfTokenManagerInterface $tokenManager, array $config = [])
     {
         $this->tokenManager = $tokenManager;
+        $this->config = array_merge($this->config, $config);
     }
 
     /**
@@ -56,8 +56,10 @@ class CsrfCookieListener implements EventSubscriberInterface
 
         if (is_string($cookie) && strlen($cookie) > 0) {
             [$tokenId] = explode(CsrfTokenManagerInterface::delimiter, $cookie);
-            $cookie = $this->tokenManager->getToken($tokenId); 
-            $request = $request->withAttribute($this->config['field'], $cookie);
+            $request = $request->withAttribute(
+                $this->config['field'],
+                $this->tokenManager->getToken($tokenId)
+            );
         }
 
         if (\in_array($method, ['GET', 'HEAD'], true) && strlen($cookie) === 0) {
@@ -68,13 +70,13 @@ class CsrfCookieListener implements EventSubscriberInterface
         if (\in_array($method, ['DELETE', 'PATCH', 'POST', 'PUT'], true)) {
             $body = $request->getParsedBody() ?: [];
             if ((\is_array($body) || $body instanceof \ArrayAccess) && !empty($body)) {
-                $token = $body[$this->config['field']];
+                $token = $body[$this->config['field']] ?? null;
                 $this->validateToken($token, $cookie);
             } else if (!$request->hasHeader($this->config['header'])) {
                 throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
             } else {
-                $headerCookie = $request->getHeaderLine($this->config['header']);
-                $this->validateToken($headerCookie, $cookie);
+                $token = $request->getHeaderLine($this->config['header']);
+                $this->validateToken($token, $cookie);
             }
 
             [$tokenId] = explode(CsrfTokenManagerInterface::delimiter, $cookie);
@@ -96,13 +98,13 @@ class CsrfCookieListener implements EventSubscriberInterface
         $token = $request->getAttribute($this->config['field']);
 
         if (null !== $token) {
-            $setCookie = SetCookie::create('XSRF-TOKEN')
+            $setCookie = SetCookie::create($this->config['cookieName'])
                 ->withValue($token)
-                // ->withExpires(time() + 3600)
+                ->withExpires($this->config['expiry'])
                 ->withPath('/')
                 ->withDomain(null)
-                ->withSecure(false)
-                ->withHttpOnly(false);
+                ->withSecure($this->config['secure'])
+                ->withHttpOnly($this->config['httponly']);
             $response = FigResponseCookies::set($response, $setCookie);
             $event->setResponse($response);
         }
@@ -110,12 +112,18 @@ class CsrfCookieListener implements EventSubscriberInterface
 
     protected function validateToken($token, $cookie)
     {
+        if (!$token) {
+            throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
+        }
+
         if (!$cookie) {
             throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
         }
+
         if (!$this->tokenManager->isTokenValid($token)) {
             throw new InvalidCsrfException('Le Csrf est incorrect');
         }
+
         if (!hash_equals($token, $cookie)) {
             throw new InvalidCsrfException('Le cookie Csrf est incorrect');
         }

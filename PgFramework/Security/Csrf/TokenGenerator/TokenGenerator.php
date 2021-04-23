@@ -2,6 +2,8 @@
 
 namespace PgFramework\Security\Csrf\TokenGenerator;
 
+use PgFramework\Security\Security;
+
 class TokenGenerator implements TokenGeneratorInterface
 {
     /**
@@ -13,7 +15,7 @@ class TokenGenerator implements TokenGeneratorInterface
      */
     public function generateToken(): string
     {
-        $token = bin2hex(random_bytes(16));
+        $token = Security::saltToken(Security::createToken());
 
         return $token;
     }

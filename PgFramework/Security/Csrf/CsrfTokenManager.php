@@ -65,12 +65,16 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
      */
     public function isTokenValid(string $token): bool
     {
-        [$tokenId] = explode(self::delimiter, $token);
+        [$tokenId, $token] = explode(self::delimiter, $token);
         if (!$this->storage->hasToken($tokenId)) {
             return false;
         }
+        [, $knownToken] = explode(self::delimiter, $this->storage->getToken($tokenId));
 
-        return hash_equals($this->storage->getToken($tokenId), $token);
+        $knownToken = Security::unsaltToken($knownToken);
+        $token = Security::unsaltToken($token);
+
+        return hash_equals($knownToken, $token);
     }
 
     /**
