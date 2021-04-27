@@ -47,14 +47,14 @@ class ActiveRecordAnnotationConverter implements ParameterResolver
             $reflectionParameters = array_diff_key($reflectionParameters, $resolvedParameters);
         }
 
+        /** @todo best annotation parse */
+        $findByKey = array_key_first($this->findBy);
+        $include = $this->findBy['include'] ?? null;
+
         foreach ($providedParameters as $key => $parameter) {
             if (is_int($key)) {
                 continue;
             }
-
-            /** @todo best annotation parse */
-            $findByKey = array_key_first($this->findBy);
-            $include = $this->findBy['include'] ?? null;
 
             if ($key === $this->findBy[$findByKey]) {
                 /** @var ReflectionParameter[] $reflectionParameters */
