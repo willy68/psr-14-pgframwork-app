@@ -39,7 +39,7 @@ final class ParameterConverter
         // Method param name
         if (!isset($parameters['value'])) {
             throw new InvalidAnnotation(sprintf(
-                '@ParameterConverter("name", options={"id = "value"}) expects parameter "name", %s given.',
+                '@ParameterConverter("name", options={"id" = "value"}) expects parameter "name", %s given.',
                 json_encode($parameters)
             ));
             return;
