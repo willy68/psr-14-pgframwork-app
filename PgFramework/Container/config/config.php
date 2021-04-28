@@ -1,5 +1,9 @@
 <?php
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\ORM\Configuration;
+use Doctrine\ORM\EntityManager;
 use PgFramework\Jwt\JwtMiddlewareFactory;
 use Psr\Container\ContainerInterface;
 use Grafikart\Csrf\CsrfMiddleware;
@@ -122,13 +126,14 @@ return [
     RequestMatcherInterface::class => create(RequestMatcher::class),
     CsrfMiddleware::class =>
     create()->constructor(get(SessionInterface::class)),
-    TokenStorageInterface::class => 
+    TokenStorageInterface::class =>
     create(TokenSessionStorage::class)->constructor(get(SessionInterface::class)),
     TokenGeneratorInterface::class => create(TokenGenerator::class),
-    CsrfTokenManagerInterface::class => 
+    CsrfTokenManagerInterface::class =>
     create(CsrfTokenManager::class)->constructor(
-        get(TokenStorageInterface::class), 
-        get(TokenGeneratorInterface::class)),
+        get(TokenStorageInterface::class),
+        get(TokenGeneratorInterface::class)
+    ),
     JwtAuthentication::class => factory(JwtMiddlewareFactory::class),
     Invoker::class => factory(InvokerFactory::class),
     ParameterResolver::class => factory(ResolverChainFactory::class),
@@ -149,6 +154,7 @@ return [
     'database.user' => Environnement::getEnv('DATABASE_USER', 'root'),
     'database.password' => Environnement::getEnv('DATABASE_PASSWORD', 'root'),
     'database.name' => Environnement::getEnv('DATABASE_NAME', 'my_database'),
+    'database.driver' => Environnement::getEnv('DATABASE_DRIVER'),
     'ActiveRecord' => factory(ActiveRecordFactory::class),
     'ActiveRecord.connections' => function (ContainerInterface $c): array {
         return [
@@ -169,5 +175,46 @@ return [
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
             ]
         );
+    },
+    'doctrine.proxies.dir' => __DIR__ . '/app/Proxies',
+    'doctrine.proxies.namespace' => 'App\Proxies',
+    'doctrine.entity.path' => \DI\add([]),
+    'doctrine.connection.options' => function (ContainerInterface $c): array {
+        return [
+            'url' => $c->get('database.sgdb') . "://" .
+            $c->get('database.user') . ":" .
+            $c->get('database.password') . "@" .
+            $c->get('database.host') . "/" .
+            $c->get('database.name') . "?charset=utf8",
+        ];
+    },
+    Connection::class => function (ContainerInterface $c): Connection {
+        return DriverManager::getConnection($c->get('doctrine.connection.options'));
+    },
+    EntityManager::class => function (ContainerInterface $c): EntityManager {
+        // Create a simple "default" Doctrine ORM configuration for Annotations
+        $isDevMode = $c->get('env') === 'dev';
+        $config = new Configuration;
+
+        if ($isDevMode === true) {
+            $cache = new \Doctrine\Common\Cache\ArrayCache;
+            $config->setAutoGenerateProxyClasses(true);
+        } else {
+            $cache = new \Doctrine\Common\Cache\ApcuCache;
+            $config->setAutoGenerateProxyClasses(false);
+        }
+
+        $config->setMetadataCacheImpl($cache);
+        $driverImpl = $config->newDefaultAnnotationDriver(
+            $c->get('doctrine.entity.path'),
+            false
+        );
+
+        $config->setMetadataDriverImpl($driverImpl);
+        $config->setQueryCacheImpl($cache);
+        $config->setProxyDir($c->get('doctrine.proxies.dir'));
+        $config->setProxyNamespace($c->get('doctrine.proxies.namespace'));
+
+        return EntityManager::create($c->get(Connection::class), $config);
     }
 ];

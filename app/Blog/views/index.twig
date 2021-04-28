@@ -73,6 +73,9 @@
 								<a href="{{ path('blog.postCategoryShow', {category_slug: post.category.slug, id: post.id}) }}" class="btn btn-primary">
 									Voir l'article
 								</a>
+								<a href="{{ path('blog.showPost', {id: post.id}) }}" class="btn btn-primary">
+									Article Doctrine
+								</a>
 							</div>
 						</div>
 					{% endfor %}

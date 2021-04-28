@@ -2,8 +2,11 @@
 
 namespace App\Demo\Controller;
 
+use App\Entity\Post;
 use App\Models\Client;
 use App\Auth\Models\User;
+use Doctrine\ORM\EntityManager;
+use App\Repository\PostRepository;
 use PgFramework\Router\Annotation\Route;
 use PgFramework\Validator\ValidationRules;
 use PgFramework\Renderer\RendererInterface;
@@ -32,7 +35,8 @@ class DemoController
     public function index(
         ServerRequestInterface $request,
         RendererInterface $renderer,
-        \PDO $pdo
+        \PDO $pdo,
+        EntityManager $em
     ): string {
         $validation = new ValidationRules('auteur', 'required|min:3|max:10|filter:trim');
         $validation->isValid('Willy ');
@@ -44,6 +48,12 @@ class DemoController
         /** @var \App\Auth\Models\User $user */
         $user = User::find_by_username(['username' => 'admin']);
         $user_array = $user->to_array();
+
+        /** @var PostRepository */
+        $repo = $em->getRepository(Post::class);
+        $doctrinePost = $repo->findWithCategory(122);
+        //dd($doctrinePost);
+
         $mysql_ver = $pdo->getAttribute(\PDO::ATTR_SERVER_VERSION);
         $params = array_merge($request->getServerParams(), $user_array, [$mysql_ver], [$query->__toString()]);
         return $renderer->render('@demo/index', compact('params'));

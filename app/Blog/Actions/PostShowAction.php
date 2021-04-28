@@ -4,11 +4,14 @@ namespace App\Blog\Actions;
 
 use App\Blog\Models\Posts;
 use App\Blog\Models\Categories;
+use App\Entity\Post;
+use Doctrine\ORM\EntityManager;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Router\Annotation\Route;
 use PgFramework\Actions\RouterAwareAction;
 use PgFramework\Renderer\RendererInterface;
 use PgFramework\Invoker\Annotation\ParameterConverter;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @Route("/blog")
@@ -77,6 +80,24 @@ class PostShowAction
      */
     public function postShow(Categories $category, Posts $post): string
     {
+        return $this->renderer->render('@blog/show', [
+            'post' => $post
+        ]);
+    }
+
+    /**
+     * Show post with Doctrine
+     * 
+     * @Route("/post/{id:[0-9]+}", name="blog.showPost", method={"GET"})
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param \Doctrine\ORM\EntityManager $em
+     * @return string
+     */
+    public function showPost(ServerRequestInterface $request, EntityManager $em): string
+    {
+        $id = $request->getAttribute('id');
+        $post = $em->find(Post::class, $id);
         return $this->renderer->render('@blog/show', [
             'post' => $post
         ]);

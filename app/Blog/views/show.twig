@@ -12,8 +12,11 @@
     {{ post.category.name }}
   </a>
 {% endif %}
-
-  {{ post.created_at | ago }} 
+{% if post.created_at %}
+{{ post.created_at | ago }}
+{% else %}
+{{ post.getCreatedAt | ago }} 
+{% endif %}
 </p>
 
 <p>
