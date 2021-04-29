@@ -11,6 +11,7 @@ use Invoker\ParameterResolver\AssociativeArrayResolver;
 use PgFramework\Invoker\ParameterResolver\ActiveRecordResolver;
 use Invoker\ParameterResolver\Container\TypeHintContainerResolver;
 use PgFramework\Invoker\ParameterResolver\ActiveRecordAnnotationsResolver;
+use PgFramework\Invoker\ParameterResolver\DoctrineEntitiesResolver;
 use PgFramework\Invoker\ParameterResolver\DoctrineEntityResolver;
 
 class ResolverChainFactory
@@ -20,6 +21,7 @@ class ResolverChainFactory
         return new ControllerParamsResolver([
         new ActiveRecordAnnotationsResolver(),
         new ActiveRecordResolver(),
+        new DoctrineEntitiesResolver($container->get(EntityManager::class)),
         new DoctrineEntityResolver($container->get(EntityManager::class)),
         new NumericArrayResolver(),
         new AssociativeArrayResolver(),

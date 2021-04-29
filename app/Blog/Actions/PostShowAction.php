@@ -4,6 +4,7 @@ namespace App\Blog\Actions;
 
 use App\Blog\Models\Posts;
 use App\Blog\Models\Categories;
+use App\Entity\Category;
 use App\Entity\Post;
 use Doctrine\ORM\EntityManager;
 use Mezzio\Router\RouterInterface;
@@ -78,7 +79,7 @@ class PostShowAction
      * @param Posts $post
      * @return string
      */
-    public function postShow(Categories $category, Posts $post): string
+    public function postShow(Category $category, Post $post): string
     {
         return $this->renderer->render('@blog/show', [
             'post' => $post
@@ -110,7 +111,7 @@ class PostShowAction
      * @param Posts $post
      * @return string
      */
-    public function postCategoryShow(Categories $category, Posts $post): string
+    public function postCategoryShow(Category $category, Post $post): string
     {
         return $this->renderer->render('@blog/show', [
             'post' => $post
