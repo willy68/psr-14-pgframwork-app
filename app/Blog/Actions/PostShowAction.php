@@ -2,17 +2,13 @@
 
 namespace App\Blog\Actions;
 
-use App\Blog\Models\Posts;
-use App\Blog\Models\Categories;
 use App\Entity\Category;
 use App\Entity\Post;
-use Doctrine\ORM\EntityManager;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Router\Annotation\Route;
 use PgFramework\Actions\RouterAwareAction;
 use PgFramework\Renderer\RendererInterface;
 use PgFramework\Invoker\Annotation\ParameterConverter;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @Route("/blog")
@@ -55,9 +51,9 @@ class PostShowAction
      * @param Post $post
      * @return mixed
      */
-    public function __invoke(string $slug, Posts $post)
+    public function __invoke(string $slug, Post $post)
     {
-        if ($post->slug !== $slug) {
+        if ($post->getSlug() !== $slug) {
             return $this->redirect('blog.show', [
                 'slug' => $post->slug,
                 'id' => $post->id
@@ -75,8 +71,8 @@ class PostShowAction
      * @Route("/category/{category_id:[0-9]+}/post/{id:[0-9]+}", name="blog.postShow")
      * @ParameterConverter("category", options={"id"="category_id"})
      *
-     * @param Categories $category
-     * @param Posts $post
+     * @param Category $category
+     * @param Post $post
      * @return string
      */
     public function postShow(Category $category, Post $post): string
@@ -107,8 +103,8 @@ class PostShowAction
      * @Route("/category/{category_slug:[a-z\-0-9]+}/post/{id:[0-9]+}", name="blog.postCategoryShow", methods={"GET"})
      * @ParameterConverter("category", options={"slug"="category_slug"})
      *
-     * @param Categories $category
-     * @param Posts $post
+     * @param Category $category
+     * @param Post $post
      * @return string
      */
     public function postCategoryShow(Category $category, Post $post): string
