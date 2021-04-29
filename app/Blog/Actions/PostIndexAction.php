@@ -2,14 +2,17 @@
 
 namespace App\Blog\Actions;
 
+use App\Entity\Post;
 use App\Blog\Models\Posts;
 use App\Blog\Models\Categories;
+use App\Entity\Category;
+use Doctrine\ORM\EntityManager;
+use App\Repository\PostRepository;
 use PgFramework\Router\Annotation\Route;
 use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 /**
- * @Route("/blog", name="blog.index")
  */
 class PostIndexAction
 {
@@ -33,6 +36,8 @@ class PostIndexAction
 
     /**
      *
+     * @Route("/blog", name="blog.index", methods={"GET"})
+     * 
      * @param Request $request
      * @return string
      */
@@ -44,6 +49,23 @@ class PostIndexAction
                 ::paginate(12, $params['p'] ?? 1);
         $categories = Categories::find('all');
 
+        return $this->renderer->render('@blog/index', compact('posts', 'categories'));
+    }
+
+    /**
+     * @Route("/dblog", name="blog.indexORM", methods={"GET"})
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param \Doctrine\ORM\EntityManager $em
+     * @return string
+     */
+    public function index(Request $request, EntityManager $em): string
+    {
+        $params = $request->getQueryParams();
+        /** @var PostRepository */
+        $repo = $em->getRepository(Post::class);
+        $posts = $repo->paginate($repo->buildFindPublic(), 12, $params['p'] ?? 1);
+        $categories = $em->getRepository(Category::class)->findAll();
         return $this->renderer->render('@blog/index', compact('posts', 'categories'));
     }
 }

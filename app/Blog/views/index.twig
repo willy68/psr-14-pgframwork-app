@@ -59,7 +59,11 @@
 									{{ post.content | excerpt | nl2br }}
 								</p>
 								<p class="text-muted">
-								{{ post.created_at | ago }}
+									{% if post.created_at %}
+									{{ post.created_at | ago }}
+									{% else %}
+									{{ post.getCreatedAt | ago }} 
+									{% endif %}
 								</p>
 
 							</div>

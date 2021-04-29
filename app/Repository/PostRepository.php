@@ -3,9 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Post;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
+use Pagerfanta\Pagerfanta;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\EntityRepository;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
 
 class PostRepository extends EntityRepository
 {
@@ -41,6 +43,22 @@ class PostRepository extends EntityRepository
     public function buildFindPublicForCategory(int $category_id): QueryBuilder
     {
         return $this->buildFindPublic()->andWhere("p.category = $category_id");
+    }
+
+    /**
+     * paginate Posts
+     *
+     * @param \Doctrine\ORM\QueryBuilder $query
+     * @param int $perPage
+     * @param int $currentPage
+     * @return \Pagerfanta\Pagerfanta
+     */
+    public function paginate(QueryBuilder $query, int $perPage, int $currentPage = 1): Pagerfanta
+    {
+        $paginator = new QueryAdapter($query);
+        return (new Pagerfanta($paginator))
+            ->setMaxPerPage($perPage)
+            ->setCurrentPage($currentPage);
     }
 
     /**
