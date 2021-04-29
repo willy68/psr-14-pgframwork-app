@@ -90,14 +90,11 @@ class PostShowAction
      * 
      * @Route("/post/{id:[0-9]+}", name="blog.showPost", method={"GET"})
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Doctrine\ORM\EntityManager $em
+     * @param Post $post
      * @return string
      */
-    public function showPost(ServerRequestInterface $request, EntityManager $em): string
+    public function showPost(Post $post): string
     {
-        $id = $request->getAttribute('id');
-        $post = $em->find(Post::class, $id);
         return $this->renderer->render('@blog/show', [
             'post' => $post
         ]);

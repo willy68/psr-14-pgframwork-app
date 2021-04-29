@@ -8,7 +8,6 @@ use ReflectionFunctionAbstract;
 use Invoker\ParameterResolver\ParameterResolver;
 use Doctrine\Common\Annotations\AnnotationReader;
 use PgFramework\Invoker\Exception\InvalidAnnotation;
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use PgFramework\Invoker\Annotation\ParameterConverter;
 use PgFramework\Invoker\ParameterResolver\ActiveRecordAnnotationConverter;
 
@@ -28,12 +27,12 @@ class ActiveRecordAnnotationsResolver implements ParameterResolver
         array $resolvedParameters
     ): array {
 
-        $annotation = $this->getMethodAnnotation($reflection);
-        if (empty($annotation)) {
+        $annotations = $this->getMethodAnnotation($reflection);
+        if (empty($annotations)) {
             return $resolvedParameters;
         }
 
-        $converters = $this->parseAnnotation($annotation, $reflection);
+        $converters = $this->parseAnnotation($annotations, $reflection);
 
         if (empty($converters)) {
             return $resolvedParameters;
@@ -65,7 +64,7 @@ class ActiveRecordAnnotationsResolver implements ParameterResolver
     public function getAnnotationReader(): AnnotationReader
     {
         if ($this->annotationReader === null) {
-            AnnotationRegistry::registerLoader('class_exists');
+            //AnnotationRegistry::registerLoader('class_exists');
             $this->annotationReader = new AnnotationReader();
         }
 
@@ -82,9 +81,9 @@ class ActiveRecordAnnotationsResolver implements ParameterResolver
     {
         // Look for @ParameterConverter annotation
         try {
-            $annotation = $this->getAnnotationReader()
+            $annotations = $this->getAnnotationReader()
                 ->getMethodAnnotations($method);
-        } catch (InvalidAnnotation $e) {
+        } catch (\Exception $e) {
             throw new InvalidAnnotation(sprintf(
                 '@ParameterConverter annotation on %s::%s is malformed. %s',
                 $method->getDeclaringClass()->getName(),
@@ -92,7 +91,7 @@ class ActiveRecordAnnotationsResolver implements ParameterResolver
                 $e->getMessage()
             ), 0, $e);
         }
-        return $annotation;
+        return $annotations;
     }
 
     /**
