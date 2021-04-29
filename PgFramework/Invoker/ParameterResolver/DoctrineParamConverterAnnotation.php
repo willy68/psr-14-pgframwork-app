@@ -2,11 +2,11 @@
 
 namespace PgFramework\Invoker\ParameterResolver;
 
-use ActiveRecord\Exceptions\RecordNotFound;
 use Doctrine\ORM\EntityManager;
+use ActiveRecord\Exceptions\RecordNotFound;
 use Invoker\ParameterResolver\ParameterResolver;
 
-class DoctrineResolver implements ParameterResolver
+class DoctrineParamConverterAnnotation implements ParameterResolver
 {
     /**
      * Nom du paramètre de la methode à injecter

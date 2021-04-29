@@ -8,7 +8,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use PgFramework\Invoker\Exception\InvalidAnnotation;
 use PgFramework\Invoker\Annotation\ParameterConverter;
 
-class DoctrineEntitiesResolver implements ParameterResolver
+class DoctrineParamConverterAnnotations implements ParameterResolver
 {
     /**
      * Reader
@@ -124,7 +124,7 @@ class DoctrineEntitiesResolver implements ParameterResolver
                     $method->getName()
                 ));
             }
-            $converters[] = new DoctrineResolver(
+            $converters[] = new DoctrineParamConverterAnnotation(
                 $this->em,
                 $annotationParams['value'],
                 $annotationParams['options']
