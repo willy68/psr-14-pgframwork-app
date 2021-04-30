@@ -13,8 +13,9 @@ class PostRepository extends EntityRepository
 {
     public function findPublic()
     {
-        $builder = $this->buildFindPublic();
-        $query = $this->getEntityManager()->createQuery($builder->getDQL());
+        //$builder = $this->buildFindPublic();
+        //$query = $this->getEntityManager()->createQuery($builder->getDQL());
+        $query = $this->buildFindPublic()->getQuery();
         return $query->getResult();
     }
 
