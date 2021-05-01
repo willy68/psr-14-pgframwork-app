@@ -64,7 +64,7 @@ class PostIndexAction
         $params = $request->getQueryParams();
         /** @var PostRepository */
         $repo = $em->getRepository(Post::class);
-        $posts = $repo->paginate($repo->buildFindPublic(), 12, $params['p'] ?? 1);
+        $posts = $repo->buildFindPublic()->paginate(12, $params['p'] ?? 1);
         $categories = $em->getRepository(Category::class)->findAll();
         return $this->renderer->render('@blog/index', compact('posts', 'categories'));
     }

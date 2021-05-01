@@ -6,22 +6,20 @@ use App\Entity\Post;
 use Doctrine\ORM\Query;
 use Pagerfanta\Pagerfanta;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\EntityRepository;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
+use PgFramework\Database\Doctrine\PaginatedQueryBuilder;
+use PgFramework\Database\Doctrine\PaginatedEntityRepository;
 
-class PostRepository extends EntityRepository
+class PostRepository extends PaginatedEntityRepository
 {
-    public function findPublic()
+    /**
+     * Get all records with category
+     *
+     * @return PaginatedQueryBuilder
+     */
+    public function buildFindAll(): PaginatedQueryBuilder
     {
-        //$builder = $this->buildFindPublic();
-        //$query = $this->getEntityManager()->createQuery($builder->getDQL());
-        $query = $this->buildFindPublic()->getQuery();
-        return $query->getResult();
-    }
-
-    public function buildFindAll(): QueryBuilder
-    {
-        $builder = $this->getEntityManager()->createQueryBuilder();
+        $builder = $this->createQueryBuilder();
         $builder->select('p')
             ->from(Post::class, 'p')
             ->join('p.category', 'c', 'c = p.category')
@@ -30,18 +28,24 @@ class PostRepository extends EntityRepository
         return $builder;
     }
 
-    public function buildFindPublic(): QueryBuilder
+    /**
+     * Get all public records with category
+     *
+     * @return PaginatedQueryBuilder
+     */
+    public function buildFindPublic(): PaginatedQueryBuilder
     {
         return $this->buildFindAll()
             ->where('p.published = 1')
             ->andWhere('p.created_at < CURRENT_TIMESTAMP()');
     }
     /**
+     * Get all records for one category
      *
      * @param int $category_id
      * @return Query
      */
-    public function buildFindPublicForCategory(int $category_id): QueryBuilder
+    public function buildFindPublicForCategory(int $category_id): PaginatedQueryBuilder
     {
         return $this->buildFindPublic()->andWhere("p.category = $category_id");
     }
@@ -63,13 +67,14 @@ class PostRepository extends EntityRepository
     }
 
     /**
+     * Get one record for one category
      *
      * @param int $id
      */
     public function findWithCategory(int $id)
     {
         $builder = $this->buildFindPublic()->andWhere("p.id = $id");
-        $query = $this->getEntityManager()->createQuery($builder->getDQL());
+        $query = $builder->getQuery();
         return $query->getResult();
     }
 }
