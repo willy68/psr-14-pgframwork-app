@@ -15,8 +15,14 @@ class PaginatedEntityRepository extends EntityRepository
 
     public function createQueryBuilder($alias = null, $indexBy = null)
     {
-        return (new PaginatedQueryBuilder($this->_em))
+        $builder = new PaginatedQueryBuilder($this->_em);
+
+        if (null !== $alias) {
+            $builder
             ->select($alias)
             ->from($this->_entityName, $alias, $indexBy);
+        }
+
+        return $builder;
     }
 }
