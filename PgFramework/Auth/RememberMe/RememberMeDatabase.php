@@ -8,8 +8,8 @@ use Psr\Http\Message\ResponseInterface;
 use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
 use Psr\Http\Message\ServerRequestInterface;
-use PgFramework\Auth\Repository\UserRepositoryInterface;
-use PgFramework\Auth\Repository\TokenRepositoryInterface;
+use PgFramework\Auth\Provider\UserProviderInterface;
+use PgFramework\Auth\Provider\TokenProviderInterface;
 
 class RememberMeDatabase extends AbstractRememberMe
 {
@@ -17,23 +17,24 @@ class RememberMeDatabase extends AbstractRememberMe
     /**
      * Token Repository
      *
-     * @var TokenRepositoryInterface
+     * @var TokenProviderInterface
      */
-    private $tokenRepository;
+    private $tokenProvider;
 
     /**
      * Constructeur: ajoute l'option pour le nom du cookie du mot de passe aléatoire
      *
-     * @param UserRepositoryInterface $userRepository
-     * @param TokenRepositoryInterface $tokenRepository
+     * @param \PgFramework\Auth\Provider\UserProviderInterface $userProvider
+     * @param \PgFramework\Auth\Provider\TokenProviderInterface $tokenProvider
+     * @param string $salt
      */
     public function __construct(
-        UserRepositoryInterface $userRepository,
-        TokenRepositoryInterface $tokenRepository,
+        UserProviderInterface $userProvider,
+        TokenProviderInterface $tokenProvider,
         string $salt
     ) {
-        parent::__construct($userRepository, $salt);
-        $this->tokenRepository = $tokenRepository;
+        parent::__construct($userProvider, $salt);
+        $this->tokenProvider = $tokenProvider;
     }
 
     /**
@@ -51,7 +52,7 @@ class RememberMeDatabase extends AbstractRememberMe
         $randomPassword = base64_encode(random_bytes(64));
 
         //["series', 'credential', 'random_password', 'expiration_date']
-        $this->tokenRepository->saveToken(
+        $this->tokenProvider->saveToken(
             [
                 'series' => $series,
                 'credential' => $user->getUsername(),
@@ -94,7 +95,7 @@ class RememberMeDatabase extends AbstractRememberMe
             }
 
             [$series,, $randomPassword] = $cookieParts;
-            $token = $this->tokenRepository->getTokenBySeries($series);
+            $token = $this->tokenProvider->getTokenBySeries($series);
 
             if (!$token) {
                 $authenticate = false;
@@ -109,7 +110,7 @@ class RememberMeDatabase extends AbstractRememberMe
             return $this->cancelCookie($request);
         }
 
-        $user = $this->userRepository->getUser($this->options['field'], $token->getCredential());
+        $user = $this->userProvider->getUser($this->options['field'], $token->getCredential());
         if ($user) {
 
             //password corrupted
@@ -122,14 +123,14 @@ class RememberMeDatabase extends AbstractRememberMe
             }
             // Remove token from database
             if (!$authenticate) {
-                $this->tokenRepository->deleteToken($token->getId());
+                $this->tokenProvider->deleteToken($token->getId());
                 return $this->cancelCookie($request);
             }
 
             // Update cookie and database token
             //["series', 'credential', 'random_password', 'expiration_date']
             $randomPassword = base64_encode(random_bytes(64));
-            $this->tokenRepository->updateToken(
+            $this->tokenProvider->updateToken(
                 [
                     'random_password' => $randomPassword,
                     'expiration_date' => new \DateTime()
@@ -169,11 +170,11 @@ class RememberMeDatabase extends AbstractRememberMe
 
                 [$series] = $cookieParts;
 
-                $token = $this->tokenRepository->getTokenBySeries($series);
+                $token = $this->tokenProvider->getTokenBySeries($series);
 
                 if ($token) {
                     // Delete token from database
-                    $this->tokenRepository->deleteToken($token->getId());
+                    $this->tokenProvider->deleteToken($token->getId());
                 }
                 // Delete cookie
                 $cookiePassword = SetCookie::create($this->options['name'])

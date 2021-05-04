@@ -2,8 +2,8 @@
 
 namespace App\Auth\Entity;
 
-use PgFramework\Auth\TokenInterface;
 use Doctrine\ORM\Mapping as ORM;
+use PgFramework\Auth\TokenInterface;
 
 /**
  * @ORM\Entity
@@ -29,7 +29,7 @@ class UserToken implements TokenInterface
      * @ORM\Column(type="string")
      * @var string
      */
-    public $credentials;
+    public $credential;
 
     /**
      * @ORM\Column(type="string")
@@ -38,13 +38,12 @@ class UserToken implements TokenInterface
     public $random_password;
 
     /**
-     * @ORM\Column(type="Datetime")
+     * @ORM\Column(type="datetime")
      * @var \Datetime
      */
     public $expiration_date;
 
     /**
-     * @ORM\Column(type="boolean")
      * @var bool
      */
     public $is_expired;

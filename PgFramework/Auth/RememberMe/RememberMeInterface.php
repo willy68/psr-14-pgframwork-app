@@ -27,7 +27,6 @@ interface RememberMeInterface
      * Connecte l'utilisateur automatiquement avec le cookie reçu de la requète
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param string $salt
      * @return ServerRequestInterface with _user attribute or not
      */
     public function autoLogin(ServerRequestInterface $request): ServerRequestInterface;

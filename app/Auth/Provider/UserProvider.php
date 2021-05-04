@@ -31,7 +31,7 @@ class UserProvider implements UserProviderInterface
         try {
             $repo = $this->em->getRepository($this->entity);
             /** @var User $user */
-            $user = $repo->findBy([$field => $value]);
+            $user = $repo->findOneBy([$field => $value]);
         } catch (\Exception $e) {
             return null;
         }

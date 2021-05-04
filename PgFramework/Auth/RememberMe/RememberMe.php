@@ -62,7 +62,7 @@ class RememberMe extends AbstractRememberMe
                 return $this->cancelCookie($request);
             }
 
-            $user = $this->userRepository->getUser($this->options['field'], $username);
+            $user = $this->userProvider->getUser($this->options['field'], $username);
 
             if (true === $this->validateToken($user, $expires, $hash)) {
                 $cookieValue = $this->getCookieHash(

@@ -5,7 +5,7 @@ namespace PgFramework\Auth;
 use PgFramework\Auth;
 use PgFramework\Auth\User;
 use PgFramework\Session\SessionInterface;
-use PgFramework\Auth\Repository\UserRepositoryInterface;
+use PgFramework\Auth\Provider\UserProviderInterface;
 
 class AuthSession implements Auth
 {
@@ -30,17 +30,17 @@ class AuthSession implements Auth
     private $user;
 
     /**
-     * @var UserRepositoryInterface
+     * @var UserProviderInterface
      */
-    protected $userRepository;
+    protected $userProvider;
 
     public function __construct(
         SessionInterface $session,
-        UserRepositoryInterface $userRepository,
+        UserProviderInterface $userProvider,
         array $options = []
     ) {
         $this->session = $session;
-        $this->userRepository = $userRepository;
+        $this->userProvider = $userProvider;
         if (!empty($options)) {
             $this->options = array_merge($this->options, $options);
         }
@@ -52,14 +52,14 @@ class AuthSession implements Auth
      * @param string $password
      * @return User|null
      */
-    public function login(string $username, string $password): ?User
+    public function login(string $identifier, string $password): ?User
     {
-        if (empty($username) || empty($password)) {
+        if (empty($identifier) || empty($password)) {
             return null;
         }
 
         /** @var User $user */
-        $user = $this->userRepository->getUser($this->options['field'], $username);
+        $user = $this->userProvider->getUser($this->options['field'], $identifier);
         if ($user && password_verify($password, $user->getPassword())) {
             $this->setUser($user);
             return $user;
@@ -86,7 +86,7 @@ class AuthSession implements Auth
                 return $this->user;
             }
             try {
-                $this->user = $this->userRepository->getUser('id', $userId);
+                $this->user = $this->userProvider->getUser('id', $userId);
                 return $this->user;
             } catch (\Exception $e) {
                 $this->session->delete($this->options['sessionName']);

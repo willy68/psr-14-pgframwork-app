@@ -4,9 +4,9 @@ namespace App\Auth\Provider;
 
 use App\Auth\Entity\UserToken;
 use Doctrine\ORM\EntityManager;
+use PgFramework\Database\Hydrator;
 use PgFramework\Auth\TokenInterface;
 use PgFramework\Auth\Provider\TokenProviderInterface;
-use PgFramework\Database\Hydrator;
 
 class UserTokenProvider implements TokenProviderInterface
 {
@@ -26,7 +26,7 @@ class UserTokenProvider implements TokenProviderInterface
         $this->entity = $entity;
     }
     /**
-     * get cookie token from database with ActiveRecord library
+     * get cookie token from database with Doctrine library
      *
      * use user series to find token
      *
@@ -46,7 +46,7 @@ class UserTokenProvider implements TokenProviderInterface
     }
 
     /**
-     * get cookie token from database with ActiveRecord library
+     * get cookie token from database with Doctrine library
      *
      * use user credential (ex. username or email)
      *
@@ -130,7 +130,7 @@ class UserTokenProvider implements TokenProviderInterface
 
     /**
      * Get only the params needed by the array:
-     * ['credential', 'random_password', 'expiration_date', 'is_expired']
+     * ['series', 'credential', 'random_password', 'expiration_date']
      *
      * @param array $params
      * @return array

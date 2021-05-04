@@ -2,7 +2,7 @@
 
 namespace PgFramework\Auth\RememberMe;
 
-use PgFramework\Auth\Repository\UserRepositoryInterface;
+use PgFramework\Auth\Provider\UserProviderInterface;
 
 abstract class AbstractRememberMe implements RememberMeInterface
 {
@@ -23,11 +23,9 @@ abstract class AbstractRememberMe implements RememberMeInterface
     protected $salt;
 
     /**
-     * User repository
-     *
-     * @var UserRepositoryInterface
+     * @var UserProviderInterface
      */
-    protected $userRepository;
+    protected $userProvider;
 
     /**
      * Cookie options
@@ -47,10 +45,10 @@ abstract class AbstractRememberMe implements RememberMeInterface
     ];
 
     public function __construct(
-        UserRepositoryInterface $userRepository,
+        UserProviderInterface $userProvider,
         string $salt = ''
     ) {
-        $this->userRepository = $userRepository;
+        $this->userProvider = $userProvider;
         $this->salt = $salt;
     }
 
