@@ -36,15 +36,19 @@ return [
         get(AuthTwigExtension::class)
     ]),
     'doctrine.entity.path' => add([__DIR__ . '/Entity']),
+    AuthSession::class => autowire()->constructorParameter('options', [
+        'sessionName' => 'auth.user',
+        'field' => 'username'
+    ]),
     Auth::class => get(AuthSession::class),
     User::class => factory(function (Auth $auth) {
         return $auth->getUser();
     })->parameter('auth', get(Auth::class)),
     RememberMeInterface::class => get(RememberMeDatabase::class),
     RememberMeDatabase::class =>
-    \DI\autowire()->constructorParameter('salt', Environnement::getEnv('APP_KEY', 'abcdefghijklmnop123456789')),
+    autowire()->constructorParameter('salt', Environnement::getEnv('APP_KEY', 'abcdefghijklmnop123456789')),
     RememberMe::class =>
-    \DI\autowire()->constructorParameter('salt', Environnement::getEnv('APP_KEY', 'abcdefghijklmnop123456789')),
+    autowire()->constructorParameter('salt', Environnement::getEnv('APP_KEY', 'abcdefghijklmnop123456789')),
     UtilTokenInterface::class => get(UtilToken::class),
     UserProviderInterface::class => get(UserProvider::class),
     TokenProviderInterface::class => get(UserTokenProvider::class),
