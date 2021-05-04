@@ -3,7 +3,12 @@
 namespace App\Auth\Entity;
 
 use PgFramework\Auth\User as AuthUser;
+use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="users")
+ */
 class User implements AuthUser
 {
 

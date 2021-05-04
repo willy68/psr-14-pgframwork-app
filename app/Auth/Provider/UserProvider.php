@@ -9,19 +9,29 @@ use PgFramework\Auth\Provider\UserProviderInterface;
 
 class UserProvider implements UserProviderInterface
 {
-    private $em;
+    /**
+     * @var string
+     */
+    protected $entity;
 
-    public function __construct(EntityManager $em)
+    /**
+     *
+     * @var EntityManager
+     */
+    protected $em;
+
+    public function __construct(EntityManager $em, string $entity = User::class)
     {
         $this->em = $em;
+        $this->entity = $entity;
     }
 
     public function getUser(string $field, $value): ?AuthUser
     {
-        $repo = $this->em->getRepository(User::class);
         try {
+            $repo = $this->em->getRepository($this->entity);
             /** @var User $user */
-            $user = $repo->findBy([$field, $value]);
+            $user = $repo->findBy([$field => $value]);
         } catch (\Exception $e) {
             return null;
         }
