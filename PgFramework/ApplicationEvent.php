@@ -17,13 +17,14 @@ use Psr\Container\ContainerInterface;
 use PgFramework\Event\ControllerEvent;
 use Psr\Http\Message\ResponseInterface;
 use Invoker\Reflection\CallableReflection;
+use PgFramework\Router\RoutesMapInterface;
 use PgFramework\Environnement\Environnement;
 use PgFramework\Event\ControllerParamsEvent;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Router\Loader\DirectoryLoader;
 use Invoker\ParameterResolver\ParameterResolver;
-use PgFramework\Router\RoutesMapInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 
 /**
  * Application
@@ -173,6 +174,10 @@ class ApplicationEvent extends AbstractApplication
 
         foreach ($this->listeners as $listener) {
             $this->dispatcher->addSubscriber($listener);
+        }
+
+        if (class_exists(AnnotationRegistry::class)) {
+            AnnotationRegistry::registerLoader('class_exists');
         }
 
         foreach ($this->modules as $module) {

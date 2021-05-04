@@ -9,7 +9,6 @@ use Mezzio\Router\RouteResult;
 use PgFramework\Event\ViewEvent;
 use Mezzio\Router\RouteCollector;
 use GuzzleHttp\Psr7\ServerRequest;
-use League\Event\ListenerPriority;
 use PgFramework\Event\RequestEvent;
 use PgFramework\Event\ResponseEvent;
 use PgFramework\Event\ExceptionEvent;
@@ -26,6 +25,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use PgFramework\Router\Loader\DirectoryLoader;
 use Invoker\ParameterResolver\ParameterResolver;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use PgFramework\Middleware\Stack\MiddlewareAwareStackTrait;
 
 /**
@@ -210,6 +210,10 @@ class App extends AbstractApplication implements RequestHandlerInterface
 
         foreach ($this->listeners as $listener) {
             $this->dispatcher->addSubscriber($listener);
+        }
+
+        if (class_exists(AnnotationRegistry::class)) {
+            AnnotationRegistry::registerLoader('class_exists');
         }
 
         foreach ($this->modules as $module) {

@@ -71,7 +71,6 @@ class DoctrineParamConverterAnnotations implements ParameterResolver
     public function getAnnotationReader(): AnnotationReader
     {
         if ($this->annotationReader === null) {
-            //AnnotationRegistry::registerLoader('class_exists');
             $this->annotationReader = new AnnotationReader();
         }
 

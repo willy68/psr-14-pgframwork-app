@@ -3,10 +3,9 @@
 namespace PgFramework\Router\Loader;
 
 use ReflectionMethod;
-use PgFramework\Router\Annotation\Route;
 use Doctrine\Common\Annotations\Reader;
+use PgFramework\Router\Annotation\Route;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use PgFramework\Router\Annotation\Exception\RouteAnnotationException;
 
 class MethodLoader
@@ -68,7 +67,7 @@ class MethodLoader
     public function getAnnotationReader(): Reader
     {
         if ($this->reader === null) {
-            AnnotationRegistry::registerLoader('class_exists');
+            //AnnotationRegistry::registerLoader('class_exists');
             $this->reader = new AnnotationReader();
         }
 

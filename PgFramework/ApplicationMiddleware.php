@@ -10,9 +10,10 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use PgFramework\Environnement\Environnement;
-use PgFramework\Router\Loader\DirectoryLoader;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use PgFramework\Router\Loader\DirectoryLoader;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use PgFramework\Middleware\Stack\MiddlewareAwareStackTrait;
 
 /**
@@ -127,6 +128,10 @@ class ApplicationMiddleware extends AbstractApplication implements RequestHandle
     public function run(?ServerRequestInterface $request = null): ResponseInterface
     {
         $container = $this->getContainer();
+
+        if (class_exists(AnnotationRegistry::class)) {
+            AnnotationRegistry::registerLoader('class_exists');
+        }
 
         foreach ($this->modules as $module) {
             if (!empty($module::ANNOTATIONS)) {
