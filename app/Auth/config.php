@@ -32,6 +32,7 @@ return [
     'twig.extensions' => add([
         get(AuthTwigExtension::class)
     ]),
+    'doctrine.entity.path' => \DI\add([__DIR__ . '/Entity']),
     Auth::class => \DI\get(AuthSession::class),
     User::class => factory(function (Auth $auth) {
         return $auth->getUser();
