@@ -7,7 +7,10 @@ class DefaultPasswordHasher implements PasswordHasherInterface
     protected $config = [
         'algo' => \PASSWORD_BCRYPT,
         'options' => [
-            'cost' => 10
+            'cost' => 10,
+            'memory_cost' => \PASSWORD_ARGON2_DEFAULT_MEMORY_COST,
+            'time_cost' => \PASSWORD_ARGON2_DEFAULT_TIME_COST,
+            'threads' => PASSWORD_ARGON2_DEFAULT_THREADS
         ]
     ];
 
