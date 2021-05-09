@@ -14,23 +14,14 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 class RememberMeLoginListener implements EventSubscriberInterface
 {
 
-    /**
-     *
-     * @var Auth
-     */
     private $auth;
 
-    /**
-     *
-     *
-     * @var RememberMeInterface
-     */
-    private $cookie;
+    private $rememberMe;
 
-    public function __construct(Auth $auth, RememberMeInterface $cookie)
+    public function __construct(Auth $auth, RememberMeInterface $rememberMe)
     {
         $this->auth = $auth;
-        $this->cookie = $cookie;
+        $this->rememberMe = $rememberMe;
     }
 
     public function onAuthentication(RequestEvent $event)
@@ -41,7 +32,7 @@ class RememberMeLoginListener implements EventSubscriberInterface
         if ($user) {
             return;
         }
-        $request = $this->cookie->autoLogin($request);
+        $request = $this->rememberMe->autoLogin($request);
         $event->setRequest($request);
         if (!($user = $request->getAttribute('_user'))) {
             throw new ForbiddenException("Cookie invalid");
@@ -53,7 +44,7 @@ class RememberMeLoginListener implements EventSubscriberInterface
     {
         $request = $event->getRequest();
         $response = $event->getResponse();
-        $event->setResponse($this->cookie->resume($request, $response));
+        $event->setResponse($this->rememberMe->resume($request, $response));
     }
 
     public static function getSubscribedEvents()
