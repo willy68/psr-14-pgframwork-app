@@ -50,7 +50,6 @@ class Firewall extends EventDispatcher implements EventSubscriberInterface
         $event = $this->dispatch($event);
 
         if ($event->hasResponse()) {
-            $event->setResponse($event->getResponse());
             return;
         }
     }
