@@ -32,7 +32,11 @@ class FormAuthenticationListener implements EventSubscriberInterface
         try {
             $user = $this->authenticator->authenticate($request);
         } catch (AuthenticationFailureException $e) {
-            return $this->authenticator->onAuthenticateFailure($request);
+            $response = $this->authenticator->onAuthenticateFailure($request, $e);
+            if ($response instanceof ResponseInterface) {
+                $event->setResponse($response);
+            }
+            return;
         }
 
         $response = $this->authenticator->onAuthenticateSuccess($request, $user);
@@ -41,8 +45,7 @@ class FormAuthenticationListener implements EventSubscriberInterface
             $event->setResponse($response);
         }
 
-        $request->withAttribute('_user', $user);
-        $event->setRequest($request);
+        $event->setRequest($request->withAttribute('_user', $user));
     }
 
     public function onResponse(ResponseEvent $event)
@@ -59,7 +62,7 @@ class FormAuthenticationListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::REQUEST => ['onAuthentication', ListenerPriority::HIGH],
+            Events::REQUEST =>  ['onAuthentication', ListenerPriority::HIGH],
             Events::RESPONSE => ['onResponse', ListenerPriority::LOW]
         ];
     }

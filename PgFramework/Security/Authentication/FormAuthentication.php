@@ -12,9 +12,8 @@ use PgFramework\Actions\RouterAwareAction;
 use PgFramework\Response\ResponseRedirect;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Auth\Provider\UserProviderInterface;
-use PgFramework\Auth\RememberMe\RememberMeInterface;
-use PgFramework\Security\Authentication\Exception\AuthenticationFailureException;
 use PgFramework\Security\Hasher\PasswordHasherInterface;
+use PgFramework\Security\Authentication\Exception\AuthenticationFailureException;
 
 class FormAuthentication implements AuthenticationInterface
 {
@@ -30,8 +29,6 @@ class FormAuthentication implements AuthenticationInterface
 
     protected $hasher;
 
-    protected $rememberMe;
-
     protected $options = [
         'identifier' => 'username',
         'password' => 'password',
@@ -44,7 +41,6 @@ class FormAuthentication implements AuthenticationInterface
         SessionInterface $session,
         RouterInterface $router,
         PasswordHasherInterface $hasher,
-        RememberMeInterface $rememberMe,
         array $options = []
     ){
         $this->auth = $auth;
@@ -52,7 +48,6 @@ class FormAuthentication implements AuthenticationInterface
         $this->session = $session;
         $this->router = $router;
         $this->hasher = $hasher;
-        $this->rememberMe = $rememberMe;
 
         if (!empty($options)) {
             $this->options = array_merge($this->options, $options);
@@ -64,18 +59,19 @@ class FormAuthentication implements AuthenticationInterface
         $credentials = $this->getCredentials($request);
 
         if (null === $credentials) {
-            throw new AuthenticationFailureException();
+            throw new AuthenticationFailureException('User credentials could not be null');
         }
 
         $user = $this->getUser($credentials);
 
         if (!$user || !$user instanceof User) {
-            throw new AuthenticationFailureException();
+            throw new AuthenticationFailureException('User not found');
         }
         
-        if ($this->hasher->verify($user->getPassword(), $credentials['password'])) {
-            throw new AuthenticationFailureException();
+        if (!$this->hasher->verify($user->getPassword(), $credentials['password'])) {
+            throw new AuthenticationFailureException('Bad password');
         }
+
         return $user;
     }
 
@@ -100,25 +96,14 @@ class FormAuthentication implements AuthenticationInterface
 
     public function onAuthenticateSuccess(ServerRequestInterface $request, $user): ?ResponseInterface
     {
-        $params = $request->getParsedBody();
-
         $this->auth->setUser($user);
 
         $path = $this->session->get('auth.redirect')  ?: $this->router->generateUri('admin');
         $this->session->delete('auth.redirect');
-        $response = new ResponseRedirect($path);
-
-        /** @todo RememberMeListeners LoginSuccessEvent or ResponseEvent to modify $response */
-        if ($params['rememberMe']) {
-            $response = $this->rememberMe->onLogin(
-                $response,
-                $user
-            );
-        }
-        return $response;
+        return  new ResponseRedirect($path);
     }
 
-    public function onAuthenticateFailure(ServerRequestInterface $request): ?ResponseInterface
+    public function onAuthenticateFailure(ServerRequestInterface $request, AuthenticationFailureException $e): ?ResponseInterface
     {
         (new FlashService($this->session))->error('Identifiant ou mot de passe incorrect');
         return $this->redirect($this->options['auth.login']);
