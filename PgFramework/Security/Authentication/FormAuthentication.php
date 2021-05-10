@@ -32,7 +32,8 @@ class FormAuthentication implements AuthenticationInterface
     protected $options = [
         'identifier' => 'username',
         'password' => 'password',
-        'auth.login' => 'auth.login'
+        'auth.login' => 'auth.login',
+        'redirect.success' => 'admin'
     ];
 
     public function __construct(
@@ -98,7 +99,7 @@ class FormAuthentication implements AuthenticationInterface
     {
         $this->auth->setUser($user);
 
-        $path = $this->session->get('auth.redirect')  ?: $this->router->generateUri('admin');
+        $path = $this->session->get('auth.redirect')  ?: $this->router->generateUri($this->options['redirect.success']);
         $this->session->delete('auth.redirect');
         return  new ResponseRedirect($path);
     }
