@@ -13,6 +13,7 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 use PgFramework\Security\Firewall\Event\LoginFailureEvent;
 use PgFramework\Security\Firewall\Event\LoginSuccessEvent;
 use PgFramework\Security\Authentication\AuthenticationInterface;
+use PgFramework\Security\Authentication\Result\AuthenticateResultInterface;
 use PgFramework\Security\Authentication\Exception\AuthenticationFailureException;
 
 class FormAuthenticationListener implements EventSubscriberInterface
@@ -62,7 +63,7 @@ class FormAuthenticationListener implements EventSubscriberInterface
             $event->setResponse($response);
         }
 
-        $event->setRequest($request->withAttribute('_user', $result->getUser()));
+        $event->setRequest($request->withAttribute('auth.result', $result));
     }
 
     public function onResponse(ResponseEvent $event)
@@ -70,9 +71,12 @@ class FormAuthenticationListener implements EventSubscriberInterface
         $request = $event->getRequest();
         $response = $event->getResponse();
 
-        $params = $request->getParsedBody();
-        if (($user = $request->getAttribute('_user')) && $params['rememberMe']) {
-            $event->setResponse($this->rememberMe->onLogin($response, $user));
+        /** @var AuthenticateResultInterface $result */
+        if (($result = $request->getAttribute('auth.result'))) {
+            $credentials = $result->getCredentials();
+            if (isset($credentials['rememberMe'])) {
+                $event->setResponse($this->rememberMe->onLogin($response, $result->getUser()));
+            }
         }
     }
 

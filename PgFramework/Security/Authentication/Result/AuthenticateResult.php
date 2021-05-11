@@ -32,4 +32,28 @@ class AuthenticateResult implements AuthenticateResultInterface
     {
         return $this->user;
     }
+
+    /**
+     * Set the value of credentials
+     *
+     * @return  self
+     */ 
+    public function setCredentials($credentials)
+    {
+        $this->credentials = $credentials;
+
+        return $this;
+    }
+
+    /**
+     * Set the value of user
+     *
+     * @return  self
+     */ 
+    public function setUser($user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
 }

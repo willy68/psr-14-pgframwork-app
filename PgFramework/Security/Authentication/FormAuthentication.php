@@ -34,6 +34,7 @@ class FormAuthentication implements AuthenticationInterface
     protected $options = [
         'identifier' => 'username',
         'password' => 'password',
+        'rememberMe' => 'rememberMe',
         'auth.login' => 'auth.login',
         'redirect.success' => 'admin'
     ];
@@ -82,10 +83,14 @@ class FormAuthentication implements AuthenticationInterface
     {
         $params = $request->getParsedBody();
 
-        $credentials['identifier'] = $params[$this->options['identifier']] ?? '';
-        $credentials['password'] = $params[$this->options['password']] ?? '';
+        $credentials['identifier'] = $params[$this->options['identifier']] ?? null;
+        $credentials['password'] = $params[$this->options['password']] ?? null;
+        $rememberMe = $params[$this->options['rememberMe']] ?? null;
+        if ($rememberMe) {
+            $credentials['rememberMe'] = true;
+        }
 
-        if (!\is_string($credentials['identifier']) || isEmpty($credentials['identifier'])) {
+        if (!\is_string($credentials['identifier']) || $credentials['identifier']) {
             return null;
         }
 

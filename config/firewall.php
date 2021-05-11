@@ -37,7 +37,6 @@ return [
         ],
         [
             'path' => '^/logout',
-            // Events::REQUEST ne sera jamais appelé!
             'main.listeners' => [
                 RememberMeLogoutListener::class,
             ]
