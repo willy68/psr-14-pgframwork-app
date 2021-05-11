@@ -14,6 +14,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Auth\Provider\UserProviderInterface;
 use PgFramework\Security\Hasher\PasswordHasherInterface;
 use PgFramework\Security\Authentication\Exception\AuthenticationFailureException;
+use PgFramework\Security\Authentication\Result\AuthenticateResult;
+use PgFramework\Security\Authentication\Result\AuthenticateResultInterface;
 
 class FormAuthentication implements AuthenticationInterface
 {
@@ -55,7 +57,7 @@ class FormAuthentication implements AuthenticationInterface
         }
     }
 
-    public function authenticate(ServerRequestInterface $request)
+    public function authenticate(ServerRequestInterface $request): AuthenticateResultInterface
     {
         $credentials = $this->getCredentials($request);
 
@@ -73,10 +75,10 @@ class FormAuthentication implements AuthenticationInterface
             throw new AuthenticationFailureException('Bad password');
         }
 
-        return $user;
+        return new AuthenticateResult($credentials, $user);
     }
 
-    public function getCredentials(ServerRequestInterface $request): ?array
+    public function getCredentials(ServerRequestInterface $request)
     {
         $params = $request->getParsedBody();
 
@@ -90,11 +92,14 @@ class FormAuthentication implements AuthenticationInterface
         return $credentials;
     }
 
-    public function getUser($credentiels)
+    public function getUser($credentials)
     {
-        return $this->userProvider->getUser($this->options['identifier'], $credentiels['identifier']);
+        return $this->userProvider->getUser($this->options['identifier'], $credentials['identifier']);
     }
 
+    /**
+     * @param User $user
+     */
     public function onAuthenticateSuccess(ServerRequestInterface $request, $user): ?ResponseInterface
     {
         $this->auth->setUser($user);
