@@ -2,9 +2,9 @@
 
 namespace App\Auth;
 
-use PgFramework\Auth\User as AuthUser;
+use PgFramework\Auth\UserInterface;
 
-class User implements AuthUser
+class User implements UserInterface
 {
     public $id;
 

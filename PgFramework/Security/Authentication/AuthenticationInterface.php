@@ -33,7 +33,7 @@ interface AuthenticationInterface
      * Get user with $credentials
      *
      * @param mixed $credentials
-     * @return User|mixed
+     * @return UserInterface|mixed
      */
     public function getUser($credentials);
 

@@ -2,7 +2,7 @@
 
 namespace PgFramework\Auth\RememberMe;
 
-use PgFramework\Auth\User;
+use PgFramework\Auth\UserInterface;
 use Dflydev\FigCookies\SetCookie;
 use Psr\Http\Message\ResponseInterface;
 use Dflydev\FigCookies\FigRequestCookies;
@@ -45,7 +45,7 @@ class RememberMeDatabase extends AbstractRememberMe
      * @param User $user
      * @return ResponseInterface
      */
-    public function onLogin(ResponseInterface $response, User $user): ResponseInterface
+    public function onLogin(ResponseInterface $response, UserInterface $user): ResponseInterface
     {
 
         $series = base64_encode(random_bytes(64));

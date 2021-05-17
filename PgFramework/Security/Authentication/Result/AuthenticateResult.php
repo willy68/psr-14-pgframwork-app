@@ -2,7 +2,7 @@
 
 namespace PgFramework\Security\Authentication\Result;
 
-use PgFramework\Auth\User;
+use PgFramework\Auth\UserInterface;
 
 class AuthenticateResult implements AuthenticateResultInterface
 {
@@ -11,7 +11,7 @@ class AuthenticateResult implements AuthenticateResultInterface
 
     protected $user;
 
-    public function __construct($credentials, User $user)
+    public function __construct($credentials, UserInterface $user)
     {
         $this->credentials = $credentials;
         $this->user = $user;
@@ -28,7 +28,7 @@ class AuthenticateResult implements AuthenticateResultInterface
     /**
      * @inheritdoc
      */
-    public function getUser(): User
+    public function getUser(): UserInterface
     {
         return $this->user;
     }

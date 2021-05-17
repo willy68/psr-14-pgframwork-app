@@ -3,7 +3,7 @@
 namespace App\Auth;
 
 use App\Auth\Models\User;
-use PgFramework\Auth\User as AuthUser;
+use PgFramework\Auth\UserInterface;
 use PgFramework\Auth\Repository\UserRepositoryInterface;
 
 class ActiveRecordUserRepository implements UserRepositoryInterface
@@ -14,7 +14,7 @@ class ActiveRecordUserRepository implements UserRepositoryInterface
      */
     protected $model = User::class;
 
-    public function getUser(string $field, $value): ?AuthUser
+    public function getUser(string $field, $value): ?UserInterface
     {
         try {
             $user = $this->model::find(['conditions' => ["$field = ?", $value]]);

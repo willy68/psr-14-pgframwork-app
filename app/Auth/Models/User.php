@@ -3,9 +3,9 @@
 namespace App\Auth\Models;
 
 use ActiveRecord\Model;
-use PgFramework\Auth\User as AuthUser;
+use PgFramework\Auth\UserInterface;
 
-class User extends Model implements AuthUser
+class User extends Model implements UserInterface
 {
     public static $connection = 'blog';
 

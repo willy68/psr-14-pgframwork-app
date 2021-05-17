@@ -2,7 +2,7 @@
 
 namespace PgFramework\Auth\RememberMe;
 
-use PgFramework\Auth\User;
+use PgFramework\Auth\UserInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -20,7 +20,7 @@ interface RememberMeInterface
      */
     public function onLogin(
         ResponseInterface $response,
-        User $user
+        UserInterface $user
     ): ResponseInterface;
 
     /**

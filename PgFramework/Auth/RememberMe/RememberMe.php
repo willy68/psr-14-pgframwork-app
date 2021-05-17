@@ -2,7 +2,7 @@
 
 namespace PgFramework\Auth\RememberMe;
 
-use PgFramework\Auth\User;
+use PgFramework\Auth\UserInterface;
 use Dflydev\FigCookies\SetCookie;
 use Psr\Http\Message\ResponseInterface;
 use Dflydev\FigCookies\FigRequestCookies;
@@ -16,10 +16,10 @@ class RememberMe extends AbstractRememberMe
      * Crée un cookie d'authentification
      *
      * @param ResponseInterface $response
-     * @param User $user
+     * @param UserInterface $user
      * @return ResponseInterface
      */
-    public function onLogin(ResponseInterface $response, User $user): ResponseInterface
+    public function onLogin(ResponseInterface $response, UserInterface $user): ResponseInterface
     {
 
         $cookieValue = $this->getCookieHash(

@@ -3,7 +3,7 @@
 use PgFramework\{
     Auth,
     Auth\AuthSession,
-    Auth\User,
+    Auth\UserInterface,
     Auth\Provider\UserProviderInterface
 };
 
@@ -41,7 +41,7 @@ return [
         'field' => 'username'
     ]),
     Auth::class => get(AuthSession::class),
-    User::class => factory(function (Auth $auth) {
+    UserInterface::class => factory(function (Auth $auth) {
         return $auth->getUser();
     })->parameter('auth', get(Auth::class)),
     RememberMeInterface::class => get(RememberMeDatabase::class),

@@ -2,7 +2,6 @@
 
 namespace PgFramework\Auth\Middleware;
 
-use PgFramework\Auth\User;
 use GuzzleHttp\Psr7\Response;
 use PgFramework\Session\FlashService;
 use PgFramework\HttpUtils\RequestUtils;

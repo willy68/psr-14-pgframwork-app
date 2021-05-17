@@ -3,7 +3,7 @@
 namespace PgFramework\Security\Authentication;
 
 use PgFramework\Auth;
-use PgFramework\Auth\User;
+use PgFramework\Auth\UserInterface;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Session\FlashService;
 use Psr\Http\Message\ResponseInterface;
@@ -68,7 +68,7 @@ class FormAuthentication implements AuthenticationInterface
 
         $user = $this->getUser($credentials);
 
-        if (!$user || !$user instanceof User) {
+        if (!$user || !$user instanceof UserInterface) {
             throw new AuthenticationFailureException('User not found');
         }
         
@@ -103,7 +103,7 @@ class FormAuthentication implements AuthenticationInterface
     }
 
     /**
-     * @param User $user
+     * @param UserInterface $user
      */
     public function onAuthenticateSuccess(ServerRequestInterface $request, $user): ?ResponseInterface
     {

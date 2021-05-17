@@ -4,7 +4,7 @@ namespace App\Auth;
 
 use App\Auth\User;
 use App\Auth\Table\UserTable;
-use PgFramework\Auth\User as AuthUser;
+use PgFramework\Auth\UserInterface;
 use PgFramework\Auth\Repository\UserRepositoryInterface;
 use PgFramework\Database\NoRecordException;
 
@@ -18,7 +18,7 @@ class DatabaseUserRepository implements UserRepositoryInterface
         $this->userTable = $userTable;
     }
 
-    public function getUser(string $field, $value): ?AuthUser
+    public function getUser(string $field, $value): ?UserInterface
     {
         try {
             /** @var User $user */

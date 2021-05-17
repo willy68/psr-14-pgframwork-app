@@ -2,7 +2,7 @@
 
 namespace PgFramework\Security\Authentication\Result;
 
-use PgFramework\Auth\User;
+use PgFramework\Auth\UserInterface;
 
 interface AuthenticateResultInterface
 {
@@ -26,7 +26,7 @@ interface AuthenticateResultInterface
      *
      * @return User
      */
-    public function getUser(): User;
+    public function getUser(): UserInterface;
 
     /**
      * set the user
@@ -34,5 +34,5 @@ interface AuthenticateResultInterface
      * @param User $user
      * @return self
      */
-    public function setUser(User $user);
+    public function setUser(UserInterface $user);
 }

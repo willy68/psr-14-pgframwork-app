@@ -2,21 +2,21 @@
 
 namespace PgFramework;
 
-use PgFramework\Auth\User;
+use PgFramework\Auth\UserInterface;
 
 interface Auth
 {
 
     /**
      *
-     * @return User|null
+     * @return UserInterface|null
      */
-    public function getUser(): ?User;
+    public function getUser(): ?UserInterface;
 
     /**
      *
-     * @param User $user
+     * @param UserInterface $user
      * @return Auth
      */
-    public function setUser(User $user): self;
+    public function setUser(UserInterface $user): self;
 }

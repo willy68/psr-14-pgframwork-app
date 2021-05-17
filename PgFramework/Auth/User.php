@@ -2,7 +2,7 @@
 
 namespace PgFramework\Auth;
 
-interface User
+interface UserInterface
 {
 
     /**

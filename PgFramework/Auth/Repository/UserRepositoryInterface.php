@@ -2,9 +2,9 @@
 
 namespace PgFramework\Auth\Repository;
 
-use PgFramework\Auth\User;
+use PgFramework\Auth\UserInterface;
 
 interface UserRepositoryInterface
 {
-    public function getUser(string $field, $value): ?User;
+    public function getUser(string $field, $value): ?UserInterface;
 }

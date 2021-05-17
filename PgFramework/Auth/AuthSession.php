@@ -3,7 +3,7 @@
 namespace PgFramework\Auth;
 
 use PgFramework\Auth;
-use PgFramework\Auth\User;
+use PgFramework\Auth\UserInterface;
 use PgFramework\Session\SessionInterface;
 use PgFramework\Auth\Provider\UserProviderInterface;
 
@@ -52,13 +52,13 @@ class AuthSession implements Auth
      * @param string $password
      * @return User|null
      */
-    public function login(string $identifier, string $password): ?User
+    public function login(string $identifier, string $password): ?UserInterface
     {
         if (empty($identifier) || empty($password)) {
             return null;
         }
 
-        /** @var User $user */
+        /** @var UserInterface $user */
         $user = $this->userProvider->getUser($this->options['field'], $identifier);
         if ($user && password_verify($password, $user->getPassword())) {
             $this->setUser($user);
@@ -77,7 +77,7 @@ class AuthSession implements Auth
         $this->user = null;
     }
 
-    public function getUser(): ?User
+    public function getUser(): ?UserInterface
     {
         $userId = $this->session->get($this->options['sessionName']);
 
@@ -101,7 +101,7 @@ class AuthSession implements Auth
      * @param User $user
      * @return Auth
      */
-    public function setUser(User $user): Auth
+    public function setUser(UserInterface $user): Auth
     {
         $this->session->set($this->options['sessionName'], $user->getId());
         $this->user = $user;

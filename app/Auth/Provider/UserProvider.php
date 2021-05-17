@@ -4,7 +4,7 @@ namespace App\Auth\Provider;
 
 use App\Auth\Entity\User;
 use Doctrine\ORM\EntityManager;
-use PgFramework\Auth\User as AuthUser;
+use PgFramework\Auth\UserInterface;
 use PgFramework\Auth\Provider\UserProviderInterface;
 
 class UserProvider implements UserProviderInterface
@@ -26,7 +26,7 @@ class UserProvider implements UserProviderInterface
         $this->entity = $entity;
     }
 
-    public function getUser(string $field, $value): ?AuthUser
+    public function getUser(string $field, $value): ?UserInterface
     {
         try {
             $repo = $this->em->getRepository($this->entity);

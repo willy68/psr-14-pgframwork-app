@@ -2,9 +2,9 @@
 
 namespace PgFramework\Auth\Provider;
 
-use PgFramework\Auth\User;
+use PgFramework\Auth\UserInterface;
 
 interface UserProviderInterface
 {
-    public function getUser(string $field, $value): ?User;
+    public function getUser(string $field, $value): ?UserInterface;
 }
