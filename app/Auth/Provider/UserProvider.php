@@ -37,4 +37,22 @@ class UserProvider implements UserProviderInterface
         }
         return $user;
     }
+
+    public function updateUser(UserInterface $user): ?UserInterface
+    {
+        
+        try {
+            $dbUser = $this->em->find($this->entity, $user->getId());
+        } catch (\Exception $e) {
+            return null;
+        }
+
+        if (null === $dbUser) {
+            return null;
+        }
+
+        $this->em->persist($user);
+        $this->em->flush();
+        return $user;
+    }
 }
