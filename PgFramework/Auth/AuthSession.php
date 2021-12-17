@@ -50,7 +50,7 @@ class AuthSession implements Auth
      *
      * @param string $username
      * @param string $password
-     * @return User|null
+     * @return UserInterface|null
      */
     public function login(string $identifier, string $password): ?UserInterface
     {
