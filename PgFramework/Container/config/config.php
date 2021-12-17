@@ -71,6 +71,8 @@ use PgFramework\Router\RoutesMapFactory;
 use PgFramework\Router\RoutesMapInterface;
 use Tuupola\Middleware\JwtAuthentication;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 
 use function DI\create;
 use function DI\get;
@@ -197,21 +199,23 @@ return [
         $config = new Configuration;
 
         if ($isDevMode === true) {
-            $cache = new \Doctrine\Common\Cache\ArrayCache;
+            $queryCache = new ArrayAdapter();
+            $metadataCache = new ArrayAdapter();
             $config->setAutoGenerateProxyClasses(true);
         } else {
-            $cache = new \Doctrine\Common\Cache\ApcuCache;
+            $queryCache = new PhpFilesAdapter ('doctrine_queries');
+            $metadataCache = new PhpFilesAdapter('doctrine_metadata');
             $config->setAutoGenerateProxyClasses(false);
         }
 
-        $config->setMetadataCacheImpl($cache);
+        $config->setMetadataCache($metadataCache);
         $driverImpl = $config->newDefaultAnnotationDriver(
             $c->get('doctrine.entity.path'),
             false
         );
 
         $config->setMetadataDriverImpl($driverImpl);
-        $config->setQueryCacheImpl($cache);
+        $config->setQueryCache($queryCache);
         $config->setProxyDir($c->get('doctrine.proxies.dir'));
         $config->setProxyNamespace($c->get('doctrine.proxies.namespace'));
 
