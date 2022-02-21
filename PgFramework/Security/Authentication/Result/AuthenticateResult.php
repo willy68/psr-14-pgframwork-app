@@ -50,7 +50,7 @@ class AuthenticateResult implements AuthenticateResultInterface
      *
      * @return  self
      */ 
-    public function setUser($user)
+    public function setUser(UserInterface $user)
     {
         $this->user = $user;
 

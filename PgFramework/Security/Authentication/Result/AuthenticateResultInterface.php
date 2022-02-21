@@ -24,14 +24,14 @@ interface AuthenticateResultInterface
     /**
      * Get authenticate user
      *
-     * @return User
+     * @return UserInterface
      */
     public function getUser(): UserInterface;
 
     /**
      * set the user
      *
-     * @param User $user
+     * @param UserInterface $user
      * @return self
      */
     public function setUser(UserInterface $user);
