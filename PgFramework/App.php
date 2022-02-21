@@ -4,7 +4,6 @@ namespace PgFramework;
 
 use Exception;
 use DI\ContainerBuilder;
-use Invoker\CallableResolver;
 use Mezzio\Router\RouteResult;
 use PgFramework\Event\ViewEvent;
 use Mezzio\Router\RouteCollector;
@@ -16,14 +15,12 @@ use Psr\Container\ContainerInterface;
 use PgFramework\Event\ControllerEvent;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use Invoker\Reflection\CallableReflection;
 use PgFramework\Router\RoutesMapInterface;
 use PgFramework\Environnement\Environnement;
 use PgFramework\Event\ControllerParamsEvent;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use PgFramework\Router\Loader\DirectoryLoader;
-use Invoker\ParameterResolver\ParameterResolver;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use PgFramework\Middleware\Stack\MiddlewareAwareStackTrait;
@@ -44,18 +41,6 @@ class App extends AbstractApplication implements RequestHandlerInterface
      * @var ContainerInterface
      */
     private $container = null;
-
-    /**
-     *
-     * @var CallableResolver
-     */
-    private $callableResolver;
-
-    /**
-     *
-     * @var ParameterResolver
-     */
-    private $paramsResolver;
 
     /**
      *
@@ -96,9 +81,7 @@ class App extends AbstractApplication implements RequestHandlerInterface
      */
     public function __construct(
         array $config,
-        ?EventDispatcherInterface $dispatcher = null,
-        ?CallableResolver $callableResolver = null,
-        ?ParameterResolver $paramsResolver = null
+        ?EventDispatcherInterface $dispatcher = null
     ) {
         $this->config[] = __DIR__ . '/Container/config/config.php';
         $this->config = \array_merge($this->config, $config);
@@ -106,8 +89,6 @@ class App extends AbstractApplication implements RequestHandlerInterface
         self::$app = $this;
 
         $this->dispatcher = $dispatcher;
-        $this->callableResolver = $callableResolver;
-        $this->paramsResolver = $paramsResolver;
     }
 
     /**
@@ -190,14 +171,6 @@ class App extends AbstractApplication implements RequestHandlerInterface
 
         $container = $this->getContainer();
 
-        if (!$this->callableResolver) {
-            $this->callableResolver = $container->get(CallableResolver::class);
-        }
-
-        if (!$this->paramsResolver) {
-            $this->paramsResolver = $container->get(ParameterResolver::class);
-        }
-
         if (!$this->dispatcher) {
             $this->dispatcher = $container->get(EventDispatcherInterface::class);
         }
@@ -251,8 +224,6 @@ class App extends AbstractApplication implements RequestHandlerInterface
         $controller = $result->getMatchedRoute()->getCallback();
         $params = $result->getMatchedParams();
 
-        //$controller = $this->callableResolver->resolve($controller);
-
         $event = new ControllerEvent($this, $controller, $event->getRequest());
         $event = $this->dispatcher->dispatch($event);
         $controller = $event->getController();
@@ -266,9 +237,6 @@ class App extends AbstractApplication implements RequestHandlerInterface
             // Limitation: $request must be named "$request"
             $params = array_merge(["request" => $event->getRequest()], $params);
         }
-
-        //$callableReflection = CallableReflection::create($controller);
-        //$params = $this->paramsResolver->getParameters($callableReflection, $params, []);
 
         $event = new ControllerParamsEvent($this, $controller, $params, $event->getRequest());
         $event = $this->dispatcher->dispatch($event);
