@@ -251,7 +251,7 @@ class App extends AbstractApplication implements RequestHandlerInterface
         $controller = $result->getMatchedRoute()->getCallback();
         $params = $result->getMatchedParams();
 
-        $controller = $this->callableResolver->resolve($controller);
+        //$controller = $this->callableResolver->resolve($controller);
 
         $event = new ControllerEvent($this, $controller, $event->getRequest());
         $event = $this->dispatcher->dispatch($event);
@@ -267,8 +267,8 @@ class App extends AbstractApplication implements RequestHandlerInterface
             $params = array_merge(["request" => $event->getRequest()], $params);
         }
 
-        $callableReflection = CallableReflection::create($controller);
-        $params = $this->paramsResolver->getParameters($callableReflection, $params, []);
+        //$callableReflection = CallableReflection::create($controller);
+        //$params = $this->paramsResolver->getParameters($callableReflection, $params, []);
 
         $event = new ControllerParamsEvent($this, $controller, $params, $event->getRequest());
         $event = $this->dispatcher->dispatch($event);
