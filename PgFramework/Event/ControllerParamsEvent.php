@@ -18,7 +18,7 @@ class ControllerParamsEvent extends ControllerEvent
         $this->params = $params;
     }
 
-    public function getParams(): iterable
+    public function getParams(): array
     {
         return $this->params;
     }

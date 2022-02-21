@@ -11,18 +11,18 @@ class ControllerEvent extends RequestEvent
 
     private $controller;
 
-    public function __construct(ApplicationInterface $app, callable $controller, ServerRequestInterface $request)
+    public function __construct(ApplicationInterface $app, $controller, ServerRequestInterface $request)
     {
         parent::__construct($app, $request);
         $this->controller = $controller;
     }
 
-    public function getController(): callable
+    public function getController()
     {
         return $this->controller;
     }
 
-    public function setController(callable $controller)
+    public function setController($controller)
     {
         $this->controller = $controller;
     }
