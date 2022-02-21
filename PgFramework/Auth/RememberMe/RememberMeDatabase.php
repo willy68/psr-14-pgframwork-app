@@ -42,7 +42,7 @@ class RememberMeDatabase extends AbstractRememberMe
      * un token en base données et un cookie avec un mot de passe aléatoire
      *
      * @param ResponseInterface $response
-     * @param User $user
+     * @param UserInterface $user
      * @return ResponseInterface
      */
     public function onLogin(ResponseInterface $response, UserInterface $user): ResponseInterface
