@@ -26,7 +26,7 @@ class RequestEvent extends AppEvent
     public function setRequest(ServerRequestInterface $request)
     {
         $this->request = $request;
-        $app = $this->getApp()->setRequest($request);
+        $this->getApp()->setRequest($request);
     }
 
     public function getResponse(): ?ResponseInterface

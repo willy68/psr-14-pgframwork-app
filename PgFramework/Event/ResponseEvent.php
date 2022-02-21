@@ -2,7 +2,6 @@
 
 namespace PgFramework\Event;
 
-use PgFramework\App;
 use PgFramework\ApplicationInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,7 +29,7 @@ class ResponseEvent extends AppEvent
     public function setRequest(ServerRequestInterface $request)
     {
         $this->request = $request;
-        $app = $this->getApp()->setRequest($request);
+        $this->getApp()->setRequest($request);
     }
 
     public function getResponse(): ?ResponseInterface

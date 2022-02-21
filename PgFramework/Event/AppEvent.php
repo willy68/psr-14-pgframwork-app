@@ -2,8 +2,6 @@
 
 namespace PgFramework\Event;
 
-use PgFramework\ApplicationInterface;
-
 class AppEvent extends StoppableEvent
 {
     public const NAME = Events::REQUEST;
