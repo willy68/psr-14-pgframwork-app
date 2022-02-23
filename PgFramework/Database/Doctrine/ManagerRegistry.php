@@ -44,6 +44,8 @@ class ManagerRegistry extends AbstractManagerRegistry
 
 
     /**
+     * From Doctrine bundle Registry.php
+     * 
      * @inheritdoc
      */
     public function getAliasNamespace($alias)
