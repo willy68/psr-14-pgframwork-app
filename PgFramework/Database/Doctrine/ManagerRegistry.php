@@ -2,10 +2,12 @@
 
 namespace App\PgFramework\Database\Doctrine;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\Persistence\AbstractManagerRegistry;
 use Doctrine\ORM\Exception\UnknownEntityNamespace;
+use Doctrine\Persistence\ObjectManager;
 
 class ManagerRegistry extends AbstractManagerRegistry
 {
@@ -47,8 +49,14 @@ class ManagerRegistry extends AbstractManagerRegistry
     public function getAliasNamespace($alias)
     {
         foreach (array_keys($this->getManagers()) as $name) {
+            $objectManager = $this->getManager($name);
+
+            if (!$objectManager instanceof EntityManagerInterface) {
+                continue;
+            }
+
             try {
-                return $this->getManager($name)->getConfiguration()->getEntityNamespace($alias);
+                return $objectManager->getConfiguration()->getEntityNamespace($alias);
             } catch (ORMException $e) {
             }
         }
