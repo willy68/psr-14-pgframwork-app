@@ -7,7 +7,6 @@ use Psr\Container\ContainerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\Persistence\AbstractManagerRegistry;
 use Doctrine\ORM\Exception\UnknownEntityNamespace;
-use Doctrine\Persistence\ObjectManager;
 
 class ManagerRegistry extends AbstractManagerRegistry
 {
