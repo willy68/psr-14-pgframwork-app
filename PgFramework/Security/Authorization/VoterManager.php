@@ -7,7 +7,7 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * Modify for this PgFramework by William Lety
  */
 
@@ -33,7 +33,7 @@ class VoterManager implements VoterManagerInterface
      */
     public function __construct(iterable $voters = [], string $strategy = self::STRATEGY_AFFIRMATIVE, bool $allowIfAllAbstainDecisions = false, bool $allowIfEqualGrantedDeniedDecisions = true)
     {
-        $strategyMethod = 'decide'.ucfirst($strategy);
+        $strategyMethod = 'decide' . ucfirst($strategy);
         if ('' === $strategy || !\is_callable([$this, $strategyMethod])) {
             throw new \InvalidArgumentException(sprintf('The strategy "%s" is not supported.', $strategy));
         }

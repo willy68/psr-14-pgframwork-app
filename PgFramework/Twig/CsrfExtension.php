@@ -8,7 +8,6 @@ use Twig\TwigFunction;
 
 class CsrfExtension extends \Twig\Extension\AbstractExtension
 {
-
     private $tokenManager;
 
     /**

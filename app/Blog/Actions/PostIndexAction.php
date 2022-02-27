@@ -16,7 +16,6 @@ use Psr\Http\Message\ServerRequestInterface as Request;
  */
 class PostIndexAction
 {
-
     /**
      * Undocumented variable
      *
@@ -37,7 +36,7 @@ class PostIndexAction
     /**
      *
      * @Route("/blog", name="blog.index", methods={"GET"})
-     * 
+     *
      * @param Request $request
      * @return string
      */

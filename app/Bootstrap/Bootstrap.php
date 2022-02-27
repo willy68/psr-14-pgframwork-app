@@ -24,8 +24,8 @@ $app = (new PgFramework\ApplicationEvent($bootstrap['config']))
 
 if (Environnement::getEnv('APP_ENV', 'production') === 'dev') {
     //$app->pipe(Whoops::class);
-    $whoops = new \Whoops\Run;
-    $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+    $whoops = new \Whoops\Run();
+    $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler());
     $whoops->register();
 }
 

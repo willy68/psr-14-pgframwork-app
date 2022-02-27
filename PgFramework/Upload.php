@@ -7,7 +7,6 @@ use Psr\Http\Message\UploadedFileInterface;
 
 class Upload
 {
-
     /**
      * Undocumented variable
      *

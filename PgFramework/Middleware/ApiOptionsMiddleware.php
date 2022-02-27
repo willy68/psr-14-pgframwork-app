@@ -12,7 +12,6 @@ use GuzzleHttp\Psr7\Response;
 
 class ApiOptionsMiddleware implements MiddlewareInterface
 {
-
     /**
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler

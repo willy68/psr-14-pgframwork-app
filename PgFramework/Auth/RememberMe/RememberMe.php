@@ -11,7 +11,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class RememberMe extends AbstractRememberMe
 {
-
     /**
      * Crée un cookie d'authentification
      *

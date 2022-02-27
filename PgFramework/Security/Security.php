@@ -107,7 +107,7 @@ class Security
 
     /**
      * Remove the salt from a CSRF token.
-     * 
+     *
      * If $length / 2 !== $expectedLenght $token is not salted token
      *
      * @param string $token The token that could be salty.

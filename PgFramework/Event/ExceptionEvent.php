@@ -19,7 +19,7 @@ class ExceptionEvent extends RequestEvent
 
     /**
      * Get the value of exception
-     */ 
+     */
     public function getException(): \Throwable
     {
         return $this->exception;
@@ -29,7 +29,7 @@ class ExceptionEvent extends RequestEvent
      * Set the value of exception
      *
      * @return  self
-     */ 
+     */
     public function setException(\Throwable $exception)
     {
         $this->exception = $exception;

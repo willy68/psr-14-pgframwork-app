@@ -7,7 +7,6 @@ use App\Api\AbstractApiController;
 
 class CiviliteController extends AbstractApiController
 {
-
     /**
      * Model class
      *

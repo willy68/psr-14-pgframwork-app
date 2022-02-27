@@ -6,7 +6,6 @@ use Pagerfanta\Adapter\AdapterInterface;
 
 class PaginatedQuery implements AdapterInterface
 {
-
     /**
      * Undocumented variable
      *

@@ -120,7 +120,7 @@ class FormExtension extends AbstractExtension
      */
     public function select(?string $value, array $options, array $attributes): string
     {
-        
+
         $htmlOptions = array_reduce(
             array_keys($options),
             function (string $html, string $key) use ($options, $value) {

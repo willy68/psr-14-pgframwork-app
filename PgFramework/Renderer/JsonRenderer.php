@@ -4,7 +4,6 @@ namespace PgFramework\Renderer;
 
 class JsonRenderer implements RendererInterface
 {
-
     /**
      * Render as json
      *

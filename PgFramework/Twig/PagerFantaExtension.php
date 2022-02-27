@@ -10,7 +10,6 @@ use Twig\TwigFunction;
 
 class PagerFantaExtension extends AbstractExtension
 {
-
     /**
      * @var RouterInterface
      */

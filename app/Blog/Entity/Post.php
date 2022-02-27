@@ -4,7 +4,6 @@ namespace App\Blog\Entity;
 
 class Post
 {
-
     public $id;
 
     public $name;

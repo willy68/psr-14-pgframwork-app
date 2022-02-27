@@ -10,7 +10,7 @@ class PaginatedEntityRepository extends EntityRepository
 {
     public function __construct(EntityManagerInterface $em, ClassMetadata $class)
     {
-        parent::__construct($em, $class);   
+        parent::__construct($em, $class);
     }
 
     public function createQueryBuilder($alias = null, $indexBy = null)

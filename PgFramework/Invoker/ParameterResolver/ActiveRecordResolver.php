@@ -13,7 +13,6 @@ use Invoker\ParameterResolver\ParameterResolver;
  */
 class ActiveRecordResolver implements ParameterResolver
 {
-
     /**
      * nom du champ id par défaut id
      *

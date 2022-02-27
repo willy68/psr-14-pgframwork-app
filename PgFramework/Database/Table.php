@@ -9,7 +9,6 @@ use PDO;
  */
 class Table
 {
-
     /**
      * Undocumented variable
      *
@@ -209,7 +208,7 @@ class Table
     {
         return $this->table;
     }
-    
+
     /**
      * Get undocumented variable
      *

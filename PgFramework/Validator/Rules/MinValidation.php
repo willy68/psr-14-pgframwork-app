@@ -6,7 +6,6 @@ use PgFramework\Validator\ValidationInterface;
 
 class MinValidation implements ValidationInterface
 {
-
     protected int $min;
 
     protected string $error = 'Le champ %s doit avoir minimum %d caractères';

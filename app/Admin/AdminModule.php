@@ -14,7 +14,6 @@ use PgFramework\Auth\Middleware\CookieLoginMiddleware;
 
 class AdminModule extends Module
 {
-
     public const DEFINITIONS = __DIR__ . '/config.php';
 
     public const ANNOTATIONS = [

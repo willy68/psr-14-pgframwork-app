@@ -33,7 +33,6 @@ use function implode;
  */
 class MethodNotAllowedMiddleware implements MiddlewareInterface
 {
-
     /**
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler

@@ -13,7 +13,6 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class RememberMeLoginListener implements EventSubscriberInterface
 {
-
     private $auth;
 
     private $rememberMe;

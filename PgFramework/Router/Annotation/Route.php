@@ -1,16 +1,16 @@
 <?php
+
 namespace PgFramework\Router\Annotation;
 
 use PgFramework\Router\Annotation\Exception\RouteAnnotationException;
 
-
 /**
- * 
+ *
  * Ex: @Route("/route/{id:\d+}", name="path.route", methods={"GET"})
- * 
+ *
  * @Annotation
  * @Target({"CLASS", "METHOD"})
- * 
+ *
  */
 class Route
 {
@@ -38,7 +38,6 @@ class Route
         $this->host = $parameters['host'] ?? null;
         $this->methods = $parameters['methods'] ?? null;
         $this->schemes = $parameters['schemes'] ?? null;
-
     }
 
     public function getParameters(): array
@@ -48,7 +47,7 @@ class Route
 
     /**
      * Get the value of path
-     */ 
+     */
     public function getPath(): string
     {
         return $this->path;
@@ -56,7 +55,7 @@ class Route
 
     /**
      * Get the value of name
-     */ 
+     */
     public function getName(): ?string
     {
         return $this->name;
@@ -64,7 +63,7 @@ class Route
 
     /**
      * Get the value of host
-     */ 
+     */
     public function getHost(): ?string
     {
         return $this->host;
@@ -72,7 +71,7 @@ class Route
 
     /**
      * Get the value of methods
-     */ 
+     */
     public function getMethods(): ?array
     {
         return $this->methods;
@@ -80,7 +79,7 @@ class Route
 
     /**
      * Get the value of schemes
-     */ 
+     */
     public function getSchemes(): ?array
     {
         return $this->schemes;

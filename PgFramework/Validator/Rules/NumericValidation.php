@@ -6,7 +6,6 @@ use PgFramework\Validator\ValidationInterface;
 
 class NumericValidation implements ValidationInterface
 {
-
     protected $error = 'Le champ %s doit être entre %d et %d';
 
     protected $min;

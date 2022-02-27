@@ -6,7 +6,6 @@ use PgFramework\Session\SessionInterface;
 
 class TokenSessionStorage implements TokenStorageInterface
 {
-
     /**
      * @var array|\ArrayAccess|SessionInterface
      */

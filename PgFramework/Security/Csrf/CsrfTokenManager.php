@@ -8,7 +8,6 @@ use PgFramework\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
 class CsrfTokenManager implements CsrfTokenManagerInterface
 {
-
     private $storage;
     private $generator;
     private $sessionKey;
@@ -65,11 +64,11 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
      */
     public function isTokenValid(string $token): bool
     {
-        [$tokenId, $token] = explode(self::delimiter, $token);
+        [$tokenId, $token] = explode(self::DELIMITER, $token);
         if (!$this->storage->hasToken($tokenId)) {
             return false;
         }
-        [, $knownToken] = explode(self::delimiter, $this->storage->getToken($tokenId));
+        [, $knownToken] = explode(self::DELIMITER, $this->storage->getToken($tokenId));
 
         $knownToken = Security::unsaltToken($knownToken);
         $token = Security::unsaltToken($token);
@@ -100,10 +99,10 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
     {
         $token = null;
         if (null !== $tokenId) {
-            $token = $tokenId . self::delimiter . $this->generator->generateToken();
+            $token = $tokenId . self::DELIMITER . $this->generator->generateToken();
         } else {
             $tokenId = bin2hex(Security::randomBytes(8));
-            $token = $tokenId . self::delimiter . $this->generator->generateToken();
+            $token = $tokenId . self::DELIMITER . $this->generator->generateToken();
         }
 
         $this->storage->setToken($tokenId, $token);

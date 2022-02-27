@@ -8,7 +8,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 interface RememberMeInterface
 {
-
     /**
      * Crée un cookie d'authentification
      *

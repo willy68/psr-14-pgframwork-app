@@ -4,7 +4,6 @@ namespace PgFramework\Session;
 
 class ArraySession implements SessionInterface
 {
-
     private $session = [];
 
     /**

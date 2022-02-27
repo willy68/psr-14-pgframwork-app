@@ -6,7 +6,6 @@ use PgFramework\Validator\ValidationInterface;
 
 class ExistsValidation implements ValidationInterface
 {
-
     protected $error = "Le champ %s n'existe pas dans la table %s";
 
     /**

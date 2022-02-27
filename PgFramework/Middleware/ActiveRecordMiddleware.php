@@ -13,7 +13,6 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class ActiveRecordMiddleware implements MiddlewareInterface
 {
-
     /**
      *
      * @var ContainerInterface

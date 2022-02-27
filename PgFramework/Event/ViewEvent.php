@@ -26,5 +26,4 @@ class ViewEvent extends RequestEvent
     {
         $this->result = $result;
     }
-
 }

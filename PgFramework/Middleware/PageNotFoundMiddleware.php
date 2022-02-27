@@ -12,7 +12,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class PageNotFoundMiddleware implements MiddlewareInterface
 {
-
     /**
      * Undocumented variable
      *
@@ -21,7 +20,7 @@ class PageNotFoundMiddleware implements MiddlewareInterface
     private $renderer;
 
     /**
-     * 
+     *
      *
      * @var RouterInterface
      */

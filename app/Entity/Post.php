@@ -11,7 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Post
 {
-
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -71,7 +70,7 @@ class Post
      * Get the value of id
      *
      * @return  int
-     */ 
+     */
     public function getId()
     {
         return $this->id;
@@ -83,7 +82,7 @@ class Post
      * @param  int  $id
      *
      * @return  self
-     */ 
+     */
     public function setId(int $id)
     {
         $this->id = $id;
@@ -96,7 +95,7 @@ class Post
      * Get the value of name
      *
      * @return  string
-     */ 
+     */
     public function getName()
     {
         return $this->name;
@@ -108,7 +107,7 @@ class Post
      * @param  string  $name
      *
      * @return  self
-     */ 
+     */
     public function setName(string $name)
     {
         $this->name = $name;
@@ -120,7 +119,7 @@ class Post
      * Get the value of slug
      *
      * @return  string
-     */ 
+     */
     public function getSlug()
     {
         return $this->slug;
@@ -132,7 +131,7 @@ class Post
      * @param  string  $slug
      *
      * @return  self
-     */ 
+     */
     public function setSlug(string $slug)
     {
         $this->slug = $slug;
@@ -144,7 +143,7 @@ class Post
      * Get the value of content
      *
      * @return  string
-     */ 
+     */
     public function getContent()
     {
         return $this->content;
@@ -156,7 +155,7 @@ class Post
      * @param  string  $content
      *
      * @return  self
-     */ 
+     */
     public function setContent(string $content)
     {
         $this->content = $content;
@@ -168,7 +167,7 @@ class Post
      * Get the value of createdAt
      *
      * @return  DateTime
-     */ 
+     */
     public function getCreatedAt()
     {
         return $this->created_at;
@@ -180,7 +179,7 @@ class Post
      * @param  DateTime  $createdAt
      *
      * @return  self
-     */ 
+     */
     public function setCreatedAt(DateTime $createdAt)
     {
         $this->created_at = $createdAt;
@@ -192,7 +191,7 @@ class Post
      * Get the value of updatedAt
      *
      * @return  DateTime
-     */ 
+     */
     public function getUpdatedAt()
     {
         return $this->updated_at;
@@ -204,7 +203,7 @@ class Post
      * @param  DateTime  $updatedAt
      *
      * @return  self
-     */ 
+     */
     public function setUpdatedAt(DateTime $updatedAt)
     {
         $this->updated_at = $updatedAt;
@@ -216,7 +215,7 @@ class Post
      * Get the value of image
      *
      * @return  string
-     */ 
+     */
     public function getImage()
     {
         return $this->image;
@@ -228,7 +227,7 @@ class Post
      * @param  string  $image
      *
      * @return  self
-     */ 
+     */
     public function setImage(string $image)
     {
         $this->image = $image;
@@ -257,7 +256,7 @@ class Post
 
     /**
      * Get the value of category
-     */ 
+     */
     public function getCategory(): Category
     {
         return $this->category;
@@ -267,7 +266,7 @@ class Post
      * Set the value of category
      *
      * @return  self
-     */ 
+     */
     public function setCategory(Category $category)
     {
         $category->addPost($this);
@@ -280,7 +279,7 @@ class Post
      * Get the value of published
      *
      * @return  bool
-     */ 
+     */
     public function getPublished()
     {
         return $this->published;
@@ -292,7 +291,7 @@ class Post
      * @param  bool  $published
      *
      * @return  self
-     */ 
+     */
     public function setPublished(bool $published)
     {
         $this->published = $published;

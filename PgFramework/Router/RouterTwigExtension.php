@@ -11,7 +11,6 @@ use Twig\TwigFunction;
  */
 class RouterTwigExtension extends AbstractExtension
 {
-
   /**
    * Undocumented variable
    *

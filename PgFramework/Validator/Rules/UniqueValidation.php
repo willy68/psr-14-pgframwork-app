@@ -6,7 +6,6 @@ use PgFramework\Validator\ValidationInterface;
 
 class UniqueValidation implements ValidationInterface
 {
-
     protected $error = "Le champ %s doit être unique";
 
     /**

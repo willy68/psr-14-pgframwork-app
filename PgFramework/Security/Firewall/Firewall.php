@@ -13,7 +13,6 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class Firewall extends EventDispatcher implements EventSubscriberInterface
 {
-
     /**
      *
      * @var EventDispatcher

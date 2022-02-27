@@ -11,7 +11,7 @@ interface AuthenticationInterface
 {
     /**
      * Authenticate the request
-     * 
+     *
      * Return AuthenticateResultInterface on authenticate success
      * or throw AuthenticationFailureException
      *
@@ -39,7 +39,7 @@ interface AuthenticationInterface
 
     /**
      * Action to do when success (generally redirect)
-     * 
+     *
      * If response is returned, the controller is not be executed
      * If null returned, the controller is executed
      *

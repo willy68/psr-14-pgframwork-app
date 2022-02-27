@@ -11,7 +11,6 @@ use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
 
 class SessionCsrfMiddleware implements MiddlewareInterface
 {
-
     /**
      * @var string
      */
@@ -30,14 +29,13 @@ class SessionCsrfMiddleware implements MiddlewareInterface
     public function __construct(
         CsrfTokenManagerInterface $tokenManager,
         string $formKey = '_csrf'
-    )
-    {
+    ) {
         $this->tokenManager = $tokenManager;
         $this->formKey = $formKey;
     }
 
     /**
-     * 
+     *
      *
      * @param object $event
      * @return void

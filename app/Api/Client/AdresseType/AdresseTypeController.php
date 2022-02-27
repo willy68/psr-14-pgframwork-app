@@ -7,7 +7,6 @@ use App\Api\AbstractApiController;
 
 class AdresseTypeController extends AbstractApiController
 {
-
     /**
      * Model class
      *

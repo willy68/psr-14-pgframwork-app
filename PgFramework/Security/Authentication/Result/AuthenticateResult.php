@@ -6,7 +6,6 @@ use PgFramework\Auth\UserInterface;
 
 class AuthenticateResult implements AuthenticateResultInterface
 {
-
     protected $credentials;
 
     protected $user;
@@ -37,7 +36,7 @@ class AuthenticateResult implements AuthenticateResultInterface
      * Set the value of credentials
      *
      * @return  self
-     */ 
+     */
     public function setCredentials($credentials)
     {
         $this->credentials = $credentials;
@@ -49,7 +48,7 @@ class AuthenticateResult implements AuthenticateResultInterface
      * Set the value of user
      *
      * @return  self
-     */ 
+     */
     public function setUser(UserInterface $user)
     {
         $this->user = $user;

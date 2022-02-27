@@ -14,7 +14,6 @@ use Psr\Http\Message\ServerRequestInterface as Request;
  */
 class CategoryShowAction
 {
-
     /**
      *
      * @var RendererInterface

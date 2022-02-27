@@ -7,7 +7,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class AbstractController
 {
-    
     /**
      * Return filter Post body from SPA or Web
      *

@@ -11,7 +11,6 @@ use PgFramework\Database\Query;
  */
 class PostTable extends Table
 {
-
     /**
      * Undocumented variable
      *

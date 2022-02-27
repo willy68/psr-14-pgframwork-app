@@ -18,7 +18,6 @@ use Psr\Http\Server\{
 
 class InvalidCsrfMiddleware implements MiddlewareInterface
 {
-
     /**
      * Undocumented variable
      *
@@ -46,7 +45,7 @@ class InvalidCsrfMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         } catch (InvalidCsrfException $e) {
             if (RequestUtils::isJson($request)) {
-                Return new Response(403, [], $e->getMessage() . ' ' . $e->getCode());
+                return new Response(403, [], $e->getMessage() . ' ' . $e->getCode());
             }
             $this->flashService->error('Vous n\'avez pas de token valid pour executer cette action');
             return new ResponseRedirect('/');

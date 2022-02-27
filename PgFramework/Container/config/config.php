@@ -196,14 +196,14 @@ return [
     EntityManager::class => function (ContainerInterface $c): EntityManager {
         // Create a simple "default" Doctrine ORM configuration for Annotations
         $isDevMode = $c->get('env') === 'dev';
-        $config = new Configuration;
+        $config = new Configuration();
 
         if ($isDevMode === true) {
             $queryCache = new ArrayAdapter();
             $metadataCache = new ArrayAdapter();
             $config->setAutoGenerateProxyClasses(true);
         } else {
-            $queryCache = new PhpFilesAdapter ('doctrine_queries');
+            $queryCache = new PhpFilesAdapter('doctrine_queries');
             $metadataCache = new PhpFilesAdapter('doctrine_metadata');
             $config->setAutoGenerateProxyClasses(false);
         }

@@ -14,7 +14,6 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class RouterListener implements EventSubscriberInterface
 {
-
     /**
      * @var RouterInterface
      */

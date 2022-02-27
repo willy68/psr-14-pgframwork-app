@@ -10,7 +10,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class RoutePrefixMiddleware implements MiddlewareInterface
 {
-
     /**
      * Undocumented variable
      *

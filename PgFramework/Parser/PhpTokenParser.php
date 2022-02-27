@@ -4,7 +4,6 @@ namespace PgFramework\Parser;
 
 class PhpTokenParser
 {
-
     public function __construct()
     {
         if (!\function_exists('token_get_all')) {
@@ -18,8 +17,7 @@ class PhpTokenParser
      * @param string $file A PHP file path
      * @return string|false Full class name if found, false otherwise
      */
-    static public function findClass($file)
-
+    public static function findClass($file)
     {
         $class = false;
         $namespace = false;

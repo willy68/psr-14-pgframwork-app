@@ -6,7 +6,6 @@ use PgFramework\Auth;
 
 class VoterRoles implements VoterInterface
 {
-
     private $prefix;
 
     public function __construct(string $prefix = 'ROLE_')
@@ -20,7 +19,6 @@ class VoterRoles implements VoterInterface
         $roles = $auth->getUser()->getRoles();
 
         foreach ($attributes as $attribute) {
-            
             if (!\is_string($attribute) || 0 !== strpos($attribute, $this->prefix)) {
                 continue;
             }

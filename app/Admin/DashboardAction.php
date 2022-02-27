@@ -9,7 +9,6 @@ use PgFramework\Renderer\RendererInterface;
  */
 class DashboardAction
 {
-
     /**
      *
      * @var RendererInterface

@@ -13,7 +13,6 @@ use PgFramework\Invoker\ParameterResolver\ActiveRecordAnnotationConverter;
 
 class ActiveRecordAnnotationsResolver implements ParameterResolver
 {
-
     /**
      * Reader
      *

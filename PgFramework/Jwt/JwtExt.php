@@ -6,7 +6,6 @@ use Firebase\JWT\JWT as JWT;
 
 class JwtExt extends JWT
 {
-
     /**
      *
      * @param string $jwt
@@ -31,8 +30,8 @@ class JwtExt extends JWT
         $algo = $header->alg;
         $timestamp = time();
         $leeway = (isset($payload->nbf) && isset($payload->iat)) ? ($payload->nbf - $payload->iat) : static::$leeway;
-        
-        
+
+
         // Check that this token has been created before 'now'. This prevents
         // using tokens that have been created for later use (and haven't
         // correctly used the nbf claim).

@@ -16,7 +16,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class ForbidenMiddleware implements MiddlewareInterface
 {
-
     private $loginPath;
 
     /**
@@ -38,18 +37,18 @@ class ForbidenMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         } catch (ForbiddenException $e) {
             if (RequestUtils::isJson($request)) {
-                Return new Response(403, [], $e->getMessage() . ' ' . $e->getCode());
+                return new Response(403, [], $e->getMessage() . ' ' . $e->getCode());
             }
             return $this->redirectLogin($request);
         } catch (FailedAccessException $e) {
             if (RequestUtils::isJson($request)) {
-                Return new Response(403, [], $e->getMessage() . ' ' . $e->getCode());
+                return new Response(403, [], $e->getMessage() . ' ' . $e->getCode());
             }
             return $this->redirectAdminHome($request);
         } catch (\TypeError $error) {
             if (strpos($error->getMessage(), User::class) !== false) {
                 if (RequestUtils::isJson($request)) {
-                    Return new Response(403, [], $error->getMessage() . ' ' . $error->getCode());
+                    return new Response(403, [], $error->getMessage() . ' ' . $error->getCode());
                 }
                 return $this->redirectLogin($request);
             }

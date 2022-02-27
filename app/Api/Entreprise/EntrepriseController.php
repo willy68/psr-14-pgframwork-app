@@ -12,7 +12,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class EntrepriseController extends AbstractApiController
 {
-
     /**
      * Model class
      *

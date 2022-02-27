@@ -6,7 +6,6 @@ use PgFramework\Auth\UserInterface;
 
 interface Auth
 {
-
     /**
      *
      * @return UserInterface|null

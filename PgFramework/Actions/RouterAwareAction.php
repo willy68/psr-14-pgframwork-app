@@ -10,7 +10,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 trait RouterAwareAction
 {
-
   /**
    * Redirection
    *

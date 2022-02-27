@@ -1,15 +1,26 @@
 <?php
 
-use PgFramework\{
-    Auth,
-    Auth\AuthSession,
-    Auth\UserInterface,
-    Auth\Provider\UserProviderInterface
+use PgFramework\Environnement\Environnement;
+use PgFramework\Security\Firewall\EventListener\ForbidenListener;
+use PgFramework\Auth;
+use PgFramework\Auth\{
+    AuthSession,
+    UserInterface,
+    Provider\TokenProviderInterface,
+    Provider\UserProviderInterface,
+    RememberMe\RememberMeInterface,
+    RememberMe\RememberMeDatabase,
+    RememberMe\RememberMe,
+    Middleware\ForbidenMiddleware
 };
-
+use PgFramework\Auth\Service\{
+    UtilToken,
+    UtilTokenInterface
+};
 use App\Auth\{
     Twig\AuthTwigExtension,
-    Provider\UserProvider
+    Provider\UserProvider,
+    Provider\UserTokenProvider
 };
 
 use function DI\{
@@ -18,17 +29,6 @@ use function DI\{
     factory,
     autowire
 };
-
-use PgFramework\Auth\Service\UtilToken;
-use App\Auth\Provider\UserTokenProvider;
-use PgFramework\Auth\RememberMe\RememberMe;
-use PgFramework\Environnement\Environnement;
-use PgFramework\Auth\Service\UtilTokenInterface;
-use PgFramework\Auth\Middleware\ForbidenMiddleware;
-use PgFramework\Auth\RememberMe\RememberMeDatabase;
-use PgFramework\Auth\RememberMe\RememberMeInterface;
-use PgFramework\Auth\Provider\TokenProviderInterface;
-use PgFramework\Security\Firewall\EventListener\ForbidenListener;
 
 return [
     'auth.login' => '/login',

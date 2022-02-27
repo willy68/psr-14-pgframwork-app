@@ -18,7 +18,6 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class ForbidenListener implements EventSubscriberInterface
 {
-
     private $loginPath;
 
     /**

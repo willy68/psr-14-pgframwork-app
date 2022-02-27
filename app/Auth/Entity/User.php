@@ -11,7 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class User implements UserInterface
 {
-
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -58,7 +57,7 @@ class User implements UserInterface
      * Set the value of id
      *
      * @return  self
-     */ 
+     */
     public function setId($id)
     {
         $this->id = $id;
@@ -80,7 +79,7 @@ class User implements UserInterface
      * Set the value of username
      *
      * @return  self
-     */ 
+     */
     public function setUsername($username)
     {
         $this->username = $username;
@@ -100,7 +99,7 @@ class User implements UserInterface
      * Set the value of email
      *
      * @return  self
-     */ 
+     */
     public function setEmail($email)
     {
         $this->email = $email;
@@ -122,7 +121,7 @@ class User implements UserInterface
      * Set the value of password
      *
      * @return  self
-     */ 
+     */
     public function setPassword($password)
     {
         $this->password = $password;
@@ -134,7 +133,7 @@ class User implements UserInterface
      * Set the value of roles
      *
      * @return  self
-     */ 
+     */
     public function setRoles($roles)
     {
         $this->roles = $roles;

@@ -10,7 +10,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class LoggedInMiddleware implements MiddlewareInterface
 {
-
     private $auth;
 
     /**

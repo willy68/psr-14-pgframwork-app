@@ -13,7 +13,6 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class CallableMiddleware implements MiddlewareInterface
 {
-
   /**
    * Undocumented variable
    *

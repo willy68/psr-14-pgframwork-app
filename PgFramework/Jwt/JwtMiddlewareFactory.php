@@ -8,7 +8,6 @@ use Tuupola\Middleware\JwtAuthentication;
 
 class JwtMiddlewareFactory
 {
-
     /**
      * JwtAuthentication Factory
      *

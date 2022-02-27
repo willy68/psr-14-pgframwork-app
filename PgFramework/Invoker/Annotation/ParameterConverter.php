@@ -22,7 +22,6 @@ use PgFramework\Invoker\Exception\InvalidAnnotation;
  */
 final class ParameterConverter
 {
-
     /**
      * Parameters, indexed by the parameter number (index) or name.
      *

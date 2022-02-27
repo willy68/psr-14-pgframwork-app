@@ -4,7 +4,7 @@ namespace PgFramework\Security\Csrf;
 
 interface CsrfTokenManagerInterface
 {
-    public const delimiter = '.';
+    public const DELIMITER = '.';
 
     /**
     * Returns a CSRF token.
@@ -14,7 +14,7 @@ interface CsrfTokenManagerInterface
     *
     * @return string The CSRF token
     */
-   public function getToken(?string $tokenId = null): string;
+    public function getToken(?string $tokenId = null): string;
 
    /**
     * Generates a new token value.
@@ -25,7 +25,7 @@ interface CsrfTokenManagerInterface
     *
     * @return string The CSRF token
     */
-   public function refreshToken(string $tokenId): string;
+    public function refreshToken(string $tokenId): string;
 
    /**
     * Invalidates the CSRF token, if one exists.
@@ -33,12 +33,12 @@ interface CsrfTokenManagerInterface
     * @return string|null Returns the removed token value if one existed, NULL
     *                     otherwise
     */
-   public function removeToken(string $tokenId): string;
+    public function removeToken(string $tokenId): string;
 
    /**
     * Returns whether the given CSRF token is valid.
     *
     * @return bool Returns true if the token is valid, false otherwise
     */
-   public function isTokenValid(string $token): bool;
+    public function isTokenValid(string $token): bool;
 }

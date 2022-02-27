@@ -6,7 +6,6 @@ use PgFramework\Auth\TokenInterface;
 
 interface TokenRepositoryInterface
 {
-
     /**
      * get cookie token from database or what else
      *

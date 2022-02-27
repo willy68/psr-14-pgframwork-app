@@ -4,7 +4,6 @@ namespace PgFramework\Database\ActiveRecord;
 
 class ActiveRecordQuery
 {
-
     private $options = [];
 
     private $whereValue = [];

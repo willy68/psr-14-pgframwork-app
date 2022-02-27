@@ -16,7 +16,6 @@ use PgFramework\Database\ActiveRecord\ActiveRecordQuery;
 
 class DemoController
 {
-
     /**
      * Montre l'index de l'application
      * $renderer est injecté automatiquement, comme toutes les classes

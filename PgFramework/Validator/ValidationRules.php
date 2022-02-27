@@ -13,7 +13,6 @@ use PgFramework\AbstractApplication;
  */
 class ValidationRules
 {
-
     /**
      *
      *
@@ -80,7 +79,7 @@ class ValidationRules
         }
 
         $options = explode('|', $rules);
-        
+
         foreach ($options as $option) {
             list($key, $value) = array_pad(explode(':', $option, 2), 2, '');
             if (strtolower($key) === 'filter') {
@@ -160,7 +159,7 @@ class ValidationRules
     {
         return $this->errors;
     }
-    
+
     public function getFieldName(): string
     {
         return $this->fieldName;

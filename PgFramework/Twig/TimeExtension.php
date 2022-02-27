@@ -8,7 +8,6 @@ use Twig\TwigFilter;
 
 class TimeExtension extends AbstractExtension
 {
-
   /**
    * Undocumented function
    *

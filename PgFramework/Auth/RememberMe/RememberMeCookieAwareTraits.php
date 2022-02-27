@@ -6,7 +6,7 @@ trait RememberMeCookieAwareTraits
 {
     // Can't use const!
     private $delimiter = ':';
-    
+
     /**
      * Get the cookie parts
      *
@@ -25,7 +25,7 @@ trait RememberMeCookieAwareTraits
      * @param array $cookieParts
      * @return string
      */
-    protected function encodeCookie(array $cookieParts): string 
+    protected function encodeCookie(array $cookieParts): string
     {
         return base64_encode(implode($this->delimiter, $cookieParts));
     }

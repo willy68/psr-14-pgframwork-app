@@ -9,7 +9,6 @@ use PgFramework\Database\Table;
  */
 class CategoryTable extends Table
 {
-
     /**
      * Undocumented variable
      *

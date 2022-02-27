@@ -4,7 +4,6 @@ namespace PgFramework\Session;
 
 class FlashService
 {
-
     /**
      * Undocumented variable
      *
@@ -74,7 +73,7 @@ class FlashService
             $this->messages = $this->session->get($this->sessionKey, []);
             $this->session->delete($this->sessionKey);
         }
-        
+
         if (array_key_exists($type, $this->messages)) {
             return $this->messages[$type];
         }

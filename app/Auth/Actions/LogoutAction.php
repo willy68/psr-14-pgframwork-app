@@ -12,7 +12,6 @@ use PgFramework\Response\ResponseRedirect;
  */
 class LogoutAction
 {
-
     /**
      * Undocumented variable
      *

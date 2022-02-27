@@ -39,7 +39,7 @@ class DispatcherMiddleware implements MiddlewareInterface, RequestHandlerInterfa
      * @var FastRouteRouter
      */
     private $router;
-    
+
     /**
      * Next App Handler
      *
@@ -200,7 +200,7 @@ class DispatcherMiddleware implements MiddlewareInterface, RequestHandlerInterfa
                     $this->container->set(ServerRequestInterface::class, $request);
                 } else {
                     // Limitation: $request must be named "$request"
-                    $params = array_merge(["request" => $request] , $params);
+                    $params = array_merge(["request" => $request], $params);
                 }
 
                 $response = $this->getInvoker($this->container)->call($callback, $params);

@@ -8,7 +8,6 @@ use PgFramework\Renderer\RendererInterface;
 
 class BlogWidget implements AdminWidgetInterface
 {
-
     /**
      * Undocumented variable
      *

@@ -13,7 +13,6 @@ use PgFramework\Auth\Provider\TokenProviderInterface;
 
 class RememberMeDatabase extends AbstractRememberMe
 {
-
     /**
      * Token Repository
      *
@@ -112,7 +111,6 @@ class RememberMeDatabase extends AbstractRememberMe
 
         $user = $this->userProvider->getUser($this->options['field'], $token->getCredential());
         if ($user) {
-
             //password corrupted
             if (!hash_equals(base64_decode($token->getRandomPassword()), base64_decode($randomPassword))) {
                 $authenticate = false;
@@ -164,10 +162,8 @@ class RememberMeDatabase extends AbstractRememberMe
     {
         $cookie = FigRequestCookies::get($request, $this->options['name']);
         if ($cookie->getValue()) {
-
             $cookieParts = $this->decodeCookie($cookie->getValue());
             if (3 === \count($cookieParts)) {
-
                 [$series] = $cookieParts;
 
                 $token = $this->tokenProvider->getTokenBySeries($series);

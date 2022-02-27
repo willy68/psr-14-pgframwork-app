@@ -84,7 +84,7 @@ class PostShowAction
 
     /**
      * Show post with Doctrine
-     * 
+     *
      * @Route("/post/{id:[0-9]+}", name="blog.showPost", method={"GET"})
      *
      * @param Post $post

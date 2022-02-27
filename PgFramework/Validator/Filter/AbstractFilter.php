@@ -4,7 +4,6 @@ namespace PgFramework\Validator\Filter;
 
 abstract class AbstractFilter
 {
-
     /**
      *
      * @Check if POST variable is set

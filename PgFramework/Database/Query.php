@@ -7,7 +7,6 @@ use PDO;
 
 class Query implements \IteratorAggregate
 {
-
     private $pdo;
 
     private $select;

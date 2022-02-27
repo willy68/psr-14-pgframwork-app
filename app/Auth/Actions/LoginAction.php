@@ -10,7 +10,6 @@ use PgFramework\Renderer\RendererInterface;
  */
 class LoginAction
 {
-
     private $renderer;
 
     public function __construct(RendererInterface $renderer)

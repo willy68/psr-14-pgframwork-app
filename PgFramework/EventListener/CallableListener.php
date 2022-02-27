@@ -53,11 +53,11 @@ class CallableListener implements Listener
         }
 
         if (is_array($callback) && is_string($callback[0])) {
-            $callback[0] = new $callback[0];
+            $callback[0] = new $callback[0]();
         }
 
         if (is_string($callback) && method_exists($callback, '__invoke')) {
-            $callback = new $callback;
+            $callback = new $callback();
         }
 
         if (! is_callable($callback)) {

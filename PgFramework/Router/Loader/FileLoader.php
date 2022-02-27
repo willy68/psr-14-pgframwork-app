@@ -60,7 +60,8 @@ class FileLoader extends ClassLoader
                 $classAnnotation->getPath(),
                 $reflectionClass->getName(),
                 $classAnnotation->getName(),
-                $classAnnotation->getMethods());
+                $classAnnotation->getMethods()
+            );
         }
 
         gc_mem_caches();

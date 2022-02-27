@@ -40,7 +40,7 @@ class UserProvider implements UserProviderInterface
 
     public function updateUser(UserInterface $user): ?UserInterface
     {
-        
+
         try {
             $dbUser = $this->em->find($this->entity, $user->getId());
         } catch (\Exception $e) {

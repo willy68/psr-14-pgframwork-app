@@ -9,7 +9,6 @@ use Twig\Extension\AbstractExtension;
 
 class WebpackExtension extends AbstractExtension
 {
-
     /**
      * Path du fichier entrypoints.json
      *
@@ -38,8 +37,8 @@ class WebpackExtension extends AbstractExtension
         $entryPoints = $this->readJsonFile($this->entryPoints, $entryName);
         $tags = '';
         if (!empty($entryPoints) && array_key_exists('js', $entryPoints)) {
-            foreach($entryPoints['js'] as $tag) {
-            $tags .= <<<HTML
+            foreach ($entryPoints['js'] as $tag) {
+                $tags .= <<<HTML
         <script src="{$tag}" defer></script>\n
 HTML;
             }
@@ -52,14 +51,13 @@ HTML;
         $entryPoints = $this->readJsonFile($this->entryPoints, $entryName);
         $tags = '';
         if (!empty($entryPoints) && array_key_exists('css', $entryPoints)) {
-            foreach($entryPoints['css'] as $tag) {
+            foreach ($entryPoints['css'] as $tag) {
                 $tags .= <<<HTML
         <link href="{$tag}" rel="stylesheet">\n
 HTML;
             }
         }
         return $tags;
-
     }
 
     protected function readJsonFile(string $file, string $entryName): array

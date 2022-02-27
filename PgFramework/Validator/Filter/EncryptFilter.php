@@ -6,7 +6,6 @@ use PgFramework\Validator\FilterInterface;
 
 class EncryptFilter extends AbstractFilter implements FilterInterface
 {
-
     public const MD5 = 'MD5';
 
     public const CUSTOM = 'CUSTOM';

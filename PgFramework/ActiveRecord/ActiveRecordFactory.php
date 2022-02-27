@@ -8,7 +8,6 @@ use Psr\Container\ContainerInterface;
 
 class ActiveRecordFactory
 {
-
     /**
      * Initialize ActiveRecord Factory
      *

@@ -9,7 +9,6 @@ use PgFramework\Database\ActiveRecord\PaginatedActiveRecord;
 
 class PaginatedModel extends ActiveRecord\Model
 {
- 
     public static $paginatedCondition = [];
 
     public static $query;

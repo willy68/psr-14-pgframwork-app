@@ -9,7 +9,7 @@ class FirewallMapFactory
 {
     public function __invoke(ContainerInterface $c)
     {
-        $map = new FirewallMap;
+        $map = new FirewallMap();
 
         if ($c->has('security.firewall.rules')) {
             $rules = $c->get('security.firewall.rules');

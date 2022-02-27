@@ -9,7 +9,7 @@ class AccessMapFactory
 {
     public function __invoke(ContainerInterface $c)
     {
-        $map = new AccessMap;
+        $map = new AccessMap();
 
         if ($c->has('security.voters.rules')) {
             $rules = $c->get('security.voters.rules');

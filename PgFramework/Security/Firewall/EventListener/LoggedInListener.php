@@ -11,7 +11,6 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class LoggedInListener implements EventSubscriberInterface
 {
-
     private $auth;
 
     /**

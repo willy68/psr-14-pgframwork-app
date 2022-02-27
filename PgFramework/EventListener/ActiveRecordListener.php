@@ -9,7 +9,6 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class ActiveRecordListener implements EventSubscriberInterface
 {
-
     public function __invoke(RequestEvent $event): void
     {
         $event->getApp()->getContainer()->get('ActiveRecord');

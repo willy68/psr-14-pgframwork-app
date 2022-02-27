@@ -363,7 +363,7 @@ class App extends AbstractApplication implements RequestHandlerInterface
      * Get the value of request
      *
      * @return  ServerRequestInterface
-     */ 
+     */
     public function getRequest()
     {
         return $this->request;
@@ -375,7 +375,7 @@ class App extends AbstractApplication implements RequestHandlerInterface
      * @param  ServerRequestInterface  $request
      *
      * @return  self
-     */ 
+     */
     public function setRequest(ServerRequestInterface $request)
     {
         $this->request = $request;

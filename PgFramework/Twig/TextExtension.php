@@ -10,7 +10,6 @@ use Twig\TwigFilter;
  */
 class TextExtension extends AbstractExtension
 {
-
   /**
    * Undocumented function
    *

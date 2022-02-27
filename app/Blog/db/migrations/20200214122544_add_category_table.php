@@ -6,7 +6,6 @@ use function DI\string;
 
 class AddCategoryTable extends AbstractMigration
 {
-
     public function change()
     {
         $this->table('categories')

@@ -7,7 +7,6 @@ use PgFramework\Validator\ValidationInterface;
 
 class ExtensionValidation implements ValidationInterface
 {
-
     private const MIME_TYPES = [
         'jpg' => 'image/jpg',
         'png' => 'image/png',

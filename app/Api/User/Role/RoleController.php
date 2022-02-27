@@ -7,7 +7,6 @@ use App\Api\AbstractApiController;
 
 class RoleController extends AbstractApiController
 {
-
     /**
      * Model class
      *

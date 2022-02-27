@@ -6,7 +6,6 @@ use GuzzleHttp\Psr7\Response;
 
 class ResponseRedirect extends Response
 {
-
     /**
      * ResponseRedirect constructor.
      * @param string $url

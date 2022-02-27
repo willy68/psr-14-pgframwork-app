@@ -4,7 +4,6 @@ namespace PgFramework\Renderer;
 
 class PHPRenderer implements RendererInterface
 {
-
     /**
      *
      */
@@ -66,7 +65,7 @@ class PHPRenderer implements RendererInterface
         } else {
             $path = $this->paths[self::DEFAULT_NAMESPACE] . DIRECTORY_SEPARATOR . $view . '.php';
         }
-        
+
         ob_start();
         $renderer = $this;
         extract($this->globals);

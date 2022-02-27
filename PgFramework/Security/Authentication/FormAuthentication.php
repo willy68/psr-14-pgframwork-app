@@ -46,7 +46,7 @@ class FormAuthentication implements AuthenticationInterface
         RouterInterface $router,
         PasswordHasherInterface $hasher,
         array $options = []
-    ){
+    ) {
         $this->auth = $auth;
         $this->userProvider = $userProvider;
         $this->session = $session;
@@ -71,7 +71,7 @@ class FormAuthentication implements AuthenticationInterface
         if (!$user || !$user instanceof UserInterface) {
             throw new AuthenticationFailureException('User not found');
         }
-        
+
         if (!$this->hasher->verify($user->getPassword(), $credentials['password'])) {
             throw new AuthenticationFailureException('Bad password');
         }

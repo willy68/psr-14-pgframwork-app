@@ -4,7 +4,6 @@ namespace PgFramework\Validator;
 
 class ValidationError
 {
-
     /**
      * Undocumented variable
      *

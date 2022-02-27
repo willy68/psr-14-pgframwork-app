@@ -10,7 +10,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class ClientController extends AbstractApiController
 {
-
     /**
      * Model class
      *

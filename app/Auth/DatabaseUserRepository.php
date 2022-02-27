@@ -10,7 +10,6 @@ use PgFramework\Database\NoRecordException;
 
 class DatabaseUserRepository implements UserRepositoryInterface
 {
-
     private $userTable;
 
     public function __construct(UserTable $userTable)

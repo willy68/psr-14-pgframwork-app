@@ -14,7 +14,6 @@ use Invoker\ParameterResolver\Container\TypeHintContainerResolver;
 
 class InvokerFactory
 {
-
     /**
      * Create Invoker
      *

@@ -7,7 +7,6 @@ use PgFramework\Security\Authorization\VoterManagerInterface;
 
 class VoterManagerFactory
 {
-
     public function __invoke(ContainerInterface $c)
     {
         $voters = [];

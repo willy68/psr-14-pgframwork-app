@@ -6,7 +6,6 @@ use PgFramework\Validator\ValidationInterface;
 
 class DateFormatValidation implements ValidationInterface
 {
-
     /**
      * @var string
      */

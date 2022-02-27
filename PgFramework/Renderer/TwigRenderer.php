@@ -12,7 +12,6 @@ use Twig\Error\SyntaxError;
  */
 class TwigRenderer implements RendererInterface
 {
-
   /**
    * Undocumented variable
    *
@@ -54,7 +53,7 @@ class TwigRenderer implements RendererInterface
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    
+
     public function render(string $view, array $params = []): string
     {
         return $this->twig->render($view . '.twig', $params);

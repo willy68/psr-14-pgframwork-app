@@ -8,7 +8,6 @@ use Twig\Extension\AbstractExtension;
 
 class BlogTwigExtension extends AbstractExtension
 {
-
     private $widgets;
 
     public function __construct(array $widgets)

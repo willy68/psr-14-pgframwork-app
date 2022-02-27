@@ -6,7 +6,6 @@ use PDO;
 
 class Validator
 {
-
     private const MIME_TYPES = [
         'jpg' => 'image/jpg',
         'png' => 'image/png',
@@ -36,7 +35,7 @@ class Validator
 
     /**
      * Validator constructor.
-     * 
+     *
      * @param array $params
      */
     public function __construct(array $params)

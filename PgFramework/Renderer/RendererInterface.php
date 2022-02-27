@@ -4,7 +4,6 @@ namespace PgFramework\Renderer;
 
 interface RendererInterface
 {
-
     /**
      * Undocumented function
      *

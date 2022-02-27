@@ -13,7 +13,6 @@ use PgFramework\Renderer\RendererInterface;
 
 class RecordNotFoundListener implements EventSubscriberInterface
 {
-
     /**
      * Renderer de vue
      *

@@ -7,7 +7,6 @@ use PgFramework\Renderer\RendererInterface;
 
 class DemoModule extends Module
 {
-
     public const ANNOTATIONS = [
         __DIR__ . '/Controller'
     ];

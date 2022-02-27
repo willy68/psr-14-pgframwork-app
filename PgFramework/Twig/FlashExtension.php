@@ -7,7 +7,6 @@ use Twig\TwigFunction;
 
 class FlashExtension extends \Twig\Extension\AbstractExtension
 {
-
   /**
    * Undocumented variable
    *

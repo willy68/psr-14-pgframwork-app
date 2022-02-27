@@ -8,13 +8,12 @@ class RoutesMapFactory
 {
     public function __invoke(ContainerInterface $c)
     {
-        $map = new RoutesMap;
+        $map = new RoutesMap();
 
         if ($c->has('routes.listeners')) {
             $rules = $c->get('routes.listeners');
 
             foreach ($rules as $rule) {
-
                 $map->add(
                     new RequestMatcher(
                         $rule['path'] ?? null,

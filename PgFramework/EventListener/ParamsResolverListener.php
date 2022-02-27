@@ -31,6 +31,5 @@ class ParamsResolverListener implements EventSubscriberInterface
         return [
             Events::PARAMETERS => ['onResolve', 10]
         ];
-
     }
 }

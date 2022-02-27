@@ -36,11 +36,11 @@ class RequestMatcher implements RequestMatcherInterface
             return false;
         }
 
-        if (null !== $this->path && !preg_match('{'.$this->path.'}', rawurldecode($request->getUri()->getPath()))) {
+        if (null !== $this->path && !preg_match('{' . $this->path . '}', rawurldecode($request->getUri()->getPath()))) {
             return false;
         }
 
-        if (null !== $this->host && !preg_match('{'.$this->host.'}i', $request->getUri()->getHost())) {
+        if (null !== $this->host && !preg_match('{' . $this->host . '}i', $request->getUri()->getHost())) {
             return false;
         }
 

@@ -12,7 +12,6 @@ use Twig\Extension\DebugExtension;
  */
 class TwigRendererFactory
 {
-
   /**
    * Undocumented function
    *

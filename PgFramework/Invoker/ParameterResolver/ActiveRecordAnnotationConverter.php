@@ -84,8 +84,7 @@ class ActiveRecordAnnotationConverter implements ParameterResolver
                             if ($findByKey === 'id') {
                                 if (null === $include) {
                                     $obj = $class::find((int) $parameter);
-                                }
-                                else {
+                                } else {
                                     $include = ['include' => [$include]];
                                     $obj = $class::find((int) $parameter, $include);
                                 }
@@ -93,8 +92,7 @@ class ActiveRecordAnnotationConverter implements ParameterResolver
                                 $method = "find_by_" . $findByKey;
                                 if (null === $include) {
                                     $obj = $class::$method($parameter);
-                                }
-                                else {
+                                } else {
                                     $include = ['include' => [$include]];
                                     $obj = $class::$method($parameter, $include);
                                 }

@@ -12,7 +12,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class RecordNotFoundMiddleware implements MiddlewareInterface
 {
-
     /**
      * Renderer de vue
      *

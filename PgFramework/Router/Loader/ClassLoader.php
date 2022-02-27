@@ -4,10 +4,8 @@ namespace PgFramework\Router\Loader;
 
 use PgFramework\Router\Annotation\Exception\RouteAnnotationException;
 
-
 class ClassLoader extends MethodLoader
 {
-
     /**
      * Get the annotation class
      *
@@ -19,7 +17,7 @@ class ClassLoader extends MethodLoader
         if ($class->isAbstract()) {
             return null;
         }
-        
+
         // Look for @Route annotation
         try {
             $annotation = $this->getAnnotationReader()

@@ -6,7 +6,6 @@ use PgFramework\Validator\FilterInterface;
 
 class StriptagsFilter extends AbstractFilter implements FilterInterface
 {
-    
     /**
      *
      *

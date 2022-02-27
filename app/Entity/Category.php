@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Category
 {
-
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -49,7 +48,7 @@ class Category
      * Get the value of id
      *
      * @return  int
-     */ 
+     */
     public function getId()
     {
         return $this->id;
@@ -61,7 +60,7 @@ class Category
      * @param  int  $id
      *
      * @return  self
-     */ 
+     */
     public function setId(int $id)
     {
         $this->id = $id;
@@ -73,7 +72,7 @@ class Category
      * Get the value of name
      *
      * @return  string
-     */ 
+     */
     public function getName()
     {
         return $this->name;
@@ -85,7 +84,7 @@ class Category
      * @param  string  $name
      *
      * @return  self
-     */ 
+     */
     public function setName(string $name)
     {
         $this->name = $name;
@@ -97,7 +96,7 @@ class Category
      * Get the value of slug
      *
      * @return  string
-     */ 
+     */
     public function getSlug()
     {
         return $this->slug;
@@ -109,7 +108,7 @@ class Category
      * @param  string  $slug
      *
      * @return  self
-     */ 
+     */
     public function setSlug(string $slug)
     {
         $this->slug = $slug;

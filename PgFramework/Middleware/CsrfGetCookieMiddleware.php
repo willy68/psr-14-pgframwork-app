@@ -15,7 +15,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class CsrfGetCookieMiddleware implements MiddlewareInterface
 {
-
     protected $config = [
         'cookieName' => 'XSRF-TOKEN',
         'header' => 'X-CSRF-TOKEN',
@@ -59,7 +58,7 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
 
         if (is_string($cookie) && strlen($cookie) > 0) {
             [$tokenId] = explode(CsrfTokenManagerInterface::delimiter, $cookie);
-            $cookie = $this->tokenManager->getToken($tokenId); 
+            $cookie = $this->tokenManager->getToken($tokenId);
             $request = $request->withAttribute($this->config['field'], $cookie);
         }
 
@@ -86,17 +85,11 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
                 $this->validateToken($token, $cookie);
 
                 return $handler->handle($request);
-
-
-            } else if (!$request->hasHeader($this->config['header'])) {
-
+            } elseif (!$request->hasHeader($this->config['header'])) {
                 throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
-
             } else {
-
                 $headerCookie = $request->getHeaderLine($this->config['header']);
                 $this->validateToken($headerCookie, $cookie);
-            
             }
 
             [$tokenId] = explode(CsrfTokenManagerInterface::delimiter, $cookie);

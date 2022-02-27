@@ -4,7 +4,6 @@ namespace PgFramework\Database;
 
 class QueryResult implements \ArrayAccess, \Iterator
 {
-
     /**
      * Undocumented variable
      *

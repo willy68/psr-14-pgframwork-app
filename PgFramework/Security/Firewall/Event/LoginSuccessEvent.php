@@ -19,7 +19,7 @@ class LoginSuccessEvent extends Event
 
     /**
      * Get the value of result
-     */ 
+     */
     public function getResult()
     {
         return $this->result;
@@ -29,7 +29,7 @@ class LoginSuccessEvent extends Event
      * Set the value of result
      *
      * @return  self
-     */ 
+     */
     public function setResult($result)
     {
         $this->result = $result;

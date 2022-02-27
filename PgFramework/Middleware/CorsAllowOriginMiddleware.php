@@ -9,7 +9,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class CorsAllowOriginMiddleware implements MiddlewareInterface
 {
-
     /**
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
@@ -21,7 +20,7 @@ class CorsAllowOriginMiddleware implements MiddlewareInterface
         if ($response instanceof ResponseInterface) {
             return $response->withAddedHeader('Access-Control-Allow-Origin', '*');
         }
-        
+
         return $handler->handle($request);
     }
 }

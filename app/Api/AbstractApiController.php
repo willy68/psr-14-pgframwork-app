@@ -11,7 +11,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class AbstractApiController
 {
-
     /**
      * Model class
      *

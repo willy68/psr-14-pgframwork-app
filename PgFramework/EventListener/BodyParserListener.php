@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * CakePHP(tm) : Rapid Development PgFramework (http://cakephp.org)
@@ -14,6 +13,9 @@ declare(strict_types=1);
  * @since         3.6.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
+declare(strict_types=1);
+
 namespace PgFramework\EventListener;
 
 use Closure;

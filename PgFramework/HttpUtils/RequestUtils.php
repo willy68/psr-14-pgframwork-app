@@ -6,7 +6,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class RequestUtils
 {
-
     /**
      * Not safe function
      *
@@ -57,7 +56,7 @@ class RequestUtils
     {
         $accepts = explode(',', $request->getHeaderLine('Accept'));
         $format = 'html';
-        foreach($accepts as $accept) {
+        foreach ($accepts as $accept) {
             if (1 === preg_match('{^application/(?:\w+\++)*json$}i', $accept)) {
                 $format = 'json';
             }

@@ -13,7 +13,6 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 class CategoryCrudAction extends CrudAction
 {
-
     protected $viewPath = '@blog/admin/categories';
 
     protected $routePrefix = 'blog.admin.category';

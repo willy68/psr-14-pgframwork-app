@@ -39,23 +39,20 @@ class EventDispatcher extends LeagueEventDispatcher
      * @param EventSubscriberInterface|string $subscriber
      * @return void
      */
-    function addSubscriber($subscriber)
+    public function addSubscriber($subscriber)
     {
         foreach ($subscriber::getSubscribedEvents() as $eventName => $params) {
             // eventName in $params default __invoke and priority
             if (is_int($eventName)) {
                 $this->subscribeTo($params, $this->callableResolver->resolve($subscriber));
-            }
-            // default priority
-            else if (\is_string($params)) {
+            } elseif (\is_string($params)) {
+                // default priority
                 $this->subscribeTo($eventName, $this->callableResolver->resolve([$subscriber, $params]));
-            }
-            // default __invoke and priority in $params 
-            else if (\is_int($params)) {
+            } elseif (\is_int($params)) {
+                // default __invoke and priority in $params
                 $this->subscribeTo($eventName, $this->callableResolver->resolve($subscriber), $params);
-            }
-            // Array of method and priority (or default to 0)
-            elseif (\is_string($params[0])) {
+            } elseif (\is_string($params[0])) {
+                // Array of method and priority (or default to 0)
                 $this->subscribeTo($eventName, $this->callableResolver->resolve([$subscriber, $params[0]]), $params[1] ?? 0);
             }
         }
@@ -63,9 +60,9 @@ class EventDispatcher extends LeagueEventDispatcher
 
     /**
      * Add listeners array to this dispatcher
-     * 
+     *
      * The array keys are callable names and the value can be:
-     * 
+     *
      *  * With __invoke method
      *  * [$listeners::class => [$eventName, $priority]]
      *  * With specific method (CallableResolver resolve this format)

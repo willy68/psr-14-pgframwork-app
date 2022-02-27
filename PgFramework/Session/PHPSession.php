@@ -4,7 +4,6 @@ namespace PgFramework\Session;
 
 class PHPSession implements SessionInterface, \ArrayAccess
 {
-
     /**
      * Undocumented function
      *

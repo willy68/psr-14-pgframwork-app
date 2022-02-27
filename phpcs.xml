@@ -6,7 +6,7 @@
   <arg name="colors"/>
   <arg value="p"/>
 
-  <file>src</file>
+  <file>PgFramework</file>
   <file>app</file>
   <file>bin</file>
 

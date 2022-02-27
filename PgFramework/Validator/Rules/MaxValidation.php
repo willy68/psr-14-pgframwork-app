@@ -3,10 +3,9 @@
 namespace PgFramework\Validator\Rules;
 
 use PgFramework\Validator\ValidationInterface;
-  
+
 class MaxValidation implements ValidationInterface
 {
-
     protected int $max;
 
     protected string $error = 'Le champ %s doit avoir maximum %d caractères';
@@ -18,7 +17,7 @@ class MaxValidation implements ValidationInterface
             $this->error = $error;
         }
     }
-    
+
     public function isValid($var): bool
     {
         //if (empty($var)) return false;
@@ -67,16 +66,16 @@ class MaxValidation implements ValidationInterface
         if ($len > $this->max) {
             return false;
         }
-            
+
         return true;
     }
-    
+
     protected function checkInt($var)
     {
         if ($var > $this->max) {
             return false;
         }
-            
+
         return true;
     }
 
@@ -85,7 +84,7 @@ class MaxValidation implements ValidationInterface
         if ($var > $this->max) {
             return false;
         }
-            
+
         return true;
     }
 

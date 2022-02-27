@@ -4,7 +4,6 @@ namespace PgFramework\Router\Loader;
 
 class DirectoryLoader extends FileLoader
 {
-
     /**
      * Find all php files with @Route annotations
      *

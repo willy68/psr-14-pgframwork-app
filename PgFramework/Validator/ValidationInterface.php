@@ -4,7 +4,6 @@ namespace PgFramework\Validator;
 
 interface ValidationInterface
 {
-
     /**
      * Undocumented function
      *

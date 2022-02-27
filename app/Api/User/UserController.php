@@ -14,7 +14,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class UserController extends AbstractApiController
 {
-
     /**
      * \DI\Container
      *

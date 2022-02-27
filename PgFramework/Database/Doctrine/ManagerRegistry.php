@@ -10,7 +10,7 @@ use Doctrine\ORM\Exception\UnknownEntityNamespace;
 
 class ManagerRegistry extends AbstractManagerRegistry
 {
-     /**
+    /**
      * @var ContainerInterface
      */
     protected $container;
@@ -44,7 +44,7 @@ class ManagerRegistry extends AbstractManagerRegistry
 
     /**
      * From Doctrine bundle Registry.php
-     * 
+     *
      * @inheritdoc
      */
     public function getAliasNamespace($alias)
@@ -64,6 +64,4 @@ class ManagerRegistry extends AbstractManagerRegistry
 
         throw UnknownEntityNamespace::fromNamespaceAlias($alias);
     }
-
-
 }

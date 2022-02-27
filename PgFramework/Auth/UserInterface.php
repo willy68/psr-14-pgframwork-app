@@ -4,7 +4,6 @@ namespace PgFramework\Auth;
 
 interface UserInterface
 {
-
     /**
      *
      * @return int

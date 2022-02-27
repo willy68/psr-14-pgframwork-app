@@ -28,6 +28,5 @@ class CallableResolverListener implements EventSubscriberInterface
         return [
             Events::CONTROLLER => ['onResolve', 10]
         ];
-
     }
 }

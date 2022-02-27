@@ -14,7 +14,6 @@ use PgFramework\Security\Authorization\VoterManagerInterface;
 
 class AuthorizationMiddleware implements MiddlewareInterface
 {
-
     protected $auth;
     protected $voterManager;
     protected $map;
@@ -31,7 +30,7 @@ class AuthorizationMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        
+
         [$attributes] = $this->map->getPatterns($request);
 
         if (!$attributes) {

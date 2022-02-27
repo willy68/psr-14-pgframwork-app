@@ -9,7 +9,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class ContentTypeJsonMiddleware implements MiddlewareInterface
 {
-
     /**
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler

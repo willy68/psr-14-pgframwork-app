@@ -9,8 +9,8 @@ class JsonResponse extends Response
     public function __construct(
         $status = 200,
         $body = null,
-        $reason = null)
-    {
+        $reason = null
+    ) {
         parent::__construct($status, ['content-type', 'application/json;charset=UTF-8'], $body, '1.1', $reason);
     }
 }

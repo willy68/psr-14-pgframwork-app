@@ -11,7 +11,6 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class CsrfListener implements EventSubscriberInterface
 {
-
     /**
      * @var string
      */
@@ -30,14 +29,13 @@ class CsrfListener implements EventSubscriberInterface
     public function __construct(
         CsrfTokenManagerInterface $tokenManager,
         string $formKey = '_csrf'
-    )
-    {
+    ) {
         $this->tokenManager = $tokenManager;
         $this->formKey = $formKey;
     }
 
     /**
-     * 
+     *
      *
      * @param object $event
      * @return void

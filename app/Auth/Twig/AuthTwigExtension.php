@@ -8,7 +8,6 @@ use Twig\Extension\AbstractExtension;
 
 class AuthTwigExtension extends AbstractExtension
 {
-
     /**
      * auth
      *

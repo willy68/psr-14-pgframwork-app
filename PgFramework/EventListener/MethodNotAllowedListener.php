@@ -12,7 +12,6 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class MethodNotAllowedListener implements EventSubscriberInterface
 {
-
     public function __invoke(RequestEvent $event): void
     {
         $request = $event->getRequest();
@@ -25,10 +24,9 @@ class MethodNotAllowedListener implements EventSubscriberInterface
         }
 
         if ($routeResult->isMethodFailure()) {
-            $event->setResponse( (new Response())
+            $event->setResponse((new Response())
                 ->withStatus(StatusCode::STATUS_METHOD_NOT_ALLOWED)
-                ->withHeader('Allow', implode(',', $routeResult->getAllowedMethods()))
-            );
+                ->withHeader('Allow', implode(',', $routeResult->getAllowedMethods())));
         }
     }
 

@@ -114,7 +114,7 @@ class UserToken implements TokenInterface
      * @param  string  $credentials
      *
      * @return  self
-     */ 
+     */
     public function setCredentials(string $credentials)
     {
         $this->credentials = $credentials;
@@ -138,7 +138,7 @@ class UserToken implements TokenInterface
      * @param  string  $random_password
      *
      * @return  self
-     */ 
+     */
     public function setRandomPassword(string $random_password)
     {
         $this->random_password = $random_password;
@@ -162,7 +162,7 @@ class UserToken implements TokenInterface
      * @param  \Datetime  $expiration_date
      *
      * @return  self
-     */ 
+     */
     public function setExpirationDate(\Datetime $expiration_date)
     {
         $this->expiration_date = $expiration_date;
@@ -187,7 +187,7 @@ class UserToken implements TokenInterface
      * @param  bool  $is_expired
      *
      * @return  self
-     */ 
+     */
     public function setIsExpired(bool $is_expired)
     {
         $this->is_expired = $is_expired;
