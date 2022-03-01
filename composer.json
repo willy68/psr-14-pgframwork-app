@@ -31,7 +31,7 @@
         "pagerfanta/pagerfanta": "^2.1",
         "grafikart/psr15-csrf-middleware": "^1.0",
         "intervention/image": "^2.5",
-        "dflydev/fig-cookies": "^2.0",
+        "dflydev/fig-cookies": "^3.0",
         "tuupola/slim-jwt-auth": "^3.4",
         "league/event": "^3.0",
         "symfony/cache": "^5.4"
