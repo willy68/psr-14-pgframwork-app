@@ -16,6 +16,7 @@ use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Database\Doctrine\ManagerRegistry;
 use PgFramework\Invoker\Annotation\ParameterConverter;
+use Doctrine\ORM\Tools\DisconnectedClassMetadataFactory;
 use PgFramework\Database\ActiveRecord\ActiveRecordQuery;
 
 class DemoController
@@ -45,6 +46,13 @@ class DemoController
         ManagerRegistry $managerRegistry
     ): string {
         $conn = $managerRegistry->getManager();
+
+        //$em = $managerRegistry->getManager('paysagest');
+        /*$cmf = new DisconnectedClassMetadataFactory();
+        $cmf->setEntityManager($em);
+        $metadatas = $cmf->getAllMetadata();
+        */
+        //dd($metadatas);
         //dd($conn);
         /** @var PostRepository */
         $rp = $conn->getRepository(Post::class);

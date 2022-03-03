@@ -2,9 +2,9 @@
 
 namespace PgFramework\Database\Doctrine;
 
-use Doctrine\Common\Proxy\Proxy;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Proxy\Proxy;
 use Psr\Container\ContainerInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\Persistence\AbstractManagerRegistry;
 use Doctrine\ORM\Exception\UnknownEntityNamespace;
