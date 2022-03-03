@@ -1,5 +1,7 @@
 <?php
 
+use PgFramework\Database\Doctrine\ManagerRegistry;
+use Doctrine\Common\Proxy\Proxy;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\Configuration;
@@ -64,6 +66,7 @@ use Invoker\ParameterResolver\ParameterResolver;
 use Mezzio\Router\FastRouteRouter;
 use Mezzio\Router\RouteCollector;
 use Mezzio\Router\RouterInterface;
+use PgFramework\Database\Doctrine\EntityManagerFactory;
 use PgFramework\EventDispatcher\EventDispatcher;
 use PgFramework\EventListener\CsrfListener;
 use PgFramework\EventListener\CsrfListenerInterface;
@@ -181,17 +184,52 @@ return [
     'doctrine.proxies.dir' => __DIR__ . '/app/Proxies',
     'doctrine.proxies.namespace' => 'App\Proxies',
     'doctrine.entity.path' => \DI\add([]),
-    'doctrine.connection.options' => function (ContainerInterface $c): array {
+    'doctrine.connection.default.url' => function (ContainerInterface $c): array {
         return [
             'url' => $c->get('database.sgdb') . "://" .
-            $c->get('database.user') . ":" .
-            $c->get('database.password') . "@" .
-            $c->get('database.host') . "/" .
-            $c->get('database.name') . "?charset=utf8",
+                $c->get('database.user') . ":" .
+                $c->get('database.password') . "@" .
+                $c->get('database.host') . "/" .
+                $c->get('database.name') . "?charset=utf8",
         ];
     },
+    'doctrine.connections' => \DI\add([
+        'default' => 'doctrine.connection.default',
+        'paysagest' => 'doctrine.connection.paysagest',
+        'communes' => 'doctrine.connection.communes'
+    ]),
+    'doctrine.connection.paysagest.url' => function (ContainerInterface $c): array {
+        return [
+            'url' => $c->get('database.sgdb') . "://" .
+                $c->get('database.user') . ":" .
+                $c->get('database.password') . "@" .
+                $c->get('database.host') . "/" .
+                "paysagest?charset=utf8",
+        ];
+    },
+    'doctrine.connection.communes.url' => function (ContainerInterface $c): array {
+        return [
+            'url' => $c->get('database.sgdb') . "://" .
+                $c->get('database.user') . ":" .
+                $c->get('database.password') . "@" .
+                $c->get('database.host') . "/" .
+                "communes?charset=utf8",
+        ];
+    },
+    'doctrine.connection.paysagest' => function (ContainerInterface $c): Connection {
+        return DriverManager::getConnection($c->get('doctrine.connection.paysagest.url'));
+    },
+    'doctrine.connection.communes' => function (ContainerInterface $c): Connection {
+        return DriverManager::getConnection($c->get('doctrine.connection.communes.url'));
+    },
+    'doctrine.connection.default' => function (ContainerInterface $c): Connection {
+        return $c->get(Connection::class);
+    },
     Connection::class => function (ContainerInterface $c): Connection {
-        return DriverManager::getConnection($c->get('doctrine.connection.options'));
+        return DriverManager::getConnection($c->get('doctrine.connection.default.url'));
+    },
+    'doctrine.manager.default' => function (ContainerInterface $c): EntityManager {
+        return $c->get(EntityManager::class);
     },
     EntityManager::class => function (ContainerInterface $c): EntityManager {
         // Create a simple "default" Doctrine ORM configuration for Annotations
@@ -219,6 +257,24 @@ return [
         $config->setProxyDir($c->get('doctrine.proxies.dir'));
         $config->setProxyNamespace($c->get('doctrine.proxies.namespace'));
 
-        return EntityManager::create($c->get(Connection::class), $config);
+        return EntityManager::create($c->get('doctrine.connection.default'), $config);
+    },
+    'doctrine.managers' => \DI\add([
+        'default' => 'doctrine.manager.default',
+        'paysagest' => 'doctrine.manager.paysagest',
+        'communes' => 'doctrine.manager.communes'
+    ]),
+    'doctrine.manager.paysagest' => factory(EntityManagerFactory::class)
+        ->parameter('connectionEntry', 'doctrine.connection.paysagest'),
+    'doctrine.manager.communes' => factory(EntityManagerFactory::class)
+        ->parameter('connectionEntry', 'doctrine.connection.communes'),
+    ManagerRegistry::class => function (ContainerInterface $c): ManagerRegistry {
+        return new ManagerRegistry(
+            $c->get('doctrine.connections'),
+            $c->get('doctrine.managers'),
+            'default',
+            'default',
+            $c
+        );
     }
 ];

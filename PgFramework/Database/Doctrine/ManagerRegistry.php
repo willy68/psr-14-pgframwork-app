@@ -1,7 +1,8 @@
 <?php
 
-namespace App\PgFramework\Database\Doctrine;
+namespace PgFramework\Database\Doctrine;
 
+use Doctrine\Common\Proxy\Proxy;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Doctrine\ORM\Exception\ORMException;
@@ -14,6 +15,32 @@ class ManagerRegistry extends AbstractManagerRegistry
      * @var ContainerInterface
      */
     protected $container;
+
+    /**
+     *
+     * @param string[] $connections
+     * @param string[] $managers
+     * @param string $defaultConnection
+     * @param string $defaultManager
+     * @param ContainerInterface $container
+     */
+    public function __construct(
+        array $connections,
+        array $managers,
+        string $defaultConnection,
+        string $defaultManager,
+        ContainerInterface $container
+    ) {
+        parent::__construct(
+            'ORM',
+            $connections,
+            $managers,
+            $defaultConnection,
+            $defaultManager,
+            Proxy::class
+        );
+        $this->setContainer($container);
+    }
 
     /**
      * @inheritdoc

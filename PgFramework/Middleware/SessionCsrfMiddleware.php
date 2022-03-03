@@ -54,7 +54,7 @@ class SessionCsrfMiddleware implements MiddlewareInterface
                 throw new InvalidCsrfException();
             }
 
-            [$tokenId] = explode(CsrfTokenManagerInterface::delimiter, $params[$this->formKey]);
+            [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $params[$this->formKey]);
             $this->tokenManager->removeToken($tokenId);
         }
         return $handler->handle($request);

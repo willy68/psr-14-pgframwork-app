@@ -55,7 +55,7 @@ class CsrfListener implements EventSubscriberInterface
                 throw new InvalidCsrfException();
             }
 
-            [$tokenId] = explode(CsrfTokenManagerInterface::delimiter, $params[$this->formKey]);
+            [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $params[$this->formKey]);
             $this->tokenManager->removeToken($tokenId);
         }
     }

@@ -68,7 +68,7 @@ class CsrfCookieListener implements EventSubscriberInterface
         $cookie = FigRequestCookies::get($request, $this->config['cookieName'])->getValue();
 
         if (is_string($cookie) && strlen($cookie) > 0) {
-            [$tokenId] = explode(CsrfTokenManagerInterface::delimiter, $cookie);
+            [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
             $request = $request->withAttribute(
                 $this->config['field'],
                 $this->tokenManager->getToken($tokenId)
@@ -93,7 +93,7 @@ class CsrfCookieListener implements EventSubscriberInterface
                 $this->validateToken($token, $cookie);
             }
 
-            [$tokenId] = explode(CsrfTokenManagerInterface::delimiter, $cookie);
+            [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
             $token = $this->tokenManager->refreshToken($tokenId);
             $request = $request->withAttribute($this->config['field'], $token);
         }
@@ -129,7 +129,7 @@ class CsrfCookieListener implements EventSubscriberInterface
         $e = $event->getException();
         $request = $event->getRequest();
         $token = $request->getAttribute($this->config['field']);
-        [$tokenId] = explode(CsrfTokenManagerInterface::delimiter, $token);
+        [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $token);
 
         if ($e instanceof InvalidCsrfException) {
             $this->tokenManager->removeToken($tokenId);

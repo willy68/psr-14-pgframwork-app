@@ -5,14 +5,17 @@ namespace App\Demo\Controller;
 use App\Entity\Post;
 use App\Models\Client;
 use App\Auth\Models\User;
+use PgFramework\Database\Doctrine\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use App\Repository\PostRepository;
+use Doctrine\DBAL\Connection;
 use PgFramework\Router\Annotation\Route;
 use PgFramework\Validator\ValidationRules;
 use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Invoker\Annotation\ParameterConverter;
 use PgFramework\Database\ActiveRecord\ActiveRecordQuery;
+use Psr\Container\ContainerInterface;
 
 class DemoController
 {
@@ -29,14 +32,23 @@ class DemoController
      * @param ServerRequestInterface $request
      * @param RendererInterface $renderer
      * @param \PDO $pdo
+     * @param ContainerInterface $c
      * @return string
      */
     public function index(
         ServerRequestInterface $request,
         RendererInterface $renderer,
         \PDO $pdo,
-        EntityManager $em
+        EntityManager $em,
+        ContainerInterface $c,
+        ManagerRegistry $managerRegistry
     ): string {
+        $conn = $managerRegistry->getManager();
+        //dd($conn);
+        /** @var PostRepository */
+        $rp = $conn->getRepository(Post::class);
+        $pc = $rp->findWithCategory(122);
+        //dd($pc);
         $validation = new ValidationRules('auteur', 'required|min:3|max:10|filter:trim');
         $validation->isValid('Willy ');
         $query = new ActiveRecordQuery();

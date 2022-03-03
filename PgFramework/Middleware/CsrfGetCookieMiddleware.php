@@ -57,7 +57,7 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
         $cookie = FigRequestCookies::get($request, $this->config['cookieName'])->getValue();
 
         if (is_string($cookie) && strlen($cookie) > 0) {
-            [$tokenId] = explode(CsrfTokenManagerInterface::delimiter, $cookie);
+            [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
             $cookie = $this->tokenManager->getToken($tokenId);
             $request = $request->withAttribute($this->config['field'], $cookie);
         }
@@ -92,7 +92,7 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
                 $this->validateToken($headerCookie, $cookie);
             }
 
-            [$tokenId] = explode(CsrfTokenManagerInterface::delimiter, $cookie);
+            [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
             $token = $this->tokenManager->refreshToken($tokenId);
             $request = $request->withAttribute($this->config['field'], $token);
         }

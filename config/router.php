@@ -7,10 +7,10 @@ use PgFramework\Auth\Middleware\ForbidenMiddleware;
 use PgFramework\Middleware\CsrfGetCookieMiddleware;
 use PgFramework\Auth\Middleware\AuthorizationMiddleware;
 
-/**
- * Add your own router middlewares
- */
 return [
+    /**
+     * Add your own router middlewares
+     */
     'router.middlewares' => \DI\add([
         ForbidenMiddleware::class,
         InvalidCsrfMiddleware::class,
