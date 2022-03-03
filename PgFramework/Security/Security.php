@@ -114,8 +114,10 @@ class Security
      * @param int $expectedLength Default to Security::TOKEN_WITH_CHECKSUM_LENGTH (56)
      * @return string An unsalted token.
      */
-    public static function unsaltToken(string $token, int $expectedLenght = Security::TOKEN_WITH_CHECKSUM_LENGTH): string
-    {
+    public static function unsaltToken(
+        string $token,
+        int $expectedLenght = Security::TOKEN_WITH_CHECKSUM_LENGTH
+    ): string {
         $decoded = base64_decode($token, true);
         $length = strlen($decoded) / 2;
         if ($length !== $expectedLenght) {

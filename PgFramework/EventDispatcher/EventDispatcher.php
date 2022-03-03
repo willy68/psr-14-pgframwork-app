@@ -53,7 +53,11 @@ class EventDispatcher extends LeagueEventDispatcher
                 $this->subscribeTo($eventName, $this->callableResolver->resolve($subscriber), $params);
             } elseif (\is_string($params[0])) {
                 // Array of method and priority (or default to 0)
-                $this->subscribeTo($eventName, $this->callableResolver->resolve([$subscriber, $params[0]]), $params[1] ?? 0);
+                $this->subscribeTo(
+                    $eventName,
+                    $this->callableResolver->resolve([$subscriber, $params[0]]),
+                    $params[1] ?? 0
+                );
             }
         }
     }

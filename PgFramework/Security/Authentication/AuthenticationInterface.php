@@ -56,5 +56,8 @@ interface AuthenticationInterface
      * @param AuthenticationFailureException $e
      * @return ResponseInterface|null
      */
-    public function onAuthenticateFailure(ServerRequestInterface $request, AuthenticationFailureException $e): ?ResponseInterface;
+    public function onAuthenticateFailure(
+        ServerRequestInterface $request,
+        AuthenticationFailureException $e
+    ): ?ResponseInterface;
 }

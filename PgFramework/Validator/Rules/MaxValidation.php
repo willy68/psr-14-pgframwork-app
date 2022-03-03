@@ -2,6 +2,7 @@
 
 namespace PgFramework\Validator\Rules;
 
+use InvalidArgumentException;
 use PgFramework\Validator\ValidationInterface;
 
 class MaxValidation implements ValidationInterface
@@ -103,7 +104,7 @@ class MaxValidation implements ValidationInterface
         $this->max = $this->getNumeric($max);
         //lancer une exception si max === null;
         if ($this->max === null || $this->max <= 0) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Argument invalide, $max doit être de type numeric  plus grand que 0 ex: 256 ou \'256\''
             );
         }

@@ -32,7 +32,9 @@ class FirewallMapFactory
                 }
 
                 $listeners = isset($rule['listeners']) ? array_merge($listeners, $rule['listeners']) : $listeners;
-                $mainListeners = isset($rule['main.listeners']) ? array_merge($mainListeners, $rule['main.listeners']) : $mainListeners;
+                $mainListeners = isset($rule['main.listeners']) ?
+                    array_merge($mainListeners, $rule['main.listeners']) :
+                    $mainListeners;
 
                 $map->add(
                     new RequestMatcher(

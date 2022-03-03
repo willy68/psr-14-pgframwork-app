@@ -12,6 +12,9 @@
 
   <exclude-pattern>app/Api/db/*$</exclude-pattern>
   <exclude-pattern>*/views/*$</exclude-pattern>
+  <exclude-pattern>*/migrations/*$</exclude-pattern>
+  <exclude-pattern>*/seeds/*$</exclude-pattern>
+  <exclude-pattern>*/Proxies/*$</exclude-pattern>
 
   <rule ref="PSR12">
     <exclude/>

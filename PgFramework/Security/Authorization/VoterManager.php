@@ -14,6 +14,7 @@
 namespace PgFramework\Security\Authorization;
 
 use PgFramework\Auth;
+use InvalidArgumentException;
 use PgFramework\Security\Authorization\Voter\VoterInterface;
 
 class VoterManager implements VoterManagerInterface
@@ -24,18 +25,22 @@ class VoterManager implements VoterManagerInterface
     private $allowIfEqualGrantedDeniedDecisions;
 
     /**
-     * @param iterable|VoterInterface[] $voters                             An array or an iterator of VoterInterface instances
-     * @param string                    $strategy                           The vote strategy
-     * @param bool                      $allowIfAllAbstainDecisions         Whether to grant access if all voters abstained or not
-     * @param bool                      $allowIfEqualGrantedDeniedDecisions Whether to grant access if result are equals
+     * @param iterable|VoterInterface[] $voters An array or an iterator of VoterInterface instances
+     * @param string $strategy The vote strategy
+     * @param bool $allowIfAllAbstainDecisions Whether to grant access if all voters abstained or not
+     * @param bool $allowIfEqualGrantedDeniedDecisions Whether to grant access if result are equals
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct(iterable $voters = [], string $strategy = self::STRATEGY_AFFIRMATIVE, bool $allowIfAllAbstainDecisions = false, bool $allowIfEqualGrantedDeniedDecisions = true)
-    {
+    public function __construct(
+        iterable $voters = [],
+        string $strategy = self::STRATEGY_AFFIRMATIVE,
+        bool $allowIfAllAbstainDecisions = false,
+        bool $allowIfEqualGrantedDeniedDecisions = true
+    ) {
         $strategyMethod = 'decide' . ucfirst($strategy);
         if ('' === $strategy || !\is_callable([$this, $strategyMethod])) {
-            throw new \InvalidArgumentException(sprintf('The strategy "%s" is not supported.', $strategy));
+            throw new InvalidArgumentException(sprintf('The strategy "%s" is not supported.', $strategy));
         }
 
         $this->voters = $voters;
@@ -72,7 +77,15 @@ class VoterManager implements VoterManagerInterface
             if (VoterInterface::ACCESS_DENIED === $result) {
                 ++$deny;
             } elseif (VoterInterface::ACCESS_ABSTAIN !== $result) {
-                trigger_deprecation('symfony/security-core', '5.3', 'Returning "%s" in "%s::vote()" is deprecated, return one of "%s" constants: "ACCESS_GRANTED", "ACCESS_DENIED" or "ACCESS_ABSTAIN".', var_export($result, true), get_debug_type($voter), VoterInterface::class);
+                trigger_deprecation(
+                    'symfony/security-core',
+                    '5.3',
+                    'Returning "%s" in "%s::vote()" is deprecated, return one of "%s" constants: "ACCESS_GRANTED",
+                    "ACCESS_DENIED" or "ACCESS_ABSTAIN".',
+                    var_export($result, true),
+                    get_debug_type($voter),
+                    VoterInterface::class
+                );
             }
         }
 
@@ -109,7 +122,15 @@ class VoterManager implements VoterManagerInterface
             } elseif (VoterInterface::ACCESS_DENIED === $result) {
                 ++$deny;
             } elseif (VoterInterface::ACCESS_ABSTAIN !== $result) {
-                trigger_deprecation('symfony/security-core', '5.3', 'Returning "%s" in "%s::vote()" is deprecated, return one of "%s" constants: "ACCESS_GRANTED", "ACCESS_DENIED" or "ACCESS_ABSTAIN".', var_export($result, true), get_debug_type($voter), VoterInterface::class);
+                trigger_deprecation(
+                    'symfony/security-core',
+                    '5.3',
+                    'Returning "%s" in "%s::vote()" is deprecated, return one of "%s" constants: "ACCESS_GRANTED",
+                    "ACCESS_DENIED" or "ACCESS_ABSTAIN".',
+                    var_export($result, true),
+                    get_debug_type($voter),
+                    VoterInterface::class
+                );
             }
         }
 
@@ -148,7 +169,15 @@ class VoterManager implements VoterManagerInterface
                 if (VoterInterface::ACCESS_GRANTED === $result) {
                     ++$grant;
                 } elseif (VoterInterface::ACCESS_ABSTAIN !== $result) {
-                    trigger_deprecation('symfony/security-core', '5.3', 'Returning "%s" in "%s::vote()" is deprecated, return one of "%s" constants: "ACCESS_GRANTED", "ACCESS_DENIED" or "ACCESS_ABSTAIN".', var_export($result, true), get_debug_type($voter), VoterInterface::class);
+                    trigger_deprecation(
+                        'symfony/security-core',
+                        '5.3',
+                        'Returning "%s" in "%s::vote()" is deprecated, return one of "%s" constants: "ACCESS_GRANTED",
+                        "ACCESS_DENIED" or "ACCESS_ABSTAIN".',
+                        var_export($result, true),
+                        get_debug_type($voter),
+                        VoterInterface::class
+                    );
                 }
             }
         }
@@ -182,7 +211,15 @@ class VoterManager implements VoterManagerInterface
             }
 
             if (VoterInterface::ACCESS_ABSTAIN !== $result) {
-                trigger_deprecation('symfony/security-core', '5.3', 'Returning "%s" in "%s::vote()" is deprecated, return one of "%s" constants: "ACCESS_GRANTED", "ACCESS_DENIED" or "ACCESS_ABSTAIN".', var_export($result, true), get_debug_type($voter), VoterInterface::class);
+                trigger_deprecation(
+                    'symfony/security-core',
+                    '5.3',
+                    'Returning "%s" in "%s::vote()" is deprecated, return one of "%s" constants: "ACCESS_GRANTED",
+                    "ACCESS_DENIED" or "ACCESS_ABSTAIN".',
+                    var_export($result, true),
+                    get_debug_type($voter),
+                    VoterInterface::class
+                );
             }
         }
 

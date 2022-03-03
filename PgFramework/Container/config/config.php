@@ -1,10 +1,8 @@
 <?php
 
 use PgFramework\Database\Doctrine\ManagerRegistry;
-use Doctrine\Common\Proxy\Proxy;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
-use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use PgFramework\Jwt\JwtMiddlewareFactory;
 use Psr\Container\ContainerInterface;
@@ -24,7 +22,6 @@ use PgFramework\Session\PHPSession;
 use PgFramework\Session\SessionInterface;
 use PgFramework\Renderer\RendererInterface;
 use PgFramework\Renderer\TwigRendererFactory;
-use PgFramework\ActiveRecord\ActiveRecordFactory;
 use PgFramework\Environnement\Environnement;
 use PgFramework\Invoker\CallableResolverFactory;
 use PgFramework\Invoker\InvokerFactory;
@@ -66,6 +63,7 @@ use Invoker\ParameterResolver\ParameterResolver;
 use Mezzio\Router\FastRouteRouter;
 use Mezzio\Router\RouteCollector;
 use Mezzio\Router\RouterInterface;
+use PgFramework\Database\ActiveRecord\ActiveRecordFactory;
 use PgFramework\Database\Doctrine\EntityManagerFactory;
 use PgFramework\EventDispatcher\EventDispatcher;
 use PgFramework\EventListener\CsrfListener;
@@ -74,8 +72,6 @@ use PgFramework\Router\RoutesMapFactory;
 use PgFramework\Router\RoutesMapInterface;
 use Tuupola\Middleware\JwtAuthentication;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 
 use function DI\create;
 use function DI\get;
@@ -231,34 +227,8 @@ return [
     'doctrine.manager.default' => function (ContainerInterface $c): EntityManager {
         return $c->get(EntityManager::class);
     },
-    EntityManager::class => function (ContainerInterface $c): EntityManager {
-        // Create a simple "default" Doctrine ORM configuration for Annotations
-        $isDevMode = $c->get('env') === 'dev';
-        $config = new Configuration();
-
-        if ($isDevMode === true) {
-            $queryCache = new ArrayAdapter();
-            $metadataCache = new ArrayAdapter();
-            $config->setAutoGenerateProxyClasses(true);
-        } else {
-            $queryCache = new PhpFilesAdapter('doctrine_queries');
-            $metadataCache = new PhpFilesAdapter('doctrine_metadata');
-            $config->setAutoGenerateProxyClasses(false);
-        }
-
-        $config->setMetadataCache($metadataCache);
-        $driverImpl = $config->newDefaultAnnotationDriver(
-            $c->get('doctrine.entity.path'),
-            false
-        );
-
-        $config->setMetadataDriverImpl($driverImpl);
-        $config->setQueryCache($queryCache);
-        $config->setProxyDir($c->get('doctrine.proxies.dir'));
-        $config->setProxyNamespace($c->get('doctrine.proxies.namespace'));
-
-        return EntityManager::create($c->get('doctrine.connection.default'), $config);
-    },
+    EntityManager::class => factory(EntityManagerFactory::class)
+    ->parameter('connectionEntry', 'doctrine.connection.default'),
     'doctrine.managers' => \DI\add([
         'default' => 'doctrine.manager.default',
         'paysagest' => 'doctrine.manager.paysagest',

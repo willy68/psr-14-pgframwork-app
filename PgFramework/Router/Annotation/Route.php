@@ -27,7 +27,8 @@ class Route
         // Method param name
         if (!isset($parameters['value'])) {
             throw new RouteAnnotationException(sprintf(
-                '@Route("/route/{id:\d+}", name="path.route", methods={"GET"}) expects first parameter "path", %s given.',
+                '@Route("/route/{id:\d+}", name="path.route",
+                methods={"GET"}) expects first parameter "path", %s given.',
                 json_encode($parameters)
             ));
         }

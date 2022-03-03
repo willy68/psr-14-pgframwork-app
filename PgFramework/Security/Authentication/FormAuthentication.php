@@ -114,8 +114,10 @@ class FormAuthentication implements AuthenticationInterface
         return  new ResponseRedirect($path);
     }
 
-    public function onAuthenticateFailure(ServerRequestInterface $request, AuthenticationFailureException $e): ?ResponseInterface
-    {
+    public function onAuthenticateFailure(
+        ServerRequestInterface $request,
+        AuthenticationFailureException $e
+    ): ?ResponseInterface {
         (new FlashService($this->session))->error('Identifiant ou mot de passe incorrect');
         return $this->redirect($this->options['auth.login']);
     }

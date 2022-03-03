@@ -1,6 +1,6 @@
 <?php
 
-namespace PgFramework\ActiveRecord;
+namespace PgFramework\Database\ActiveRecord;
 
 use ActiveRecord;
 use ActiveRecord\Connection;

@@ -2,20 +2,21 @@
 
 namespace App\Demo\Controller;
 
+use DateTime;
 use App\Entity\Post;
 use App\Models\Client;
 use App\Auth\Models\User;
-use PgFramework\Database\Doctrine\ManagerRegistry;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 use App\Repository\PostRepository;
-use Doctrine\DBAL\Connection;
+use Psr\Container\ContainerInterface;
 use PgFramework\Router\Annotation\Route;
 use PgFramework\Validator\ValidationRules;
 use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use PgFramework\Database\Doctrine\ManagerRegistry;
 use PgFramework\Invoker\Annotation\ParameterConverter;
 use PgFramework\Database\ActiveRecord\ActiveRecordQuery;
-use Psr\Container\ContainerInterface;
 
 class DemoController
 {
@@ -49,13 +50,11 @@ class DemoController
         $rp = $conn->getRepository(Post::class);
         $pc = $rp->findWithCategory(122);
         //dd($pc);
-        $validation = new ValidationRules('auteur', 'required|min:3|max:10|filter:trim');
-        $validation->isValid('Willy ');
         $query = new ActiveRecordQuery();
         $query
             ->where('id = ?', 'user_id = ?')
             ->orWhere('created_at = now()')
-            ->setWhereValue([2, 5, new \DateTime()]);
+            ->setWhereValue([2, 5, new DateTime()]);
         /** @var \App\Auth\Models\User $user */
         $user = User::find_by_username(['username' => 'admin']);
         $user_array = $user->to_array();
