@@ -47,12 +47,18 @@ class DemoController
     ): string {
         $conn = $managerRegistry->getManager();
 
-        //$em = $managerRegistry->getManager('paysagest');
-        /*$cmf = new DisconnectedClassMetadataFactory();
-        $cmf->setEntityManager($em);
+        /** @var EntityManager $paysagest */
+        /*$paysagest = $managerRegistry->getManager('paysagest');
+        $paysagest->getConfiguration()->setMetadataDriverImpl(
+            new \Doctrine\ORM\Mapping\Driver\DatabaseDriver(
+                $paysagest->getConnection()->getSchemaManager()
+            )
+        );
+        $cmf = new DisconnectedClassMetadataFactory();
+        $cmf->setEntityManager($paysagest);
         $metadatas = $cmf->getAllMetadata();
         */
-        //dd($metadatas);
+        //dd($metadatas, $cmf);
         //dd($conn);
         /** @var PostRepository */
         $rp = $conn->getRepository(Post::class);

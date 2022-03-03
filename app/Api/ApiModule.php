@@ -19,6 +19,8 @@ use PgFramework\Middleware\CorsAllowOriginMiddleware;
 
 class ApiModule extends Module
 {
+    public const DEFINITIONS = __DIR__ . '/config.php';
+
     public const MIGRATIONS = __DIR__ . '/db/migrations';
 
     public const SEEDS = __DIR__ . '/db/seeds';
