@@ -43,18 +43,6 @@ class ApplicationEvent extends AbstractApplication
 
     /**
      *
-     * @var CallableResolver
-     */
-    private $callableResolver;
-
-    /**
-     *
-     * @var ParameterResolver
-     */
-    private $paramsResolver;
-
-    /**
-     *
      * @var EventDispatcherInterface
      */
     private $dispatcher;
@@ -92,9 +80,7 @@ class ApplicationEvent extends AbstractApplication
      */
     public function __construct(
         array $config,
-        ?EventDispatcherInterface $dispatcher = null,
-        ?CallableResolver $callableResolver = null,
-        ?ParameterResolver $paramsResolver = null
+        ?EventDispatcherInterface $dispatcher = null
     ) {
         $this->config[] = __DIR__ . '/Container/config/config.php';
         $this->config = \array_merge($this->config, $config);
@@ -102,8 +88,6 @@ class ApplicationEvent extends AbstractApplication
         self::$app = $this;
 
         $this->dispatcher = $dispatcher;
-        $this->callableResolver = $callableResolver;
-        $this->paramsResolver = $paramsResolver;
     }
 
     /**
@@ -153,14 +137,6 @@ class ApplicationEvent extends AbstractApplication
         }
 
         $container = $this->getContainer();
-
-        if (!$this->callableResolver) {
-            $this->callableResolver = $container->get(CallableResolver::class);
-        }
-
-        if (!$this->paramsResolver) {
-            $this->paramsResolver = $container->get(ParameterResolver::class);
-        }
 
         if (!$this->dispatcher) {
             $this->dispatcher = $container->get(EventDispatcherInterface::class);
@@ -213,8 +189,6 @@ class ApplicationEvent extends AbstractApplication
         $controller = $result->getMatchedRoute()->getCallback();
         $params = $result->getMatchedParams();
 
-        $controller = $this->callableResolver->resolve($controller);
-
         $event = new ControllerEvent($this, $controller, $event->getRequest());
         $event = $this->dispatcher->dispatch($event);
         $controller = $event->getController();
@@ -227,10 +201,7 @@ class ApplicationEvent extends AbstractApplication
         } else {
             // Limitation: $request must be named "$request"
             $params = array_merge(["request" => $event->getRequest()], $params);
-        }
-
-        $callableReflection = CallableReflection::create($controller);
-        $params = $this->paramsResolver->getParameters($callableReflection, $params, []);
+        };
 
         $event = new ControllerParamsEvent($this, $controller, $params, $event->getRequest());
         $event = $this->dispatcher->dispatch($event);

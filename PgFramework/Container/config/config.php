@@ -180,6 +180,7 @@ return [
     'doctrine.proxies.dir' => __DIR__ . '/app/Proxies',
     'doctrine.proxies.namespace' => 'App\Proxies',
     'doctrine.entity.path' => \DI\add([]),
+    'doctrine.entity.namespace' => \DI\add([]),
     'doctrine.connection.default.url' => function (ContainerInterface $c): array {
         return [
             'url' => $c->get('database.sgdb') . "://" .

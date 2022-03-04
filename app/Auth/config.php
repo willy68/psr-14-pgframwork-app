@@ -36,6 +36,7 @@ return [
         get(AuthTwigExtension::class)
     ]),
     'doctrine.entity.path' => add([__DIR__ . '/Entity']),
+    'doctrine.entity.namespace' => add(['App\Auth\Entity']),
     AuthSession::class => autowire()->constructorParameter('options', [
         'sessionName' => 'auth.user',
         'field' => 'username'
