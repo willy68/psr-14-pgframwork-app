@@ -11,7 +11,7 @@ class ActiveRecordListener implements EventSubscriberInterface
 {
     public function __invoke(RequestEvent $event): void
     {
-        $event->getApp()->getContainer()->get('ActiveRecord');
+        $event->getKernel()->container->get('ActiveRecord');
     }
 
     public static function getSubscribedEvents()

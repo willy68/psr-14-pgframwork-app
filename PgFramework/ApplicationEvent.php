@@ -4,7 +4,6 @@ namespace PgFramework;
 
 use Exception;
 use DI\ContainerBuilder;
-use Invoker\CallableResolver;
 use Mezzio\Router\RouteResult;
 use PgFramework\Event\ViewEvent;
 use Mezzio\Router\RouteCollector;
@@ -16,13 +15,11 @@ use PgFramework\Event\ExceptionEvent;
 use Psr\Container\ContainerInterface;
 use PgFramework\Event\ControllerEvent;
 use Psr\Http\Message\ResponseInterface;
-use Invoker\Reflection\CallableReflection;
 use PgFramework\Router\RoutesMapInterface;
 use PgFramework\Environnement\Environnement;
 use PgFramework\Event\ControllerParamsEvent;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Router\Loader\DirectoryLoader;
-use Invoker\ParameterResolver\ParameterResolver;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 
