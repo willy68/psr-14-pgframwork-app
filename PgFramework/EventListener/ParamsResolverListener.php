@@ -3,11 +3,12 @@
 namespace PgFramework\EventListener;
 
 use PgFramework\Event\Events;
+use Psr\Container\ContainerInterface;
 use Invoker\Reflection\CallableReflection;
 use PgFramework\Event\ControllerParamsEvent;
+use Psr\Http\Message\ServerRequestInterface;
 use Invoker\ParameterResolver\ParameterResolver;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
-use Psr\Container\ContainerInterface;
 
 class ParamsResolverListener implements EventSubscriberInterface
 {
@@ -26,7 +27,7 @@ class ParamsResolverListener implements EventSubscriberInterface
         $controller = $event->getController();
         $params = $event->getParams();
 
-        // controller arguments
+        // Ajoute la requète à jour
         if ($this->container instanceof \DI\Container) {
             $this->container->set(ServerRequestInterface::class, $event->getRequest());
         } else {

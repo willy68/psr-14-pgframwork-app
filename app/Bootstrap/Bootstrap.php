@@ -17,7 +17,7 @@ $dotenv->bootEnv($basePath . '/.env');
 
 $bootstrap = require 'App.php';
 
-$app = (new PgFramework\ApplicationEvent($bootstrap['config']))
+$app = (new PgFramework\App($bootstrap['config']))
     ->addModules($bootstrap['modules'])
     //->middlewares($bootstrap['middlewares'])
     ->addListeners($bootstrap['listeners']);

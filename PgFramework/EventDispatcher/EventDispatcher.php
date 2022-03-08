@@ -37,9 +37,9 @@ class EventDispatcher extends LeagueEventDispatcher
      *  * ['eventName' => ['methodName', $priority]]
      *
      * @param EventSubscriberInterface|string $subscriber
-     * @return void
+     * @return self
      */
-    public function addSubscriber($subscriber)
+    public function addSubscriber($subscriber): self
     {
         foreach ($subscriber::getSubscribedEvents() as $eventName => $params) {
             // eventName in $params default __invoke and priority
@@ -60,6 +60,7 @@ class EventDispatcher extends LeagueEventDispatcher
                 );
             }
         }
+        return $this;
     }
 
     /**

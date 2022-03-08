@@ -2,6 +2,7 @@
 
 namespace PgFramework\Kernel;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -24,6 +25,12 @@ interface KernelInterface
      */
     public function handleException(\Throwable $e, ServerRequestInterface $request): ResponseInterface;
 
+    /**
+     * Get Event Dispatcher
+     *
+     * @return EventDispatcherInterface
+     */
+    public function getDispatcher(): EventDispatcherInterface;
     /**
      * Set request value
      *

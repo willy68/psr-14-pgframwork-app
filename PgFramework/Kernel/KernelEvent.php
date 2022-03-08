@@ -121,6 +121,14 @@ class KernelEvent implements KernelInterface
     /**
      * @inheritDoc
      */
+    public function getDispatcher(): EventDispatcherInterface
+    {
+        return $this->dispatcher;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getRequest(): ServerRequestInterface
     {
         return $this->request;
