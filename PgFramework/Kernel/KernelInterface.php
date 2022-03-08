@@ -2,7 +2,6 @@
 
 namespace PgFramework\Kernel;
 
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -26,13 +25,7 @@ interface KernelInterface
     public function handleException(\Throwable $e, ServerRequestInterface $request): ResponseInterface;
 
     /**
-     * get Injection Container
-     *
-     * @return ContainerInterface
-     */
-    public function getContainer(): ContainerInterface;
-    /**
-     * Set de value of request
+     * Set request value
      *
      * @param ServerRequestInterface $request
      * @return self
@@ -40,7 +33,7 @@ interface KernelInterface
     public function setRequest(ServerRequestInterface $request): self;
 
     /**
-     * get value of request
+     * Get value of request
      *
      * @return ServerRequestInterface
      */

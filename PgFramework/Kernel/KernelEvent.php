@@ -11,7 +11,6 @@ use PgFramework\Event\ExceptionEvent;
 use PgFramework\Event\ControllerEvent;
 use Psr\Http\Message\ResponseInterface;
 use PgFramework\Event\ControllerParamsEvent;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -21,14 +20,14 @@ class KernelEvent implements KernelInterface
 
     protected $dispatcher;
 
-    protected $container;
-
-    public function __construct(ContainerInterface $container, EventDispatcherInterface $dispatcher)
+    public function __construct(EventDispatcherInterface $dispatcher)
     {
-        $this->container = $container;
         $this->dispatcher = $dispatcher;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $this->request = $request;
@@ -48,14 +47,6 @@ class KernelEvent implements KernelInterface
         $event = new ControllerEvent($this, $controller, $event->getRequest());
         $event = $this->dispatcher->dispatch($event);
         $controller = $event->getController();
-
-        // controller arguments
-        if ($this->container instanceof \DI\Container) {
-            $this->container->set(ServerRequestInterface::class, $event->getRequest());
-        } else {
-            // Limitation: $request must be named "$request"
-            $params = array_merge(["request" => $event->getRequest()], $params);
-        };
 
         $event = new ControllerParamsEvent($this, $controller, $params, $event->getRequest());
         $event = $this->dispatcher->dispatch($event);
@@ -86,6 +77,7 @@ class KernelEvent implements KernelInterface
 
         return $this->filterResponse($response, $event->getRequest());
     }
+
     /**
      * Filters a response object.
      *
@@ -100,6 +92,9 @@ class KernelEvent implements KernelInterface
         return $event->getResponse();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function handleException(\Throwable $e, ServerRequestInterface $request): ResponseInterface
     {
         $event = new ExceptionEvent($this, $request, $e);
@@ -123,15 +118,8 @@ class KernelEvent implements KernelInterface
         }
     }
 
-    public function getContainer(): ContainerInterface
-    {
-        return $this->container;
-    }
-
     /**
-     * Get the value of request
-     *
-     * @return  ServerRequestInterface
+     * @inheritDoc
      */
     public function getRequest(): ServerRequestInterface
     {
@@ -139,11 +127,7 @@ class KernelEvent implements KernelInterface
     }
 
     /**
-     * Set the value of request
-     *
-     * @param  ServerRequestInterface  $request
-     *
-     * @return  self
+     * @inheritDoc
      */
     public function setRequest(ServerRequestInterface $request): self
     {
