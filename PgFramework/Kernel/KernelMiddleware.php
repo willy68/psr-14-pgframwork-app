@@ -38,6 +38,7 @@ class KernelMiddleware implements KernelInterface, RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $this->request = $request;
         $middleware = $this->getMiddleware();
         if (is_null($middleware)) {
             throw new Exception('Aucun middleware n\'a intercepté cette requête');
@@ -50,6 +51,7 @@ class KernelMiddleware implements KernelInterface, RequestHandlerInterface
 
     public function handleException(Throwable $e, ServerRequestInterface $request): ResponseInterface
     {
+        throw $e;
         return $this->handle($request);
     }
 

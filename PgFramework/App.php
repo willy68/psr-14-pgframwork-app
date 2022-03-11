@@ -204,7 +204,7 @@ class App extends AbstractApplication
         try {
             return $this->kernel->handle($this->request);
         } catch (\Exception $e) {
-            return $this->kernel->handleException($e, $this->request);
+            return $this->kernel->handleException($e, $this->kernel->getRequest());
         }
     }
 

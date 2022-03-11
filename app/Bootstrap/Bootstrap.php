@@ -19,8 +19,8 @@ $bootstrap = require 'App.php';
 
 $app = (new PgFramework\App($bootstrap['config']))
     ->addModules($bootstrap['modules'])
-    ->addMiddlewares($bootstrap['middlewares']);
-    //->addListeners($bootstrap['listeners']);
+    //->addMiddlewares($bootstrap['middlewares']);
+    ->addListeners($bootstrap['listeners']);
 
 if (Environnement::getEnv('APP_ENV', 'production') === 'dev') {
     //$app->pipe(Whoops::class);
