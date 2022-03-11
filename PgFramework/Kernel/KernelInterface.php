@@ -26,11 +26,13 @@ interface KernelInterface
     public function handleException(\Throwable $e, ServerRequestInterface $request): ResponseInterface;
 
     /**
-     * Get Event Dispatcher
+     * set Listeners or middlewares
      *
-     * @return EventDispatcherInterface
+     * @param array $callbacks
+     * @return self
      */
-    public function getDispatcher(): EventDispatcherInterface;
+    public function setCallbacks(array $callbacks): self;
+
     /**
      * Set request value
      *

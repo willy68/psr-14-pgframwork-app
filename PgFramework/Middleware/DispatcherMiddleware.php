@@ -4,25 +4,20 @@ namespace PgFramework\Middleware;
 
 use Invoker\Invoker;
 use GuzzleHttp\Psr7\Response;
-use Invoker\InvokerInterface;
+use Invoker\CallableResolver;
 use Mezzio\Router\RouteResult;
 use Mezzio\Router\FastRouteRouter;
 use Mezzio\Router\RouterInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use Invoker\ParameterResolver\ResolverChain;
+use Invoker\Reflection\CallableReflection;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Invoker\ParameterResolver\DefaultValueResolver;
-use Invoker\ParameterResolver\NumericArrayResolver;
-use Invoker\ParameterResolver\AssociativeArrayResolver;
-use PgFramework\Invoker\ParameterResolver\ActiveRecordResolver;
-use Invoker\ParameterResolver\Container\TypeHintContainerResolver;
-use PgFramework\Invoker\ParameterResolver\ActiveRecordAnnotationsResolver;
+use Invoker\ParameterResolver\ParameterResolver;
 
 /**
- * Undocumented class
+ * Toute la magie est là
  */
 class DispatcherMiddleware implements MiddlewareInterface, RequestHandlerInterface
 {
@@ -95,13 +90,12 @@ class DispatcherMiddleware implements MiddlewareInterface, RequestHandlerInterfa
     {
         $middleware = $this->router->shiftMiddleware($this->container);
 
-        if (is_null($middleware)) {
-            // return App handler;
-            return $this->next->handle($request);
-        } elseif ($middleware instanceof MiddlewareInterface) {
-            return $middleware->process($request, $this);
-        } elseif (is_callable($middleware)) {
-            return call_user_func_array($middleware, [$request, [$this, 'handle']]);
+        if (!is_null($middleware)) {
+            if ($middleware instanceof MiddlewareInterface) {
+                return $middleware->process($request, $this);
+            } elseif (is_callable($middleware)) {
+                return call_user_func_array($middleware, [$request, [$this, 'handle']]);
+            }
         }
         return $this->next->handle($request);
     }
@@ -203,7 +197,16 @@ class DispatcherMiddleware implements MiddlewareInterface, RequestHandlerInterfa
                     $params = array_merge(["request" => $request], $params);
                 }
 
-                $response = $this->getInvoker($this->container)->call($callback, $params);
+                /** @var CallableResolver */
+                $callableResolver = $this->container->get(CallableResolver::class);
+                $callback = $callableResolver->resolve($callback);
+                $callableReflection = CallableReflection::create($callback);
+
+                /** @var ParameterResolver $paramResolver */
+                $paramResolver = $this->container->get(ParameterResolver::class);
+                $params = $paramResolver->getParameters($callableReflection, $params, []);
+
+                $response = $callback(...$params);
 
                 if (is_string($response)) {
                     return new Response(200, [], $response);
@@ -213,28 +216,6 @@ class DispatcherMiddleware implements MiddlewareInterface, RequestHandlerInterfa
                     throw new \Exception('The response is not a string or a ResponseInterface');
                 }
                 return $requestHandler->handle($request);
-            }
-
-            /**
-             * crée un Invoker
-             *
-             * @param \Psr\Container\ContainerInterface $container
-             * @return InvokerInterface
-             */
-            protected function getInvoker(ContainerInterface $container): InvokerInterface
-            {
-                if (!$this->invoker) {
-                    $parameterResolver = new ResolverChain([
-                    new ActiveRecordAnnotationsResolver(),
-                    new ActiveRecordResolver(),
-                    new NumericArrayResolver(),
-                    new AssociativeArrayResolver(),
-                    new DefaultValueResolver(),
-                    new TypeHintContainerResolver($container)
-                    ]);
-                    $this->invoker = new Invoker($parameterResolver, $container);
-                }
-                return $this->invoker;
             }
         };
     }

@@ -21,8 +21,6 @@ use PgFramework\Middleware\Stack\MiddlewareAwareStackTrait;
  */
 class App extends AbstractApplication
 {
-    use MiddlewareAwareStackTrait;
-
     public const PROXY_DIRECTORY = 'tmp/proxies';
 
     public const COMPILED_CONTAINER_DIRECTORY = 'tmp/di';
@@ -41,18 +39,22 @@ class App extends AbstractApplication
     private $kernel;
 
     /**
-     * Undocumented variable
      *
      * @var array
      */
     private $config = [];
 
     /**
-     * Undocumented modules
      *
      * @var array
      */
     private $modules = [];
+
+    /**
+     *
+     * @var array
+     */
+    private $middlewares = [];
 
     /**
      *
@@ -84,7 +86,6 @@ class App extends AbstractApplication
     }
 
     /**
-     * Undocumented function
      *
      * @param string $module
      * @return self
@@ -96,7 +97,6 @@ class App extends AbstractApplication
     }
 
     /**
-     * Undocumented function
      *
      * @param array $modules
      * @return self
@@ -109,6 +109,22 @@ class App extends AbstractApplication
         return $this;
     }
 
+    /**
+     *
+     * @param string $listener
+     * @return self
+     */
+    public function addListener(string $listener): self
+    {
+        $this->listeners[] = $listener;
+        return $this;
+    }
+
+    /**
+     *
+     * @param array $listeners
+     * @return self
+     */
     public function addListeners(array $listeners): self
     {
         $this->listeners = array_merge($this->listeners, $listeners);
@@ -116,20 +132,28 @@ class App extends AbstractApplication
     }
 
     /**
-     * Undocumented function
      *
-     * @param string $routePrefix
-     * @param string|null $middleware
+     * @param string $middleware
      * @return self
      */
-    public function pipe(string $routePrefix, ?string $middleware = null): self
+    public function addMiddleware(string $middleware): self
     {
-        /** MiddlewareAwareStackTrait::lazyPipe */
-        return $this->lazyPipe($routePrefix, $middleware, $this->getContainer());
+        $this->middlewares[] = $middleware;
+        return $this;
     }
 
     /**
-     * Undocumented function
+     *
+     * @param array $middlewares
+     * @return self
+     */
+    public function addMiddlewares(array $middlewares): self
+    {
+        $this->middlewares = array_merge($this->middlewares, $middlewares);
+        return $this;
+    }
+
+    /**
      *
      * @param  ServerRequestInterface|null $request
      * @return ResponseInterface
@@ -162,20 +186,19 @@ class App extends AbstractApplication
             $module = $container->get($module);
         }
 
-        if (!empty($this->listeners)) {
-            if (!$this->kernel) {
-                $this->kernel = $container->get(KernelInterface::class);
-            }
+        if (!$this->kernel) {
+            $this->kernel = $container->get(KernelInterface::class);
+        }
 
+        if (!empty($this->listeners)) {
             $map = $container->get(RoutesMapInterface::class);
             [$listeners] = $map->getListeners($this->request);
             if (null !== $listeners) {
                 $this->listeners = array_merge($this->listeners, $listeners);
             }
-
-            foreach ($this->listeners as $listener) {
-                $this->kernel->getDispatcher()->addSubscriber($listener);
-            }
+            $this->kernel->setCallbacks($this->listeners);
+        } else {
+            $this->kernel->setCallbacks($this->middlewares);
         }
 
         try {
@@ -214,25 +237,12 @@ class App extends AbstractApplication
     }
 
     /**
-     * Undocumented function
      *
      * @return array
      */
     public function getModules(): array
     {
         return $this->modules;
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @return object
-     * @throws Exception
-     */
-
-    private function getMiddleware()
-    {
-        return $this->shiftMiddleware($this->getContainer());
     }
 
     /**

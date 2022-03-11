@@ -3,6 +3,7 @@
 namespace PgFramework\Kernel;
 
 use Exception;
+use InvalidArgumentException;
 use Mezzio\Router\RouteResult;
 use PgFramework\Event\ViewEvent;
 use PgFramework\Event\RequestEvent;
@@ -116,6 +117,25 @@ class KernelEvent implements KernelInterface
         } catch (\Exception $e) {
             return $response;
         }
+    }
+
+    /**
+     *
+     * @param array $callbacks
+     * @return self
+     */
+    public function setCallbacks(array $callbacks): self
+    {
+        if (empty($callbacks)) {
+            throw new InvalidArgumentException("Une liste de listeners doit être passer à ce Kernel");
+        }
+
+        /** @var mixed */
+        $dispatcher = $this->dispatcher;
+        foreach ($callbacks as $callback) {
+            $dispatcher->addSubscriber($callback);
+        }
+        return $this;
     }
 
     /**

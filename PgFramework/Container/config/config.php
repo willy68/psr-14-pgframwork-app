@@ -70,6 +70,7 @@ use PgFramework\EventListener\CsrfListener;
 use PgFramework\EventListener\CsrfListenerInterface;
 use PgFramework\Kernel\KernelEvent;
 use PgFramework\Kernel\KernelInterface;
+use PgFramework\Kernel\KernelMiddleware;
 use PgFramework\Router\RoutesMapFactory;
 use PgFramework\Router\RoutesMapInterface;
 use Tuupola\Middleware\JwtAuthentication;
@@ -144,7 +145,8 @@ return [
     EventDispatcherInterface::class => function (ContainerInterface $c): EventDispatcherInterface {
         return new EventDispatcher($c->get(CallableResolver::class));
     },
-    KernelInterface::class => create(KernelEvent::class)->constructor(get(EventDispatcherInterface::class)),
+    //KernelInterface::class => create(KernelEvent::class)->constructor(get(EventDispatcherInterface::class)),
+    KernelInterface::class => create(KernelMiddleware::class)->constructor(get(ContainerInterface::class)),
     'routes.listeners' => \DI\add([]),
     RoutesMapInterface::class => factory(RoutesMapFactory::class),
     RouterInterface::class => factory(FastRouteRouterFactory::class),
