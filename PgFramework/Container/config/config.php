@@ -1,9 +1,10 @@
 <?php
 
-use PgFramework\Database\Doctrine\ManagerRegistry;
+use PgFramework\Database\Doctrine\ManagerRegistry as PgManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use PgFramework\Jwt\JwtMiddlewareFactory;
 use Psr\Container\ContainerInterface;
 use Grafikart\Csrf\CsrfMiddleware;
@@ -239,8 +240,8 @@ return [
         ->parameter('connectionEntry', 'doctrine.connection.paysagest'),
     'doctrine.manager.communes' => factory(EntityManagerFactory::class)
         ->parameter('connectionEntry', 'doctrine.connection.communes'),
-    ManagerRegistry::class => function (ContainerInterface $c): ManagerRegistry {
-        return new ManagerRegistry(
+    ManagerRegistry::class => function (ContainerInterface $c): PgManagerRegistry {
+        return new PgManagerRegistry(
             $c->get('doctrine.connections'),
             $c->get('doctrine.managers'),
             'default',
