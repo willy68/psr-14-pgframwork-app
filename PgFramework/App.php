@@ -14,7 +14,6 @@ use PgFramework\Environnement\Environnement;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Router\Loader\DirectoryLoader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use PgFramework\Middleware\Stack\MiddlewareAwareStackTrait;
 
 /**
  * Application

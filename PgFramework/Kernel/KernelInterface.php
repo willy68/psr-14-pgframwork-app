@@ -2,7 +2,6 @@
 
 namespace PgFramework\Kernel;
 
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
