@@ -4,6 +4,7 @@ namespace PgFramework\Database;
 
 use Pagerfanta\Pagerfanta;
 use PDO;
+use Traversable;
 
 class Query implements \IteratorAggregate
 {
@@ -334,7 +335,7 @@ class Query implements \IteratorAggregate
      * @inheritDoc
      *
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return $this->fetchAll();
     }
