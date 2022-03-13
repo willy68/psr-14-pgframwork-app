@@ -59,7 +59,7 @@ class PHPSession implements SessionInterface, \ArrayAccess
      * @param mixed $offset
      * @return bool
      */
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         $this->ensureStarted();
         return array_key_exists($offset, $_SESSION);
@@ -69,7 +69,7 @@ class PHPSession implements SessionInterface, \ArrayAccess
      * @param mixed $offset
      * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->get($offset);
     }
@@ -78,7 +78,7 @@ class PHPSession implements SessionInterface, \ArrayAccess
      * @param mixed $offset
      * @param mixed $value
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->set($offset, $value);
     }
@@ -86,7 +86,7 @@ class PHPSession implements SessionInterface, \ArrayAccess
     /**
      * @param mixed $offset
      */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         $this->delete($offset);
     }
