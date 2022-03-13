@@ -2,6 +2,8 @@
 
 namespace PgFramework\Router\Loader;
 
+use PgFramework\File\FileUtils;
+
 class DirectoryLoader extends FileLoader
 {
     /**
@@ -16,7 +18,7 @@ class DirectoryLoader extends FileLoader
             return parent::load($dir);
         }
 
-        $files = $this->getFiles($dir);
+        $files = FileUtils::getFiles($dir);
 
         $routes = [];
         foreach ($files as $file) {
@@ -26,32 +28,5 @@ class DirectoryLoader extends FileLoader
             }
         }
         return $routes;
-    }
-
-
-    /**
-     * Filtre les fichiers php recursivement a partir de path
-     *
-     * @param string $path
-     * @return array
-     */
-    public function getFiles(string $path): array
-    {
-        // from https://stackoverflow.com/a/41636321
-        return iterator_to_array(
-            new \CallbackFilterIterator(
-                new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator(
-                        $path,
-                        \FilesystemIterator::FOLLOW_SYMLINKS | \FilesystemIterator::SKIP_DOTS
-                    )
-                ),
-                function (\SplFileInfo $file) {
-                    return $file->isFile() &&
-                        ('.' !== substr($file->getBasename(), 0, 1) &&
-                            '.php' === substr($file->getFilename(), -4));
-                }
-            )
-        );
     }
 }
