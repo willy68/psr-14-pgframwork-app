@@ -6,6 +6,7 @@ use App\Blog\BlogModule;
 use App\Demo\DemoModule;
 use App\Admin\AdminModule;
 use App\Api\ApiClientModule;
+use Application\Console\ConsoleModule;
 use PgFramework\Security\Firewall\Firewall;
 use PgFramework\Middleware\MethodMiddleware;
 use PgFramework\Middleware\RouterMiddleware;
@@ -30,6 +31,7 @@ use PgFramework\EventListener\ParamsResolverListener;
 return [
     /* Application modules. Place your own on the list */
     'modules' => [
+        ConsoleModule::class,
         DemoModule::class,
         AdminModule::class,
         BlogModule::class,

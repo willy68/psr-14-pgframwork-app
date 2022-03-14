@@ -15,7 +15,7 @@
         }
     ],
     "require": {
-        "php": "^7.2 || ^8.0",
+        "php": "^7.2 || ^8.0 || ^8.1",
         "ext-json": "*",
         "ext-pdo": "*",
         "symfony/dotenv": "^5.0",
@@ -26,8 +26,9 @@
         "php-di/php-di": "^6.0",
         "php-di/invoker": "^2.2",
         "twig/twig": "^3.0",
-        "willy68/mezzio-fastroute-dev": "^3.3",
-        "willy68/php-activerecord-psr-4": "^1.0",
+        "willy68/mezzio-fastroute-dev": "dev-master",
+        "willy68/mezzio-router-dev": "@dev",
+        "willy68/php-activerecord-psr-4": "dev-master",
         "tuupola/http-factory": "^1.1",
         "pagerfanta/pagerfanta": "^2.1",
         "grafikart/psr15-csrf-middleware": "^1.0",
