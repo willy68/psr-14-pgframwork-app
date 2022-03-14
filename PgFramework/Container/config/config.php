@@ -198,33 +198,7 @@ return [
     },
     'doctrine.connections' => \DI\add([
         'default' => 'doctrine.connection.default',
-        'paysagest' => 'doctrine.connection.paysagest',
-        'communes' => 'doctrine.connection.communes'
     ]),
-    'doctrine.connection.paysagest.url' => function (ContainerInterface $c): array {
-        return [
-            'url' => $c->get('database.sgdb') . "://" .
-                $c->get('database.user') . ":" .
-                $c->get('database.password') . "@" .
-                $c->get('database.host') . "/" .
-                "paysagest?charset=utf8",
-        ];
-    },
-    'doctrine.connection.communes.url' => function (ContainerInterface $c): array {
-        return [
-            'url' => $c->get('database.sgdb') . "://" .
-                $c->get('database.user') . ":" .
-                $c->get('database.password') . "@" .
-                $c->get('database.host') . "/" .
-                "communes?charset=utf8",
-        ];
-    },
-    'doctrine.connection.paysagest' => function (ContainerInterface $c): Connection {
-        return DriverManager::getConnection($c->get('doctrine.connection.paysagest.url'));
-    },
-    'doctrine.connection.communes' => function (ContainerInterface $c): Connection {
-        return DriverManager::getConnection($c->get('doctrine.connection.communes.url'));
-    },
     'doctrine.connection.default' => function (ContainerInterface $c): Connection {
         return $c->get(Connection::class);
     },
@@ -238,13 +212,7 @@ return [
     ->parameter('connectionEntry', 'doctrine.connection.default'),
     'doctrine.managers' => \DI\add([
         'default' => 'doctrine.manager.default',
-        'paysagest' => 'doctrine.manager.paysagest',
-        'communes' => 'doctrine.manager.communes'
     ]),
-    'doctrine.manager.paysagest' => factory(EntityManagerFactory::class)
-        ->parameter('connectionEntry', 'doctrine.connection.paysagest'),
-    'doctrine.manager.communes' => factory(EntityManagerFactory::class)
-        ->parameter('connectionEntry', 'doctrine.connection.communes'),
     ManagerRegistry::class => function (ContainerInterface $c): PgManagerRegistry {
         return new PgManagerRegistry(
             $c->get('doctrine.connections'),
