@@ -38,8 +38,8 @@ class EntityManagerFactory
         $attributeDriver = new AttributeDriver($c->get('doctrine.entity.path'));
 
         foreach ($c->get('doctrine.entity.namespace') as $namespace) {
-            //$driverChain->addDriver($attributeDriver, $namespace);
-            $driverChain->addDriver($annotDriver, $namespace);
+            $driverChain->addDriver($attributeDriver, $namespace);
+            //$driverChain->addDriver($annotDriver, $namespace);
         }
 
         $driverChain->setDefaultDriver($attributeDriver);

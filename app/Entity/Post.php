@@ -3,12 +3,23 @@
 namespace App\Entity;
 
 use DateTime;
+use DateTimeImmutable;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use App\Repository\PostRepository;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\GeneratedValue;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PostRepository")
  * @ORM\Table(name="posts")
  */
+#[Entity(repositoryClass: PostRepository::class)]
+#[Table(name: 'posts')]
 class Post
 {
     /**
@@ -17,53 +28,64 @@ class Post
      * @ORM\GeneratedValue
      * @var int
      */
+    #[Id]
+    #[GeneratedValue()]
+    #[Column(type: Types::INTEGER)]
     protected $id;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
+    #[Column(type: TYPES::STRING)]
     protected $name;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
+    #[Column(type: TYPES::STRING)]
     protected $slug;
 
     /**
      * @ORM\Column(type="text")
      * @var string
      */
+    #[Column(type: TYPES::TEXT)]
     protected $content;
 
     /**
-     * @ORM\Column(type="datetime")
-     * @var DateTime
+     * @ORM\Column(type="datetime_immutable")
+     * @var DateTimeImmutable
      */
+    #[Column(type: TYPES::DATETIME_IMMUTABLE)]
     protected $created_at;
 
     /**
      * @ORM\Column(type="datetime")
      * @var DateTime
      */
+    #[Column(type: TYPES::DATETIME_MUTABLE)]
     protected $updated_at;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
+    #[Column(type: TYPES::STRING)]
     protected $image;
 
     /**
      * @ORM\Column(type="boolean")
      * @var bool
      */
+    #[Column(type: TYPES::BOOLEAN)]
     protected $published;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="addPost")
      */
+    #[ManyToOne(targetEntity: Category::class, inversedBy: "addPost")]
     protected $category;
 
     /**

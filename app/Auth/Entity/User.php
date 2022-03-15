@@ -2,13 +2,21 @@
 
 namespace App\Auth\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use PgFramework\Auth\UserInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Table;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="users")
  */
+#[Entity]
+#[Table(name: 'users')]
 class User implements UserInterface
 {
     /**
@@ -17,30 +25,37 @@ class User implements UserInterface
      * @ORM\GeneratedValue
      * @var int
      */
+    #[Id]
+    #[GeneratedValue]
+    #[Column(type: Types::INTEGER)]
     public $id;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
+    #[Column(type: TYPES::STRING)]
     public $username;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
+    #[Column(type: TYPES::STRING)]
     public $email;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
+    #[Column(type: TYPES::STRING)]
     public $password;
 
     /**
      * @ORM\Column(type="json")
      * @var string[]
      */
+    #[Column(type: TYPES::JSON)]
     public $roles = [];
 
     /**
