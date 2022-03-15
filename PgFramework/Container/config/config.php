@@ -1,6 +1,6 @@
 <?php
 
-use PgFramework\Database\Doctrine\ManagerRegistry as PgManagerRegistry;
+use PgFramework\Database\Doctrine\OrmManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
@@ -213,8 +213,8 @@ return [
     'doctrine.managers' => \DI\add([
         'default' => 'doctrine.manager.default',
     ]),
-    ManagerRegistry::class => function (ContainerInterface $c): PgManagerRegistry {
-        return new PgManagerRegistry(
+    ManagerRegistry::class => function (ContainerInterface $c): OrmManagerRegistry {
+        return new OrmManagerRegistry(
             $c->get('doctrine.connections'),
             $c->get('doctrine.managers'),
             'default',

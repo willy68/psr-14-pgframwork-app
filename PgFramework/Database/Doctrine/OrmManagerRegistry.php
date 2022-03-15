@@ -9,7 +9,7 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\Persistence\AbstractManagerRegistry;
 use Doctrine\ORM\Exception\UnknownEntityNamespace;
 
-class ManagerRegistry extends AbstractManagerRegistry
+class OrmManagerRegistry extends AbstractManagerRegistry
 {
     /**
      * @var ContainerInterface
@@ -31,14 +31,7 @@ class ManagerRegistry extends AbstractManagerRegistry
         string $defaultManager,
         ContainerInterface $container
     ) {
-        parent::__construct(
-            'ORM',
-            $connections,
-            $managers,
-            $defaultConnection,
-            $defaultManager,
-            Proxy::class
-        );
+        parent::__construct('ORM', $connections, $managers, $defaultConnection, $defaultManager, Proxy::class);
         $this->setContainer($container);
     }
 
