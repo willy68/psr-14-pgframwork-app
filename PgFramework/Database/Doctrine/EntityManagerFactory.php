@@ -5,7 +5,6 @@ namespace PgFramework\Database\Doctrine;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
-use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
@@ -30,21 +29,16 @@ class EntityManagerFactory
 
         $config->setMetadataCache($metadataCache);
 
-        $driverChain = new MappingDriverChain();
-        $annotDriver = $config->newDefaultAnnotationDriver(
-            $c->get('doctrine.entity.path'),
-            false
-        );
-        $attributeDriver = new AttributeDriver($c->get('doctrine.entity.path'));
-
-        foreach ($c->get('doctrine.entity.namespace') as $namespace) {
-            $driverChain->addDriver($attributeDriver, $namespace);
-            //$driverChain->addDriver($annotDriver, $namespace);
+        if (PHP_VERSION_ID >= 80000) {
+            $annotDriver = new AttributeDriver($c->get('doctrine.entity.path'));
+        } else {
+            $annotDriver = $config->newDefaultAnnotationDriver(
+                $c->get('doctrine.entity.path'),
+                false
+            );
         }
 
-        $driverChain->setDefaultDriver($attributeDriver);
-
-        $config->setMetadataDriverImpl($driverChain);
+        $config->setMetadataDriverImpl($annotDriver);
         $config->setQueryCache($queryCache);
         $config->setProxyDir($c->get('doctrine.proxies.dir'));
         $config->setProxyNamespace($c->get('doctrine.proxies.namespace'));
