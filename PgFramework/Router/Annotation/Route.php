@@ -2,6 +2,8 @@
 
 namespace PgFramework\Router\Annotation;
 
+use Attribute;
+use Doctrine\ORM\Mapping\Annotation;
 use PgFramework\Router\Annotation\Exception\RouteAnnotationException;
 
 /**
@@ -12,7 +14,8 @@ use PgFramework\Router\Annotation\Exception\RouteAnnotationException;
  * @Target({"CLASS", "METHOD"})
  *
  */
-class Route
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::TARGET_FUNCTION | Attribute::IS_REPEATABLE)]
+class Route implements Annotation
 {
     private $parameters = [];
 
