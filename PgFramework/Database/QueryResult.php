@@ -60,6 +60,7 @@ class QueryResult implements \ArrayAccess, \Iterator
      * @inheritDoc
      *
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset): bool
     {
         return isset($this->records[$offset]);
@@ -69,6 +70,7 @@ class QueryResult implements \ArrayAccess, \Iterator
      * @inheritDoc
      *
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->get($offset);
@@ -78,6 +80,7 @@ class QueryResult implements \ArrayAccess, \Iterator
      * @inheritDoc
      *
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value): void
     {
         throw new \Exception('Can\'t alter records');
@@ -87,6 +90,7 @@ class QueryResult implements \ArrayAccess, \Iterator
      * @inheritDoc
      *
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset): void
     {
         throw new \Exception('Can\'t alter records');
@@ -96,6 +100,7 @@ class QueryResult implements \ArrayAccess, \Iterator
      * @inheritDoc
      *
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->get($this->index);
@@ -105,6 +110,7 @@ class QueryResult implements \ArrayAccess, \Iterator
      * @inheritDoc
      *
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->index;
@@ -114,7 +120,8 @@ class QueryResult implements \ArrayAccess, \Iterator
      * @inheritDoc
      *
      */
-    public function next()
+    #[\ReturnTypeWillChange]
+    public function next(): void
     {
         $this->index ++;
     }
@@ -123,7 +130,8 @@ class QueryResult implements \ArrayAccess, \Iterator
      * @inheritDoc
      *
      */
-    public function rewind()
+    #[\ReturnTypeWillChange]
+    public function rewind(): void
     {
         $this->index = 0;
     }
@@ -132,6 +140,7 @@ class QueryResult implements \ArrayAccess, \Iterator
      * @inheritDoc
      *
      */
+    #[\ReturnTypeWillChange]
     public function valid(): bool
     {
         return isset($this->records[$this->index]);
