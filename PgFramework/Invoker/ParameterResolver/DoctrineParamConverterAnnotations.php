@@ -9,15 +9,11 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use PgFramework\Invoker\Exception\InvalidAnnotation;
 use PgFramework\Invoker\Annotation\ParameterConverter;
 use Doctrine\ORM\Mapping\Driver\RepeatableAttributeCollection;
+use PgFramework\Annotation\AnnotationReaderTrait;
 
 class DoctrineParamConverterAnnotations implements ParameterResolver
 {
-    /**
-     * Reader
-     *
-     * @var AnnotationReader
-     */
-    private $annotationReader;
+    use AnnotationReaderTrait;
 
     /**
      *
@@ -68,22 +64,6 @@ class DoctrineParamConverterAnnotations implements ParameterResolver
     }
 
     /**
-     * @return  mixed reader The annotation reader
-     */
-    public function getAnnotationReader()
-    {
-        if ($this->annotationReader === null) {
-            if (PHP_VERSION_ID >= 80000) {
-                $this->annotationReader = new AttributeReader();
-            } else {
-                $this->annotationReader = new AnnotationReader();
-            }
-        }
-
-        return $this->annotationReader;
-    }
-
-    /**
      * Get annotation method
      *
      * @param \ReflectionMethod $method
@@ -93,7 +73,7 @@ class DoctrineParamConverterAnnotations implements ParameterResolver
     {
         // Look for @ParameterConverter annotation
         try {
-            $annotations = $this->getAnnotationReader()
+            $annotations = $this->getReader()
                 ->getMethodAnnotations($method);
         } catch (\Exception $e) {
             throw new InvalidAnnotation(sprintf(

@@ -8,10 +8,13 @@ use PgFramework\Router\Annotation\Route;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\Mapping\Driver\AttributeReader;
 use Doctrine\ORM\Mapping\Driver\RepeatableAttributeCollection;
+use PgFramework\Annotation\AnnotationReaderTrait;
 use PgFramework\Router\Annotation\Exception\RouteAnnotationException;
 
 class MethodLoader
 {
+    use AnnotationReaderTrait;
+
     protected $reader;
 
     protected $annotationClass = Route::class;
@@ -42,7 +45,7 @@ class MethodLoader
     {
         // Look for @Route annotation
         try {
-            $annotations = $this->getAnnotationReader()
+            $annotations = $this->getReader()
                 ->getMethodAnnotations(
                     $method
                 );
@@ -67,21 +70,5 @@ class MethodLoader
             }
         }
         return null;
-    }
-
-    /**
-     * @return mixed The annotation reader
-     */
-    public function getAnnotationReader()
-    {
-        if ($this->reader === null) {
-            if (PHP_VERSION_ID >= 80000) {
-                $this->reader = new AttributeReader();
-            } else {
-                $this->reader = new AnnotationReader();
-            }
-        }
-
-        return $this->reader;
     }
 }

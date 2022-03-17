@@ -21,7 +21,7 @@ class ClassLoader extends MethodLoader
 
         // Look for @Route annotation
         try {
-            $annotation = $this->getAnnotationReader()
+            $annotation = $this->getReader()
                 ->getClassAnnotation(
                     $class,
                     $this->annotationClass
