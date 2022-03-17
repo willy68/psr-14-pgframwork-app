@@ -78,6 +78,7 @@ class PostShowAction
      * @return string
      */
     #[Route('/category/{category_id:[0-9]+}/post/{id:[0-9]+}', name:'blog.postShow')]
+    #[ParameterConverter('category', options:['id' => 'category_id'])]
     public function postShow(Category $category, Post $post): string
     {
         return $this->renderer->render('@blog/show', [
@@ -112,6 +113,7 @@ class PostShowAction
      * @return string
      */
     #[Route('/category/{category_slug:[a-z\-0-9]+}/post/{id:[0-9]+}', name:'blog.postCategoryShow', methods:['GET'])]
+    #[ParameterConverter('category', options:['slug' => 'category_slug'])]
     public function postCategoryShow(Category $category, Post $post): string
     {
         return $this->renderer->render('@blog/show', [

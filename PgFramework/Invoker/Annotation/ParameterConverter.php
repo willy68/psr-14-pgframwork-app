@@ -19,6 +19,7 @@ use PgFramework\Invoker\Exception\InvalidAnnotation;
  * @api
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target({"METHOD"})
  *
  */
@@ -33,21 +34,27 @@ final class ParameterConverter implements Annotation
      */
     private $parameters = [];
 
+    private $name;
+
+    private $options = [];
+
     /**
      * @throws InvalidAnnotation
      */
-    public function __construct(array $parameters)
+    public function __construct($parameters = [], string $name = null, $options = [])
     {
+        $this->parameters = $parameters;
+        $this->name = $parameters['value'] ?? (\is_string($parameters) ? $parameters : $name);
+        $this->options = $parameters['options'] ?? ([] !== $options ? $options : null);
+
         // Method param name
-        if (!isset($parameters['value'])) {
+        if (null === $this->name) {
             throw new InvalidAnnotation(sprintf(
                 '@ParameterConverter("name", options={"id" = "value"}) expects parameter "name", %s given.',
-                json_encode($parameters)
+                $name
             ));
             return;
         }
-
-        $this->parameters = $parameters;
     }
 
     /**
@@ -56,5 +63,21 @@ final class ParameterConverter implements Annotation
     public function getParameters(): array
     {
         return $this->parameters;
+    }
+
+    /**
+     * Get the value of name
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Get the value of options
+     */
+    public function getOptions()
+    {
+        return $this->options;
     }
 }
