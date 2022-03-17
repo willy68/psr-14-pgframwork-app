@@ -61,7 +61,7 @@ class QueryResult implements \ArrayAccess, \Iterator
      *
      */
     #[\ReturnTypeWillChange]
-    public function offsetExists($offset): bool
+    public function offsetExists($offset)
     {
         return isset($this->records[$offset]);
     }
@@ -81,7 +81,7 @@ class QueryResult implements \ArrayAccess, \Iterator
      *
      */
     #[\ReturnTypeWillChange]
-    public function offsetSet($offset, $value): void
+    public function offsetSet($offset, $value)
     {
         throw new \Exception('Can\'t alter records');
     }
@@ -91,7 +91,7 @@ class QueryResult implements \ArrayAccess, \Iterator
      *
      */
     #[\ReturnTypeWillChange]
-    public function offsetUnset($offset): void
+    public function offsetUnset($offset)
     {
         throw new \Exception('Can\'t alter records');
     }
@@ -131,7 +131,7 @@ class QueryResult implements \ArrayAccess, \Iterator
      *
      */
     #[\ReturnTypeWillChange]
-    public function rewind(): void
+    public function rewind()
     {
         $this->index = 0;
     }
@@ -141,7 +141,7 @@ class QueryResult implements \ArrayAccess, \Iterator
      *
      */
     #[\ReturnTypeWillChange]
-    public function valid(): bool
+    public function valid()
     {
         return isset($this->records[$this->index]);
     }
