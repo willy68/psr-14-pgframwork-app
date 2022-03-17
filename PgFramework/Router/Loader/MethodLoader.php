@@ -6,6 +6,8 @@ use ReflectionMethod;
 use Doctrine\Common\Annotations\Reader;
 use PgFramework\Router\Annotation\Route;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\ORM\Mapping\Driver\AttributeReader;
+use Doctrine\ORM\Mapping\Driver\RepeatableAttributeCollection;
 use PgFramework\Router\Annotation\Exception\RouteAnnotationException;
 
 class MethodLoader
@@ -54,7 +56,13 @@ class MethodLoader
         }
 
         foreach ($annotations as $annotation) {
-            if ($annotation instanceof $this->annotationClass) {
+            if ($annotation instanceof RepeatableAttributeCollection) {
+                foreach ($annotation as $annot) {
+                    if ($annot instanceof $this->annotationClass) {
+                        yield $annot;
+                    }
+                }
+            } elseif ($annotation instanceof $this->annotationClass) {
                 yield $annotation;
             }
         }
@@ -62,13 +70,16 @@ class MethodLoader
     }
 
     /**
-     * @return AnnotationReader The annotation reader
+     * @return mixed The annotation reader
      */
-    public function getAnnotationReader(): Reader
+    public function getAnnotationReader()
     {
         if ($this->reader === null) {
-            //AnnotationRegistry::registerLoader('class_exists');
-            $this->reader = new AnnotationReader();
+            if (PHP_VERSION_ID >= 80000) {
+                $this->reader = new AttributeReader();
+            } else {
+                $this->reader = new AnnotationReader();
+            }
         }
 
         return $this->reader;

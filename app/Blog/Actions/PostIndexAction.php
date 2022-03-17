@@ -40,6 +40,7 @@ class PostIndexAction
      * @param Request $request
      * @return string
      */
+    #[Route('/blog', name:'blog.index', methods:['GET'])]
     public function __invoke(Request $request): string
     {
         $params = $request->getQueryParams();
@@ -58,6 +59,7 @@ class PostIndexAction
      * @param \Doctrine\ORM\EntityManager $em
      * @return string
      */
+    #[Route('/dblog', name:'blog.indexORM', methods:['GET'])]
     public function index(Request $request, EntityManager $em): string
     {
         $params = $request->getQueryParams();

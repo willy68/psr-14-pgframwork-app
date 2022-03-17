@@ -10,6 +10,7 @@ use PgFramework\Response\ResponseRedirect;
 /**
  * @Route("/logout", name="auth.logout", methods={"POST"})
  */
+#[Route('/logout', name:'auth.logout', methods:['POST'])]
 class LogoutAction
 {
     /**

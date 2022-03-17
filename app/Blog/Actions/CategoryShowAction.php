@@ -12,6 +12,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 /**
  * @Route("/blog/category/{slug:[a-z\-0-9]+}", name="blog.category")
  */
+#[Route('/blog/category/{slug:[a-z\-0-9]+}', name:'blog.category', methods:['GET'])]
 class CategoryShowAction
 {
     /**

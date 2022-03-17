@@ -16,6 +16,7 @@ use PgFramework\Auth\RememberMe\RememberMeInterface;
 /**
  * @Route("/login", methods={"POST"})
  */
+#[Route('/login', methods:['POST'])]
 class LoginAttemptAction
 {
     use RouterAwareAction;

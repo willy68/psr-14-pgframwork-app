@@ -5,6 +5,7 @@ namespace PgFramework\Invoker\ParameterResolver;
 use ReflectionMethod;
 use ReflectionParameter;
 use ReflectionFunctionAbstract;
+use Doctrine\ORM\Mapping\Driver\AttributeReader;
 use Invoker\ParameterResolver\ParameterResolver;
 use Doctrine\Common\Annotations\AnnotationReader;
 use PgFramework\Invoker\Exception\InvalidAnnotation;
@@ -58,12 +59,16 @@ class ActiveRecordAnnotationsResolver implements ParameterResolver
     }
 
     /**
-     * @return AnnotationReader The annotation reader
+     * @return mixed reader The annotation reader
      */
-    public function getAnnotationReader(): AnnotationReader
+    public function getAnnotationReader()
     {
         if ($this->annotationReader === null) {
-            $this->annotationReader = new AnnotationReader();
+            if (PHP_VERSION_ID >= 80000) {
+                $this->annotationReader = new AttributeReader();
+            } else {
+                $this->annotationReader = new AnnotationReader();
+            }
         }
 
         return $this->annotationReader;

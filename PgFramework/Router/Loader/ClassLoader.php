@@ -2,6 +2,7 @@
 
 namespace PgFramework\Router\Loader;
 
+use Doctrine\ORM\Mapping\Driver\RepeatableAttributeCollection;
 use PgFramework\Router\Annotation\Exception\RouteAnnotationException;
 
 class ClassLoader extends MethodLoader
@@ -33,7 +34,13 @@ class ClassLoader extends MethodLoader
             ), 0, $e);
         }
 
-        if ($annotation instanceof $this->annotationClass) {
+        if ($annotation instanceof RepeatableAttributeCollection) {
+            foreach ($annotation as $annot) {
+                if ($annot instanceof $this->annotationClass) {
+                    return $annot;
+                }
+            }
+        } elseif ($annotation instanceof $this->annotationClass) {
             return $annotation;
         }
 

@@ -86,6 +86,7 @@ class FileLoader extends ClassLoader
         if ($classAnnotation) {
             $path = $classAnnotation->getPath() . $path;
         }
+        //dd($methodAnnotation->getMethods());
         return $this->collector->route(
             $path,
             $method->getDeclaringClass()->getName() . "::" . $method->getName(),

@@ -37,6 +37,7 @@ class DemoController
      * @param ContainerInterface $c
      * @return string
      */
+    #[Route('/', name: 'demo.index', methods: ['GET'])]
     public function index(
         ServerRequestInterface $request,
         RendererInterface $renderer,
@@ -89,6 +90,7 @@ class DemoController
      * @param RendererInterface $renderer
      * @return string
      */
+    #[Route('/react', name: 'demo.react', methods: ['GET'])]
     public function demoReact(RendererInterface $renderer): string
     {
         return $renderer->render('@demo/react');
@@ -103,6 +105,7 @@ class DemoController
      * @param \PgFramework\Renderer\RendererInterface $renderer
      * @return string
      */
+    #[Route('/demo/client/{id:\d+}', name: 'demo.client', methods: ['GET'])]
     public function demoClient(Client $client, RendererInterface $renderer): string
     {
         $client = $client->to_array(['include' => 'adresses']);

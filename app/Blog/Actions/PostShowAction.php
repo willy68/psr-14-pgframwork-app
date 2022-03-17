@@ -13,6 +13,7 @@ use PgFramework\Invoker\Annotation\ParameterConverter;
 /**
  * @Route("/blog")
  */
+#[Route('/blog')]
 class PostShowAction
 {
     use RouterAwareAction;
@@ -51,6 +52,7 @@ class PostShowAction
      * @param Post $post
      * @return mixed
      */
+    #[Route('{slug:[a-z\-0-9]+}-{id:[0-9]+}', name:'blog.show', methods:['GET'])]
     public function __invoke(string $slug, Post $post)
     {
         if ($post->getSlug() !== $slug) {
@@ -75,6 +77,7 @@ class PostShowAction
      * @param Post $post
      * @return string
      */
+    #[Route('/category/{category_id:[0-9]+}/post/{id:[0-9]+}', name:'blog.postShow')]
     public function postShow(Category $category, Post $post): string
     {
         return $this->renderer->render('@blog/show', [
@@ -90,6 +93,7 @@ class PostShowAction
      * @param Post $post
      * @return string
      */
+    #[Route('/post/{id:[0-9]+}', name:'blog.showPost', methods:['GET'])]
     public function showPost(Post $post): string
     {
         return $this->renderer->render('@blog/show', [
@@ -107,6 +111,7 @@ class PostShowAction
      * @param Post $post
      * @return string
      */
+    #[Route('/category/{category_slug:[a-z\-0-9]+}/post/{id:[0-9]+}', name:'blog.postCategoryShow', methods:['GET'])]
     public function postCategoryShow(Category $category, Post $post): string
     {
         return $this->renderer->render('@blog/show', [

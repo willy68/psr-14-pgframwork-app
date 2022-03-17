@@ -11,6 +11,7 @@ use PgFramework\Router\Annotation\Exception\RouteAnnotationException;
  * Ex: @Route("/route/{id:\d+}", name="path.route", methods={"GET"})
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target({"CLASS", "METHOD"})
  *
  */
@@ -25,23 +26,30 @@ class Route implements Annotation
     private $methods = [];
     private $schemes = [];
 
-    public function __construct($parameters = [])
-    {
+    public function __construct(
+        $parameters = [],
+        $path = null,
+        string $name = null,
+        string $host = null,
+        $methods = [],
+        $schemes = []
+    ) {
+        $this->parameters = $parameters;
+
+        $this->path = $parameters['value'] ?? (\is_string($parameters) ? $parameters : $path);
+        $this->name = $parameters['name'] ?? (!\is_null($name) ? $name : null);
+        $this->host = $parameters['host'] ??  (!\is_null($host) ? $host : null);
+        $this->methods = $parameters['methods'] ?? ([] !== $methods ? $methods : null);
+        $this->schemes = $parameters['schemes'] ?? ([] !== $schemes ? $schemes : null);
+
         // Method param name
-        if (!isset($parameters['value'])) {
+        if (null === $this->path) {
             throw new RouteAnnotationException(sprintf(
                 '@Route("/route/{id:\d+}", name="path.route",
                 methods={"GET"}) expects first parameter "path", %s given.',
-                json_encode($parameters)
+                $this->path
             ));
         }
-        $this->parameters = $parameters;
-
-        $this->path = $parameters['value'];
-        $this->name = $parameters['name'] ?? null;
-        $this->host = $parameters['host'] ?? null;
-        $this->methods = $parameters['methods'] ?? null;
-        $this->schemes = $parameters['schemes'] ?? null;
     }
 
     public function getParameters(): array
