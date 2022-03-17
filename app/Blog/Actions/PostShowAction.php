@@ -46,7 +46,7 @@ class PostShowAction
     /**
      * Show blog post
      *
-     * @Route("/{slug:[a-z\-0-9]+}-{id:[0-9]+}", name="blog.show", method={"GET"})
+     * @Route("/{slug:[a-z\-0-9]+}-{id:[0-9]+}", name="blog.show", methods={"GET"})
      *
      * @param string $slug
      * @param Post $post
@@ -89,7 +89,7 @@ class PostShowAction
     /**
      * Show post with Doctrine
      *
-     * @Route("/post/{id:[0-9]+}", name="blog.showPost", method={"GET"})
+     * @Route("/post/{id:[0-9]+}", name="blog.showPost", methods={"GET"})
      *
      * @param Post $post
      * @return string
