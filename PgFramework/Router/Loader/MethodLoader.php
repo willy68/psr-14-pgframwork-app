@@ -3,10 +3,7 @@
 namespace PgFramework\Router\Loader;
 
 use ReflectionMethod;
-use Doctrine\Common\Annotations\Reader;
 use PgFramework\Router\Annotation\Route;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\ORM\Mapping\Driver\AttributeReader;
 use Doctrine\ORM\Mapping\Driver\RepeatableAttributeCollection;
 use PgFramework\Annotation\AnnotationReaderTrait;
 use PgFramework\Router\Annotation\Exception\RouteAnnotationException;
@@ -15,11 +12,9 @@ class MethodLoader
 {
     use AnnotationReaderTrait;
 
-    protected $reader;
-
     protected $annotationClass = Route::class;
 
-    public function __construct(?Reader $reader = null)
+    public function __construct($reader = null)
     {
         $this->reader = $reader;
     }

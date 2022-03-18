@@ -5,7 +5,6 @@ namespace PgFramework\Router\Loader;
 use ReflectionMethod;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteCollector;
-use Doctrine\Common\Annotations\Reader;
 use PgFramework\Parser\PhpTokenParser;
 
 class FileLoader extends ClassLoader
@@ -14,7 +13,7 @@ class FileLoader extends ClassLoader
 
     public function __construct(
         RouteCollector $collector,
-        ?Reader $reader = null
+        $reader = null
     ) {
         if (!\function_exists('token_get_all')) {
             throw new \LogicException("Function token_get_all don't exists in this system");

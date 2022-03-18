@@ -3,9 +3,7 @@
 namespace PgFramework\Invoker\ParameterResolver;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Mapping\Driver\AttributeReader;
 use Invoker\ParameterResolver\ParameterResolver;
-use Doctrine\Common\Annotations\AnnotationReader;
 use PgFramework\Invoker\Exception\InvalidAnnotation;
 use PgFramework\Invoker\Annotation\ParameterConverter;
 use Doctrine\ORM\Mapping\Driver\RepeatableAttributeCollection;
