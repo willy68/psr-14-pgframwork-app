@@ -84,6 +84,15 @@ class ActiveRecordAnnotationsResolver implements ParameterResolver
                         $annot->getOptions()
                     );
                 }
+            } else {
+                if (!$annotation instanceof ParameterConverter) {
+                    continue;
+                }
+                $converters[] = new DoctrineParamConverterAnnotation(
+                    $this->em,
+                    $annotation->getName(),
+                    $annotation->getOptions()
+                );
             }
         }
         return $converters;
