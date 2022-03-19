@@ -31,12 +31,12 @@ class AnnotationsLoader
     }
 
     /**
-     * Recherche les annotations de class
+     * Recherche la première annotation de method
      *
      * @param \ReflectionMethod $method
-     * @return iterable|Annotation|null
+     * @return Annotation|null
      */
-    protected function getMethodAnnotation(ReflectionMethod $method)
+    public function getMethodAnnotation(ReflectionMethod $method): ?Annotation
     {
         // Look for class annotation
         $annotation = $this->getReader()
@@ -47,21 +47,21 @@ class AnnotationsLoader
 
         if ($annotation instanceof RepeatableAttributeCollection) {
             foreach ($annotation as $annot) {
-                yield $annot;
+                return $annot;
             }
         } else {
-            yield $annotation;
+            return $annotation;
         }
         return null;
     }
 
     /**
-     * Recherche les annotations de class
+     * Recherche les annotations de method
      *
      * @param \ReflectionMethod $method
      * @return iterable|null
      */
-    protected function getMethodAnnotations(ReflectionMethod $method): ?iterable
+    public function getMethodAnnotations(ReflectionMethod $method): ?iterable
     {
         // Look for class annotation
         $annotations = $this->getReader()
@@ -84,12 +84,12 @@ class AnnotationsLoader
     }
 
     /**
-     * Get the annotation class
+     * Recherche la première annotation de class
      *
      * @param \ReflectionClass $class
-     * @return iterable|Annotation|null
+     * @return Annotation|null
      */
-    protected function getClassAnnotation(\ReflectionClass $class)
+    public function getClassAnnotation(\ReflectionClass $class): ?Annotation
     {
         if ($class->isAbstract()) {
             return null;
@@ -104,7 +104,7 @@ class AnnotationsLoader
 
         if ($annotation instanceof RepeatableAttributeCollection) {
             foreach ($annotation as $annot) {
-                yield $annot;
+                return $annot;
             }
         } else {
             return $annotation;
@@ -113,12 +113,12 @@ class AnnotationsLoader
     }
 
     /**
-     * Get the annotation class
+     * Recherche les annotations de class
      *
      * @param \ReflectionClass $class
      * @return iterable|null
      */
-    protected function getClassAnnotations(\ReflectionClass $class): ?iterable
+    public function getClassAnnotations(\ReflectionClass $class): ?iterable
     {
         if ($class->isAbstract()) {
             return null;

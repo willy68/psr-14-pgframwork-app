@@ -4,10 +4,10 @@ namespace PgFramework\Invoker\ParameterResolver;
 
 use Doctrine\ORM\EntityManager;
 use Invoker\ParameterResolver\ParameterResolver;
-use PgFramework\Invoker\Exception\InvalidAnnotation;
 use PgFramework\Invoker\Annotation\ParameterConverter;
 use Doctrine\ORM\Mapping\Driver\RepeatableAttributeCollection;
 use PgFramework\Annotation\AnnotationReaderTrait;
+use PgFramework\Annotation\AnnotationsLoader;
 
 class DoctrineParamConverterAnnotations implements ParameterResolver
 {
@@ -19,9 +19,17 @@ class DoctrineParamConverterAnnotations implements ParameterResolver
      */
     private $em;
 
-    public function __construct(EntityManager $em)
+    /**
+     *
+     * @var AnnotationsLoader
+     */
+    private $annotationsLoader;
+
+    public function __construct(EntityManager $em, AnnotationsLoader $annotationsLoader)
     {
         $this->em = $em;
+        $this->annotationsLoader = $annotationsLoader;
+        $this->annotationsLoader->setAnnotation(ParameterConverter::class);
     }
 
     public function getParameters(
@@ -30,7 +38,7 @@ class DoctrineParamConverterAnnotations implements ParameterResolver
         array $resolvedParameters
     ): array {
 
-        $annotations = $this->getMethodAnnotation($reflection);
+        $annotations = $this->annotationsLoader->getMethodAnnotations($reflection);
         if (empty($annotations)) {
             return $resolvedParameters;
         }
@@ -62,35 +70,12 @@ class DoctrineParamConverterAnnotations implements ParameterResolver
     }
 
     /**
-     * Get annotation method
-     *
-     * @param \ReflectionMethod $method
-     * @return array
-     */
-    private function getMethodAnnotation(\ReflectionMethod $method): array
-    {
-        // Look for @ParameterConverter annotation
-        try {
-            $annotations = $this->getReader()
-                ->getMethodAnnotations($method);
-        } catch (\Exception $e) {
-            throw new InvalidAnnotation(sprintf(
-                '@ParameterConverter annotation on %s::%s is malformed. %s',
-                $method->getDeclaringClass()->getName(),
-                $method->getName(),
-                $e->getMessage()
-            ), 0, $e);
-        }
-        return $annotations;
-    }
-
-    /**
      * Parse le tableau d'annotations
      *
-     * @param array $annotations
+     * @param iterable $annotations
      * @return ParameterResolver[]
      */
-    protected function parseAnnotation(array $annotations): array
+    protected function parseAnnotation(iterable $annotations): array
     {
         $converters = [];
         foreach ($annotations as $annotation) {

@@ -5,22 +5,24 @@ namespace PgFramework\Router\Loader;
 use ReflectionMethod;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteCollector;
+use PgFramework\Annotation\AnnotationsLoader;
 use PgFramework\Parser\PhpTokenParser;
 
-class FileLoader extends ClassLoader
+class FileLoader
 {
     protected $collector;
 
+    protected $annotationsLoader;
+
     public function __construct(
         RouteCollector $collector,
-        $reader = null
+        AnnotationsLoader $annotationsLoader
     ) {
         if (!\function_exists('token_get_all')) {
             throw new \LogicException("Function token_get_all don't exists in this system");
         }
-
-        parent::__construct($reader);
         $this->collector = $collector;
+        $this->annotationsLoader = $annotationsLoader;
     }
 
     /**
@@ -45,11 +47,12 @@ class FileLoader extends ClassLoader
             return null;
         }
 
-        $classAnnotation = $this->getClassAnnotation($reflectionClass);
+        /** @var \PgFramework\Router\Annotation\Route */
+        $classAnnotation = $this->annotationsLoader->getClassAnnotation($reflectionClass);
 
         $routes = [];
         foreach ($reflectionClass->getMethods() as $method) {
-            foreach ($this->getMethodAnnotations($method) as $methodAnnotation) {
+            foreach ($this->annotationsLoader->getMethodAnnotations($method) as $methodAnnotation) {
                 $routes[] = $this->addRoute($methodAnnotation, $method, $classAnnotation);
             }
         }
@@ -85,7 +88,6 @@ class FileLoader extends ClassLoader
         if ($classAnnotation) {
             $path = $classAnnotation->getPath() . $path;
         }
-        //dd($methodAnnotation->getMethods());
         return $this->collector->route(
             $path,
             $method->getDeclaringClass()->getName() . "::" . $method->getName(),

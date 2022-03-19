@@ -14,6 +14,8 @@ use PgFramework\Environnement\Environnement;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Router\Loader\DirectoryLoader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use PgFramework\Annotation\AnnotationsLoader;
+use PgFramework\Router\Annotation\Route;
 
 /**
  * Application
@@ -176,7 +178,8 @@ class App extends AbstractApplication
         foreach ($this->modules as $module) {
             if (!empty($module::ANNOTATIONS)) {
                 $loader = new DirectoryLoader(
-                    $container->get(RouteCollector::class)
+                    $container->get(RouteCollector::class),
+                    $container->get(AnnotationsLoader::class)
                 );
                 foreach ($module::ANNOTATIONS as $dir) {
                     $loader->load($dir);
