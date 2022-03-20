@@ -5,6 +5,11 @@ namespace PgFramework\Database\ActiveRecord;
 use ActiveRecord;
 use ActiveRecord\Connection;
 use Psr\Container\ContainerInterface;
+use Invoker\ParameterResolver\ResolverChain;
+use PgFramework\Annotation\AnnotationsLoader;
+use Invoker\ParameterResolver\ParameterResolver;
+use PgFramework\Invoker\ParameterResolver\ActiveRecordResolver;
+use PgFramework\Invoker\ParameterResolver\ActiveRecordAnnotationsResolver;
 
 class ActiveRecordFactory
 {
@@ -27,6 +32,11 @@ class ActiveRecordFactory
             // Datetime format
             Connection::$datetime_format = 'Y-m-d H:i:s';
         });
+
+        /** @var  ResolverChain */
+        $paramResolver = $c->get(ParameterResolver::class);
+        $paramResolver->prependResolver(new ActiveRecordAnnotationsResolver($c->get(AnnotationsLoader::class)));
+        $paramResolver->prependResolver(new ActiveRecordResolver());
         return true;
     }
 }
