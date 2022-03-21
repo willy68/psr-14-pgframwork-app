@@ -6,7 +6,6 @@ use DateTime;
 use App\Entity\Post;
 use App\Models\Client;
 use App\Auth\Models\User;
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 use App\Repository\PostRepository;
 use Psr\Container\ContainerInterface;
@@ -16,7 +15,6 @@ use PgFramework\Validator\ValidationRules;
 use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Invoker\Annotation\ParameterConverter;
-use Doctrine\ORM\Tools\DisconnectedClassMetadataFactory;
 use PgFramework\Database\ActiveRecord\ActiveRecordQuery;
 
 class DemoController
@@ -48,23 +46,10 @@ class DemoController
     ): string {
         $conn = $managerRegistry->getManager();
 
-        /** @var EntityManager $paysagest */
-        /*$paysagest = $managerRegistry->getManager('paysagest');
-        $paysagest->getConfiguration()->setMetadataDriverImpl(
-            new \Doctrine\ORM\Mapping\Driver\DatabaseDriver(
-                $paysagest->getConnection()->getSchemaManager()
-            )
-        );
-        $cmf = new DisconnectedClassMetadataFactory();
-        $cmf->setEntityManager($paysagest);
-        $metadatas = $cmf->getAllMetadata();
-        */
-        //dd($metadatas, $cmf);
-        //dd($conn);
         /** @var PostRepository */
         $rp = $conn->getRepository(Post::class);
         $pc = $rp->findWithCategory(122);
-        //dd($pc);
+
         $query = new ActiveRecordQuery();
         $query
             ->where('id = ?', 'user_id = ?')
@@ -77,10 +62,9 @@ class DemoController
         /** @var PostRepository */
         $repo = $em->getRepository(Post::class);
         $doctrinePost = $repo->findWithCategory(122);
-        //dd($doctrinePost);
 
         $mysql_ver = $pdo->getAttribute(\PDO::ATTR_SERVER_VERSION);
-        $params = array_merge($request->getServerParams(), $user_array, [$mysql_ver], [$query->__toString()]);
+        $params = array_merge($request->getServerParams(), $user_array, [$mysql_ver], [$query]);
         return $renderer->render('@demo/index', compact('params'));
     }
 

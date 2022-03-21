@@ -83,12 +83,10 @@ class DoctrineParamConverterAnnotation implements ParameterResolver
                         }
 
                         $class = $parameterType->getName();
-
-                        try {
-                            $repo = $this->em->getRepository($class);
-                        } catch (\Exception $e) {
+                        if ($this->em->getMetadataFactory()->isTransient($class)) {
                             continue;
                         }
+                        $repo = $this->em->getRepository($class);
                         if ($findByKey === 'id') {
                             $obj = $repo->find((int) $parameter);
                         } else {

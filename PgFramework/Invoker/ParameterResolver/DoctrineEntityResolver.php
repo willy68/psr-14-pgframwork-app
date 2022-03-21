@@ -81,11 +81,10 @@ class DoctrineEntityResolver implements ParameterResolver
 
                     $class = $parameterType->getName();
 
-                    try {
-                        $repo = $this->em->getRepository($class);
-                    } catch (\Exception $e) {
+                    if ($this->em->getMetadataFactory()->isTransient($class)) {
                         continue;
                     }
+                    $repo = $this->em->getRepository($class);
                     $entity = $repo->find($parameter);
                     if ($entity) {
                         $resolvedParameters[$index] = $entity;
