@@ -3,6 +3,7 @@
 use PgFramework\Database\Doctrine\OrmManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use PgFramework\Jwt\JwtMiddlewareFactory;
@@ -65,6 +66,7 @@ use Mezzio\Router\FastRouteRouter;
 use Mezzio\Router\RouteCollector;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Database\ActiveRecord\ActiveRecordFactory;
+use PgFramework\Database\Doctrine\DoctrineConfigFactory;
 use PgFramework\Database\Doctrine\EntityManagerFactory;
 use PgFramework\EventDispatcher\EventDispatcher;
 use PgFramework\EventListener\CsrfListener;
@@ -183,6 +185,7 @@ return [
             ]
         );
     },
+    Configuration::class => factory(DoctrineConfigFactory::class),
     'doctrine.proxies.dir' => __DIR__ . '/app/Proxies',
     'doctrine.proxies.namespace' => 'App\Proxies',
     'doctrine.entity.path' => \DI\add([]),
