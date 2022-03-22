@@ -2,10 +2,10 @@
 
 namespace PgFramework\Invoker\ParameterResolver;
 
-use Doctrine\ORM\EntityManager;
 use Invoker\ParameterResolver\ParameterResolver;
 use PgFramework\Invoker\Annotation\ParameterConverter;
 use Doctrine\ORM\Mapping\Driver\RepeatableAttributeCollection;
+use Doctrine\Persistence\ManagerRegistry;
 use PgFramework\Annotation\AnnotationReaderTrait;
 use PgFramework\Annotation\AnnotationsLoader;
 
@@ -15,9 +15,9 @@ class DoctrineParamConverterAnnotations implements ParameterResolver
 
     /**
      *
-     * @var EntityManager
+     * @var ManagerRegistry
      */
-    private $em;
+    private $mg;
 
     /**
      *
@@ -25,9 +25,9 @@ class DoctrineParamConverterAnnotations implements ParameterResolver
      */
     private $annotationsLoader;
 
-    public function __construct(EntityManager $em, AnnotationsLoader $annotationsLoader)
+    public function __construct(ManagerRegistry $mg, AnnotationsLoader $annotationsLoader)
     {
-        $this->em = $em;
+        $this->mg = $mg;
         $this->annotationsLoader = $annotationsLoader;
         $this->annotationsLoader->setAnnotation(ParameterConverter::class);
     }
@@ -85,7 +85,7 @@ class DoctrineParamConverterAnnotations implements ParameterResolver
                         continue;
                     }
                     $converters[] = new DoctrineParamConverterAnnotation(
-                        $this->em,
+                        $this->mg,
                         $annot->getName(),
                         $annot->getOptions()
                     );
@@ -95,7 +95,7 @@ class DoctrineParamConverterAnnotations implements ParameterResolver
                     continue;
                 }
                 $converters[] = new DoctrineParamConverterAnnotation(
-                    $this->em,
+                    $this->mg,
                     $annotation->getName(),
                     $annotation->getOptions()
                 );

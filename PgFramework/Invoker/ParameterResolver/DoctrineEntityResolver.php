@@ -2,8 +2,8 @@
 
 namespace PgFramework\Invoker\ParameterResolver;
 
-use Doctrine\ORM\EntityManager;
 use ActiveRecord\Exceptions\RecordNotFound;
+use Doctrine\Persistence\ManagerRegistry;
 use Invoker\ParameterResolver\ParameterResolver;
 
 class DoctrineEntityResolver implements ParameterResolver
@@ -23,11 +23,11 @@ class DoctrineEntityResolver implements ParameterResolver
     private $alias;
 
     /**
-     * EntityManager
+     * ManagerRegistry
      *
-     * @var EntityManager
+     * @var ManagerRegistry
      */
-    private $em;
+    private $mg;
 
     /**
      * Constructor
@@ -35,9 +35,9 @@ class DoctrineEntityResolver implements ParameterResolver
      * @param string $key
      * @param string|null $alias
      */
-    public function __construct(EntityManager $em, ?string $alias = null)
+    public function __construct(ManagerRegistry $mg, ?string $alias = null)
     {
-        $this->em = $em;
+        $this->mg = $mg;
         $this->alias = $alias;
     }
 
@@ -80,11 +80,10 @@ class DoctrineEntityResolver implements ParameterResolver
                     }
 
                     $class = $parameterType->getName();
-
-                    if ($this->em->getMetadataFactory()->isTransient($class)) {
+                    if (null === ($em = $this->mg->getManagerForClass($class))) {
                         continue;
                     }
-                    $repo = $this->em->getRepository($class);
+                    $repo = $em->getRepository($class);
                     $entity = $repo->find($parameter);
                     if ($entity) {
                         $resolvedParameters[$index] = $entity;

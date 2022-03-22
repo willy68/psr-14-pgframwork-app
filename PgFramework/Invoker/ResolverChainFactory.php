@@ -4,11 +4,11 @@ namespace PgFramework\Invoker;
 
 use PgFramework\App;
 use DI\Proxy\ProxyFactory;
-use Doctrine\ORM\EntityManager;
 use Psr\Container\ContainerInterface;
 use DI\Invoker\DefinitionParameterResolver;
 use PgFramework\Annotation\AnnotationsLoader;
 use DI\Definition\Resolver\ResolverDispatcher;
+use Doctrine\Persistence\ManagerRegistry;
 use Invoker\ParameterResolver\ParameterResolver;
 use Invoker\ParameterResolver\DefaultValueResolver;
 use Invoker\ParameterResolver\NumericArrayResolver;
@@ -32,10 +32,10 @@ class ResolverChainFactory
 
         return new ControllerParamsResolver([
             new DoctrineParamConverterAnnotations(
-                $container->get(EntityManager::class),
+                $container->get(ManagerRegistry::class),
                 $container->get(AnnotationsLoader::class)
             ),
-            new DoctrineEntityResolver($container->get(EntityManager::class)),
+            new DoctrineEntityResolver($container->get(ManagerRegistry::class)),
             new DefinitionParameterResolver($definitionResolver),
             new NumericArrayResolver(),
             new AssociativeArrayResolver(),
