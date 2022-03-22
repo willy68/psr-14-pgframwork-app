@@ -65,7 +65,7 @@ trait MiddlewareAwareStackTrait
      * @param ContainerInterface $c
      * @return self
      */
-    public function lazyPipe(string $routePrefix, ?string $middleware = null, ContainerInterface $c): self
+    public function lazyPipe(ContainerInterface $c, string $routePrefix, ?string $middleware = null): self
     {
         $middleware = $middleware ?
             new RoutePrefixMiddleware($c, $routePrefix, $middleware) :

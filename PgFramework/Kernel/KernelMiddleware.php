@@ -63,8 +63,7 @@ class KernelMiddleware implements KernelInterface, RequestHandlerInterface
      */
     public function pipe(string $routePrefix, ?string $middleware = null): self
     {
-        /** MiddlewareAwareStackTrait::lazyPipe */
-        return $this->lazyPipe($routePrefix, $middleware, $this->getContainer());
+        return $this->lazyPipe($this->getContainer(), $routePrefix, $middleware);
     }
 
     /**

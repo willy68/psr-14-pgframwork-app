@@ -15,6 +15,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Router\Loader\DirectoryLoader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use PgFramework\Annotation\AnnotationsLoader;
+use PgFramework\Kernel\KernelEvent;
+use PgFramework\Kernel\KernelMiddleware;
 use PgFramework\Router\Annotation\Route;
 
 /**
@@ -188,19 +190,25 @@ class App extends AbstractApplication
             $module = $container->get($module);
         }
 
-        if (!$this->kernel) {
-            $this->kernel = $container->get(KernelInterface::class);
-        }
-
         if (!empty($this->listeners)) {
-            $map = $container->get(RoutesMapInterface::class);
-            [$listeners] = $map->getListeners($this->request);
-            if (null !== $listeners) {
-                $this->listeners = array_merge($this->listeners, $listeners);
+            if (!$this->kernel) {
+                $this->kernel = $container->get(KernelEvent::class);
             }
-            $this->kernel->setCallbacks($this->listeners);
+            if ($this->kernel instanceof KernelEvent) {
+                $map = $container->get(RoutesMapInterface::class);
+                [$listeners] = $map->getListeners($this->request);
+                if (null !== $listeners) {
+                    $this->listeners = array_merge($this->listeners, $listeners);
+                }
+                $this->kernel->setCallbacks($this->listeners);
+            }
         } else {
-            $this->kernel->setCallbacks($this->middlewares);
+            if (!$this->kernel) {
+                $this->kernel = $container->get(KernelMiddleware::class);
+            }
+            if ($this->kernel instanceof KernelMiddleware) {
+                $this->kernel->setCallbacks($this->middlewares);
+            }
         }
 
         try {

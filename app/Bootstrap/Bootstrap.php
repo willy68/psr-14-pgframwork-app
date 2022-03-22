@@ -1,7 +1,6 @@
 <?php
 
 use PgFramework\Environnement\Environnement;
-use Middlewares\Whoops;
 use Symfony\Component\Dotenv\Dotenv;
 
 if (!class_exists(Dotenv::class)) {
@@ -23,7 +22,6 @@ $app = (new PgFramework\App($bootstrap['config']))
     ->addListeners($bootstrap['listeners']);
 
 if (Environnement::getEnv('APP_ENV', 'production') === 'dev') {
-    //$app->pipe(Whoops::class);
     $whoops = new \Whoops\Run();
     $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler());
     $whoops->register();
