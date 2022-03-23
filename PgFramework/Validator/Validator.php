@@ -44,9 +44,8 @@ class Validator
     }
 
     /**
-     * Undocumented function
      *
-     * @param string[] $keys
+     * @param string ...$keys
      * @return self
      */
     public function required(string ...$keys): self
@@ -61,9 +60,8 @@ class Validator
     }
 
     /**
-     * Undocumented function
      *
-     * @param string[] $keys
+     * @param string ...$keys
      * @return self
      */
     public function notEmpty(string ...$keys): self
@@ -113,7 +111,6 @@ class Validator
     }
 
     /**
-     * Undocumented function
      *
      * @param string $key
      * @return self
@@ -122,7 +119,7 @@ class Validator
     {
         $value = $this->getValue($key);
         $pattern = '/^[0-9a-z]+(-[0-9a-z]*)$/';
-        if (is_null($value) && !preg_match($pattern, $value)) {
+        if (is_null($value) || !preg_match($pattern, $value)) {
             $this->addError($key, 'slug');
         }
         return $this;
