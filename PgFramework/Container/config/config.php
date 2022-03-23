@@ -68,6 +68,7 @@ use Mezzio\Router\RouterInterface;
 use PgFramework\Database\ActiveRecord\ActiveRecordFactory;
 use PgFramework\Database\Doctrine\DoctrineConfigFactory;
 use PgFramework\Database\Doctrine\EntityManagerFactory;
+use PgFramework\Database\Doctrine\OrmManagerFactory;
 use PgFramework\EventDispatcher\EventDispatcher;
 use PgFramework\EventListener\CsrfListener;
 use PgFramework\EventListener\CsrfListenerInterface;
@@ -210,17 +211,9 @@ return [
         return $c->get(EntityManager::class);
     },
     EntityManager::class => factory(EntityManagerFactory::class)
-    ->parameter('connectionEntry', 'doctrine.connection.default'),
+        ->parameter('connectionEntry', 'doctrine.connection.default'),
     'doctrine.managers' => \DI\add([
         'default' => 'doctrine.manager.default',
     ]),
-    ManagerRegistry::class => function (ContainerInterface $c): OrmManagerRegistry {
-        return new OrmManagerRegistry(
-            $c->get('doctrine.connections'),
-            $c->get('doctrine.managers'),
-            'default',
-            'default',
-            $c
-        );
-    }
+    ManagerRegistry::class => factory(OrmManagerFactory::class)
 ];
