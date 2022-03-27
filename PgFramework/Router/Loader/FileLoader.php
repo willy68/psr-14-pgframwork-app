@@ -58,12 +58,16 @@ class FileLoader
         }
 
         if (empty($routes) && $classAnnotation && $reflectionClass->hasMethod('__invoke')) {
-            $routes[] = $this->collector->route(
+            $route = $this->collector->route(
                 $classAnnotation->getPath(),
                 $reflectionClass->getName(),
                 $classAnnotation->getName(),
                 $classAnnotation->getMethods()
             );
+            if (! empty($classAnnotation->getSchemes())) {
+                $route->setSchemes($classAnnotation->getSchemes());
+            }
+            $routes[] = $route;
         }
 
         gc_mem_caches();
@@ -88,11 +92,15 @@ class FileLoader
         if ($classAnnotation) {
             $path = $classAnnotation->getPath() . $path;
         }
-        return $this->collector->route(
+        $route = $this->collector->route(
             $path,
             $method->getDeclaringClass()->getName() . "::" . $method->getName(),
             $methodAnnotation->getName(),
             $methodAnnotation->getMethods()
         );
+        if (! empty($classAnnotation->getSchemes())) {
+            $route->setSchemes($classAnnotation->getSchemes());
+        }
+        return $route;
     }
 }
