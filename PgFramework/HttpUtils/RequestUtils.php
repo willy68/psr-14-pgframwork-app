@@ -1,8 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\HttpUtils;
 
 use Psr\Http\Message\ServerRequestInterface;
+
+use function explode;
+use function in_array;
+use function json_decode;
+use function json_last_error;
+use function preg_match;
 
 class RequestUtils
 {
@@ -14,7 +22,7 @@ class RequestUtils
      */
     public static function isAjax(ServerRequestInterface $request): bool
     {
-        return 'XMLHttpRequest' == $request->getHeader('X-Requested-With');
+        return in_array('XMLHttpRequest', $request->getHeader('X-Requested-With'));
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace PgFramework\Router\Loader;
 
+use Doctrine\ORM\Mapping\Annotation;
 use ReflectionMethod;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteCollector;
@@ -58,16 +59,13 @@ class FileLoader
         }
 
         if (empty($routes) && $classAnnotation && $reflectionClass->hasMethod('__invoke')) {
-            $route = $this->collector->route(
+            $route[] = $this->collector->route(
                 $classAnnotation->getPath(),
                 $reflectionClass->getName(),
                 $classAnnotation->getName(),
                 $classAnnotation->getMethods()
-            );
-            if (! empty($classAnnotation->getSchemes())) {
-                $route->setSchemes($classAnnotation->getSchemes());
-            }
-            $routes[] = $route;
+            )
+                ->setSchemes($classAnnotation->getSchemes());
         }
 
         gc_mem_caches();
@@ -83,7 +81,7 @@ class FileLoader
      * @return Route
      */
     protected function addRoute(
-        object $methodAnnotation,
+        Annotation $methodAnnotation,
         ReflectionMethod $method,
         ?object $classAnnotation
     ): Route {
@@ -92,15 +90,12 @@ class FileLoader
         if ($classAnnotation) {
             $path = $classAnnotation->getPath() . $path;
         }
-        $route = $this->collector->route(
+        return $this->collector->route(
             $path,
             $method->getDeclaringClass()->getName() . "::" . $method->getName(),
             $methodAnnotation->getName(),
             $methodAnnotation->getMethods()
-        );
-        if (! empty($classAnnotation->getSchemes())) {
-            $route->setSchemes($classAnnotation->getSchemes());
-        }
-        return $route;
+        )
+            ->setSchemes($methodAnnotation->getSchemes());
     }
 }

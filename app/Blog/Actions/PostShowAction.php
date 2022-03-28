@@ -52,7 +52,7 @@ class PostShowAction
      * @param Post $post
      * @return mixed
      */
-    #[Route('{slug:[a-z\-0-9]+}-{id:[0-9]+}', name:'blog.show', methods:['GET'])]
+    #[Route('/{slug:[a-z\-0-9]+}-{id:[0-9]+}', name:'blog.show', methods:['GET'])]
     public function __invoke(string $slug, Post $post)
     {
         if ($post->getSlug() !== $slug) {

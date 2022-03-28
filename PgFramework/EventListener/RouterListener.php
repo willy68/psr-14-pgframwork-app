@@ -4,6 +4,7 @@ namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Response;
 use PgFramework\Event\Events;
+use Mezzio\Router\RouteResult;
 use League\Event\ListenerPriority;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Event\RequestEvent;
@@ -34,7 +35,6 @@ class RouterListener implements EventSubscriberInterface
 
         // Redirect if trailing slash on url
         $response = $this->trailingSlash($request);
-
         if (null !== $response) {
             $event->setResponse($response);
             return;
@@ -88,6 +88,31 @@ class RouterListener implements EventSubscriberInterface
             $request = $request->withMethod($parseBody['_method']);
         }
         return $request;
+    }
+
+    private function redirectHttps(
+        ServerRequestInterface $request,
+        RouteResult $result,
+        ?ResponseInterface $response = null
+    ): ?ResponseInterface {
+        $scheme = $request->getUri()->getScheme();
+        if (! $result->getMatchedRoute()->allowsScheme($scheme)) {
+            $uriClass = $request->getUri();
+            $newScheme = in_array('https', $result->getMatchedRoute()->getSchemes(), true)
+                ? 'https'
+                : $result->getMatchedRoute()->getSchemes()[0];
+            $path = $response ? $response->getHeaderLine('Location') : $uriClass->getPath();
+            $uri = $uriClass
+                ->withScheme($newScheme)
+                ->withPath($path)
+                ->__toString();
+            $response = $response ?
+                $response->withHeader('Location', $uri) :
+                (new Response())
+                    ->withStatus(301)
+                    ->withHeader('Location', $uri);
+        }
+        return $response;
     }
 
     public static function getSubscribedEvents()
