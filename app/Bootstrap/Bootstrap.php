@@ -21,7 +21,7 @@ $app = (new PgFramework\App($bootstrap['config']))
     //->addMiddlewares($bootstrap['middlewares']);
     ->addListeners($bootstrap['listeners']);
 
-if (Environnement::getEnv('APP_ENV', 'production') === 'dev') {
+if (Environnement::getEnv('APP_ENV', 'prod') === 'dev') {
     $whoops = new \Whoops\Run();
     $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler());
     $whoops->register();

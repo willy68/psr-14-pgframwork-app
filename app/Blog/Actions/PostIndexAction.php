@@ -35,12 +35,12 @@ class PostIndexAction
 
     /**
      *
-     * @Route("/blog", name="blog.index", methods={"GET"})
+     * @Route("/dblog", name="blog.indexAR", methods={"GET"})
      *
      * @param Request $request
      * @return string
      */
-    #[Route('/blog', name:'blog.index', methods:['GET'])]
+    #[Route('/dblog', name:'blog.indexAR', methods:['GET'])]
     public function __invoke(Request $request): string
     {
         $params = $request->getQueryParams();
@@ -53,13 +53,14 @@ class PostIndexAction
     }
 
     /**
-     * @Route("/dblog", name="blog.indexORM", methods={"GET"})
+     *
+     * @Route("/blog", name="blog.index", methods={"GET"})
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param \Doctrine\ORM\EntityManager $em
      * @return string
      */
-    #[Route('/dblog', name:'blog.indexORM', methods:['GET'])]
+    #[Route('/blog', name:'blog.index', methods:['GET'])]
     public function index(Request $request, EntityManager $em): string
     {
         $params = $request->getQueryParams();

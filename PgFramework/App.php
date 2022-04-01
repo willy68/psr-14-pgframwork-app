@@ -228,8 +228,8 @@ class App extends AbstractApplication
     {
         if ($this->container === null) {
             $builder = new ContainerBuilder();
-            $env = Environnement::getEnv('APP_ENV', 'production');
-            if ($env === 'production') {
+            $env = Environnement::getEnv('APP_ENV', 'prod');
+            if ($env === 'prod') {
                 $builder->enableCompilation(self::COMPILED_CONTAINER_DIRECTORY);
                 $builder->writeProxiesToFile(true, self::PROXY_DIRECTORY);
             }
@@ -244,6 +244,15 @@ class App extends AbstractApplication
             $this->container = $builder->build();
         }
         return $this->container;
+    }
+
+    /**
+     *
+     * @return KernelInterface|null
+     */
+    public function getKernel(): ?KernelInterface
+    {
+        return $this->kernel;
     }
 
     /**

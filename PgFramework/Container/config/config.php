@@ -1,6 +1,6 @@
 <?php
 
-use PgFramework\Database\Doctrine\OrmManagerRegistry;
+use DebugBar\DebugBar;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\Configuration;
@@ -11,6 +11,7 @@ use Psr\Container\ContainerInterface;
 use Grafikart\Csrf\CsrfMiddleware;
 use PgFramework\Twig\{
     CsrfExtension,
+    DebugBarExtension,
     FormExtension,
     TextExtension,
     TimeExtension,
@@ -69,6 +70,7 @@ use PgFramework\Database\ActiveRecord\ActiveRecordFactory;
 use PgFramework\Database\Doctrine\DoctrineConfigFactory;
 use PgFramework\Database\Doctrine\EntityManagerFactory;
 use PgFramework\Database\Doctrine\OrmManagerFactory;
+use PgFramework\DebugBar\DebugBarFactory;
 use PgFramework\EventDispatcher\EventDispatcher;
 use PgFramework\EventListener\CsrfListener;
 use PgFramework\EventListener\CsrfListenerInterface;
@@ -104,6 +106,7 @@ return [
         get(FormExtension::class),
         get(CsrfExtension::class),
         get(WebpackExtension::class),
+        //get(DebugBarExtension::class),
     ],
     'form.validations' => \DI\add([
         'required' => RequiredValidation::class,
@@ -215,5 +218,6 @@ return [
     'doctrine.managers' => \DI\add([
         'default' => 'doctrine.manager.default',
     ]),
-    ManagerRegistry::class => factory(OrmManagerFactory::class)
+    ManagerRegistry::class => factory(OrmManagerFactory::class),
+    DebugBar::class => factory(DebugBarFactory::class)
 ];

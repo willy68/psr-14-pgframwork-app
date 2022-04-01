@@ -7,6 +7,7 @@ use App\Demo\DemoModule;
 use App\Admin\AdminModule;
 use App\Api\ApiClientModule;
 use Application\Console\ConsoleModule;
+use PgFramework\DebugBar\EventListener\DebugBarListener;
 use PgFramework\Security\Firewall\Firewall;
 use PgFramework\Middleware\MethodMiddleware;
 use PgFramework\Middleware\RouterMiddleware;
@@ -65,6 +66,7 @@ return [
         CallableResolverListener::class,
         ParamsResolverListener::class,
         StringResponseListener::class,
+        DebugBarListener::class,
         RecordNotFoundListener::class,
     ],
 

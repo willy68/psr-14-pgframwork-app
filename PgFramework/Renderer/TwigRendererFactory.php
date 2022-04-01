@@ -3,9 +3,13 @@
 namespace PgFramework\Renderer;
 
 use Twig\Environment;
+use DebugBar\DebugBar;
+use Twig\Profiler\Profile;
 use Twig\Loader\FilesystemLoader;
-use Psr\Container\ContainerInterface;
 use Twig\Extension\DebugExtension;
+use Psr\Container\ContainerInterface;
+use Twig\Extension\ProfilerExtension;
+use DebugBar\Bridge\NamespacedTwigProfileCollector;
 
 /**
  * Undocumented class
@@ -20,7 +24,7 @@ class TwigRendererFactory
    */
     public function __invoke(ContainerInterface $container): TwigRenderer
     {
-        $debug = $container->get('env') !== 'production';
+        $debug = $container->get('env') !== 'prod';
 
         $viewPath = $container->get('views.path');
         $loader = new FilesystemLoader($viewPath);
@@ -34,6 +38,14 @@ class TwigRendererFactory
             foreach ($container->get('twig.extensions') as $extension) {
                 $twig->addExtension($extension);
             }
+        }
+
+        if ($debug && $container->has(DebugBar::class)) {
+            /** @var DebugBar */
+            $debugBar = $container->get(DebugBar::class);
+            $profile = new Profile();
+            $twig->addExtension(new ProfilerExtension($profile));
+            $debugBar->addCollector(new NamespacedTwigProfileCollector($profile, $twig));
         }
         return new TwigRenderer($twig);
     }

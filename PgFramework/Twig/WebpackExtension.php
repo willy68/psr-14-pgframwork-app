@@ -2,9 +2,7 @@
 
 namespace PgFramework\Twig;
 
-use InvalidArgumentException;
 use Twig\TwigFunction;
-use Psr\Container\ContainerInterface;
 use Twig\Extension\AbstractExtension;
 
 class WebpackExtension extends AbstractExtension

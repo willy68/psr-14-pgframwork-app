@@ -2,10 +2,9 @@
 
 namespace PgFramework\Session;
 
-class PHPSession implements SessionInterface, \ArrayAccess
+class PHPSession implements SessionInterface, \ArrayAccess, \Iterator, \Countable
 {
     /**
-     * Undocumented function
      *
      * @param string $key
      * @param mixed $default
@@ -21,7 +20,6 @@ class PHPSession implements SessionInterface, \ArrayAccess
     }
 
     /**
-     * Undocumented function
      *
      * @param string $key
      * @param mixed $value
@@ -34,7 +32,6 @@ class PHPSession implements SessionInterface, \ArrayAccess
     }
 
     /**
-     * Undocumented function
      *
      * @param string $key
      * @return void
@@ -93,5 +90,40 @@ class PHPSession implements SessionInterface, \ArrayAccess
     public function offsetUnset($offset)
     {
         $this->delete($offset);
+    }
+    #[\ReturnTypeWillChange]
+    public function count()
+    {
+        return count($_SESSION);
+    }
+
+    #[\ReturnTypeWillChange]
+    public function rewind()
+    {
+        reset($_SESSION);
+    }
+
+    #[\ReturnTypeWillChange]
+    public function current()
+    {
+        return current($_SESSION);
+    }
+
+    #[\ReturnTypeWillChange]
+    public function next()
+    {
+        next($_SESSION);
+    }
+
+    #[\ReturnTypeWillChange]
+    public function key()
+    {
+        return key($_SESSION);
+    }
+
+    #[\ReturnTypeWillChange]
+    public function valid()
+    {
+        return key($_SESSION) !== null;
     }
 }
