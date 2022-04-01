@@ -111,7 +111,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
         $statusCode = $response->getStatusCode();
 
         $data = [
-            'path_info' => $request->getServerParams()['PATH_INFO'],
+            'path_info' => $request->getServerParams()['PATH_INFO'] ?? '',
             'status_code' => $statusCode,
             'status_text' => ! empty($response->getReasonPhrase()) ? $response->getReasonPhrase() : '',
             'content_type' => $response->getHeader('Content-Type') ? $response->getHeader('Content-Type') : 'text/html',
