@@ -14,7 +14,7 @@ class RouteCollector extends DataCollector implements Renderable, AssetProvider
 
     protected $router;
 
-    public function __construct(RouteResult $routeResult, RouterInterface $router)
+    public function __construct(RouterInterface $router, ?RouteResult $routeResult = null)
     {
         $this->routeResult = $routeResult;
         $this->router = $router;
@@ -27,8 +27,13 @@ class RouteCollector extends DataCollector implements Renderable, AssetProvider
 
     public function collect()
     {
-        $route = $this->routeResult->getMatchedRoute();
+        if (null === $this->routeResult) {
+            return $data = [
+                'text' => 'route fail'
+            ];
+        }
 
+        $route = $this->routeResult->getMatchedRoute();
         if ($route) {
             $data = [
                 'uri' => $this->router->generateUri($route->getName(), $this->routeResult->getMatchedParams()),
@@ -37,10 +42,6 @@ class RouteCollector extends DataCollector implements Renderable, AssetProvider
                 'callback' => $route->getCallback(),
             ];
             $text = $data['text'] = implode(', ', $data['methods']) . ' ' . $route->getPath();
-        } else {
-            $data = [
-                'text' => 'route fail'
-            ];
         }
 
         foreach ($data as $key => $value) {

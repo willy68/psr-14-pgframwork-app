@@ -55,14 +55,13 @@ class DebugBarListener implements EventSubscriberInterface
                 ->useHtmlVarDumper(true)
         );
 
-        if ($routeResult = $request->getAttribute(RouteResult::class)) {
-            $this->debugBar->addCollector(
-                new RouteCollector(
-                    $routeResult,
-                    $app->getContainer()->get(RouterInterface::class)
-                )
-            );
-        }
+        $routeResult = $request->getAttribute(RouteResult::class);
+        $this->debugBar->addCollector(
+            new RouteCollector(
+                $app->getContainer()->get(RouterInterface::class),
+                $routeResult
+            )
+        );
 
         $event->setResponse($this->debugBar->injectDebugbar($response));
     }
