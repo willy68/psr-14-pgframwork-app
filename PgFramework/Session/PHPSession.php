@@ -94,36 +94,41 @@ class PHPSession implements SessionInterface, \ArrayAccess, \Iterator, \Countabl
     #[\ReturnTypeWillChange]
     public function count()
     {
+        $this->ensureStarted();
         return count($_SESSION);
     }
 
     #[\ReturnTypeWillChange]
     public function rewind()
     {
+        $this->ensureStarted();
         reset($_SESSION);
     }
 
     #[\ReturnTypeWillChange]
     public function current()
     {
+        $this->ensureStarted();
         return current($_SESSION);
     }
 
     #[\ReturnTypeWillChange]
     public function next()
     {
+        $this->ensureStarted();
         next($_SESSION);
     }
 
     #[\ReturnTypeWillChange]
     public function key()
     {
+        $this->ensureStarted();
         return key($_SESSION);
     }
 
     #[\ReturnTypeWillChange]
     public function valid()
     {
-        return key($_SESSION) !== null;
+        return $this->key() !== null;
     }
 }

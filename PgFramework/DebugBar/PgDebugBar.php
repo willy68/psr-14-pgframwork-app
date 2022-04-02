@@ -18,13 +18,10 @@ class PgDebugBar extends DebugBar
 {
     public function __construct()
     {
-        $this->addCollector(new PhpInfoCollector());
-        $this->addCollector(new MessagesCollector());
-
-        $startTime = $_SERVER['REQUEST_TIME_FLOAT'] ?? time();
-        $this->addCollector(new TimeDataCollector($startTime));
-
-        $this->addCollector(new MemoryCollector());
+        $this->addCollector(new PhpInfoCollector())
+            ->addCollector(new MessagesCollector())
+            ->addCollector(new TimeDataCollector())
+            ->addCollector(new MemoryCollector());
 
         try {
             $exceptionCollector = new ExceptionsCollector();

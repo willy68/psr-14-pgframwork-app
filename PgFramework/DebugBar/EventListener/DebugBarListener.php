@@ -5,12 +5,15 @@ namespace PgFramework\DebugBar\EventListener;
 use DebugBar\DebugBar;
 use PgFramework\Event\Events;
 use League\Event\ListenerPriority;
+use Mezzio\Router\RouteResult;
+use Mezzio\Router\RouterInterface;
 use PgFramework\ApplicationInterface;
 use PgFramework\DebugBar\PgDebugBar;
 use PgFramework\Event\ResponseEvent;
 use PgFramework\HttpUtils\RequestUtils;
 use PgFramework\Session\SessionInterface;
 use PgFramework\DebugBar\DataCollector\RequestCollector;
+use PgFramework\DebugBar\DataCollector\RouteCollector;
 use PgFramework\Environnement\Environnement;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
@@ -51,6 +54,15 @@ class DebugBarListener implements EventSubscriberInterface
             (new RequestCollector($request, $response, $app->getContainer()->get(SessionInterface::class)))
                 ->useHtmlVarDumper(true)
         );
+
+        if ($routeResult = $request->getAttribute(RouteResult::class)) {
+            $this->debugBar->addCollector(
+                new RouteCollector(
+                    $routeResult,
+                    $app->getContainer()->get(RouterInterface::class)
+                )
+            );
+        }
 
         $event->setResponse($this->debugBar->injectDebugbar($response));
     }
