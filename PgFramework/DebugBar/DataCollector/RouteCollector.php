@@ -35,17 +35,17 @@ class RouteCollector extends DataCollector implements Renderable, AssetProvider
 
         $route = $this->routeResult->getMatchedRoute();
         if ($route) {
-            $data = [
+            $data['data'] = [
                 'uri' => $this->router->generateUri($route->getName(), $this->routeResult->getMatchedParams()),
                 'methods' => $route->getAllowedMethods(),
                 'name' => $route->getName(),
                 'callback' => $route->getCallback(),
             ];
-            $text = $data['text'] = implode(', ', $data['methods']) . ' ' . $route->getPath();
+            $text = implode(', ', $data['data']['methods']) . ' ' . $route->getPath();
         }
 
-        foreach ($data as $key => $value) {
-            $data[$key] = $this->getVarDumper()->renderVar($value);
+        foreach ($data['data'] as $key => $value) {
+            $data['data'][$key] = $this->getVarDumper()->renderVar($value);
         }
         $data['text'] = $text;
 
@@ -58,7 +58,7 @@ class RouteCollector extends DataCollector implements Renderable, AssetProvider
             "route" => [
                 "icon" => "share",
                 "widget" => "PhpDebugBar.Widgets.HtmlVariableListWidget",
-                "map" => "route",
+                "map" => "route.data",
                 "default" => "{}"
             ],
             'currentroute' => [
