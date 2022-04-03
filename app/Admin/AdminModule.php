@@ -3,12 +3,12 @@
 namespace App\Admin;
 
 use PgFramework\Module;
-use Mezzio\Router\FastRouteRouter;
-use Mezzio\Router\RouterInterface;
+use Mezzio\Router\RouteCollector;
 use App\Blog\Actions\PostCrudAction;
 use PgFramework\Renderer\TwigRenderer;
 use App\Blog\Actions\CategoryCrudAction;
 use PgFramework\Auth\LoggedInMiddleware;
+use Mezzio\Router\RouteCollectionInterface;
 use PgFramework\Renderer\RendererInterface;
 use PgFramework\Auth\Middleware\CookieLoginMiddleware;
 
@@ -23,11 +23,12 @@ class AdminModule extends Module
     public function __construct(
         RendererInterface $renderer,
         AdminTwigExtension $adminTwigExtension,
-        RouterInterface $router,
+        RouteCollectionInterface $router,
         string $prefix
     ) {
         $renderer->addPath('admin', __DIR__ . '/views');
-        /** @var FastRouteRouter $router */
+
+        /** @var RouteCollector $router*/
         $router->crud("$prefix/posts", PostCrudAction::class, 'blog.admin')
             ->middleware(CookieLoginMiddleware::class)
             ->middleware(LoggedInMiddleware::class);

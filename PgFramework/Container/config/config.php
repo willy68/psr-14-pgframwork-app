@@ -64,6 +64,7 @@ use Invoker\CallableResolver;
 use Invoker\Invoker;
 use Invoker\ParameterResolver\ParameterResolver;
 use Mezzio\Router\FastRouteRouter;
+use Mezzio\Router\RouteCollectionInterface;
 use Mezzio\Router\RouteCollector;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Database\ActiveRecord\ActiveRecordFactory;
@@ -159,6 +160,7 @@ return [
     'duplicate.route' => true,
     RouteCollector::class => \DI\autowire()
         ->constructorParameter("detectDuplicates", \DI\get('duplicate.route')),
+    RouteCollectionInterface::class => get(RouteCollector::class),
     RendererInterface::class => factory(TwigRendererFactory::class),
     'database.sgdb' => Environnement::getEnv('DATABASE_SGDB', 'mysql'),
     'database.host' => Environnement::getEnv('DATABASE_HOST', 'localhost'),
