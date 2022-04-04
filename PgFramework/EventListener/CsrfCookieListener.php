@@ -25,7 +25,7 @@ class CsrfCookieListener implements EventSubscriberInterface
         'cookieName' => 'XSRF-TOKEN',
         'header' => 'X-CSRF-TOKEN',
         'field' => '_csrf',
-        'expiry' => 0,
+        'expiry' => null,
         'secure' => false,
         'httponly' => true,
         'samesite' => null,
@@ -69,13 +69,11 @@ class CsrfCookieListener implements EventSubscriberInterface
 
         if (is_string($cookie) && strlen($cookie) > 0) {
             [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
-            $request = $request->withAttribute(
-                $this->config['field'],
-                $this->tokenManager->getToken($tokenId)
-            );
+            $cookie = $this->tokenManager->getToken($tokenId);
+            $request = $request->withAttribute($this->config['field'], $cookie);
         }
 
-        if (\in_array($method, ['GET', 'HEAD'], true) && strlen($cookie) === 0) {
+        if (\in_array($method, ['GET', 'HEAD'], true) && null === $cookie) {
             $token = $this->getToken();
             $request = $request->withAttribute($this->config['field'], $token);
         }
@@ -129,10 +127,15 @@ class CsrfCookieListener implements EventSubscriberInterface
         $e = $event->getException();
         $request = $event->getRequest();
         $token = $request->getAttribute($this->config['field']);
-        [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $token);
+        $tokenId = '';
+        if ($token) {
+            [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $token);
+        }
 
         if ($e instanceof InvalidCsrfException) {
-            $this->tokenManager->removeToken($tokenId);
+            if ($token) {
+                $this->tokenManager->removeToken($tokenId);
+            }
 
             if (RequestUtils::isJson($request)) {
                 $response = new Response(403, [], json_encode($e->getMessage()));

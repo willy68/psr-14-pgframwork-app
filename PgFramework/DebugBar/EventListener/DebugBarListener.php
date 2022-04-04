@@ -8,6 +8,7 @@ use League\Event\ListenerPriority;
 use Mezzio\Router\RouteResult;
 use Mezzio\Router\RouterInterface;
 use PgFramework\ApplicationInterface;
+use PgFramework\DebugBar\DataCollector\AuthCollector;
 use PgFramework\DebugBar\PgDebugBar;
 use PgFramework\Event\ResponseEvent;
 use PgFramework\HttpUtils\RequestUtils;
@@ -62,6 +63,8 @@ class DebugBarListener implements EventSubscriberInterface
                 $routeResult
             )
         );
+
+        $this->debugBar->addCollector($app->getContainer()->get(AuthCollector::class));
 
         $event->setResponse($this->debugBar->injectDebugbar($response));
     }
