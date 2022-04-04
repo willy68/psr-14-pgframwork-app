@@ -24,7 +24,7 @@ class DirectoryLoader extends FileLoader
 
         $routes = [];
         foreach ($files as $file) {
-            $res = parent::load($file);
+            $res = parent::load((string)$file);
             if ($res) {
                 $routes[] = $res;
             }
