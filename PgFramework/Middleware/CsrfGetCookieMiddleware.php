@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Middleware;
 
 use Dflydev\FigCookies\SetCookie;
@@ -96,14 +98,20 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
         return $handler->handle($request);
     }
 
-    protected function validateToken($token, $cookie)
+    protected function validateToken(?string $token = null, ?string $cookie = null)
     {
+        if (!$token) {
+            throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
+        }
+
         if (!$cookie) {
             throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
         }
+
         if (!$this->tokenManager->isTokenValid($token)) {
             throw new InvalidCsrfException('Le Csrf est incorrect');
         }
+
         if (!hash_equals($token, $cookie)) {
             throw new InvalidCsrfException('Le cookie Csrf est incorrect');
         }

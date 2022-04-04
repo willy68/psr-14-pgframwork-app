@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Router\Loader;
 
 use PgFramework\File\FileUtils;

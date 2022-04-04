@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Invoker\ParameterResolver;
 
 use Invoker\ParameterResolver\ParameterResolver;
@@ -14,13 +16,11 @@ class DoctrineParamConverterAnnotations implements ParameterResolver
     use AnnotationReaderTrait;
 
     /**
-     *
      * @var ManagerRegistry
      */
     private $mg;
 
     /**
-     *
      * @var AnnotationsLoader
      */
     private $annotationsLoader;

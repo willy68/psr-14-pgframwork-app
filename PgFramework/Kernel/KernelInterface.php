@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Kernel;
 
 use Psr\Http\Message\ResponseInterface;

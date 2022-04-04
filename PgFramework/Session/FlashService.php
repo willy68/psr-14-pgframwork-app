@@ -1,33 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Session;
 
 class FlashService
 {
     /**
-     * Undocumented variable
-     *
      * @var SessionInterface
      */
     private $session;
 
     /**
-     * Undocumented variable
-     *
      * @var string
      */
     private $sessionKey = 'flash';
 
     /**
-     * Undocumented variable
-     *
      * @var string
      */
     private $messages;
 
     /**
-     * Undocumented function
-     *
      * @param SessionInterface $session
      */
     public function __construct(SessionInterface $session)
@@ -36,8 +30,6 @@ class FlashService
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $message
      * @return void
      */
@@ -49,8 +41,6 @@ class FlashService
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $message
      * @return void
      */
@@ -62,8 +52,6 @@ class FlashService
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $type
      * @return string|null
      */

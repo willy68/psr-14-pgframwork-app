@@ -1,26 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Database;
 
 class QueryResult implements \ArrayAccess, \Iterator
 {
     /**
-     * Undocumented variable
-     *
      * @var array
      */
     private $records;
 
     /**
-     * Undocumented variable
-     *
      * @var mixed
      */
     private $entity;
 
     /**
-     * Undocumented variable
-     *
      * @var int
      */
     private $index = 0;
@@ -28,8 +24,6 @@ class QueryResult implements \ArrayAccess, \Iterator
     private $hydratedRecords = [];
 
     /**
-     *
-     *
      * @param array $records
      * @param string|null $entity
      */
@@ -40,8 +34,6 @@ class QueryResult implements \ArrayAccess, \Iterator
     }
 
     /**
-     * Undocumented function
-     *
      * @param int $index
      * @return mixed
      */
@@ -58,7 +50,6 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * @inheritDoc
-     *
      */
     #[\ReturnTypeWillChange]
     public function offsetExists($offset)
@@ -68,7 +59,6 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * @inheritDoc
-     *
      */
     #[\ReturnTypeWillChange]
     public function offsetGet($offset)
@@ -78,7 +68,6 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * @inheritDoc
-     *
      */
     #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
@@ -88,7 +77,6 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * @inheritDoc
-     *
      */
     #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
@@ -98,7 +86,6 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * @inheritDoc
-     *
      */
     #[\ReturnTypeWillChange]
     public function current()
@@ -108,7 +95,6 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * @inheritDoc
-     *
      */
     #[\ReturnTypeWillChange]
     public function key()
@@ -118,7 +104,6 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * @inheritDoc
-     *
      */
     #[\ReturnTypeWillChange]
     public function next(): void
@@ -128,7 +113,6 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * @inheritDoc
-     *
      */
     #[\ReturnTypeWillChange]
     public function rewind()
@@ -138,7 +122,6 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * @inheritDoc
-     *
      */
     #[\ReturnTypeWillChange]
     public function valid()

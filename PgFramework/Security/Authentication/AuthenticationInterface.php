@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Security\Authentication;
 
 use PgFramework\Security\Authentication\Exception\AuthenticationFailureException;

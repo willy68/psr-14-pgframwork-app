@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Validator\Rules;
 
 use PgFramework\Validator\ValidationInterface;
@@ -59,7 +61,7 @@ class SlugValidation implements ValidationInterface
      */
     public function isValid($value): bool
     {
-        if (is_null($value) && !preg_match($this->pattern, $value)) {
+        if (is_null($value) || !preg_match($this->pattern, $value)) {
             return false;
         }
         return true;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Database;
 
 use PDO;
@@ -10,29 +12,21 @@ use PDO;
 class Table
 {
     /**
-     * Undocumented variable
-     *
      * @var PDO
      */
     protected $pdo;
 
     /**
-     * Undocumented variable
-     *
      * @var string
      */
     protected $table;
 
     /**
-     * Undocumented variable
-     *
      * @var string|null
      */
     protected $entity = \stdClass::class;
 
     /**
-     * Undocumented function
-     *
      * @param PDO $pdo
      */
     public function __construct(PDO $pdo)
@@ -43,8 +37,6 @@ class Table
     }
 
     /**
-     *
-     *
      * @return Query
      */
     public function makeQuery(): Query
@@ -55,8 +47,6 @@ class Table
     }
 
     /**
-     *
-     *
      * @return array
      */
     public function findList(): array
@@ -71,8 +61,6 @@ class Table
     }
 
     /**
-     * Undocumented function
-     *
      * @return Query
      */
     public function findAll(): Query
@@ -81,8 +69,6 @@ class Table
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $field
      * @param string $value
      * @return mixed
@@ -94,8 +80,6 @@ class Table
     }
 
     /**
-     * Undocumented function
-     *
      * @param integer $id
      * @return mixed
      * @throws NoRecordException
@@ -106,8 +90,6 @@ class Table
     }
 
     /**
-     * Undocumented function
-     *
      * @param int $id
      * @param array $params
      * @return bool
@@ -121,8 +103,6 @@ class Table
     }
 
     /**
-     * Undocumented function
-     *
      * @param array $params
      * @return bool
      */
@@ -142,8 +122,6 @@ class Table
     }
 
     /**
-     * Undocumented function
-     *
      * @param int $id
      * @return bool
      */
@@ -154,8 +132,6 @@ class Table
     }
 
     /**
-     * Undocumented function
-     *
      * @param mixed $id
      * @return bool
      */
@@ -167,8 +143,6 @@ class Table
     }
 
     /**
-     * Undocumented function
-     *
      * @return mixed
      */
     public function count()
@@ -177,8 +151,6 @@ class Table
     }
 
     /**
-     * Undocumented function
-     *
      * @param array $params
      * @return string
      */
@@ -190,8 +162,6 @@ class Table
     }
 
     /**
-     * Undocumented function
-     *
      * @return string
      */
     public function getEntity(): string
@@ -200,8 +170,6 @@ class Table
     }
 
     /**
-     * Undocumented function
-     *
      * @return string
      */
     public function getTable(): string
@@ -210,8 +178,6 @@ class Table
     }
 
     /**
-     * Get undocumented variable
-     *
      * @return  PDO
      */
     public function getPdo()
@@ -220,8 +186,6 @@ class Table
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $query
      * @param array $params
      * @return mixed
@@ -241,9 +205,7 @@ class Table
         return $record;
     }
 
-        /**
-     * Undocumented function
-     *
+    /**
      * @param string $query
      * @param array $params
      * @return mixed

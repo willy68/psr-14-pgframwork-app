@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Response;
@@ -8,7 +10,6 @@ use PgFramework\Event\RequestEvent;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use League\Event\ListenerPriority;
 use PgFramework\Event\Events;
-use PgFramework\Event\ResponseEvent;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class MethodOptionsListener implements EventSubscriberInterface

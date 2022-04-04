@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Response;
@@ -18,10 +20,6 @@ class PageNotFoundListener implements EventSubscriberInterface
      */
     private $renderer;
 
-    /**
-     *
-     * @param RendererInterface $renderer
-     */
     public function __construct(RendererInterface $renderer)
     {
         $this->renderer = $renderer;

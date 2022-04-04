@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use PgFramework\Environnement\Environnement;
 use Symfony\Component\Dotenv\Dotenv;
 

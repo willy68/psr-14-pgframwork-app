@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\DebugBar\Middleware;
 
 use DebugBar\DebugBar;

@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Middleware;
 
-use Invoker\Invoker;
 use GuzzleHttp\Psr7\Response;
 use Invoker\CallableResolver;
 use Mezzio\Router\RouteResult;
@@ -101,7 +102,7 @@ class DispatcherMiddleware implements MiddlewareInterface, RequestHandlerInterfa
     }
 
     /**
-     * Prepare la pile de middleware du router
+     * Prepare la pile de middlewares du router
      *
      * @param Router $router
      * @param Route|null $route
@@ -131,11 +132,10 @@ class DispatcherMiddleware implements MiddlewareInterface, RequestHandlerInterfa
     }
 
     /**
-     * Wrap$route callable controller in middleware
+     * Wrap $route callable controller in middleware
      *
      * @param RouteResult $route
      * @param ContainerInterface $container
-     * @param Invoker $invoker
      * @return MiddlewareInterface
      */
     protected function routeCallableMiddleware(
@@ -157,13 +157,6 @@ class DispatcherMiddleware implements MiddlewareInterface, RequestHandlerInterfa
              * @var ContainerInterface
              */
             protected $container;
-
-            /**
-             * Invoker des callback des$route
-             *
-             * @var Invoker
-             */
-            protected $invoker;
 
             /**
              *  constructor.

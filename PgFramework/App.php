@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework;
 
 use Exception;
@@ -11,7 +13,6 @@ use Psr\Container\ContainerInterface;
 use PgFramework\Kernel\KernelInterface;
 use Psr\Http\Message\ResponseInterface;
 use PgFramework\Kernel\KernelMiddleware;
-use PgFramework\Router\Annotation\Route;
 use PgFramework\Router\RoutesMapInterface;
 use PgFramework\Environnement\Environnement;
 use Psr\Http\Message\ServerRequestInterface;

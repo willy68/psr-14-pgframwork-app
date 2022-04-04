@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Demo\Controller;
 
 use DateTime;
@@ -11,7 +13,6 @@ use App\Repository\PostRepository;
 use Psr\Container\ContainerInterface;
 use PgFramework\Router\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
-use PgFramework\Validator\ValidationRules;
 use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Invoker\Annotation\ParameterConverter;

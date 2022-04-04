@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Auth;
 
 use PgFramework\Auth;
@@ -67,10 +69,6 @@ class AuthSession implements Auth
         return null;
     }
 
-    /**
-     *
-     * @return void
-     */
     public function logout(): void
     {
         $this->session->delete($this->options['sessionName']);

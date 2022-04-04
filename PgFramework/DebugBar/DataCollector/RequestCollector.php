@@ -1,7 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\DebugBar\DataCollector;
 
+use DateTime;
+use DateTimeZone;
+use InvalidArgumentException;
 use PgFramework\ApplicationInterface;
 use DebugBar\DataCollector\Renderable;
 use Psr\Http\Message\ResponseInterface;
@@ -20,8 +25,10 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
 {
     /** @var ServerRequestInterface $request */
     protected $request;
+
     /** @var  ResponseInterface $response */
     protected $response;
+
     /** @var  SessionInterface $session */
     protected $session;
 
@@ -165,19 +172,19 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
         if (0 !== $expires) {
             if (is_numeric($expires)) {
                 $expires = (int) $expires;
-            } elseif ($expires instanceof \DateTime) {
+            } elseif ($expires instanceof DateTime) {
                 $expires = $expires->getTimestamp();
             } else {
                 $expires = strtotime($expires);
                 if (false === $expires || -1 == $expires) {
-                    throw new \InvalidArgumentException(
+                    throw new InvalidArgumentException(
                         sprintf('The "expires" cookie parameter is not valid.', $expires)
                     );
                 }
             }
 
             $cookie .= '; expires=' . substr(
-                \DateTime::createFromFormat('U', $expires, new \DateTimeZone('UTC'))->format('D, d-M-Y H:i:s T'),
+                DateTime::createFromFormat('U', (string)$expires, new DateTimeZone('UTC'))->format('D, d-M-Y H:i:s T'),
                 0,
                 -5
             );

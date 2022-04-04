@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Auth\Middleware;
 
 use GuzzleHttp\Psr7\Response;
@@ -19,8 +21,6 @@ class ForbidenMiddleware implements MiddlewareInterface
     private $loginPath;
 
     /**
-     * Undocumented variable
-     *
      * @var SessionInterface
      */
     private $session;

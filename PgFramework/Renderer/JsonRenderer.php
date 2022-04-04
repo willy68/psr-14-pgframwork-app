@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Renderer;
 
 class JsonRenderer implements RendererInterface
@@ -21,7 +23,7 @@ class JsonRenderer implements RendererInterface
      *
      * @param mixed $view
      * @param array|int|null $options
-     * @return void
+     * @return string
      */
     public function toJson($view, $options): string
     {
@@ -50,7 +52,6 @@ class JsonRenderer implements RendererInterface
     }
 
     /**
-     *
      * Transform le tableau $record (\ActiveRecord\Model)
      * en un tableau d'objets json
      *

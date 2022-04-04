@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Actions;
 
 use ActiveRecord\Model;
 use PgFramework\Database\Table;
-use PgFramework\Database\Hydrator;
 use PgFramework\Validator\Validator;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Session\FlashService;
@@ -16,21 +17,14 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 class CrudAction
 {
-    /**
-     *
-     */
     use RouterAwareAction;
 
     /**
-     * Undocumented variable
-     *
      * @var RendererInterface
      */
     private $renderer;
 
     /**
-     * Undocumented variable
-     *
      * @var Table
      */
     protected $table;
@@ -43,36 +37,26 @@ class CrudAction
     protected $model = Model::class;
 
     /**
-     * Undocumented variable
-     *
      * @var RouterInterface
      */
     private $router;
 
     /**
-     * Undocumented variable
-     *
      * @var FlashService
      */
     private $flash;
 
     /**
-     * Undocumented variable
-     *
      * @var string
      */
     protected $viewPath;
 
     /**
-     * Undocumented variable
-     *
      * @var string
      */
     protected $routePrefix;
 
     /**
-     * Undocumented variable
-     *
      * @var array
      */
     protected $messages = [
@@ -82,8 +66,6 @@ class CrudAction
     ];
 
     /**
-     * Undocumented function
-     *
      * @param RendererInterface $renderer
      * @param Table $table
      * @param RouterInterface $router
@@ -240,7 +222,7 @@ class CrudAction
     }
 
     /**
-     * Undocumented function
+     * Get validator form fields
      *
      * @param Request $request
      * @return Validator
@@ -251,8 +233,6 @@ class CrudAction
     }
 
     /**
-     * Undocumented function
-     *
      * @return mixed
      */
     protected function getNewEntity()
@@ -261,8 +241,6 @@ class CrudAction
     }
 
     /**
-     * Undocumented function
-     *
      * @param array $params
      * @return array
      */

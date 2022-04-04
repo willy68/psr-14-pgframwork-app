@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Middleware;
 
 use Mezzio\Router\RouterInterface;
@@ -15,10 +17,6 @@ class RouterMiddleware implements MiddlewareInterface
    */
     private $router;
 
-    /**
-     * RouterMiddleware constructor.
-     * @param RouterInterface $router
-     */
     public function __construct(RouterInterface $router)
     {
         $this->router = $router;

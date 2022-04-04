@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework;
 
 use Intervention\Image\ImageManager;
@@ -8,22 +10,16 @@ use Psr\Http\Message\UploadedFileInterface;
 class Upload
 {
     /**
-     * Undocumented variable
-     *
      * @var string
      */
     protected $path;
 
     /**
-     * Undocumented variable
-     *
      * @var array
      */
     protected $formats = [];
 
     /**
-     * Undocumented function
-     *
      * @param string|null $path
      */
     public function __construct(?string $path = null)
@@ -34,8 +30,6 @@ class Upload
     }
 
     /**
-     * Undocumented function
-     *
      * @param UploadedFileInterface $file
      * @param string|null $oldFile
      * @return string|null
@@ -57,8 +51,6 @@ class Upload
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $targetPath
      * @return string
      */
@@ -76,8 +68,6 @@ class Upload
     }
 
     /**
-     * Undocumented function
-     *
      * @param string|null $oldFile
      * @return void
      */

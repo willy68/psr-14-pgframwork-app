@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Middleware;
 
 use Psr\Container\ContainerInterface;
@@ -11,28 +13,23 @@ use Psr\Http\Server\RequestHandlerInterface;
 class RoutePrefixMiddleware implements MiddlewareInterface
 {
     /**
-     * Undocumented variable
-     *
      * @var ContainerInterface
      */
     private $container;
 
     /**
-     * Undocumented variable
-     *
      * @var string
      */
     private $routePrefix;
 
     /**
-     * Undocumented variable
-     *
      * @var string
      */
     private $middleware;
 
     /**
      * RoutePrefixMiddleware constructor.
+     *
      * @param ContainerInterface $container
      * @param string $routePrefix
      * @param string $middleware

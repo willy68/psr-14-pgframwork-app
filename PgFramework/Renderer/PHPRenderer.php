@@ -1,17 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Renderer;
 
 class PHPRenderer implements RendererInterface
 {
-    /**
-     *
-     */
     public const DEFAULT_NAMESPACE = '__MAIN';
 
     /**
-     * Undocumented variable
-     *
      * @var string[]
      */
     private $paths = [];
@@ -24,8 +21,6 @@ class PHPRenderer implements RendererInterface
     private $globals = [];
 
     /**
-     * Undocumented function
-     *
      * @param string $defaultPath
      */
     public function __construct(string $defaultPath = null)
@@ -36,8 +31,6 @@ class PHPRenderer implements RendererInterface
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $namespace
      * @param string $path
      * @return void
@@ -52,8 +45,6 @@ class PHPRenderer implements RendererInterface
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $view
      * @param array $params
      * @return string
@@ -75,8 +66,6 @@ class PHPRenderer implements RendererInterface
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $key
      * @param mixed $value
      * @return void
@@ -87,8 +76,6 @@ class PHPRenderer implements RendererInterface
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $view
      * @return boolean
      */
@@ -98,8 +85,6 @@ class PHPRenderer implements RendererInterface
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $view
      * @return string
      */
@@ -109,8 +94,6 @@ class PHPRenderer implements RendererInterface
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $view
      * @return string
      */

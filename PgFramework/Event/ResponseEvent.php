@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Event;
 
 use PgFramework\Kernel\KernelInterface;

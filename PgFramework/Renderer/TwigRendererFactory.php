@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Renderer;
 
 use Twig\Environment;
@@ -11,14 +13,9 @@ use Psr\Container\ContainerInterface;
 use Twig\Extension\ProfilerExtension;
 use DebugBar\Bridge\NamespacedTwigProfileCollector;
 
-/**
- * Undocumented class
- */
 class TwigRendererFactory
 {
   /**
-   * Undocumented function
-   *
    * @param ContainerInterface $container
    * @return TwigRenderer
    */

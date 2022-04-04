@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Response;
@@ -14,17 +16,8 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class InvalidCsrfListener implements EventSubscriberInterface
 {
-    /**
-     * Undocumented variable
-     *
-     * @var FlashService
-     */
     private $flashService;
 
-    /**
-     * InvalidCsrfListener constructor.
-     * @param FlashService $flashService
-     */
     public function __construct(FlashService $flashService)
     {
         $this->flashService = $flashService;

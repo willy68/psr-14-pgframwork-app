@@ -1,18 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Renderer;
 
 use PgFramework\Renderer\PHPRenderer;
 use Psr\Container\ContainerInterface;
 
-/**
- * Undocumented class
- */
 class PHPRendererFactory
 {
     /**
-     * Undocumented function
-     *
      * @param ContainerInterface $container
      * @return \PgFramework\Renderer\PHPRenderer
      */

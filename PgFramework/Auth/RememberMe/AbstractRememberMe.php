@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Auth\RememberMe;
 
 use PgFramework\Auth\Provider\UserProviderInterface;

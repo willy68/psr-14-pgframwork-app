@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\EventListener;
 
 use PgFramework\Event\Events;
@@ -31,7 +33,7 @@ class ParamsResolverListener implements EventSubscriberInterface
         if ($this->container instanceof \DI\Container) {
             $this->container->set(ServerRequestInterface::class, $event->getRequest());
         } else {
-            // Limitation: $request must be named "$request"
+            // Limitation: $request must be named "$request" on your controller
             $params = array_merge(["request" => $event->getRequest()], $params);
         };
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Twig;
 
 use DateTimeInterface;
@@ -9,8 +11,6 @@ use Twig\TwigFilter;
 class TimeExtension extends AbstractExtension
 {
   /**
-   * Undocumented function
-   *
    * @return array
    */
     public function getFilters(): array

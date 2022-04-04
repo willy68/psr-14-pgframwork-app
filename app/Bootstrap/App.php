@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Api\ApiModule;
 use App\Auth\AuthModule;
 use App\Blog\BlogModule;
@@ -15,10 +17,8 @@ use PgFramework\Middleware\RouterMiddleware;
 use PgFramework\EventListener\RouterListener;
 use PgFramework\Middleware\ApiHeadMiddleware;
 use PgFramework\Middleware\ApiOptionsMiddleware;
-use PgFramework\Middleware\DispatcherMiddleware;
 use PgFramework\EventListener\CsrfCookieListener;
 use PgFramework\EventListener\MethodHeadListener;
-use PgFramework\Middleware\PageNotFoundMiddleware;
 use PgFramework\EventListener\ActiveRecordListener;
 use PgFramework\EventListener\CallableResolverListener;
 use PgFramework\EventListener\PageNotFoundListener;

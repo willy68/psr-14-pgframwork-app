@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Auth\Middleware;
 
 use PgFramework\Auth;
@@ -12,14 +14,11 @@ use PgFramework\Auth\RememberMe\RememberMeInterface;
 class CookieLogoutMiddleware implements MiddlewareInterface
 {
     /**
-     *
      * @var Auth
      */
     private $auth;
 
     /**
-     *
-     *
      * @var RememberMeInterface
      */
     private $cookie;

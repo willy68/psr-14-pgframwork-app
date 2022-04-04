@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Annotation;
 
 use Doctrine\ORM\Mapping\Driver\AttributeReader;

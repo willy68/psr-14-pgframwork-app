@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Twig;
 
 use Twig\TwigFunction;
@@ -8,8 +10,6 @@ use Twig\Extension\AbstractExtension;
 class FormExtension extends AbstractExtension
 {
     /**
-   * Undocumented function
-   *
    * @return array
    */
     public function getFunctions(): array
@@ -23,8 +23,6 @@ class FormExtension extends AbstractExtension
     }
 
     /**
-     * Undocumented function
-     *
      * @param array $context
      * @param string $key
      * @param mixed $value
@@ -66,8 +64,6 @@ class FormExtension extends AbstractExtension
     }
 
     /**
-     * Undocumented function
-     *
      * @param [type] $value
      * @return string
      */
@@ -80,8 +76,6 @@ class FormExtension extends AbstractExtension
     }
 
     /**
-     * Undocumented function
-     *
      * @param array $context
      * @param string $key
      * @return string
@@ -96,8 +90,6 @@ class FormExtension extends AbstractExtension
     }
 
     /**
-     * Undocumented function
-     *
      * @param string|null $value
      * @param array $attributes
      * @return string
@@ -111,8 +103,6 @@ class FormExtension extends AbstractExtension
 
 
     /**
-     * Undocumented function
-     *
      * @param string|null $value
      * @param array $options
      * @param array $attributes
@@ -136,8 +126,6 @@ class FormExtension extends AbstractExtension
     }
 
     /**
-     * Undocumented function
-     *
      * @param string|null $value
      * @param array $attributes
      * @return string
@@ -150,8 +138,6 @@ class FormExtension extends AbstractExtension
     }
 
     /**
-     * Undocumented function
-     *
      * @param string|null $value
      * @param array $attributes
      * @return string
@@ -171,8 +157,6 @@ class FormExtension extends AbstractExtension
     }
 
     /**
-     * Undocumented function
-     *
      * @param array $attributes
      * @return void
      */
@@ -184,8 +168,6 @@ class FormExtension extends AbstractExtension
     }
 
     /**
-     * Undocumented function
-     *
      * @param array $attributes
      * @return string
      */

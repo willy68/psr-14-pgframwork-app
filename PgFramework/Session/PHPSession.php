@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Session;
 
 class PHPSession implements SessionInterface, \ArrayAccess, \Iterator, \Countable

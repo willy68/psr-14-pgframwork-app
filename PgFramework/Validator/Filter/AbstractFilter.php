@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Validator\Filter;
 
 abstract class AbstractFilter

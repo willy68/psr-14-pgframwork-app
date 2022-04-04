@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use DebugBar\DebugBar;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
@@ -74,9 +76,6 @@ use PgFramework\DebugBar\DebugBarFactory;
 use PgFramework\EventDispatcher\EventDispatcher;
 use PgFramework\EventListener\CsrfListener;
 use PgFramework\EventListener\CsrfListenerInterface;
-use PgFramework\Kernel\KernelEvent;
-use PgFramework\Kernel\KernelInterface;
-use PgFramework\Kernel\KernelMiddleware;
 use PgFramework\Router\RoutesMapFactory;
 use PgFramework\Router\RoutesMapInterface;
 use Tuupola\Middleware\JwtAuthentication;

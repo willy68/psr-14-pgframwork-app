@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Database\Doctrine;
 
 use Pagerfanta\Pagerfanta;
@@ -15,7 +17,6 @@ class PaginatedQueryBuilder extends QueryBuilder
     }
 
     /**
-     *
      * @param int $perPage
      * @param int $currentPage
      * @return \Pagerfanta\Pagerfanta

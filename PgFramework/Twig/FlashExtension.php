@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Twig;
 
 use PgFramework\Session\FlashService;
@@ -8,8 +10,6 @@ use Twig\TwigFunction;
 class FlashExtension extends \Twig\Extension\AbstractExtension
 {
   /**
-   * Undocumented variable
-   *
    * @var FlashService
    */
     private $flashservice;
@@ -34,8 +34,6 @@ class FlashExtension extends \Twig\Extension\AbstractExtension
     }
 
   /**
-   * Undocumented function
-   *
    * @param string $type
    * @return string|null
    */

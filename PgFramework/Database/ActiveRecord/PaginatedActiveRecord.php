@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Database\ActiveRecord;
 
 use Pagerfanta\Adapter\AdapterInterface;
@@ -14,8 +16,6 @@ class PaginatedActiveRecord implements AdapterInterface
     }
 
     /**
-     * Undocumented function
-     *
      * @return int
      */
     public function getNbResults(): int
@@ -24,8 +24,6 @@ class PaginatedActiveRecord implements AdapterInterface
     }
 
     /**
-     * Undocumented function
-     *
      * @param int $offset
      * @param int $length
      * @return \ActiveRecord\Model[]

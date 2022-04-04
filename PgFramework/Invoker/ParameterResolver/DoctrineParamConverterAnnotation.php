@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Invoker\ParameterResolver;
 
 use ActiveRecord\Exceptions\RecordNotFound;

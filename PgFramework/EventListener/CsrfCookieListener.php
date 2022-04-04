@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Response;
@@ -32,8 +34,6 @@ class CsrfCookieListener implements EventSubscriberInterface
     ];
 
     /**
-     * Undocumented variable
-     *
      * @var FlashService
      */
     private $flashService;
@@ -44,10 +44,6 @@ class CsrfCookieListener implements EventSubscriberInterface
      */
     private $tokenManager;
 
-    /**
-     *
-     * @param CsrfTokenManagerInterface $tokenManager
-     */
     public function __construct(CsrfTokenManagerInterface $tokenManager, FlashService $flashService, array $config = [])
     {
         $this->tokenManager = $tokenManager;
@@ -55,11 +51,6 @@ class CsrfCookieListener implements EventSubscriberInterface
         $this->config = array_merge($this->config, $config);
     }
 
-    /**
-     *
-     * @param object $event
-     * @return void
-     */
     public function onRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
@@ -98,11 +89,6 @@ class CsrfCookieListener implements EventSubscriberInterface
         $event->setRequest($request);
     }
 
-    /**
-     *
-     * @param object $event
-     * @return void
-     */
     public function onResponse(ResponseEvent $event)
     {
         $response = $event->getResponse();
@@ -157,7 +143,7 @@ class CsrfCookieListener implements EventSubscriberInterface
         }
     }
 
-    protected function validateToken($token, $cookie)
+    protected function validateToken(?string $token = null, ?string $cookie = null)
     {
         if (!$token) {
             throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
