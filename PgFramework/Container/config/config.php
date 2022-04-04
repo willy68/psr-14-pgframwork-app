@@ -11,7 +11,6 @@ use Psr\Container\ContainerInterface;
 use Grafikart\Csrf\CsrfMiddleware;
 use PgFramework\Twig\{
     CsrfExtension,
-    DebugBarExtension,
     FormExtension,
     TextExtension,
     TimeExtension,

@@ -6,18 +6,21 @@ use Exception;
 use DI\ContainerBuilder;
 use Mezzio\Router\RouteCollector;
 use GuzzleHttp\Psr7\ServerRequest;
+use PgFramework\Kernel\KernelEvent;
 use Psr\Container\ContainerInterface;
 use PgFramework\Kernel\KernelInterface;
 use Psr\Http\Message\ResponseInterface;
+use PgFramework\Kernel\KernelMiddleware;
+use PgFramework\Router\Annotation\Route;
 use PgFramework\Router\RoutesMapInterface;
 use PgFramework\Environnement\Environnement;
 use Psr\Http\Message\ServerRequestInterface;
-use PgFramework\Router\Loader\DirectoryLoader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use PgFramework\Annotation\AnnotationsLoader;
-use PgFramework\Kernel\KernelEvent;
-use PgFramework\Kernel\KernelMiddleware;
-use PgFramework\Router\Annotation\Route;
+use PgFramework\Router\Loader\DirectoryLoader;
+use PgFramework\Middleware\PageNotFoundMiddleware;
+use Doctrine\Common\Annotations\AnnotationRegistry;
+use PgFramework\Middleware\DispatcherMiddleware;
+use RuntimeException;
 
 /**
  * Application
@@ -201,13 +204,23 @@ class App extends AbstractApplication
                     $this->listeners = array_merge($this->listeners, $listeners);
                 }
                 $this->kernel->setCallbacks($this->listeners);
+            } else {
+                throw new RuntimeException('Aucun Kernel ou le Kernel ne gère pas les listeners');
             }
         } else {
             if (!$this->kernel) {
                 $this->kernel = $container->get(KernelMiddleware::class);
             }
             if ($this->kernel instanceof KernelMiddleware) {
+                $this->addMiddlewares(
+                    [
+                        DispatcherMiddleware::class,
+                        PageNotFoundMiddleware::class
+                    ]
+                );
                 $this->kernel->setCallbacks($this->middlewares);
+            } else {
+                throw new RuntimeException('Aucun Kernel ou le Kernel ne gère pas les middlewares');
             }
         }
 

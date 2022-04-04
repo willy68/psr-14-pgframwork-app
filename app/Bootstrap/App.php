@@ -8,6 +8,7 @@ use App\Admin\AdminModule;
 use App\Api\ApiClientModule;
 use Application\Console\ConsoleModule;
 use PgFramework\DebugBar\EventListener\DebugBarListener;
+use PgFramework\DebugBar\Middleware\DebugBarMiddleware;
 use PgFramework\Security\Firewall\Firewall;
 use PgFramework\Middleware\MethodMiddleware;
 use PgFramework\Middleware\RouterMiddleware;
@@ -41,8 +42,7 @@ return [
         ApiClientModule::class,
     ],
 
-    /* Base middlewares PageNotFound must be the last.
-       Other middlewares must be put on Router, RouteGroup or Route */
+    /* Other middlewares must be put on Router, RouteGroup or Route */
     'middlewares' => [
         TrailingSlashMiddleware::class,
         MethodMiddleware::class,
@@ -50,8 +50,7 @@ return [
         ApiHeadMiddleware::class,
         ApiOptionsMiddleware::class,
         MethodNotAllowedMiddleware::class,
-        DispatcherMiddleware::class,
-        PageNotFoundMiddleware::class,
+        DebugBarMiddleware::class,
     ],
 
     'listeners' => [
