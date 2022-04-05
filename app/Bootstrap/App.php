@@ -38,8 +38,8 @@ return [
         AdminModule::class,
         BlogModule::class,
         AuthModule::class,
-        ApiModule::class,
-        ApiClientModule::class,
+        //ApiModule::class,
+        //ApiClientModule::class,
     ],
 
     /* Other middlewares must be put on Router, RouteGroup or Route */

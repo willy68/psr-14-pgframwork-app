@@ -72,7 +72,7 @@ class Post
      * @ORM\Column(type="string")
      * @var string
      */
-    #[Column(type: TYPES::STRING)]
+    #[Column(type: TYPES::STRING, nullable: true)]
     protected $image;
 
     /**

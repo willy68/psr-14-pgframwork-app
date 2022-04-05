@@ -10,7 +10,7 @@ return [
     'doctrine.entity.path' => \DI\add(
         [
             dirname(__DIR__) . '/app/Entity',
-            dirname(__DIR__) . 'App\Auth\Entity'
+            dirname(__DIR__) . '/app/Auth/Entity'
         ]
     ),
     Whoops::class => function () {

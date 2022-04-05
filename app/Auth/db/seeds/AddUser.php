@@ -2,7 +2,7 @@
 
 use Phinx\Seed\AbstractSeed;
 
-class UserSeeder extends AbstractSeed
+class AddUser extends AbstractSeed
 {
     /**
      * Run Method.
@@ -18,7 +18,7 @@ class UserSeeder extends AbstractSeed
             ->insert([
                 'username' => 'admin',
                 'email'    => 'admin@admin.fr',
-                'password' => password_hash('admin', PASSWORD_DEFAULT, [])
+                'password' => password_hash('admin', PASSWORD_DEFAULT, []),
             ])
             ->save();
     }
