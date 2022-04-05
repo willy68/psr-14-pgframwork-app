@@ -58,12 +58,6 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
 
         $cookie = FigRequestCookies::get($request, $this->config['cookieName'])->getValue();
 
-        if (is_string($cookie) && strlen($cookie) > 0) {
-            [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
-            $cookie = $this->tokenManager->getToken($tokenId);
-            $request = $request->withAttribute($this->config['field'], $cookie);
-        }
-
         if (\in_array($method, ['GET', 'HEAD'], true) && null === $cookie) {
             $token = $this->getToken();
             $request = $request->withAttribute($this->config['field'], $token);
