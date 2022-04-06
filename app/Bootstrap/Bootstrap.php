@@ -19,7 +19,7 @@ $dotenv->bootEnv($basePath . '/.env');
 
 $bootstrap = require 'App.php';
 
-$config = FileUtils::getFiles($basePath . '/config', 'php', 'dist');
+$config = FileUtils::getFiles($basePath . '/config', 'php', '.dist.');
 
 $app = (new PgFramework\App(array_keys($config)))
     ->addModules($bootstrap['modules'])
