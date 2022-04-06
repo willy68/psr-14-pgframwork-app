@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use PgFramework\Environnement\Environnement;
+use PgFramework\File\FileUtils;
 use Symfony\Component\Dotenv\Dotenv;
 
 if (!class_exists(Dotenv::class)) {
@@ -18,7 +19,9 @@ $dotenv->bootEnv($basePath . '/.env');
 
 $bootstrap = require 'App.php';
 
-$app = (new PgFramework\App($bootstrap['config']))
+$config = FileUtils::getFiles($basePath . '/config', 'php', 'dist');
+
+$app = (new PgFramework\App(array_keys($config)))
     ->addModules($bootstrap['modules'])
     //->addMiddlewares($bootstrap['middlewares']);
     ->addListeners($bootstrap['listeners']);
