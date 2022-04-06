@@ -36,17 +36,13 @@ return [
             //'main.listeners' => [
             //]
         ],
-        [ // Use only default listeners
+        [ // Use no default listeners
             'path' => '^/login',
             // Other RequestMatcher rules
             'method' => ['POST'],
-            //'host' => null,
-            //'schemes' => [],
-            //'port' => null,
-            //'listeners' => [
-            //],
+            // No default listener for this specific route
             'no.default.listeners' => true,
-            'main.listeners' => [
+            'listeners' => [
                 FormAuthenticationListener::class
             ]
         ],

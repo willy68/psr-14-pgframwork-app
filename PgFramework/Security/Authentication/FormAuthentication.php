@@ -92,7 +92,7 @@ class FormAuthentication implements AuthenticationInterface
             $credentials['rememberMe'] = true;
         }
 
-        if (!\is_string($credentials['identifier']) || $credentials['identifier']) {
+        if (!\is_string($credentials['identifier'])) {
             return null;
         }
 
@@ -113,7 +113,7 @@ class FormAuthentication implements AuthenticationInterface
 
         $path = $this->session->get('auth.redirect')  ?: $this->router->generateUri($this->options['redirect.success']);
         $this->session->delete('auth.redirect');
-        return  new ResponseRedirect($path);
+        return new ResponseRedirect($path);
     }
 
     public function onAuthenticateFailure(
