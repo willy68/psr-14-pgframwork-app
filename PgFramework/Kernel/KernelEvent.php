@@ -39,7 +39,7 @@ class KernelEvent implements KernelInterface
         $event = $this->dispatcher->dispatch($event);
 
         if ($event->hasResponse()) {
-            return $this->filterResponse($event->getResponse(), $event->getRequest());
+            return $this->filterResponse($event->getResponse(), $this->getRequest());
         }
 
         /** @var RouteResult $result */
@@ -47,11 +47,11 @@ class KernelEvent implements KernelInterface
         $controller = $result->getMatchedRoute()->getCallback();
         $params = $result->getMatchedParams();
 
-        $event = new ControllerEvent($this, $controller, $event->getRequest());
+        $event = new ControllerEvent($this, $controller, $this->getRequest());
         $event = $this->dispatcher->dispatch($event);
         $controller = $event->getController();
 
-        $event = new ControllerParamsEvent($this, $controller, $params, $event->getRequest());
+        $event = new ControllerParamsEvent($this, $controller, $params, $this->getRequest());
         $event = $this->dispatcher->dispatch($event);
         $controller = $event->getController();
         $params = $event->getParams();
@@ -61,7 +61,7 @@ class KernelEvent implements KernelInterface
 
         // view
         if (!$response instanceof ResponseInterface) {
-            $event = new ViewEvent($this, $event->getRequest(), $response);
+            $event = new ViewEvent($this, $this->getRequest(), $response);
             $event = $this->dispatcher->dispatch($event);
 
             if ($event->hasResponse()) {
@@ -78,7 +78,7 @@ class KernelEvent implements KernelInterface
             }
         }
 
-        return $this->filterResponse($response, $event->getRequest());
+        return $this->filterResponse($response, $this->getRequest());
     }
 
     /**
@@ -115,7 +115,7 @@ class KernelEvent implements KernelInterface
         $response = $event->getResponse();
 
         try {
-            return $this->filterResponse($response, $event->getRequest());
+            return $this->filterResponse($response, $this->getRequest());
         } catch (\Exception $e) {
             return $response;
         }
