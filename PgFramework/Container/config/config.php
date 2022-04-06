@@ -78,6 +78,8 @@ use PgFramework\EventListener\CsrfListener;
 use PgFramework\EventListener\CsrfListenerInterface;
 use PgFramework\Router\RoutesMapFactory;
 use PgFramework\Router\RoutesMapInterface;
+use PgFramework\Security\Hasher\DefaultPasswordHasher;
+use PgFramework\Security\Hasher\PasswordHasherInterface;
 use Tuupola\Middleware\JwtAuthentication;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -144,6 +146,7 @@ return [
         get(TokenStorageInterface::class),
         get(TokenGeneratorInterface::class)
     ),
+    PasswordHasherInterface::class => create(DefaultPasswordHasher::class),
     JwtAuthentication::class => factory(JwtMiddlewareFactory::class),
     Invoker::class => factory(InvokerFactory::class),
     ParameterResolver::class => factory(ResolverChainFactory::class),

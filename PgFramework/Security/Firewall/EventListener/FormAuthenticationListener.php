@@ -14,9 +14,9 @@ use PgFramework\Auth\RememberMe\RememberMeInterface;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 use PgFramework\Security\Firewall\Event\LoginFailureEvent;
 use PgFramework\Security\Firewall\Event\LoginSuccessEvent;
-use PgFramework\Security\Authentication\AuthenticationInterface;
 use PgFramework\Security\Authentication\Result\AuthenticateResultInterface;
 use PgFramework\Security\Authentication\Exception\AuthenticationFailureException;
+use PgFramework\Security\Authentication\FormAuthentication;
 
 class FormAuthenticationListener implements EventSubscriberInterface
 {
@@ -25,7 +25,7 @@ class FormAuthenticationListener implements EventSubscriberInterface
     private $dispatcher;
 
     public function __construct(
-        AuthenticationInterface $authenticator,
+        FormAuthentication $authenticator,
         RememberMeInterface $rememberMe,
         EventDispatcherInterface $dispatcher
     ) {

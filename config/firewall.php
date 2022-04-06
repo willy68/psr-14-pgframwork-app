@@ -3,6 +3,7 @@
 use PgFramework\Security\Authorization\Voter\VoterRoles;
 use PgFramework\Security\Firewall\EventListener\ForbidenListener;
 use PgFramework\Security\Firewall\EventListener\AuthorizationListener;
+use PgFramework\Security\Firewall\EventListener\FormAuthenticationListener;
 use PgFramework\Security\Firewall\EventListener\RememberMeLoginListener;
 use PgFramework\Security\Firewall\EventListener\RememberMeLogoutListener;
 
@@ -34,6 +35,20 @@ return [
             //],
             //'main.listeners' => [
             //]
+        ],
+        [ // Use only default listeners
+            'path' => '^/login',
+            // Other RequestMatcher rules
+            'method' => ['POST'],
+            //'host' => null,
+            //'schemes' => [],
+            //'port' => null,
+            //'listeners' => [
+            //],
+            'no.default.listeners' => true,
+            'main.listeners' => [
+                FormAuthenticationListener::class
+            ]
         ],
         [
             'path' => '^/logout',
