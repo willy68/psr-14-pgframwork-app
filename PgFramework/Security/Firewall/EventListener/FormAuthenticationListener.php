@@ -62,7 +62,7 @@ class FormAuthenticationListener implements EventSubscriberInterface
         $response = $this->authenticator->onAuthenticateSuccess($request, $result->getUser());
 
         if ($response instanceof ResponseInterface) {
-            $event->setResponse($this->rememberMe->onLogin($response, $result->getUser()));
+            $event->setResponse($response);
         }
 
         $event->setRequest($request->withAttribute('auth.result', $result));

@@ -42,7 +42,12 @@ return [
             'method' => ['POST'],
             // No default listener for this specific route
             'no.default.listeners' => true,
+            // For Request
             'listeners' => [
+                FormAuthenticationListener::class
+            ],
+            // For Response
+            'main.listeners' => [
                 FormAuthenticationListener::class
             ]
         ],
