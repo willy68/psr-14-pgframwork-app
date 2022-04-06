@@ -10,7 +10,7 @@ if (!class_exists(Dotenv::class)) {
 }
 
 if (!isset($basePath)) {
-    $basePath = dirname(dirname(__DIR__));
+    $basePath = dirname(__DIR__, 2);
 }
 
 $dotenv = new Dotenv();
