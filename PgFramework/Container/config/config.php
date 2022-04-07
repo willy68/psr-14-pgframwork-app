@@ -84,6 +84,7 @@ use PgFramework\Security\Hasher\PasswordHasherInterface;
 use Tuupola\Middleware\JwtAuthentication;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
+use function DI\autowire;
 use function DI\create;
 use function DI\get;
 use function DI\factory;
@@ -147,7 +148,9 @@ return [
         get(TokenStorageInterface::class),
         get(TokenGeneratorInterface::class)
     ),
-    PasswordHasherInterface::class => create(DefaultPasswordHasher::class),
+    PasswordHasherInterface::class =>
+    autowire(DefaultPasswordHasher::class)
+        ->constructorParameter('config', get('password.hasher.config')),
     AuthenticationListener::class => \DI\autowire()
         ->constructorParameter('authenticators', get('security.authenticators')),
     JwtAuthentication::class => factory(JwtMiddlewareFactory::class),
