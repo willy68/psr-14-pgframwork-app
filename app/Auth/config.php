@@ -22,7 +22,6 @@ use App\Auth\{
     Provider\UserProvider,
     Provider\UserTokenProvider
 };
-use PgFramework\Security\Hasher\DefaultPasswordHasher;
 
 use function DI\{
     add,
