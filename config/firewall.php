@@ -1,5 +1,6 @@
 <?php
 
+use App\Auth\Listener\RehashPasswordListener;
 use PgFramework\Security\Authorization\Voter\VoterRoles;
 use PgFramework\Security\Authentication\FormAuthentication;
 use PgFramework\Security\Firewall\EventListener\ForbidenListener;
@@ -47,6 +48,9 @@ return [
             'listeners' => [
                 AuthenticationListener::class
             ],
+            'main.listeners' => [
+               RehashPasswordListener::class
+            ]
         ],
         [
             'path' => '^/logout',
