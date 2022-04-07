@@ -1,11 +1,13 @@
 <?php
 
 use PgFramework\Security\Authorization\Voter\VoterRoles;
+use PgFramework\Security\Authentication\FormAuthentication;
 use PgFramework\Security\Firewall\EventListener\ForbidenListener;
 use PgFramework\Security\Firewall\EventListener\AuthorizationListener;
-use PgFramework\Security\Firewall\EventListener\FormAuthenticationListener;
+use PgFramework\Security\Firewall\EventListener\AuthenticationListener;
 use PgFramework\Security\Firewall\EventListener\RememberMeLoginListener;
 use PgFramework\Security\Firewall\EventListener\RememberMeLogoutListener;
+use PgFramework\Security\Firewall\EventListener\FormAuthenticationListener;
 
 return [
     'security.firewall.rules' => \DI\add([
@@ -44,12 +46,8 @@ return [
             'no.default.listeners' => true,
             // For Request
             'listeners' => [
-                FormAuthenticationListener::class
+                AuthenticationListener::class
             ],
-            // For Response
-            'main.listeners' => [
-                FormAuthenticationListener::class
-            ]
         ],
         [
             'path' => '^/logout',
@@ -57,6 +55,9 @@ return [
                 RememberMeLogoutListener::class,
             ]
         ],
+    ]),
+    'security.authenticators' => \DI\add([
+        \DI\get(FormAuthentication::class),
     ]),
     'security.authorization.listeners' => \DI\add([
         AuthorizationListener::class,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Security\Authentication;
 
+use Mezzio\Router\RouteResult;
 use PgFramework\Auth;
 use PgFramework\Auth\UserInterface;
 use Mezzio\Router\RouterInterface;
@@ -58,6 +59,13 @@ class FormAuthentication implements AuthenticationInterface
         if (!empty($options)) {
             $this->options = array_merge($this->options, $options);
         }
+    }
+
+    public function supports(ServerRequestInterface $request): bool
+    {
+        /** @var RouteResult $routeResult */
+        $routeResult = $request->getAttribute(RouteResult::class);
+        return $routeResult->getMatchedRouteName() === 'auth.login.post';
     }
 
     public function authenticate(ServerRequestInterface $request): AuthenticateResultInterface
@@ -122,5 +130,15 @@ class FormAuthentication implements AuthenticationInterface
     ): ?ResponseInterface {
         (new FlashService($this->session))->error('Identifiant ou mot de passe incorrect');
         return $this->redirect($this->options['auth.login']);
+    }
+
+    public function supportsRememberMe(ServerRequestInterface $request): bool
+    {
+        /** @var AuthenticateResultInterface $result */
+        if (($result = $request->getAttribute('auth.result'))) {
+            $credentials = $result->getCredentials();
+            return $credentials['rememberMe'] ?? false;
+        }
+        return false;
     }
 }

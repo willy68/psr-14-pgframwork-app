@@ -16,9 +16,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Auth\RememberMe\RememberMeInterface;
 
 /**
- * @Route("/login", methods={"POST"})
+ * @Route("/login", methods={"POST"}, name="loginPost")
  */
-#[Route('/login', methods:['POST'])]
+#[Route('/login', methods:['POST'], name:'auth.login.post')]
 class LoginAttemptAction
 {
     use RouterAwareAction;
