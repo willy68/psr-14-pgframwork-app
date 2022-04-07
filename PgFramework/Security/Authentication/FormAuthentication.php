@@ -119,7 +119,7 @@ class FormAuthentication implements AuthenticationInterface
     {
         $this->auth->setUser($user);
 
-        $path = $this->session->get('auth.redirect')  ?: $this->router->generateUri($this->options['redirect.success']);
+        $path = $this->session->get('auth.redirect') ?: $this->router->generateUri($this->options['redirect.success']);
         $this->session->delete('auth.redirect');
         return new ResponseRedirect($path);
     }

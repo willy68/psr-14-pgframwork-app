@@ -7,7 +7,6 @@ use PgFramework\Security\Firewall\EventListener\AuthorizationListener;
 use PgFramework\Security\Firewall\EventListener\AuthenticationListener;
 use PgFramework\Security\Firewall\EventListener\RememberMeLoginListener;
 use PgFramework\Security\Firewall\EventListener\RememberMeLogoutListener;
-use PgFramework\Security\Firewall\EventListener\FormAuthenticationListener;
 
 return [
     'security.firewall.rules' => \DI\add([

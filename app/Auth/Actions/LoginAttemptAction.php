@@ -16,7 +16,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Auth\RememberMe\RememberMeInterface;
 
 /**
- * @Route("/login", methods={"POST"}, name="loginPost")
+ * @Route("/login", methods={"POST"}, name="auth.login.post")
  */
 #[Route('/login', methods:['POST'], name:'auth.login.post')]
 class LoginAttemptAction
@@ -24,36 +24,26 @@ class LoginAttemptAction
     use RouterAwareAction;
 
     /**
-     * Undocumented variable
-     *
      * @var RendererInterface
      */
     private $renderer;
 
     /**
-     * Undocumented variable
-     *
      * @var AuthSession
      */
     private $auth;
 
     /**
-     *
-     *
      * @var RememberMeInterface
      */
     private $cookie;
 
     /**
-     * Undocumented variable
-     *
      * @var SessionInterface
      */
     private $session;
 
     /**
-     * Undocumented variable
-     *
      * @var RouterInterface
      */
     private $router;
