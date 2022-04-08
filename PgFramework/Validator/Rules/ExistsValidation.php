@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Validator\Rules;
 
+use Doctrine\Persistence\ManagerRegistry;
 use PgFramework\Validator\ValidationInterface;
 
 class ExistsValidation implements ValidationInterface
@@ -25,14 +26,22 @@ class ExistsValidation implements ValidationInterface
     protected $pdo;
 
     /**
+     * ManagerRegistry
+     *
+     * @var ManagerRegistry
+     */
+    protected $mr;
+
+    /**
      *
      * @param string|null $table
      * @param \PDO $pdo
      * @param string|null $error
      */
-    public function __construct(\PDO $pdo, ?string $table = null, ?string $error = null)
+    public function __construct(\PDO $pdo, ManagerRegistry $mr, ?string $table = null, ?string $error = null)
     {
         $this->pdo = $pdo;
+        $this->mr = $mr;
         $this->table = $table;
         if (!empty($error)) {
             $this->error = $error;
@@ -68,10 +77,21 @@ class ExistsValidation implements ValidationInterface
                 $this->error = $message;
             }
             if (class_exists($tableOrModel)) {
-                /** @var \ActiveRecord\Model $tableOrModel */
-                $this->table = $tableOrModel::table_name();
-                /** @var \PDO $pdo */
-                $this->pdo = $tableOrModel::connection()->connection;
+                /** @var EntityManagerInterface $em */
+                if (null !== ($em = $this->mr->getManagerForClass($tableOrModel))) {
+                    $this->table = $em->getConfiguration()
+                        ->getQuoteStrategy()
+                        ->getTableName(
+                            $em->getClassMetadata($tableOrModel),
+                            $em->getConnection()->getDatabasePlatform()
+                        );
+                    $this->pdo = $em->getConnection()->getNativeConnection();
+                } else {
+                    /** @var \ActiveRecord\Model $tableOrModel */
+                    $this->table = $tableOrModel::table_name();
+                    /** @var \PDO $pdo */
+                    $this->pdo = $tableOrModel::connection()->connection;
+                }
             } else {
                 $this->table = $tableOrModel;
             }

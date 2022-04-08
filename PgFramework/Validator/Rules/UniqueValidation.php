@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PgFramework\Validator\Rules;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use PgFramework\Validator\ValidationInterface;
 
 class UniqueValidation implements ValidationInterface
@@ -38,10 +40,14 @@ class UniqueValidation implements ValidationInterface
     protected $value;
 
     /**
-     *
      * @var int
      */
     protected $exclude;
+
+    /**
+     * @var ManagerRegistry
+     */
+    protected $mr;
 
     /**
      *
@@ -50,9 +56,15 @@ class UniqueValidation implements ValidationInterface
      * @param int|null $exclude
      * @param string|null $error
      */
-    public function __construct(\PDO $pdo, ?string $table = null, ?int $exclude = null, ?string $error = null)
-    {
+    public function __construct(
+        \PDO $pdo,
+        ManagerRegistry $mr,
+        ?string $table = null,
+        ?int $exclude = null,
+        ?string $error = null
+    ) {
         $this->pdo = $pdo;
+        $this->mr = $mr;
         $this->table = $table;
         $this->exclude = $exclude;
         if (!empty($error)) {
@@ -106,10 +118,21 @@ class UniqueValidation implements ValidationInterface
             }
             $this->column = $column;
             if (class_exists($tableOrModel)) {
-                /** @var \ActiveRecord\Model $tableOrModel */
-                $this->table = $tableOrModel::table_name();
-                /** @var \PDO $pdo */
-                $this->pdo = $tableOrModel::connection()->connection;
+                /** @var EntityManagerInterface $em */
+                if (null !== ($em = $this->mr->getManagerForClass($tableOrModel))) {
+                    $this->table = $em->getConfiguration()
+                        ->getQuoteStrategy()
+                        ->getTableName(
+                            $em->getClassMetadata($tableOrModel),
+                            $em->getConnection()->getDatabasePlatform()
+                        );
+                    $this->pdo = $em->getConnection()->getNativeConnection();
+                } else {
+                    /** @var \ActiveRecord\Model $tableOrModel */
+                    $this->table = $tableOrModel::table_name();
+                    /** @var \PDO $pdo */
+                    $this->pdo = $tableOrModel::connection()->connection;
+                }
             } else {
                 $this->table = $tableOrModel;
             }

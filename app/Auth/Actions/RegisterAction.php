@@ -128,8 +128,8 @@ class RegisterAction
         $validator = (new Validator($request->getParsedBody()))
             ->required('username', 'email', 'password')
             ->addRules([
-                'username' => 'min:2|unique:App\Auth\Models\User,username',
-                'email'    => 'email|unique:App\Auth\Models\User,email',
+                'username' => 'min:2|unique:App\Auth\Entity\User,username',
+                'email'    => 'email|unique:App\Auth\Entity\User,email',
                 'password'    => 'min:4',
             ]);
         return $validator;
