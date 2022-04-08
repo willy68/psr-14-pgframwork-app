@@ -79,12 +79,7 @@ class ExistsValidation implements ValidationInterface
             if (class_exists($tableOrModel)) {
                 /** @var EntityManagerInterface $em */
                 if (null !== ($em = $this->mr->getManagerForClass($tableOrModel))) {
-                    $this->table = $em->getConfiguration()
-                        ->getQuoteStrategy()
-                        ->getTableName(
-                            $em->getClassMetadata($tableOrModel),
-                            $em->getConnection()->getDatabasePlatform()
-                        );
+                    $this->table = $em->getClassMetadata($tableOrModel)->getTableName();
                     $this->pdo = $em->getConnection()->getNativeConnection();
                 } else {
                     /** @var \ActiveRecord\Model $tableOrModel */
