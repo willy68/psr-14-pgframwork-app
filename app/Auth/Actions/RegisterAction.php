@@ -79,17 +79,19 @@ class RegisterAction
     #[Route(path: "/register", name: "auth.register")]
     public function __invoke(ServerRequestInterface $request)
     {
-        $params = $request->getParsedBody();
         $user = new User();
         $errors = false;
         $submited = false;
 
         if ($request->getMethod() === 'POST') {
+            $params = $request->getParsedBody();
+
             $user->setUsername($params['username']);
             $user->setEmail($params['email']);
             $password = $this->hasher->hash($params['password']);
             $user->setPassword($password);
             $user->setRoles(['ROLE_USER']);
+
             $validator = $this->getValidator($request);
             if ($validator->isValid()) {
                 $this->em->persist($user);
@@ -106,7 +108,6 @@ class RegisterAction
                     return $response;
                 }
                 (new FlashService($this->session))->error('Un problème est survenu, réessayer de vous enregistrer');
-                return $this->redirect('auth.register');
             } else {
                 $submited = true;
                 $errors = $validator->getErrors();
