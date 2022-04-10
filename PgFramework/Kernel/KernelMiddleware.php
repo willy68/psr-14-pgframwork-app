@@ -12,7 +12,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use PgFramework\Middleware\Stack\MiddlewareAwareStackTrait;
 
 class KernelMiddleware implements KernelInterface, RequestHandlerInterface
@@ -96,14 +95,6 @@ class KernelMiddleware implements KernelInterface, RequestHandlerInterface
     public function getContainer(): ContainerInterface
     {
         return $this->container;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getDispatcher(): EventDispatcherInterface
-    {
-        return $this->dispatcher;
     }
 
     /**

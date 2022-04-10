@@ -165,7 +165,8 @@ return [
         return new KernelEvent(
             $c->get(EventDispatcherInterface::class),
             $c->get(CallableResolver::class),
-            $c->get(ParameterResolver::class)
+            $c->get(ParameterResolver::class),
+            $c
         );
     },
     'routes.listeners' => \DI\add([]),

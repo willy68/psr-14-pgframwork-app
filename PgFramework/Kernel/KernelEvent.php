@@ -19,6 +19,7 @@ use PgFramework\Event\ControllerParamsEvent;
 use Psr\Http\Message\ServerRequestInterface;
 use Invoker\ParameterResolver\ParameterResolver;
 use PgFramework\ApplicationInterface;
+use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
 
@@ -41,15 +42,22 @@ class KernelEvent implements KernelInterface
      */
     private $paramsResolver;
 
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
 
     public function __construct(
         EventDispatcherInterface $dispatcher,
         CallableResolver $callableResolver,
-        ParameterResolver $paramsResolver
+        ParameterResolver $paramsResolver,
+        ?ContainerInterface $container = null
     ) {
         $this->dispatcher = $dispatcher;
         $this->callableResolver = $callableResolver;
         $this->paramsResolver = $paramsResolver;
+        $this->container = $container;
     }
 
     /**
@@ -77,7 +85,10 @@ class KernelEvent implements KernelInterface
         $event = $this->dispatcher->dispatch($event);
         $controller = $event->getController();
 
-        $container = $request->getAttribute(ApplicationInterface::class)->getContainer();
+        $container = $this->container;
+        if (! $container) {
+            $container = $request->getAttribute(ApplicationInterface::class)->getContainer();
+        }
 
         // controller arguments
         if ($container instanceof \DI\Container) {
