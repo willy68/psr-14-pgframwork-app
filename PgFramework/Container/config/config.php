@@ -76,6 +76,7 @@ use PgFramework\DebugBar\DebugBarFactory;
 use PgFramework\EventDispatcher\EventDispatcher;
 use PgFramework\EventListener\CsrfListener;
 use PgFramework\EventListener\CsrfListenerInterface;
+use PgFramework\Kernel\KernelEvent;
 use PgFramework\Router\RoutesMapFactory;
 use PgFramework\Router\RoutesMapInterface;
 use PgFramework\Security\Firewall\EventListener\AuthenticationListener;
@@ -159,6 +160,9 @@ return [
     CallableResolver::class => factory(CallableResolverFactory::class),
     EventDispatcherInterface::class => function (ContainerInterface $c): EventDispatcherInterface {
         return new EventDispatcher($c->get(CallableResolver::class));
+    },
+    KernelEvent::class => function (ContainerInterface $c): KernelEvent {
+        return new KernelEvent($c->get(EventDispatcherInterface::class));
     },
     'routes.listeners' => \DI\add([]),
     RoutesMapInterface::class => factory(RoutesMapFactory::class),
