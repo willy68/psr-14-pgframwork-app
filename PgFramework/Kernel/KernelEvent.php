@@ -11,15 +11,14 @@ use Mezzio\Router\RouteResult;
 use PgFramework\Event\ViewEvent;
 use PgFramework\Event\RequestEvent;
 use PgFramework\Event\ResponseEvent;
-use PgFramework\ApplicationInterface;
 use PgFramework\Event\ExceptionEvent;
-use Psr\Container\ContainerInterface;
 use PgFramework\Event\ControllerEvent;
 use Psr\Http\Message\ResponseInterface;
 use Invoker\Reflection\CallableReflection;
 use PgFramework\Event\ControllerParamsEvent;
 use Psr\Http\Message\ServerRequestInterface;
 use Invoker\ParameterResolver\ParameterResolver;
+use PgFramework\ApplicationInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
 
@@ -44,9 +43,9 @@ class KernelEvent implements KernelInterface
 
 
     public function __construct(
-        ?EventDispatcherInterface $dispatcher = null,
-        ?CallableResolver $callableResolver = null,
-        ?ParameterResolver $paramsResolver = null
+        EventDispatcherInterface $dispatcher,
+        CallableResolver $callableResolver,
+        ParameterResolver $paramsResolver
     ) {
         $this->dispatcher = $dispatcher;
         $this->callableResolver = $callableResolver;
@@ -59,22 +58,6 @@ class KernelEvent implements KernelInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $this->request = $request;
-
-        /** @var ContainerInterface $container */
-        $container = $request->getAttribute(ApplicationInterface::class)->getContainer();
-
-        if (!$this->dispatcher) {
-            $this->dispatcher = $container->get(EventDispatcherInterface::class);
-        }
-
-        if (!$this->callableResolver) {
-            $this->callableResolver = $container->get(CallableResolver::class);
-        }
-
-        if (!$this->paramsResolver) {
-            $this->paramsResolver = $container->get(ParameterResolver::class);
-        }
-
 
         $event = new RequestEvent($this, $request);
         $event = $this->dispatcher->dispatch($event);
@@ -93,6 +76,8 @@ class KernelEvent implements KernelInterface
         $event = new ControllerEvent($this, $controller, $this->getRequest());
         $event = $this->dispatcher->dispatch($event);
         $controller = $event->getController();
+
+        $container = $request->getAttribute(ApplicationInterface::class)->getContainer();
 
         // controller arguments
         if ($container instanceof \DI\Container) {
@@ -184,10 +169,6 @@ class KernelEvent implements KernelInterface
     {
         if (empty($callbacks)) {
             throw new InvalidArgumentException("Une liste de listeners doit être passer à ce Kernel");
-        }
-
-        if (! $this->dispatcher) {
-            throw new RuntimeException("Aucun dispatcher d'évennement, veuillez en fournir un au constructeur");
         }
 
         /** @var mixed */

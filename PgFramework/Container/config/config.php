@@ -162,7 +162,11 @@ return [
         return new EventDispatcher($c->get(CallableResolver::class));
     },
     KernelEvent::class => function (ContainerInterface $c): KernelEvent {
-        return new KernelEvent($c->get(EventDispatcherInterface::class));
+        return new KernelEvent(
+            $c->get(EventDispatcherInterface::class),
+            $c->get(CallableResolver::class),
+            $c->get(ParameterResolver::class)
+        );
     },
     'routes.listeners' => \DI\add([]),
     RoutesMapInterface::class => factory(RoutesMapFactory::class),
