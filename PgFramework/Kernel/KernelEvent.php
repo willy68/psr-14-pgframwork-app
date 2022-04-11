@@ -7,7 +7,6 @@ namespace PgFramework\Kernel;
 use Exception;
 use InvalidArgumentException;
 use Invoker\CallableResolver;
-use Mezzio\Router\RouteResult;
 use PgFramework\Event\ViewEvent;
 use PgFramework\Event\RequestEvent;
 use PgFramework\Event\ResponseEvent;
@@ -74,16 +73,22 @@ class KernelEvent implements KernelInterface
             return $this->filterResponse($event->getResponse(), $this->getRequest());
         }
 
-        /** @var RouteResult $result */
-        $result = $event->getRequest()->getAttribute(RouteResult::class);
-        $controller = $result->getMatchedRoute()->getCallback();
-        $params = $result->getMatchedParams();
+        if (null === $controller = $this->getRequest()->getAttribute('_controller')) {
+            throw new RuntimeException(
+                sprintf(
+                    "Aucun controller trouver pour cette requète, la route %s est peut-être mal configurée",
+                    $request->getUri()->getPath()
+                )
+            );
+        }
 
         $controller = $this->callableResolver->resolve($controller);
 
         $event = new ControllerEvent($this, $controller, $this->getRequest());
         $event = $this->dispatcher->dispatch($event);
         $controller = $event->getController();
+
+        $params = $this->getRequest()->getAttribute('_params');
 
         $container = $this->container;
         if (! $container) {
