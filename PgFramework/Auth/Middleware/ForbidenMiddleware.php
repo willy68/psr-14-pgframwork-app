@@ -52,6 +52,7 @@ class ForbidenMiddleware implements MiddlewareInterface
                 }
                 return $this->redirectLogin($request);
             }
+            throw $error;
         }
     }
 
