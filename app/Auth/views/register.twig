@@ -10,6 +10,7 @@
       {{ field('username', user.username, 'Nom d\'utilisateur') }}
       {{ field('password', null, 'Mot de passe') }}
       {{ field('email', user.email, "Email") }}
+      {{ field('email_confirm', null, "Confirmer l'Email") }}
       {{ field('connect', null, "Se connecter", {type: 'checkbox'}) }}
       <button class="btn btn-primary">S'enregistrer</button>
     </form>

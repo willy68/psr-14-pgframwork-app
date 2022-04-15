@@ -28,7 +28,9 @@ class ConfirmValidation implements ValidationInterface, ValidationExtraParamsInt
         if ($error !== null) {
             $this->error = $error;
         }
-        $this->setFieldName($fieldName);
+        if ($fieldName !== null) {
+            $this->setFieldName($fieldName);
+        }
     }
 
     /**

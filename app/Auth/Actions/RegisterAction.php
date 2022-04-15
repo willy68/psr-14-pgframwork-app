@@ -88,12 +88,12 @@ class RegisterAction
 
             $user->setUsername($params['username']);
             $user->setEmail($params['email']);
-            $password = $this->hasher->hash($params['password']);
-            $user->setPassword($password);
-            $user->setRoles(['ROLE_USER']);
 
             $validator = $this->getValidator($request);
             if ($validator->isValid()) {
+                $password = $this->hasher->hash($params['password']);
+                $user->setPassword($password);
+                $user->setRoles(['ROLE_USER']);
                 $this->em->persist($user);
                 $this->em->flush();
 
@@ -128,8 +128,9 @@ class RegisterAction
         $validator = (new Validator($request->getParsedBody()))
             ->required('username', 'email', 'password')
             ->addRules([
-                'username' => 'min:2|unique:App\Auth\Entity\User,username',
-                'email'    => 'email|unique:App\Auth\Entity\User,email',
+                'username' => 'min:2|unique:App\Auth\Entity\User,username,,Cet utilisateur existe déjà',
+                'email'    => 'email|unique:App\Auth\Entity\User,email,,Cet Email existe déjà',
+                'email_confirm'    => 'email|confirm:email',
                 'password'    => 'min:4',
             ]);
         return $validator;
