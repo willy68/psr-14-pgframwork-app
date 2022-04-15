@@ -16,15 +16,11 @@ use PgFramework\AbstractApplication;
 class ValidationRules
 {
     /**
-     *
-     *
      * @var ValidationError[]
      */
     protected array $errors = [];
 
     /**
-     *
-     *
      * @var ValidationInterface[]
      */
     protected array $validationRules = [];
@@ -70,7 +66,7 @@ class ValidationRules
      */
     public function setFieldName(string $fieldName): self
     {
-        if (is_string($fieldName) && !empty($fieldName)) {
+        if (!empty($fieldName)) {
             $this->fieldName = $fieldName;
         }
         return $this;
@@ -84,7 +80,7 @@ class ValidationRules
      */
     public function setRules(string $rules): self
     {
-        if (!is_string($rules) || empty($rules)) {
+        if (empty($rules)) {
             return $this;
         }
 
@@ -133,15 +129,12 @@ class ValidationRules
     }
 
     /**
-     *
-     *
      * @param mixed $var
      * @return bool
      * @throws \Exception
      */
     public function isValid($var): bool
     {
-        $valid = true;
         $container = AbstractApplication::getApp()->getContainer();
         $validations = $container->get('form.validations');
         $filters = $container->get('form.filters');
@@ -171,20 +164,20 @@ class ValidationRules
             }
 
             if (!$validation->isValid($var)) {
-                $valid = false;
                 $this->addError(
                     $this->fieldName,
                     $rule,
                     $validation->getParams(),
                     $validation->getError()
                 );
+                return false;
             }
         }
-        return $valid;
+        return true;
     }
 
     /**
-     * Undocumented function
+     * Get all errors
      *
      * @return ValidationError[]
      */
@@ -199,7 +192,7 @@ class ValidationRules
     }
 
     /**
-     * Undocumented function
+     * Add error
      *
      * @param string $key
      * @param string $rule
