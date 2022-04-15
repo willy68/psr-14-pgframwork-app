@@ -20,7 +20,7 @@ use Invoker\ParameterResolver\ParameterResolver;
 /**
  * Toute la magie est là
  */
-class DispatcherMiddleware implements MiddlewareInterface, RequestHandlerInterface
+class DispatcherMiddleware implements MiddlewareInterface
 {
     /**
      * Injection container
@@ -35,13 +35,6 @@ class DispatcherMiddleware implements MiddlewareInterface, RequestHandlerInterfa
      * @var FastRouteRouter
      */
     private $router;
-
-    /**
-     * Next App Handler
-     *
-     * @var RequestHandlerInterface
-     */
-    private $next;
 
     /**
      *
@@ -74,31 +67,11 @@ class DispatcherMiddleware implements MiddlewareInterface, RequestHandlerInterfa
             return $next->handle($request);
         }
 
-        $this->next = $next;
         $this->router = $this->container->get(RouterInterface::class);
         $this->prepareMiddlewareStack($this->router, $result);
 
-        return $this->handle($request);
-    }
-
-    /**
-     * Internal routing Middleware handler
-     *
-     * @param ServerRequestInterface $request
-     * @return ResponseInterface
-     */
-    public function handle(ServerRequestInterface $request): ResponseInterface
-    {
-        $middleware = $this->router->shiftMiddleware($this->container);
-
-        if (!is_null($middleware)) {
-            if ($middleware instanceof MiddlewareInterface) {
-                return $middleware->process($request, $this);
-            } elseif (is_callable($middleware)) {
-                return call_user_func_array($middleware, [$request, [$this, 'handle']]);
-            }
-        }
-        return $this->next->handle($request);
+        return (new CombinedMiddleware($this->container, $this->router->getMiddlewareStack(), $next))
+            ->process($request, $next);
     }
 
     /**
@@ -110,7 +83,6 @@ class DispatcherMiddleware implements MiddlewareInterface, RequestHandlerInterfa
      */
     protected function prepareMiddlewareStack(FastRouteRouter $router, ?RouteResult $result): void
     {
-
         if ($route = $result->getMatchedRoute()) {
             /** router stack first */
             if ($this->container->has('router.middlewares')) {

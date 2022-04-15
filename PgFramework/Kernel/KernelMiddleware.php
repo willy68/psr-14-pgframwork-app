@@ -7,6 +7,7 @@ namespace PgFramework\Kernel;
 use Exception;
 use Throwable;
 use InvalidArgumentException;
+use PgFramework\Middleware\CombinedMiddleware;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -32,6 +33,8 @@ class KernelMiddleware implements KernelInterface, RequestHandlerInterface
      */
     protected $container;
 
+    private $index = 0;
+
     public function __construct(ContainerInterface $c)
     {
         $this->container = $c;
@@ -40,14 +43,14 @@ class KernelMiddleware implements KernelInterface, RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $this->request = $request;
-        $middleware = $this->getMiddleware();
-        if (is_null($middleware)) {
+
+        $this->index++;
+        if ($this->index > 1) {
             throw new Exception('Aucun middleware n\'a intercepté cette requête');
-        } elseif ($middleware instanceof MiddlewareInterface) {
-            return $middleware->process($request, $this);
-        } elseif (is_callable($middleware)) {
-            return call_user_func_array($middleware, [$request, [$this, 'handle']]);
         }
+
+        return (new CombinedMiddleware($this->container, (array)$this->getMiddlewareStack(), $this))
+            ->process($request, $this);
     }
 
     public function handleException(Throwable $e, ServerRequestInterface $request): ResponseInterface
@@ -75,7 +78,7 @@ class KernelMiddleware implements KernelInterface, RequestHandlerInterface
     public function setCallbacks(array $callbacks): self
     {
         if (empty($callbacks)) {
-            throw new InvalidArgumentException("Une liste de listeners doit être passer à ce Kernel");
+            throw new InvalidArgumentException("Une liste de middlewares doit être passer à ce Kernel");
         }
 
         $this->middlewares($callbacks);

@@ -59,8 +59,8 @@ class PostShowAction
     {
         if ($post->getSlug() !== $slug) {
             return $this->redirect('blog.show', [
-                'slug' => $post->slug,
-                'id' => $post->id
+                'slug' => $post->getSlug(),
+                'id' => $post->getId()
             ]);
         }
 
