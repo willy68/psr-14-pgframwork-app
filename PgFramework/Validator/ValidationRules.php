@@ -37,6 +37,13 @@ class ValidationRules
     protected array $filterRules = [];
 
     /**
+     * Request Parsed Body
+     *
+     * @var array
+     */
+    protected array $params;
+
+    /**
      * FieldName
      *
      * @var string
@@ -48,10 +55,11 @@ class ValidationRules
      * @param string $fieldName
      * @param string $rules
      */
-    public function __construct(string $fieldName, string $rules)
+    public function __construct(string $fieldName = '', string $rules = '', array $params = [])
     {
         $this->setFieldName($fieldName);
         $this->setRules($rules);
+        $this->params = $params;
     }
 
     /**
@@ -94,16 +102,33 @@ class ValidationRules
     }
 
     /**
+     * Set Request Parsed Body Params
+     *
+     * @param array $params
+     * @return self
+     */
+    public function setParams(array $params): self
+    {
+        if (!empty($params)) {
+            $this->params = $params;
+        }
+        return $this;
+    }
+
+    /**
      * Clean object
      *
      * @return self
      */
-    public function clean(): self
+    public function clean(bool $excludeParams = true): self
     {
         $this->fieldName = '';
         $this->validationRules = [];
         $this->filterRules = [];
         $this->errors = [];
+        if ($excludeParams === false) {
+            $this->params = [];
+        }
         return $this;
     }
 
@@ -121,29 +146,35 @@ class ValidationRules
         $validations = $container->get('form.validations');
         $filters = $container->get('form.filters');
 
-        foreach ($this->filterRules as $key => $param) {
-            if (array_key_exists($key, $filters)) {
+        foreach ($this->filterRules as $filter => $param) {
+            if (array_key_exists($filter, $filters)) {
                 /** @var FilterInterface $filter*/
-                $filter = $container->get($filters[$key]);
+                $filter = $container->get($filters[$filter]);
             } else {
                 continue;
             }
             $var = $filter->filter($var);
         }
 
-        foreach ($this->validationRules as $key => $param) {
-            if (array_key_exists($key, $validations)) {
+        foreach ($this->validationRules as $rule => $param) {
+            if (array_key_exists($rule, $validations)) {
                 /** @var ValidationInterface $validation*/
-                $validation = $container->get($validations[$key]);
+                $validation = $container->get($validations[$rule]);
             } else {
                 continue;
             }
+
             $validation->parseParams((string) $param);
+
+            if ($validation instanceof ValidationExtraParamsInterface) {
+                $validation->setBodyParams($this->params);
+            }
+
             if (!$validation->isValid($var)) {
                 $valid = false;
                 $this->addError(
                     $this->fieldName,
-                    $key,
+                    $rule,
                     $validation->getParams(),
                     $validation->getError()
                 );

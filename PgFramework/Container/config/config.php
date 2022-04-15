@@ -48,7 +48,7 @@ use PgFramework\Validator\Filter\StriptagsFilter;
 use PgFramework\Validator\Filter\TrimFilter;
 use PgFramework\Validator\Rules\{
     DateFormatValidation,
-    EmailConfirmValidation,
+    ConfirmValidation,
     EmailValidation,
     ExistsValidation,
     ExtensionValidation,
@@ -118,7 +118,7 @@ return [
         'max' => MaxValidation::class,
         'date' => DateFormatValidation::class,
         'email' => EmailValidation::class,
-        'emailConfirm' => EmailConfirmValidation::class,
+        'confirm' => ConfirmValidation::class,
         'notEmpty' => NotEmptyValidation::class,
         'range' => RangeValidation::class,
         'filetype' => ExtensionValidation::class,

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace PgFramework\Validator\Rules;
 
+use PgFramework\Validator\ValidationExtraParamsInterface;
 use PgFramework\Validator\ValidationInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
-class EmailConfirmValidation implements ValidationInterface
+class ConfirmValidation implements ValidationInterface, ValidationExtraParamsInterface
 {
     protected string $error = 'Le champ %s doit être un E-mail identique avec le champ %s';
 
@@ -22,14 +22,12 @@ class EmailConfirmValidation implements ValidationInterface
      * @param string|null $error
      */
     public function __construct(
-        ServerRequestInterface $request,
         ?string $fieldName = null,
         ?string $error = null
     ) {
         if ($error !== null) {
             $this->error = $error;
         }
-        $this->params = $request->getParsedBody();
         $this->setFieldName($fieldName);
     }
 
@@ -39,11 +37,8 @@ class EmailConfirmValidation implements ValidationInterface
      */
     public function isValid($var): bool
     {
-        if ($this->checkField($var)) {
-            return true;
-        } else {
-            return false;
-        }
+        $confirmValue = $this->getValue($this->fieldName);
+        return $confirmValue === $var;
     }
 
     /**
@@ -81,28 +76,37 @@ class EmailConfirmValidation implements ValidationInterface
     }
 
     /**
-     * @param string $var
-     * @return bool
-     */
-    protected function checkField(string $var): bool
-    {
-        if (is_string($var)) {
-            if (isset($this->params[$this->fieldName])) {
-                return $this->params[$this->fieldName] === $var;
-            }
-        }
-        return false;
-    }
-
-    /**
      * @param string $fieldName
      * @return $this
      */
     public function setFieldName(string $fieldName): self
     {
-        if (is_string($fieldName)) {
-            $this->fieldName = $fieldName;
-        }
+        $this->fieldName = $fieldName;
         return $this;
+    }
+
+    /**
+     * Set Request Parsed Body Params
+     *
+     * @param array $params
+     * @return void
+     */
+    public function setBodyParams(array $params): void
+    {
+        if (!empty($params)) {
+            $this->params = $params;
+        }
+    }
+
+    /**
+     * @param string $key
+     * @return mixed|null
+     */
+    private function getValue(string $key)
+    {
+        if (array_key_exists($key, $this->params)) {
+            return $this->params[$key];
+        }
+        return null;
     }
 }
