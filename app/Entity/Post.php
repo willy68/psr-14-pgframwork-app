@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\DBAL\Types\Types;
@@ -202,7 +201,7 @@ class Post
      *
      * @return  self
      */
-    public function setCreatedAt(DateTime $createdAt)
+    public function setCreatedAt(DateTimeImmutable $createdAt)
     {
         $this->created_at = $createdAt;
 
@@ -226,7 +225,7 @@ class Post
      *
      * @return  self
      */
-    public function setUpdatedAt(DateTime $updatedAt)
+    public function setUpdatedAt(DateTimeImmutable $updatedAt)
     {
         $this->updated_at = $updatedAt;
 

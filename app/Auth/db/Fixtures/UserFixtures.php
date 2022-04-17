@@ -6,7 +6,7 @@ use App\Auth\Entity\User;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class UserDataLoader implements FixtureInterface
+class UserFixtures implements FixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
