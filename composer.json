@@ -67,7 +67,14 @@
             "@php -r \"file_exists('./config/database.php') || copy('./config/database.dist.php', './config/database.php');\""
         ],
         "post-create-project-cmd": [
-            "@php ./bin/generate key:generate"
+            "@php ./bin/console key:generate"
+        ],
+        "database-clean": [
+            "@php ./bin/console doctrine:database:drop --force",
+            "@php ./bin/console doctrine:database:create",
+            "@php ./bin/console migrations:migrate --no-interaction",
+            "@php ./bin/console fixtures:load app/Blog/db/Fixtures",
+            "@php ./bin/console fixtures:load app/Auth/db/Fixtures --append"
         ]
     }
 }
