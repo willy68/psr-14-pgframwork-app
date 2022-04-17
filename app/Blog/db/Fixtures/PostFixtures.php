@@ -25,18 +25,8 @@ class UserDataLoader implements FixtureInterface
         }
 
         // seeding des posts
-        $data = [];
         for ($i = 0; $i < 100; ++$i) {
             $date = $faker->unixTime('now');
-            $data[] = [
-                'name' => $faker->catchPhrase,
-                'slug' => $faker->slug,
-                'content' => $faker->text(3000),
-                'category_id' => $faker->numberBetween(1, 5),
-                'created_at' => date('Y-m-d H:i:s', $date),
-                'updated_at' => date('Y-m-d H:i:s', $date),
-                'published' => 1
-            ];
             $post = new Post();
             $post->setName($faker->catchPhrase)
                 ->setSlug($faker->slug)
@@ -45,6 +35,9 @@ class UserDataLoader implements FixtureInterface
                 ->setCreatedAt(DateTime::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s', $date)))
                 ->setUpdatedAt(DateTime::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s', $date)))
                 ->setPublished(1);
+
+            $manager->persist($post);
         }
+        $manager->flush();
     }
 }
