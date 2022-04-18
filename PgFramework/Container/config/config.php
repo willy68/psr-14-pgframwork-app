@@ -6,7 +6,7 @@ use DebugBar\DebugBar;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\Configuration;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use PgFramework\Jwt\JwtMiddlewareFactory;
 use Psr\Container\ContainerInterface;
@@ -228,10 +228,10 @@ return [
     Connection::class => function (ContainerInterface $c): Connection {
         return DriverManager::getConnection($c->get('doctrine.connection.default.url'));
     },
-    'doctrine.manager.default' => function (ContainerInterface $c): EntityManager {
-        return $c->get(EntityManager::class);
+    'doctrine.manager.default' => function (ContainerInterface $c): EntityManagerInterface {
+        return $c->get(EntityManagerInterface::class);
     },
-    EntityManager::class => factory(EntityManagerFactory::class)
+    EntityManagerInterface::class => factory(EntityManagerFactory::class)
         ->parameter('connectionEntry', 'doctrine.connection.default'),
     'doctrine.managers' => \DI\add([
         'default' => 'doctrine.manager.default',

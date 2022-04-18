@@ -6,8 +6,8 @@ use App\Entity\Post;
 use App\Blog\Models\Posts;
 use App\Blog\Models\Categories;
 use App\Entity\Category;
-use Doctrine\ORM\EntityManager;
 use App\Repository\PostRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use PgFramework\Router\Annotation\Route;
 use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -17,15 +17,11 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 class PostIndexAction
 {
     /**
-     * Undocumented variable
-     *
      * @var RendererInterface
      */
     private $renderer;
 
     /**
-     * Undocumented function
-     *
      * @param RendererInterface $renderer
      */
     public function __construct(RendererInterface $renderer)
@@ -56,12 +52,12 @@ class PostIndexAction
      *
      * @Route("/blog", name="blog.index", methods={"GET"})
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Doctrine\ORM\EntityManager $em
+     * @param Request $request
+     * @param EntityManagerInterface $em
      * @return string
      */
     #[Route('/blog', name:'blog.index', methods:['GET'])]
-    public function index(Request $request, EntityManager $em): string
+    public function index(Request $request, EntityManagerInterface $em): string
     {
         $params = $request->getQueryParams();
         /** @var PostRepository */

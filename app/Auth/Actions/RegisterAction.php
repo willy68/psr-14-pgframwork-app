@@ -3,7 +3,7 @@
 namespace App\Auth\Actions;
 
 use App\Auth\Entity\User;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use PgFramework\Auth\AuthSession;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Validator\Validator;
@@ -41,7 +41,7 @@ class RegisterAction
     private $router;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $em;
 
@@ -59,7 +59,7 @@ class RegisterAction
 
     public function __construct(
         RendererInterface $renderer,
-        EntityManager $em,
+        EntityManagerInterface $em,
         PasswordHasherInterface $hasher,
         AuthSession $auth,
         SessionInterface $session,

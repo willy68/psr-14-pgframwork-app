@@ -8,8 +8,8 @@ use DateTime;
 use App\Entity\Post;
 use App\Models\Client;
 use App\Auth\Models\User;
-use Doctrine\ORM\EntityManager;
 use App\Repository\PostRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use PgFramework\Router\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
@@ -41,7 +41,7 @@ class DemoController
         ServerRequestInterface $request,
         RendererInterface $renderer,
         \PDO $pdo,
-        EntityManager $em,
+        EntityManagerInterface $em,
         ContainerInterface $c,
         ManagerRegistry $managerRegistry
     ): string {
