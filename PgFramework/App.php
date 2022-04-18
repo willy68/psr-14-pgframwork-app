@@ -198,31 +198,29 @@ class App extends AbstractApplication
             if (!$this->kernel) {
                 $this->kernel = $container->get(KernelEvent::class);
             }
-            if ($this->kernel instanceof KernelEvent) {
-                $map = $container->get(RoutesMapInterface::class);
-                [$listeners] = $map->getListeners($this->request);
-                if (null !== $listeners) {
-                    $this->listeners = array_merge($this->listeners, $listeners);
-                }
-                $this->kernel->setCallbacks($this->listeners);
-            } else {
+            if (! $this->kernel instanceof KernelEvent) {
                 throw new RuntimeException('Aucun Kernel ou le Kernel ne gère pas les listeners');
             }
+            $map = $container->get(RoutesMapInterface::class);
+            [$listeners] = $map->getListeners($this->request);
+            if (null !== $listeners) {
+                $this->listeners = array_merge($this->listeners, $listeners);
+            }
+            $this->kernel->setCallbacks($this->listeners);
         } else {
             if (!$this->kernel) {
                 $this->kernel = $container->get(KernelMiddleware::class);
             }
-            if ($this->kernel instanceof KernelMiddleware) {
-                $this->addMiddlewares(
-                    [
-                        DispatcherMiddleware::class,
-                        PageNotFoundMiddleware::class
-                    ]
-                );
-                $this->kernel->setCallbacks($this->middlewares);
-            } else {
+            if (! $this->kernel instanceof KernelMiddleware) {
                 throw new RuntimeException('Aucun Kernel ou le Kernel ne gère pas les middlewares');
             }
+            $this->addMiddlewares(
+                [
+                    DispatcherMiddleware::class,
+                    PageNotFoundMiddleware::class
+                ]
+            );
+            $this->kernel->setCallbacks($this->middlewares);
         }
 
         try {
