@@ -72,7 +72,7 @@
         "database-clean": [
             "@php ./bin/console doctrine:database:drop --force --if-exists",
             "@php ./bin/console doctrine:database:create --if-not-exists",
-            "@php ./bin/console migrations:migrate --no-interaction",
+            "@php ./bin/console migrations:migrate --no-interaction --allow-no-migration",
             "@php ./bin/console fixtures:load --append app/Blog/db/Fixtures app/Auth/db/Fixtures"
         ]
     }
