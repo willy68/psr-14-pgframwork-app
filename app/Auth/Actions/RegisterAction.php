@@ -74,7 +74,7 @@ class RegisterAction
     }
 
     /**
-     * @Route("/register", name="auth.register"})
+     * @Route("/register", name="auth.register")
      */
     #[Route(path: "/register", name: "auth.register")]
     public function __invoke(ServerRequestInterface $request)

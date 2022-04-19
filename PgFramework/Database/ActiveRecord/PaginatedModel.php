@@ -37,7 +37,7 @@ class PaginatedModel extends ActiveRecord\Model
         if (!empty(static::$paginatedCondition['conditions'])) {
             $options['conditions'] = static::$paginatedCondition['conditions'];
         }
-        return static::count($options);
+        return (int)static::count($options);
     }
 
     /**
