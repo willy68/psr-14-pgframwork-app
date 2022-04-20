@@ -20,36 +20,45 @@ return [
                 RememberMeLoginListener::class,
             ]
         ],
-        [ // Use default listeners and specific voters rules
-            'path' => '^/admin/posts/(\d+)',
-            'listeners' => [
-                AuthorizationListener::class,
-            ]
-        ],
-        [ // Use only default listeners
+        [   // Use only default listeners
             'path' => '^/admin',
             // Other RequestMatcher rules
             //'method' => [],
             //'host' => null,
             //'schemes' => [],
             //'port' => null,
-            //'listeners' => [
-            //],
+            'listeners' => [
+                AuthorizationListener::class,
+            ],
             //'main.listeners' => [
             //]
+            'voters.rules' => [
+                [
+                    // Overhide main rules
+                    'path' => '^/admin/posts/(\d+)',
+                    // Other RequestMatcher rules overhide main rules
+                    //'method' => ['GET','POST'],
+                    //'host' => localhost,
+                    //'schemes' => ['https','http'],
+                    //'port' => 8000,
+                    'attributes' => [
+                        'ROLE_ADMIN',
+                    ],
+                ],
+            ],
         ],
-        [ // Use no default listeners
+        [   // Use no default listeners
             'path' => '^/login',
-            // Other RequestMatcher rules
             'method' => ['POST'],
             // No default listener for this specific route
             'no.default.listeners' => true,
-            // For Request
+            // For Firewall RequestEvent
             'listeners' => [
                 AuthenticationListener::class
             ],
+            // For LoginSuccessEvent
             'main.listeners' => [
-               RehashPasswordListener::class
+                RehashPasswordListener::class
             ]
         ],
         [
@@ -59,30 +68,12 @@ return [
             ]
         ],
     ]),
+    // Add your authenticators here
     'security.authenticators' => \DI\add([
         \DI\get(FormAuthentication::class),
     ]),
-    'security.authorization.listeners' => \DI\add([
-        AuthorizationListener::class,
-    ]),
+    // Add your Voter class here
     'security.voters' => \DI\add([
         \DI\get(VoterRoles::class),
     ]),
-    'security.voters.rules' => \DI\add([
-        [
-            'path' => '^/admin/posts/(\d+)',
-            // Other RequestMatcher rules
-            //'method' => ['GET','POST'],
-            //'host' => localhost,
-            //'schemes' => ['https','http'],
-            //'port' => 8000,
-            'attributes' => [
-                'ROLE_ADMIN',
-            ],
-        ],
-        [
-            'path' => '^/admin/categories/(\d+)',
-            'attributes' => [],
-        ],
-    ])
 ];
