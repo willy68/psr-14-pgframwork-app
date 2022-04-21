@@ -46,12 +46,13 @@ class DebugBarListener implements EventSubscriberInterface
 
         $response = $event->getResponse();
         $request = $event->getRequest();
-        /** @var ApplicationInterface */
-        $app = $request->getAttribute(ApplicationInterface::class);
 
         if (RequestUtils::isAjax($request)) {
             return;
         }
+
+        /** @var ApplicationInterface */
+        $app = $request->getAttribute(ApplicationInterface::class);
 
         $this->debugBar->addCollector(
             (new RequestCollector($request, $response, $this->session))
