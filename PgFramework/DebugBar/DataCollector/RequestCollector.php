@@ -12,6 +12,7 @@ use DebugBar\DataCollector\Renderable;
 use Psr\Http\Message\ResponseInterface;
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;
+use Dflydev\FigCookies\FigResponseCookies;
 use PgFramework\Session\SessionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -78,7 +79,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
             "request" => [
                 "icon" => "tags",
                 "widget" => $widget,
-                "map" => "request",
+                "map" => "request.data",
                 "default" => "{}"
             ],
             'request:badge' => [
@@ -96,32 +97,20 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
         $request = $this->request;
         $response = $this->response;
 
-        $responseHeaders = $response->getHeaders();
-
-
-        $cookies = [];
-        foreach ($response->getHeader('Set-Cookie') as $cookie) {
-            $cookies[] = $cookie;/* $this->getCookieHeader(
-                $cookie->getName(),
-                $cookie->getValue(),
-                $cookie->getExpiresTime(),
-                $cookie->getPath(),
-                $cookie->getDomain(),
-                $cookie->isSecure(),
-                $cookie->isHttpOnly()
-            );*/
-        }
-        if (count($cookies) > 0) {
-            $responseHeaders['Set-Cookie'] = $cookies;
+        $responseHeaders = [];
+        foreach ($response->getHeaders() as $name => $values) {
+            foreach ($values as $value) {
+                $responseHeaders[$name] = $value;
+            }
         }
 
         $statusCode = $response->getStatusCode();
 
-        $data = [
+        $data['data'] = [
             'path_info' => $request->getServerParams()['PATH_INFO'] ?? '',
             'status_code' => $statusCode,
             'status_text' => ! empty($response->getReasonPhrase()) ? $response->getReasonPhrase() : '',
-            'content_type' => $response->getHeader('Content-Type') ? $response->getHeader('Content-Type') : 'text/html',
+            'content_type' => $response->hasHeader('Content-Type') ? $response->getHeader('Content-Type') : 'text/html',
             'request_query' => $request->getQueryParams(),
             'request_headers' => $request->getHeaders(),
             'request_server' => $request->getServerParams(),
@@ -134,30 +123,30 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
             foreach ($this->session as $key => $value) {
                 $sessionAttributes[$key] = $value;
             }
-            $data['session_attributes'] = $sessionAttributes;
+            $data['data']['session_attributes'] = $sessionAttributes;
         }
 
         $request_attributes = $request->getAttributes();
         if (isset($request_attributes[ApplicationInterface::class])) {
             unset($request_attributes[ApplicationInterface::class]);
         }
-        $data['request_attributes'] = $request_attributes;
+        $data['data']['request_attributes'] = $request_attributes;
 
-        foreach ($data['request_server'] as $key => $value) {
+        foreach ($data['data']['request_server'] as $key => $value) {
             if (
                 stripos($key, '_KEY') || stripos($key, '_PASSWORD')
                 || stripos($key, '_SECRET') || stripos($key, '_PW')
                 || stripos($key, '_TOKEN') || stripos($key, '_PASS')
             ) {
-                $data['request_server'][$key] = '******';
+                $data['data']['request_server'][$key] = '******';
             }
         }
 
-        foreach ($data as $key => $var) {
+        foreach ($data['data'] as $key => $var) {
             if ($this->isHtmlVarDumperUsed()) {
-                $data[$key] = $this->getVarDumper()->renderVar($var);
+                $data['data'][$key] = $this->getVarDumper()->renderVar($var);
             } else {
-                $data[$key] = $this->getDataFormatter()->formatVar($var);
+                $data['data'][$key] = $this->getDataFormatter()->formatVar($var);
             }
             $data['status_code_raw'] = $statusCode;
         }
