@@ -54,7 +54,7 @@ class DebugBarListener implements EventSubscriberInterface
         }
 
         $this->debugBar->addCollector(
-            (new RequestCollector($request, $response, $app->getContainer()->get(SessionInterface::class)))
+            (new RequestCollector($request, $response, $this->session))
                 ->useHtmlVarDumper(true)
         );
 
