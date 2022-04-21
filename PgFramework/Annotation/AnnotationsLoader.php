@@ -98,20 +98,18 @@ class AnnotationsLoader
         }
 
         // Look for class annotation
-        $annotation = $this->getReader()
-            ->getClassAnnotation(
-                $class,
-                $this->annotationClass
-            );
+        if (PHP_VERSION_ID >= 80000) {
+            $annotation = $this->getReader()->getClassAnnotations($class)[$this->annotationClass] ?? null;
+        } else {
+            $annotation = $this->getReader()->getClassAnnotation($class, $this->annotationClass);
+        }
 
         if ($annotation instanceof RepeatableAttributeCollection) {
             foreach ($annotation as $annot) {
                 return $annot;
             }
-        } else {
-            return $annotation;
         }
-        return null;
+        return $annotation;
     }
 
     /**
