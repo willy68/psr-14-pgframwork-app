@@ -25,6 +25,7 @@
         "php-di/php-di": "^6.0",
         "php-di/invoker": "^2.2",
         "twig/twig": "^3.0",
+        "willy68/response-sender": "^1.0.0",
         "willy68/mezzio-fastroute-dev": "dev-master",
         "willy68/mezzio-router-dev": "@dev",
         "willy68/php-activerecord-psr-4": "dev-master",
