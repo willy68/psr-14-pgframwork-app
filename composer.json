@@ -36,7 +36,9 @@
         "dflydev/fig-cookies": "^3.0",
         "tuupola/slim-jwt-auth": "^3.4",
         "league/event": "^3.0",
-        "symfony/cache": "^5.4"
+        "symfony/cache": "^5.4",
+        "mezzio/mezzio-session": "^1.6",
+        "mezzio/mezzio-session-ext": "^1.12"
     },
     "autoload": {
         "psr-4": {
