@@ -3,7 +3,6 @@
 namespace PgFramework\Session\Listener;
 
 use PgFramework\Event\Events;
-use League\Event\ListenerPriority;
 use Mezzio\Session\SessionInterface;
 use PgFramework\Event\RequestEvent;
 use PgFramework\Event\ResponseEvent;
