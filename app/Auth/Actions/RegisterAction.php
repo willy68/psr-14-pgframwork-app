@@ -130,8 +130,8 @@ class RegisterAction
             ->addRules([
                 'username' => 'min:2|unique:App\Auth\Entity\User,username,,Cet utilisateur existe déjà',
                 'email'    => 'email|unique:App\Auth\Entity\User,email,,Cet Email existe déjà',
-                'email_confirm'    => 'email|confirm:email',
-                'password'    => 'min:4',
+                'email_confirm' => 'email|confirm:email',
+                'password'      => 'min:4',
             ]);
         return $validator;
     }
