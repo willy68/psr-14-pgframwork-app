@@ -23,26 +23,29 @@ class DoctrineConfigFactory
             $queryCache = new ArrayAdapter();
             $metadataCache = new ArrayAdapter();
             $hydrateCache = new ArrayAdapter();
-            $annotDriver = new ArrayAdapter();
+            $resultCache = new ArrayAdapter();
+            $annotCache = new ArrayAdapter();
             $config->setAutoGenerateProxyClasses(true);
         } else {
             $queryCache = new PhpFilesAdapter('doctrine_queries');
             $metadataCache = new PhpFilesAdapter('doctrine_metadata');
             $hydrateCache = new PhpFilesAdapter('doctrine.hydrate');
-            $annotDriver = new PhpFilesAdapter('doctrine.annotaions');
+            $resultCache = new PhpFilesAdapter('doctrine.result');
+            $annotCache = new PhpFilesAdapter('doctrine.annotaions');
             $config->setAutoGenerateProxyClasses(false);
         }
 
         $config->setMetadataCache($metadataCache);
         $config->setQueryCache($queryCache);
         $config->setHydrationCache($hydrateCache);
+        $config->setResultCache($resultCache);
 
         if (PHP_VERSION_ID >= 80000) {
             $annotDriver = new AttributeDriver($c->get('doctrine.entity.path'));
         } else {
             $annotDriver = ORMSetup::createDefaultAnnotationDriver(
                 $c->get('doctrine.entity.path'),
-                $annotDriver
+                $annotCache
             );
         }
 
