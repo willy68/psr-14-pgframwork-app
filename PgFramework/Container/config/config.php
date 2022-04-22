@@ -23,7 +23,7 @@ use PgFramework\Twig\{
 use PgFramework\Router\FastRouteRouterFactory;
 use PgFramework\Router\RouterTwigExtension;
 use PgFramework\Session\PHPSession;
-use PgFramework\Session\SessionInterface;
+use PgFramework\Session\SessionInterface as PgSessionInterface;
 use PgFramework\Renderer\RendererInterface;
 use PgFramework\Renderer\TwigRendererFactory;
 use PgFramework\Environnement\Environnement;
@@ -68,6 +68,8 @@ use Mezzio\Router\FastRouteRouter;
 use Mezzio\Router\RouteCollectionInterface;
 use Mezzio\Router\RouteCollector;
 use Mezzio\Router\RouterInterface;
+use Mezzio\Session\SessionInterface;
+use Mezzio\Session\SessionPersistenceInterface;
 use PgFramework\Database\ActiveRecord\ActiveRecordFactory;
 use PgFramework\Database\Doctrine\DoctrineConfigFactory;
 use PgFramework\Database\Doctrine\EntityManagerFactory;
@@ -82,9 +84,12 @@ use PgFramework\Router\RoutesMapInterface;
 use PgFramework\Security\Firewall\EventListener\AuthenticationListener;
 use PgFramework\Security\Hasher\DefaultPasswordHasher;
 use PgFramework\Security\Hasher\PasswordHasherInterface;
+use PgFramework\Session\SessionFactory;
+use PgFramework\Session\SessionPersistenceFactory;
 use Tuupola\Middleware\JwtAuthentication;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
+use function DI\add;
 use function DI\autowire;
 use function DI\create;
 use function DI\get;
@@ -110,7 +115,6 @@ return [
         get(FormExtension::class),
         get(CsrfExtension::class),
         get(WebpackExtension::class),
-        //get(DebugBarExtension::class),
     ],
     'form.validations' => \DI\add([
         'required' => RequiredValidation::class,
@@ -137,12 +141,18 @@ return [
     AccessMapInterface::class => factory(AccessMapFactory::class),
     'security.voters.strategy' => VoterManagerInterface::STRATEGY_AFFIRMATIVE,
     VoterManagerInterface::class => factory(VoterManagerFactory::class),
-    SessionInterface::class => create(PHPSession::class),
+    'session.persistence.ext' => add([
+        'non_locking' => false,
+        'delete_cookie_on_empty_session' => false
+    ]),
+    SessionPersistenceInterface::class => factory(SessionPersistenceFactory::class),
+    SessionInterface::class => factory(SessionFactory::class),
+    PgSessionInterface::class => create(PHPSession::class),
     RequestMatcherInterface::class => create(RequestMatcher::class),
     CsrfMiddleware::class =>
-    create()->constructor(get(SessionInterface::class)),
+    create()->constructor(get(PgSessionInterface::class)),
     TokenStorageInterface::class =>
-    create(TokenSessionStorage::class)->constructor(get(SessionInterface::class)),
+    create(TokenSessionStorage::class)->constructor(get(PgSessionInterface::class)),
     TokenGeneratorInterface::class => create(TokenGenerator::class),
     CsrfTokenManagerInterface::class =>
     create(CsrfTokenManager::class)->constructor(
