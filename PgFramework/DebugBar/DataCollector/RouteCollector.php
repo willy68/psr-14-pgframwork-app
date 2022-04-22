@@ -42,6 +42,7 @@ class RouteCollector extends DataCollector implements Renderable, AssetProvider
                 'methods' => $route->getAllowedMethods(),
                 'name' => $route->getName(),
                 'callback' => $route->getCallback(),
+                'params' => $this->routeResult->getMatchedParams(),
             ];
             $methods = $data['data']['methods'] ?? [];
             $text = implode(', ', $methods) . ' ' . $route->getPath();
