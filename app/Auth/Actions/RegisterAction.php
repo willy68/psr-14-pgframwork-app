@@ -99,7 +99,7 @@ class RegisterAction
 
                 if ($user->getId()) {
                     (new FlashService($this->session))->success($this->messages['create']);
-                    $path = $this->session->get('auth.redirect')  ?: $this->router->generateUri('admin');
+                    $path = $this->session->get('auth.redirect') ?: $this->router->generateUri('admin');
                     $this->session->delete('auth.redirect');
                     $response = new ResponseRedirect($path);
                     if ($params['connect']) {
