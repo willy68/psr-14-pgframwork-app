@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace PgFramework\Database\Doctrine;
 
+use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Configuration;
-use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Psr\Container\ContainerInterface;
+use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 
@@ -21,22 +22,27 @@ class DoctrineConfigFactory
         if ($isDevMode === true) {
             $queryCache = new ArrayAdapter();
             $metadataCache = new ArrayAdapter();
+            $hydrateCache = new ArrayAdapter();
+            $annotDriver = new ArrayAdapter();
             $config->setAutoGenerateProxyClasses(true);
         } else {
             $queryCache = new PhpFilesAdapter('doctrine_queries');
             $metadataCache = new PhpFilesAdapter('doctrine_metadata');
+            $hydrateCache = new PhpFilesAdapter('doctrine.hydrate');
+            $annotDriver = new PhpFilesAdapter('doctrine.annotaions');
             $config->setAutoGenerateProxyClasses(false);
         }
 
         $config->setMetadataCache($metadataCache);
         $config->setQueryCache($queryCache);
+        $config->setHydrationCache($hydrateCache);
 
         if (PHP_VERSION_ID >= 80000) {
             $annotDriver = new AttributeDriver($c->get('doctrine.entity.path'));
         } else {
-            $annotDriver = $config->newDefaultAnnotationDriver(
+            $annotDriver = ORMSetup::createDefaultAnnotationDriver(
                 $c->get('doctrine.entity.path'),
-                false
+                $annotDriver
             );
         }
 
