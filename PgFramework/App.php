@@ -245,6 +245,7 @@ class App extends AbstractApplication
                 $builder->enableCompilation(self::COMPILED_CONTAINER_DIRECTORY);
                 $builder->writeProxiesToFile(true, self::PROXY_DIRECTORY);
             }
+            $builder->addDefinitions([ApplicationInterface::class => $this]);
             foreach ($this->config as $config) {
                 $builder->addDefinitions($config);
             }
