@@ -6,6 +6,7 @@ namespace PgFramework\Annotation;
 
 use ReflectionMethod;
 use Doctrine\ORM\Mapping\Annotation;
+use Doctrine\ORM\Mapping\Driver\AttributeReader;
 use PgFramework\Router\Annotation\Route;
 use Doctrine\ORM\Mapping\Driver\RepeatableAttributeCollection;
 
@@ -98,10 +99,11 @@ class AnnotationsLoader
         }
 
         // Look for class annotation
-        if (PHP_VERSION_ID >= 80000) {
-            $annotation = $this->getReader()->getClassAnnotations($class)[$this->annotationClass] ?? null;
+        $reader = $this->getReader();
+        if ($reader instanceof AttributeReader) {
+            $annotation = $reader->getClassAnnotations($class)[$this->annotationClass] ?? null;
         } else {
-            $annotation = $this->getReader()->getClassAnnotation($class, $this->annotationClass);
+            $annotation = $reader->getClassAnnotation($class, $this->annotationClass);
         }
 
         if ($annotation instanceof RepeatableAttributeCollection) {
