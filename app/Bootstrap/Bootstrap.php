@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use PgFramework\App;
 use PgFramework\Environnement\Environnement;
-use PgFramework\File\FileUtils;
 use Symfony\Component\Dotenv\Dotenv;
 
 return (static function (): App {
@@ -21,9 +20,7 @@ return (static function (): App {
 
     $bootstrap = require 'App.php';
 
-    $config = FileUtils::getFiles($basePath . '/config', 'php', '.dist.');
-
-    $app = (new App(array_keys($config)))
+    $app = (new App())
         ->addModules($bootstrap['modules'])
         //->addMiddlewares($bootstrap['middlewares']);
         ->addListeners($bootstrap['listeners']);

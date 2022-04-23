@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace PgFramework;
 
 use Exception;
+use RuntimeException;
 use DI\ContainerBuilder;
+use PgFramework\File\FileUtils;
 use Mezzio\Router\RouteCollector;
 use GuzzleHttp\Psr7\ServerRequest;
 use PgFramework\Kernel\KernelEvent;
@@ -18,10 +20,9 @@ use PgFramework\Environnement\Environnement;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Annotation\AnnotationsLoader;
 use PgFramework\Router\Loader\DirectoryLoader;
+use PgFramework\Middleware\DispatcherMiddleware;
 use PgFramework\Middleware\PageNotFoundMiddleware;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use PgFramework\Middleware\DispatcherMiddleware;
-use RuntimeException;
 
 /**
  * Application
@@ -85,14 +86,10 @@ class App extends AbstractApplication
     /**
      * App constructor
      *
-     * @param array $config
      */
-    public function __construct(
-        array $config,
-        ?KernelInterface $kernel = null
-    ) {
+    public function __construct(?KernelInterface $kernel = null)
+    {
         $this->config[] = __DIR__ . '/Container/config/config.php';
-        $this->config = \array_merge($this->config, $config);
 
         self::$app = $this;
 
@@ -270,6 +267,11 @@ class App extends AbstractApplication
     protected function getRunTimeDefinitions(): array
     {
         $projectDir = realpath($this->getProjectDir()) ?: $this->getProjectDir();
+
+        // Get all config file definitions
+        $config = FileUtils::getFiles($projectDir . '/config', 'php', '.dist.');
+        $this->config = array_merge($this->config, array_keys($config));
+
         return [
             ApplicationInterface::class => $this,
             'app.project.dir' => $projectDir,
