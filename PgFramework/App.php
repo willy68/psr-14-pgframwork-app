@@ -77,11 +77,18 @@ class App extends AbstractApplication
     private $request;
 
     /**
-     * Dir where de composer.json file is located
+     * Dir where the composer.json file is located
      *
      * @var string
      */
     private $projectDir;
+
+    /**
+     * Dir where the container definitions files is located
+     *
+     * @var string
+     */
+    private $configDir;
 
     /**
      * App constructor
@@ -269,7 +276,7 @@ class App extends AbstractApplication
         $projectDir = realpath($this->getProjectDir()) ?: $this->getProjectDir();
 
         // Get all config file definitions
-        $config = FileUtils::getFiles($projectDir . '/config', 'php', '.dist.');
+        $config = FileUtils::getFiles($this->getConfigDir(), 'php', '.dist.');
         $this->config = array_merge($this->config, array_keys($config));
 
         return [
@@ -349,7 +356,15 @@ class App extends AbstractApplication
             }
             $this->projectDir = $dir;
         }
-
         return $this->projectDir;
+    }
+
+    public function getConfigDir(): string
+    {
+        if (!isset($this->configDir)) {
+            $projectDir = realpath($this->getProjectDir()) ?: $this->getProjectDir();
+            $this->configDir = $projectDir . '/config';
+        }
+        return $this->configDir;
     }
 }
