@@ -33,7 +33,7 @@ class FastRouteRouterFactory
     {
         $cache = null;
         if ($container->get('env') === 'prod') {
-            $cache = 'tmp/route';
+            $cache = $container->get('app.cache.dir') . '/route';
         }
 
         return new FastRouteRouter(null, null, [

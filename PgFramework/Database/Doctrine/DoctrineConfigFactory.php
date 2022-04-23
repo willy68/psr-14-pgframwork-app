@@ -27,11 +27,11 @@ class DoctrineConfigFactory
             $annotCache = new ArrayAdapter();
             $config->setAutoGenerateProxyClasses(true);
         } else {
-            $queryCache = new PhpFilesAdapter('doctrine_queries');
-            $metadataCache = new PhpFilesAdapter('doctrine_metadata');
-            $hydrateCache = new PhpFilesAdapter('doctrine.hydrate');
-            $resultCache = new PhpFilesAdapter('doctrine.result');
-            $annotCache = new PhpFilesAdapter('doctrine.annotaions');
+            $queryCache = new PhpFilesAdapter('doctrine_queries', 0, $c->get('app.cache.dir') . '/orm');
+            $metadataCache = new PhpFilesAdapter('doctrine_metadata', 0, $c->get('app.cache.dir') . '/orm');
+            $hydrateCache = new PhpFilesAdapter('doctrine.hydrate', 0, $c->get('app.cache.dir') . '/orm');
+            $resultCache = new PhpFilesAdapter('doctrine.result', 0, $c->get('app.cache.dir') . '/orm');
+            $annotCache = new PhpFilesAdapter('doctrine.annotaions', 0, $c->get('app.cache.dir') . '/orm');
             $config->setAutoGenerateProxyClasses(false);
         }
 

@@ -28,9 +28,9 @@ use RuntimeException;
  */
 class App extends AbstractApplication
 {
-    public const PROXY_DIRECTORY = 'tmp/proxies';
+    public const PROXY_DIRECTORY = '/proxies';
 
-    public const COMPILED_CONTAINER_DIRECTORY = 'tmp/di';
+    public const COMPILED_CONTAINER_DIRECTORY = '/di';
 
     /**
      *
@@ -74,6 +74,13 @@ class App extends AbstractApplication
      * @var ServerRequestInterface
      */
     private $request;
+
+    /**
+     * Dir where de composer.json file is located
+     *
+     * @var string
+     */
+    private $projectDir;
 
     /**
      * App constructor
@@ -198,7 +205,7 @@ class App extends AbstractApplication
             if (!$this->kernel) {
                 $this->kernel = $container->get(KernelEvent::class);
             }
-            if (! $this->kernel instanceof KernelEvent) {
+            if (!$this->kernel instanceof KernelEvent) {
                 throw new RuntimeException('Aucun Kernel ou le Kernel ne gère pas les listeners');
             }
             $map = $container->get(RoutesMapInterface::class);
@@ -211,7 +218,7 @@ class App extends AbstractApplication
             if (!$this->kernel) {
                 $this->kernel = $container->get(KernelMiddleware::class);
             }
-            if (! $this->kernel instanceof KernelMiddleware) {
+            if (!$this->kernel instanceof KernelMiddleware) {
                 throw new RuntimeException('Aucun Kernel ou le Kernel ne gère pas les middlewares');
             }
             $this->addMiddlewares(
@@ -242,10 +249,10 @@ class App extends AbstractApplication
             $builder = new ContainerBuilder();
             $env = Environnement::getEnv('APP_ENV', 'prod');
             if ($env === 'prod') {
-                $builder->enableCompilation(self::COMPILED_CONTAINER_DIRECTORY);
-                $builder->writeProxiesToFile(true, self::PROXY_DIRECTORY);
+                $builder->enableCompilation($this->getProjectDir() . self::COMPILED_CONTAINER_DIRECTORY);
+                $builder->writeProxiesToFile(true, $this->getProjectDir() . self::PROXY_DIRECTORY);
             }
-            $builder->addDefinitions([ApplicationInterface::class => $this]);
+            $builder->addDefinitions($this->getRunTimeDefinitions());
             foreach ($this->config as $config) {
                 $builder->addDefinitions($config);
             }
@@ -257,6 +264,16 @@ class App extends AbstractApplication
             $this->container = $builder->build();
         }
         return $this->container;
+    }
+
+    protected function getRunTimeDefinitions(): array
+    {
+        return [
+            ApplicationInterface::class => $this,
+            'app.project.dir' => realpath($this->getProjectDir()) ?: $this->getProjectDir(),
+            'app.cache.dir'   => realpath($this->getProjectDir()) ?: $this->getProjectDir() . '/tmp/cache' ?:
+                $this->getProjectDir() . '/tmp/cache',
+        ];
     }
 
     /**
@@ -299,5 +316,37 @@ class App extends AbstractApplication
         $this->request = $request;
 
         return $this;
+    }
+
+    /**
+     * Gets the application root dir (path of the project's composer file).
+     *
+     * https://github.com/symfony/symfony/blob/6.0/src/Symfony/Component/HttpKernel/Kernel.php#method_getProjectDir
+     */
+    public function getProjectDir(): string
+    {
+        if (!isset($this->projectDir)) {
+            $r = new \ReflectionObject($this);
+
+            if (!is_file($dir = $r->getFileName())) {
+                throw new \LogicException(
+                    sprintf(
+                        'Cannot auto-detect project dir for kernel of class "%s".',
+                        $r->name
+                    )
+                );
+            }
+
+            $dir = $rootDir = \dirname($dir);
+            while (!is_file($dir . '/composer.json')) {
+                if ($dir === \dirname($dir)) {
+                    return $this->projectDir = $rootDir;
+                }
+                $dir = \dirname($dir);
+            }
+            $this->projectDir = $dir;
+        }
+
+        return $this->projectDir;
     }
 }
