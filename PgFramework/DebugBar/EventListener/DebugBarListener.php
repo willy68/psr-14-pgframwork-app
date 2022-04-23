@@ -6,7 +6,6 @@ namespace PgFramework\DebugBar\EventListener;
 
 use DebugBar\DebugBar;
 use PgFramework\Event\Events;
-use League\Event\ListenerPriority;
 use Mezzio\Router\RouteResult;
 use Mezzio\Router\RouterInterface;
 use PgFramework\ApplicationInterface;
@@ -75,7 +74,7 @@ class DebugBarListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::RESPONSE => ['onResponse', ListenerPriority::LOW]
+            Events::RESPONSE => ['onResponse', -1000]
         ];
     }
 }
