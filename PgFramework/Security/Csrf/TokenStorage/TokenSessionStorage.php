@@ -34,7 +34,7 @@ class TokenSessionStorage implements TokenStorageInterface
      * @param string             $formKey
      */
     public function __construct(
-        SessionInterface &$session,
+        SessionInterface $session,
         int $limit = 50,
         string $sessionKey = 'csrf.tokens'
     ) {

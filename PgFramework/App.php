@@ -28,9 +28,9 @@ use RuntimeException;
  */
 class App extends AbstractApplication
 {
-    public const PROXY_DIRECTORY = '/proxies';
+    public const PROXY_DIRECTORY = '/tmp/proxies';
 
-    public const COMPILED_CONTAINER_DIRECTORY = '/di';
+    public const COMPILED_CONTAINER_DIRECTORY = '/tmp/di';
 
     /**
      *
@@ -249,8 +249,9 @@ class App extends AbstractApplication
             $builder = new ContainerBuilder();
             $env = Environnement::getEnv('APP_ENV', 'prod');
             if ($env === 'prod') {
-                $builder->enableCompilation($this->getProjectDir() . self::COMPILED_CONTAINER_DIRECTORY);
-                $builder->writeProxiesToFile(true, $this->getProjectDir() . self::PROXY_DIRECTORY);
+                $projectDir = realpath($this->getProjectDir()) ?: $this->getProjectDir();
+                $builder->enableCompilation($projectDir . self::COMPILED_CONTAINER_DIRECTORY);
+                $builder->writeProxiesToFile(true, $projectDir . self::PROXY_DIRECTORY);
             }
             $builder->addDefinitions($this->getRunTimeDefinitions());
             foreach ($this->config as $config) {
@@ -268,11 +269,11 @@ class App extends AbstractApplication
 
     protected function getRunTimeDefinitions(): array
     {
+        $projectDir = realpath($this->getProjectDir()) ?: $this->getProjectDir();
         return [
             ApplicationInterface::class => $this,
-            'app.project.dir' => realpath($this->getProjectDir()) ?: $this->getProjectDir(),
-            'app.cache.dir'   => realpath($this->getProjectDir()) ?: $this->getProjectDir() . '/tmp/cache' ?:
-                $this->getProjectDir() . '/tmp/cache',
+            'app.project.dir' => $projectDir,
+            'app.cache.dir'   => $projectDir . '/tmp/cache',
         ];
     }
 
