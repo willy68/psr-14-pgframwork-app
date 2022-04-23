@@ -11,8 +11,10 @@ return (static function (): App {
         throw new Exception("le library symfony/dotenv est pas installée, lancez composer symfony/dotenv!");
     }
 
+    $app = new App();
+
     if (!isset($basePath)) {
-        $basePath = dirname(__DIR__, 2);
+        $basePath = $app->getProjectDir();
     }
 
     $dotenv = new Dotenv();
@@ -20,7 +22,7 @@ return (static function (): App {
 
     $bootstrap = require 'App.php';
 
-    $app = (new App())
+    $app
         ->addModules($bootstrap['modules'])
         //->addMiddlewares($bootstrap['middlewares']);
         ->addListeners($bootstrap['listeners']);
@@ -30,6 +32,5 @@ return (static function (): App {
         $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler());
         $whoops->register();
     }
-
     return $app;
 })();
