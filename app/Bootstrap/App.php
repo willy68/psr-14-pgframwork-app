@@ -52,16 +52,16 @@ return [
     ],
 
     'listeners' => [
-        RouterListener::class,
-        MethodHeadListener::class,
-        MethodOptionsListener::class,
-        MethodNotAllowedListener::class,
-        PageNotFoundListener::class,
-        ActiveRecordListener::class,
-        CsrfCookieListener::class,
-        Firewall::class,
-        StringResponseListener::class,
-        DebugBarListener::class,
-        RecordNotFoundListener::class,
+        RouterListener::class,              //Request priority:   900
+        MethodHeadListener::class,          //Request priority:   800
+        MethodOptionsListener::class,       //Request priority:   700
+        MethodNotAllowedListener::class,    //Request priority:   600
+        PageNotFoundListener::class,        //Exception priority: 500
+        ActiveRecordListener::class,        //Request priority:   500
+        CsrfCookieListener::class,          //Request priority:   400 Response: -100 Exception: 0
+        Firewall::class,                    //Request priority:   300
+        StringResponseListener::class,      //View priority:      100
+        DebugBarListener::class,            //Response priority: -1000
+        RecordNotFoundListener::class,      //Exception priority: 100
     ],
 ];
