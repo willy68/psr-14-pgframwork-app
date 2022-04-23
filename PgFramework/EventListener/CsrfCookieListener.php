@@ -178,7 +178,7 @@ class CsrfCookieListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::REQUEST => ['onRequest', ListenerPriority::HIGH],
+            Events::REQUEST => ['onRequest', 400],
             Events::RESPONSE => ['onResponse', ListenerPriority::LOW],
             Events::EXCEPTION => ['onException', ListenerPriority::NORMAL]
         ];

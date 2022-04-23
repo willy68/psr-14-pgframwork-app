@@ -6,7 +6,6 @@ namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Response;
 use PgFramework\Event\Events;
-use League\Event\ListenerPriority;
 use PgFramework\Event\ExceptionEvent;
 use PgFramework\Renderer\RendererInterface;
 use PgFramework\Router\Exception\PageNotFoundException;
@@ -36,7 +35,7 @@ class PageNotFoundListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::EXCEPTION => ListenerPriority::HIGH
+            Events::EXCEPTION => 500
         ];
     }
 }

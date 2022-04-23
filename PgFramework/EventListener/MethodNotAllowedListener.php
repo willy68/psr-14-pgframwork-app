@@ -6,7 +6,6 @@ namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Response;
 use Mezzio\Router\RouteResult;
-use League\Event\ListenerPriority;
 use PgFramework\Event\RequestEvent;
 use Fig\Http\Message\StatusCodeInterface as StatusCode;
 use PgFramework\Event\Events;
@@ -35,7 +34,7 @@ class MethodNotAllowedListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::REQUEST => ListenerPriority::HIGH
+            Events::REQUEST => 600
         ];
     }
 }
