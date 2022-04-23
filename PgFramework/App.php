@@ -192,6 +192,7 @@ class App extends AbstractApplication
             AnnotationRegistry::registerLoader('class_exists');
         }
 
+        /** @var Module */
         foreach ($this->modules as $module) {
             if (!empty($module::ANNOTATIONS)) {
                 $loader = new DirectoryLoader(
@@ -202,7 +203,7 @@ class App extends AbstractApplication
                     $loader->load($dir);
                 }
             }
-            $module = $container->get($module);
+            $module = $container->get((string)$module);
         }
 
         if (!empty($this->listeners)) {
@@ -251,16 +252,20 @@ class App extends AbstractApplication
     {
         if ($this->container === null) {
             $builder = new ContainerBuilder();
+
             $env = Environnement::getEnv('APP_ENV', 'prod');
             if ($env === 'prod') {
                 $projectDir = realpath($this->getProjectDir()) ?: $this->getProjectDir();
                 $builder->enableCompilation($projectDir . self::COMPILED_CONTAINER_DIRECTORY);
                 $builder->writeProxiesToFile(true, $projectDir . self::PROXY_DIRECTORY);
             }
+
             $builder->addDefinitions($this->getRunTimeDefinitions());
             foreach ($this->config as $config) {
                 $builder->addDefinitions($config);
             }
+
+            /** @var Module */
             foreach ($this->modules as $module) {
                 if ($module::DEFINITIONS) {
                     $builder->addDefinitions($module::DEFINITIONS);
