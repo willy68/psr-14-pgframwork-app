@@ -341,18 +341,7 @@ class App extends AbstractApplication
     public function getProjectDir(): string
     {
         if (!isset($this->projectDir)) {
-            $r = new \ReflectionObject($this);
-
-            if (!is_file($dir = $r->getFileName())) {
-                throw new \LogicException(
-                    sprintf(
-                        'Cannot auto-detect project dir for kernel of class "%s".',
-                        $r->name
-                    )
-                );
-            }
-
-            $dir = $rootDir = \dirname($dir);
+            $dir = $rootDir = \dirname(__DIR__);
             while (!is_file($dir . '/composer.json')) {
                 if ($dir === \dirname($dir)) {
                     return $this->projectDir = $rootDir;
