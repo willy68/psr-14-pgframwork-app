@@ -5,22 +5,23 @@ declare(strict_types=1);
 namespace PgFramework\Kernel;
 
 use Exception;
+use RuntimeException;
 use InvalidArgumentException;
 use Invoker\CallableResolver;
 use PgFramework\Event\ViewEvent;
 use PgFramework\Event\RequestEvent;
 use PgFramework\Event\ResponseEvent;
+use PgFramework\ApplicationInterface;
 use PgFramework\Event\ExceptionEvent;
+use Psr\Container\ContainerInterface;
 use PgFramework\Event\ControllerEvent;
 use Psr\Http\Message\ResponseInterface;
+use PgFramework\Event\FinishRequestEvent;
 use Invoker\Reflection\CallableReflection;
 use PgFramework\Event\ControllerParamsEvent;
 use Psr\Http\Message\ServerRequestInterface;
 use Invoker\ParameterResolver\ParameterResolver;
-use PgFramework\ApplicationInterface;
-use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use RuntimeException;
 
 class KernelEvent implements KernelInterface
 {
@@ -146,7 +147,7 @@ class KernelEvent implements KernelInterface
 
         $event = $this->dispatcher->dispatch($event);
 
-        //$this->finishRequest($this->getRequest());
+        $this->finishRequest($this->getRequest());
 
         return $event->getResponse();
     }
@@ -159,11 +160,11 @@ class KernelEvent implements KernelInterface
      * operations such as {@link RequestStack::getParentRequest()} can lead to
      * weird results.
      */
-    /*private function finishRequest(ServerRequestInterface $request, int $type)
+    private function finishRequest(ServerRequestInterface $request)
     {
-       $event = $this->dispatcher->dispatch(new FinishRequestEvent($this, $request));
+        $event = $this->dispatcher->dispatch(new FinishRequestEvent($this, $request));
     }
-*/
+
     /**
      * @inheritDoc
      */
@@ -176,7 +177,7 @@ class KernelEvent implements KernelInterface
         $e = $event->getException();
 
         if (!$event->hasResponse()) {
-            //$this->finishRequest($this->getRequest());
+            $this->finishRequest($this->getRequest());
 
             throw $e;
         }
