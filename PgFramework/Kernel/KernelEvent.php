@@ -132,7 +132,6 @@ class KernelEvent implements KernelInterface
                 throw new Exception($msg . get_class($controller) . ' ' . __FILE__ . ' ' . (__LINE__ - 17));
             }
         }
-
         return $this->filterResponse($response, $this->getRequest());
     }
 
@@ -147,9 +146,24 @@ class KernelEvent implements KernelInterface
 
         $event = $this->dispatcher->dispatch($event);
 
+        //$this->finishRequest($this->getRequest());
+
         return $event->getResponse();
     }
 
+
+    /**
+     * Publishes the finish request event, then pop the request from the stack.
+     *
+     * Note that the order of the operations is important here, otherwise
+     * operations such as {@link RequestStack::getParentRequest()} can lead to
+     * weird results.
+     */
+    /*private function finishRequest(ServerRequestInterface $request, int $type)
+    {
+       $event = $this->dispatcher->dispatch(new FinishRequestEvent($this, $request));
+    }
+*/
     /**
      * @inheritDoc
      */
@@ -162,7 +176,7 @@ class KernelEvent implements KernelInterface
         $e = $event->getException();
 
         if (!$event->hasResponse()) {
-            //$this->finishRequest($request, $type);
+            //$this->finishRequest($this->getRequest());
 
             throw $e;
         }
