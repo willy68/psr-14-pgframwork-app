@@ -8,6 +8,7 @@ use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Configuration;
 use Psr\Container\ContainerInterface;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
+use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 
@@ -49,6 +50,7 @@ class DoctrineConfigFactory
             );
         }
 
+        /** @var MappingDriver */
         $config->setMetadataDriverImpl($annotDriver);
         $config->setProxyDir($c->get('app.cache.dir') . $c->get('doctrine.proxies.dir'));
         $config->setProxyNamespace($c->get('doctrine.proxies.namespace'));
