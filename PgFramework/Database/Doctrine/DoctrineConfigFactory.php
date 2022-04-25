@@ -50,7 +50,7 @@ class DoctrineConfigFactory
         }
 
         $config->setMetadataDriverImpl($annotDriver);
-        $config->setProxyDir($c->get('doctrine.proxies.dir'));
+        $config->setProxyDir($c->get('app.cache.dir') . $c->get('doctrine.proxies.dir'));
         $config->setProxyNamespace($c->get('doctrine.proxies.namespace'));
 
         return $config;
