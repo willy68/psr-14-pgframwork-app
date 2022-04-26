@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
@@ -14,15 +16,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 class CallableMiddleware implements MiddlewareInterface
 {
   /**
-   * Undocumented variable
-   *
    * @var string|callable
    */
     private $callable;
 
     /**
-     * Undocumented function
-     *
      * @param string|callable $callable
      */
     public function __construct($callable)
@@ -31,8 +29,6 @@ class CallableMiddleware implements MiddlewareInterface
     }
 
     /**
-     * Undocumented function
-     *
      * @return string|callable
      */
     public function getCallable()

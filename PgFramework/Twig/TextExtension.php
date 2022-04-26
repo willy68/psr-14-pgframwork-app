@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Twig;
 
 use Twig\Extension\AbstractExtension;
@@ -11,8 +13,6 @@ use Twig\TwigFilter;
 class TextExtension extends AbstractExtension
 {
   /**
-   * Undocumented function
-   *
    * @return array
    */
     public function getFilters(): array
@@ -23,8 +23,6 @@ class TextExtension extends AbstractExtension
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $content
      * @param int $maxlength
      * @return string

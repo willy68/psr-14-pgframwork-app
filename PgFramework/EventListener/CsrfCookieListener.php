@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Response;
@@ -25,15 +27,13 @@ class CsrfCookieListener implements EventSubscriberInterface
         'cookieName' => 'XSRF-TOKEN',
         'header' => 'X-CSRF-TOKEN',
         'field' => '_csrf',
-        'expiry' => 0,
+        'expiry' => null,
         'secure' => false,
         'httponly' => true,
         'samesite' => null,
     ];
 
     /**
-     * Undocumented variable
-     *
      * @var FlashService
      */
     private $flashService;
@@ -44,10 +44,6 @@ class CsrfCookieListener implements EventSubscriberInterface
      */
     private $tokenManager;
 
-    /**
-     *
-     * @param CsrfTokenManagerInterface $tokenManager
-     */
     public function __construct(CsrfTokenManagerInterface $tokenManager, FlashService $flashService, array $config = [])
     {
         $this->tokenManager = $tokenManager;
@@ -55,11 +51,6 @@ class CsrfCookieListener implements EventSubscriberInterface
         $this->config = array_merge($this->config, $config);
     }
 
-    /**
-     *
-     * @param object $event
-     * @return void
-     */
     public function onRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
@@ -75,7 +66,7 @@ class CsrfCookieListener implements EventSubscriberInterface
             );
         }
 
-        if (\in_array($method, ['GET', 'HEAD'], true) && strlen($cookie) === 0) {
+        if (\in_array($method, ['GET', 'HEAD'], true) && null === $cookie) {
             $token = $this->getToken();
             $request = $request->withAttribute($this->config['field'], $token);
         }
@@ -100,11 +91,6 @@ class CsrfCookieListener implements EventSubscriberInterface
         $event->setRequest($request);
     }
 
-    /**
-     *
-     * @param object $event
-     * @return void
-     */
     public function onResponse(ResponseEvent $event)
     {
         $response = $event->getResponse();
@@ -129,10 +115,15 @@ class CsrfCookieListener implements EventSubscriberInterface
         $e = $event->getException();
         $request = $event->getRequest();
         $token = $request->getAttribute($this->config['field']);
-        [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $token);
+        $tokenId = '';
+        if ($token) {
+            [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $token);
+        }
 
         if ($e instanceof InvalidCsrfException) {
-            $this->tokenManager->removeToken($tokenId);
+            if ($token) {
+                $this->tokenManager->removeToken($tokenId);
+            }
 
             if (RequestUtils::isJson($request)) {
                 $response = new Response(403, [], json_encode($e->getMessage()));
@@ -154,7 +145,7 @@ class CsrfCookieListener implements EventSubscriberInterface
         }
     }
 
-    protected function validateToken($token, $cookie)
+    protected function validateToken(?string $token = null, ?string $cookie = null)
     {
         if (!$token) {
             throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
@@ -187,7 +178,7 @@ class CsrfCookieListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::REQUEST => ['onRequest', ListenerPriority::HIGH],
+            Events::REQUEST => ['onRequest', 400],
             Events::RESPONSE => ['onResponse', ListenerPriority::LOW],
             Events::EXCEPTION => ['onException', ListenerPriority::NORMAL]
         ];

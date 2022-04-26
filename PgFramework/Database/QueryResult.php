@@ -1,26 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Database;
 
 class QueryResult implements \ArrayAccess, \Iterator
 {
     /**
-     * Undocumented variable
-     *
      * @var array
      */
     private $records;
 
     /**
-     * Undocumented variable
-     *
      * @var mixed
      */
     private $entity;
 
     /**
-     * Undocumented variable
-     *
      * @var int
      */
     private $index = 0;
@@ -28,8 +24,6 @@ class QueryResult implements \ArrayAccess, \Iterator
     private $hydratedRecords = [];
 
     /**
-     *
-     *
      * @param array $records
      * @param string|null $entity
      */
@@ -40,8 +34,6 @@ class QueryResult implements \ArrayAccess, \Iterator
     }
 
     /**
-     * Undocumented function
-     *
      * @param int $index
      * @return mixed
      */
@@ -58,17 +50,17 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * @inheritDoc
-     *
      */
-    public function offsetExists($offset): bool
+    #[\ReturnTypeWillChange]
+    public function offsetExists($offset)
     {
         return isset($this->records[$offset]);
     }
 
     /**
      * @inheritDoc
-     *
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->get($offset);
@@ -76,26 +68,26 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * @inheritDoc
-     *
      */
-    public function offsetSet($offset, $value): void
+    #[\ReturnTypeWillChange]
+    public function offsetSet($offset, $value)
     {
         throw new \Exception('Can\'t alter records');
     }
 
     /**
      * @inheritDoc
-     *
      */
-    public function offsetUnset($offset): void
+    #[\ReturnTypeWillChange]
+    public function offsetUnset($offset)
     {
         throw new \Exception('Can\'t alter records');
     }
 
     /**
      * @inheritDoc
-     *
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->get($this->index);
@@ -103,8 +95,8 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * @inheritDoc
-     *
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->index;
@@ -112,17 +104,17 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * @inheritDoc
-     *
      */
-    public function next()
+    #[\ReturnTypeWillChange]
+    public function next(): void
     {
         $this->index ++;
     }
 
     /**
      * @inheritDoc
-     *
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->index = 0;
@@ -130,9 +122,9 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * @inheritDoc
-     *
      */
-    public function valid(): bool
+    #[\ReturnTypeWillChange]
+    public function valid()
     {
         return isset($this->records[$this->index]);
     }

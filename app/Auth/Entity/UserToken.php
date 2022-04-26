@@ -2,13 +2,22 @@
 
 namespace App\Auth\Entity;
 
+use DateTime;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
 use PgFramework\Auth\TokenInterface;
+use Doctrine\ORM\Mapping\GeneratedValue;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="user_tokens")
  */
+#[Entity()]
+#[Table(name: 'user_tokens')]
 class UserToken implements TokenInterface
 {
     /**
@@ -17,30 +26,37 @@ class UserToken implements TokenInterface
      * @ORM\GeneratedValue
      * @var int
      */
+    #[Id]
+    #[GeneratedValue()]
+    #[Column(type: Types::INTEGER)]
     public $id;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
+    #[Column(type: TYPES::STRING)]
     public $series;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
+    #[Column(type: TYPES::STRING)]
     public $credential;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
+    #[Column(type: TYPES::STRING)]
     public $random_password;
 
     /**
      * @ORM\Column(type="datetime")
-     * @var \Datetime
+     * @var Datetime
      */
+    #[Column(type: TYPES::DATETIME_MUTABLE)]
     public $expiration_date;
 
     /**
@@ -149,9 +165,9 @@ class UserToken implements TokenInterface
     /**
      * get the expiration date
      *
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getExpirationDate(): \DateTime
+    public function getExpirationDate(): DateTime
     {
         return $this->expiration_date;
     }
@@ -159,11 +175,11 @@ class UserToken implements TokenInterface
     /**
      * Set the value of expiration_date
      *
-     * @param  \Datetime  $expiration_date
+     * @param  Datetime  $expiration_date
      *
      * @return  self
      */
-    public function setExpirationDate(\Datetime $expiration_date)
+    public function setExpirationDate(Datetime $expiration_date)
     {
         $this->expiration_date = $expiration_date;
 

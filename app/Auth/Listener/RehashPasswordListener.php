@@ -3,7 +3,7 @@
 namespace App\Auth\Listener;
 
 use App\Auth\Entity\User;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Event\ListenerPriority;
 use PgFramework\Security\Firewall\FirewallEvents;
 use PgFramework\Security\Hasher\PasswordHasherInterface;
@@ -16,7 +16,7 @@ class RehashPasswordListener implements EventSubscriberInterface
 
     protected $em;
 
-    public function __construct(PasswordHasherInterface $hasher, EntityManager $em)
+    public function __construct(PasswordHasherInterface $hasher, EntityManagerInterface $em)
     {
         $this->hasher = $hasher;
         $this->em = $em;

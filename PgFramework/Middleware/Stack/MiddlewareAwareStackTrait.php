@@ -17,7 +17,7 @@ trait MiddlewareAwareStackTrait
     /**
      * @var array
      */
-    protected $middleware = [];
+    protected $middlewares = [];
 
     /**
      * Add middleware
@@ -27,7 +27,7 @@ trait MiddlewareAwareStackTrait
      */
     public function middleware($middleware): self
     {
-        $this->middleware[] = $middleware;
+        $this->middlewares[] = $middleware;
         return $this;
     }
 
@@ -53,36 +53,34 @@ trait MiddlewareAwareStackTrait
      */
     public function prependMiddleware($middleware): self
     {
-        array_unshift($this->middleware, $middleware);
+        array_unshift($this->middlewares, $middleware);
         return $this;
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $routePrefix
      * @param string|null $middleware
      * @param ContainerInterface $c
      * @return self
      */
-    public function lazyPipe(string $routePrefix, ?string $middleware = null, ContainerInterface $c): self
+    public function lazyPipe(ContainerInterface $c, string $routePrefix, ?string $middleware = null): self
     {
         $middleware = $middleware ?
             new RoutePrefixMiddleware($c, $routePrefix, $middleware) :
             $routePrefix;
-        $this->middleware[] = $middleware;
+        $this->middlewares[] = $middleware;
         return $this;
     }
 
     /**
-     * Undocumented function
+     * Get first middleware from stack
      *
      * @param ContainerInterface $c
      * @return mixed|MiddlewareInterface|null
      */
     public function shiftMiddleware(ContainerInterface $c)
     {
-        $middleware =  array_shift($this->middleware);
+        $middleware =  array_shift($this->middlewares);
         if ($middleware === null) {
             return null;
         }
@@ -100,6 +98,6 @@ trait MiddlewareAwareStackTrait
      */
     public function getMiddlewareStack(): iterable
     {
-        return $this->middleware;
+        return $this->middlewares;
     }
 }

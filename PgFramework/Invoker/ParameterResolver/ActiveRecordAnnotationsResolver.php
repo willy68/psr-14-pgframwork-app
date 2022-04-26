@@ -1,24 +1,33 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Invoker\ParameterResolver;
 
-use ReflectionMethod;
 use ReflectionParameter;
 use ReflectionFunctionAbstract;
+use PgFramework\Annotation\AnnotationsLoader;
 use Invoker\ParameterResolver\ParameterResolver;
-use Doctrine\Common\Annotations\AnnotationReader;
-use PgFramework\Invoker\Exception\InvalidAnnotation;
+use PgFramework\Annotation\AnnotationReaderTrait;
 use PgFramework\Invoker\Annotation\ParameterConverter;
+use Doctrine\ORM\Mapping\Driver\RepeatableAttributeCollection;
 use PgFramework\Invoker\ParameterResolver\ActiveRecordAnnotationConverter;
 
 class ActiveRecordAnnotationsResolver implements ParameterResolver
 {
+    use AnnotationReaderTrait;
+
     /**
-     * Reader
      *
-     * @var AnnotationReader
+     * @var AnnotationsLoader
      */
-    private $annotationReader;
+    private $annotationsLoader;
+
+    public function __construct(AnnotationsLoader $annotationsLoader)
+    {
+        $this->annotationsLoader = $annotationsLoader;
+        $this->annotationsLoader->setAnnotation(ParameterConverter::class);
+    }
 
     public function getParameters(
         ReflectionFunctionAbstract $reflection,
@@ -26,12 +35,12 @@ class ActiveRecordAnnotationsResolver implements ParameterResolver
         array $resolvedParameters
     ): array {
 
-        $annotations = $this->getMethodAnnotation($reflection);
+        $annotations = $this->annotationsLoader->getMethodAnnotations($reflection);
         if (empty($annotations)) {
             return $resolvedParameters;
         }
 
-        $converters = $this->parseAnnotation($annotations, $reflection);
+        $converters = $this->parseAnnotation($annotations);
 
         if (empty($converters)) {
             return $resolvedParameters;
@@ -58,67 +67,34 @@ class ActiveRecordAnnotationsResolver implements ParameterResolver
     }
 
     /**
-     * @return AnnotationReader The annotation reader
-     */
-    public function getAnnotationReader(): AnnotationReader
-    {
-        if ($this->annotationReader === null) {
-            $this->annotationReader = new AnnotationReader();
-        }
-
-        return $this->annotationReader;
-    }
-
-    /**
-     * Get annotation method
-     *
-     * @param \ReflectionMethod $method
-     * @return array
-     */
-    private function getMethodAnnotation(ReflectionMethod $method): array
-    {
-        // Look for @ParameterConverter annotation
-        try {
-            $annotations = $this->getAnnotationReader()
-                ->getMethodAnnotations($method);
-        } catch (\Exception $e) {
-            throw new InvalidAnnotation(sprintf(
-                '@ParameterConverter annotation on %s::%s is malformed. %s',
-                $method->getDeclaringClass()->getName(),
-                $method->getName(),
-                $e->getMessage()
-            ), 0, $e);
-        }
-        return $annotations;
-    }
-
-    /**
      * Parse le tableau d'annotations
      *
-     * @param array $annotations
-     * @param \ReflectionMethod $method
+     * @param iterable $annotations
      * @return ParameterResolver[]
      */
-    protected function parseAnnotation(array $annotations, ReflectionMethod $method): array
+    protected function parseAnnotation(iterable $annotations): array
     {
         $converters = [];
         foreach ($annotations as $annotation) {
-            if (!$annotation instanceof ParameterConverter) {
-                continue;
+            if ($annotation instanceof RepeatableAttributeCollection) {
+                foreach ($annotation as $annot) {
+                    if (!$annot instanceof ParameterConverter) {
+                        continue;
+                    }
+                    $converters[] = new ActiveRecordAnnotationConverter(
+                        $annot->getName(),
+                        $annot->getOptions()
+                    );
+                }
+            } else {
+                if (!$annotation instanceof ParameterConverter) {
+                    continue;
+                }
+                $converters[] = new ActiveRecordAnnotationConverter(
+                    $annotation->getName(),
+                    $annotation->getOptions()
+                );
             }
-
-            $annotationParams = $annotation->getParameters();
-            if (!isset($annotationParams["value"]) || !isset($annotationParams["options"])) {
-                throw new InvalidAnnotation(sprintf(
-                    '@ParameterConverter annotation on %s::%s is malformed.',
-                    $method->getDeclaringClass()->getName(),
-                    $method->getName()
-                ));
-            }
-            $converters[] = new ActiveRecordAnnotationConverter(
-                $annotationParams['value'],
-                $annotationParams['options']
-            );
         }
         return $converters;
     }

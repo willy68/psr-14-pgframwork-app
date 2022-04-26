@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Auth\Actions;
 
 use PgFramework\Auth\AuthSession;
@@ -14,43 +16,34 @@ use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Auth\RememberMe\RememberMeInterface;
 
 /**
- * @Route("/login", methods={"POST"})
+ * @Route("/login", methods={"POST"}, name="auth.login.post")
  */
+#[Route('/login', methods:['POST'], name:'auth.login.post')]
 class LoginAttemptAction
 {
     use RouterAwareAction;
 
     /**
-     * Undocumented variable
-     *
      * @var RendererInterface
      */
     private $renderer;
 
     /**
-     * Undocumented variable
-     *
      * @var AuthSession
      */
     private $auth;
 
     /**
-     *
-     *
      * @var RememberMeInterface
      */
     private $cookie;
 
     /**
-     * Undocumented variable
-     *
      * @var SessionInterface
      */
     private $session;
 
     /**
-     * Undocumented variable
-     *
      * @var RouterInterface
      */
     private $router;

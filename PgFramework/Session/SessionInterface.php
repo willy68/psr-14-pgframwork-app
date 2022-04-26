@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Session;
 
 interface SessionInterface
 {
     /**
-     * Undocumented function
-     *
      * @param string $key
      * @param mixed $default
      * @return mixed
@@ -14,8 +14,6 @@ interface SessionInterface
     public function get(string $key, $default = null);
 
     /**
-     * Undocumented function
-     *
      * @param string $key
      * @param mixed $value
      * @return void
@@ -23,8 +21,6 @@ interface SessionInterface
     public function set(string $key, $value): void;
 
     /**
-     * Undocumented function
-     *
      * @param string $key
      * @return void
      */

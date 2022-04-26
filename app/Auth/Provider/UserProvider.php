@@ -3,7 +3,7 @@
 namespace App\Auth\Provider;
 
 use App\Auth\Entity\User;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use PgFramework\Auth\UserInterface;
 use PgFramework\Auth\Provider\UserProviderInterface;
 
@@ -20,7 +20,7 @@ class UserProvider implements UserProviderInterface
      */
     protected $em;
 
-    public function __construct(EntityManager $em, string $entity = User::class)
+    public function __construct(EntityManagerInterface $em, string $entity = User::class)
     {
         $this->em = $em;
         $this->entity = $entity;

@@ -1,26 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Router;
 
 use Mezzio\Router\RouterInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-/**
- * Undocumented class
- */
 class RouterTwigExtension extends AbstractExtension
 {
   /**
-   * Undocumented variable
-   *
    * @var RouterInterface
    */
     private $router;
 
     /**
-     * Undocumented function
-     *
      * @param RouterInterface $router
      */
     public function __construct(RouterInterface $router)
@@ -29,8 +24,6 @@ class RouterTwigExtension extends AbstractExtension
     }
 
     /**
-     * Undocumented function
-     *
      * @return array
      */
     public function getFunctions()

@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Event;
 
-use PgFramework\ApplicationInterface;
+use PgFramework\Kernel\KernelInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class RequestEvent extends AppEvent
 {
-    private ServerRequestInterface $request;
+    private $request;
 
     protected $response;
 
-    public function __construct(ApplicationInterface $app, ServerRequestInterface $request)
+    public function __construct(KernelInterface $kernel, ServerRequestInterface $request)
     {
-        parent::__construct($app);
+        parent::__construct($kernel);
         $this->request = $request;
     }
 
@@ -26,7 +28,7 @@ class RequestEvent extends AppEvent
     public function setRequest(ServerRequestInterface $request)
     {
         $this->request = $request;
-        $this->getApp()->setRequest($request);
+        $this->getKernel()->setRequest($request);
     }
 
     public function getResponse(): ?ResponseInterface

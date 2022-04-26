@@ -1,27 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Router\Loader;
 
+use Doctrine\ORM\Mapping\Annotation;
 use ReflectionMethod;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteCollector;
-use Doctrine\Common\Annotations\Reader;
+use PgFramework\Annotation\AnnotationsLoader;
 use PgFramework\Parser\PhpTokenParser;
 
-class FileLoader extends ClassLoader
+class FileLoader
 {
     protected $collector;
 
+    protected $annotationsLoader;
+
     public function __construct(
         RouteCollector $collector,
-        ?Reader $reader = null
+        AnnotationsLoader $annotationsLoader
     ) {
         if (!\function_exists('token_get_all')) {
             throw new \LogicException("Function token_get_all don't exists in this system");
         }
-
-        parent::__construct($reader);
         $this->collector = $collector;
+        $this->annotationsLoader = $annotationsLoader;
     }
 
     /**
@@ -46,22 +50,24 @@ class FileLoader extends ClassLoader
             return null;
         }
 
-        $classAnnotation = $this->getClassAnnotation($reflectionClass);
+        /** @var \PgFramework\Router\Annotation\Route */
+        $classAnnotation = $this->annotationsLoader->getClassAnnotation($reflectionClass);
 
         $routes = [];
         foreach ($reflectionClass->getMethods() as $method) {
-            foreach ($this->getMethodAnnotations($method) as $methodAnnotation) {
+            foreach ($this->annotationsLoader->getMethodAnnotations($method) as $methodAnnotation) {
                 $routes[] = $this->addRoute($methodAnnotation, $method, $classAnnotation);
             }
         }
 
         if (empty($routes) && $classAnnotation && $reflectionClass->hasMethod('__invoke')) {
-            $routes[] = $this->collector->route(
+            $route[] = $this->collector->route(
                 $classAnnotation->getPath(),
                 $reflectionClass->getName(),
                 $classAnnotation->getName(),
                 $classAnnotation->getMethods()
-            );
+            )
+                ->setSchemes($classAnnotation->getSchemes());
         }
 
         gc_mem_caches();
@@ -77,7 +83,7 @@ class FileLoader extends ClassLoader
      * @return Route
      */
     protected function addRoute(
-        object $methodAnnotation,
+        Annotation $methodAnnotation,
         ReflectionMethod $method,
         ?object $classAnnotation
     ): Route {
@@ -91,6 +97,7 @@ class FileLoader extends ClassLoader
             $method->getDeclaringClass()->getName() . "::" . $method->getName(),
             $methodAnnotation->getName(),
             $methodAnnotation->getMethods()
-        );
+        )
+            ->setSchemes($methodAnnotation->getSchemes());
     }
 }

@@ -2,14 +2,22 @@
 
 namespace App\Entity;
 
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\Table;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="categories")
  */
+#[Entity()]
+#[Table(name: 'categories')]
 class Category
 {
     /**
@@ -18,24 +26,30 @@ class Category
      * @ORM\GeneratedValue
      * @var int
      */
+    #[Id]
+    #[GeneratedValue()]
+    #[Column(type: Types::INTEGER)]
     public $id;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
+    #[Column(type: TYPES::STRING)]
     public $name;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
+    #[Column(type: TYPES::STRING)]
     public $slug;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Post", mappedBy="category")
-     * @var Post[] An ArrayCollection of Bug objects.
+     * @var ArrayCollection<Post> An ArrayCollection of Post objects.
      */
+    #[OneToMany(mappedBy: 'category', targetEntity: Post::class)]
     public $posts;
 
     public function __construct()

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\EventListener;
 
 use League\Event\ListenerPriority;
@@ -24,7 +26,7 @@ class CsrfListener implements EventSubscriberInterface
 
     /**
      * @param CsrfTokenManagerInterface $tokenManager
-     * @param string             $formKey
+     * @param string $formKey
      */
     public function __construct(
         CsrfTokenManagerInterface $tokenManager,

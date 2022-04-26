@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Database;
 
 use Pagerfanta\Pagerfanta;
@@ -12,11 +14,6 @@ class Query implements \IteratorAggregate
 
     private $select;
 
-    /**
-     * Undocumented variable
-     *
-     * @var array
-     */
     private $from = [];
 
     private $entity;
@@ -43,8 +40,6 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $table
      * @param string|null $alias
      * @return self
@@ -61,8 +56,6 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $entity
      * @return self
      */
@@ -73,8 +66,6 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * Undocumented function
-     *
      * @param string[] ...$fields
      * @return self
      */
@@ -85,8 +76,6 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * Undocumented function
-     *
      * @param $length
      * @param int $offset
      * @return self
@@ -100,8 +89,6 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $orders
      * @return self
      */
@@ -112,8 +99,6 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $table
      * @param string $condition
      * @param string $type
@@ -126,8 +111,6 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * Undocumented function
-     *
      * @param string[] ...$condition
      * @return self
      */
@@ -138,8 +121,6 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * Undocumented function
-     *
      * @return mixed
      */
     public function count()
@@ -150,8 +131,6 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * Undocumented function
-     *
      * @param array $params
      * @return self
      */
@@ -162,8 +141,6 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * Undocumented function
-     *
      * @return QueryResult
      */
     public function fetchAll(): QueryResult
@@ -175,8 +152,6 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * Undocumented function
-     *
      * @return mixed
      */
     public function fetch()
@@ -192,8 +167,6 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * Undocumented function
-     *
      * @return mixed
      * @throws NoRecordException
      */
@@ -207,8 +180,6 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * Undocumented function
-     *
      * @param int $perPage
      * @param int $currentPage
      * @return Pagerfanta
@@ -222,8 +193,6 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * Undocumented function
-     *
      * @return string
      */
     public function __toString()
@@ -316,8 +285,6 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * Undocumented function
-     *
      * @return mixed
      */
     private function execute()
@@ -333,7 +300,6 @@ class Query implements \IteratorAggregate
 
     /**
      * @inheritDoc
-     *
      */
     public function getIterator(): Traversable
     {

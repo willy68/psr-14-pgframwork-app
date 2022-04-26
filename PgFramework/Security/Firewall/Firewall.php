@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Security\Firewall;
 
 use Invoker\CallableResolver;
-use League\Event\ListenerPriority;
 use PgFramework\Event\Events;
 use PgFramework\Event\RequestEvent;
 use PgFramework\EventDispatcher\EventDispatcher;
@@ -56,7 +57,7 @@ class Firewall extends EventDispatcher implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::REQUEST => ListenerPriority::HIGH
+            Events::REQUEST => 300
         ];
     }
 }

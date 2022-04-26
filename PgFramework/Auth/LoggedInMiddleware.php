@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Auth;
 
 use PgFramework\Auth;
@@ -14,6 +16,7 @@ class LoggedInMiddleware implements MiddlewareInterface
 
     /**
      * LoggedInMiddleware constructor.
+     *
      * @param Auth $auth
      */
     public function __construct(Auth $auth)

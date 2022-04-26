@@ -8,6 +8,7 @@ use PgFramework\Renderer\RendererInterface;
 /**
  * @Route("/login", name="auth.login", methods={"GET"})
  */
+#[Route('/login', name:'auth.login', methods:['GET'])]
 class LoginAction
 {
     private $renderer;

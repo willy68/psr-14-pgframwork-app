@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Session;
 
 class ArraySession implements SessionInterface
@@ -7,8 +9,6 @@ class ArraySession implements SessionInterface
     private $session = [];
 
     /**
-     * Undocumented function
-     *
      * @param string $key
      * @param mixed $default
      * @return mixed
@@ -22,8 +22,6 @@ class ArraySession implements SessionInterface
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $key
      * @param mixed $value
      * @return void
@@ -34,8 +32,6 @@ class ArraySession implements SessionInterface
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $key
      * @return void
      */

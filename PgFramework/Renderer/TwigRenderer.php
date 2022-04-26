@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Renderer;
 
 use Twig\Environment;
@@ -7,21 +9,14 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-/**
- * Undocumented class
- */
 class TwigRenderer implements RendererInterface
 {
   /**
-   * Undocumented variable
-   *
    * @var Environment
    */
     private $twig;
 
     /**
-     * Undocumented function
-     *
      * @param Environment $twig
      */
     public function __construct(Environment $twig)
@@ -30,8 +25,6 @@ class TwigRenderer implements RendererInterface
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $namespace
      * @param string $path
      * @return void
@@ -44,8 +37,6 @@ class TwigRenderer implements RendererInterface
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $view
      * @param array $params
      * @return string
@@ -60,8 +51,6 @@ class TwigRenderer implements RendererInterface
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $key
      * @param mixed $value
      * @return void

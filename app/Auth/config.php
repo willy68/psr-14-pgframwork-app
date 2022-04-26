@@ -55,4 +55,14 @@ return [
     TokenProviderInterface::class => get(UserTokenProvider::class),
     ForbidenMiddleware::class => autowire()->constructorParameter('loginPath', get('auth.login')),
     ForbidenListener::class => autowire()->constructorParameter('loginPath', get('auth.login')),
+    'password.hasher.config' => add([
+        'algo' => \PASSWORD_ARGON2I,
+        'options' => [
+            'cost' => 10,
+            'memory_cost' => \PASSWORD_ARGON2_DEFAULT_MEMORY_COST,
+            'time_cost' => \PASSWORD_ARGON2_DEFAULT_TIME_COST,
+            'threads' => PASSWORD_ARGON2_DEFAULT_THREADS
+        ]
+
+    ])
 ];

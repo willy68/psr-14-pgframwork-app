@@ -21,11 +21,11 @@
         "symfony/dotenv": "^5.0",
         "doctrine/orm": "^2.8",
         "doctrine/annotations": "^1.11",
-        "http-interop/response-sender": "^1.0",
         "guzzlehttp/psr7": "^1.6",
         "php-di/php-di": "^6.0",
         "php-di/invoker": "^2.2",
         "twig/twig": "^3.0",
+        "willy68/response-sender": "^1.0.0",
         "willy68/mezzio-fastroute-dev": "dev-master",
         "willy68/mezzio-router-dev": "@dev",
         "willy68/php-activerecord-psr-4": "dev-master",
@@ -36,7 +36,9 @@
         "dflydev/fig-cookies": "^3.0",
         "tuupola/slim-jwt-auth": "^3.4",
         "league/event": "^3.0",
-        "symfony/cache": "^5.4"
+        "symfony/cache": "^5.4",
+        "mezzio/mezzio-session": "^1.6",
+        "mezzio/mezzio-session-ext": "^1.12"
     },
     "autoload": {
         "psr-4": {
@@ -54,7 +56,8 @@
         "willy68/pgconsole": "dev-master",
         "symfony/var-dumper": "^5.0",
         "doctrine/migrations": "^3.1",
-        "fakerphp/faker": "^1.13"
+        "fakerphp/faker": "^1.13",
+        "maximebf/debugbar": "^1.18"
     },
     "config": {
         "bin-dir": "bin"
@@ -66,7 +69,13 @@
             "@php -r \"file_exists('./config/database.php') || copy('./config/database.dist.php', './config/database.php');\""
         ],
         "post-create-project-cmd": [
-            "@php ./bin/generate key:generate"
+            "@php ./bin/console key:generate"
+        ],
+        "database-clean": [
+            "@php ./bin/console doctrine:database:drop --force --if-exists",
+            "@php ./bin/console doctrine:database:create --if-not-exists",
+            "@php ./bin/console migrations:migrate --no-interaction --allow-no-migration",
+            "@php ./bin/console fixtures:load --append app/Blog/db/Fixtures app/Auth/db/Fixtures"
         ]
     }
 }

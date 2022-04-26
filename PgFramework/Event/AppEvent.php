@@ -1,20 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Event;
+
+use PgFramework\Kernel\KernelInterface;
 
 class AppEvent extends StoppableEvent
 {
     public const NAME = Events::REQUEST;
 
-    private $app;
+    private $kernel;
 
-    public function __construct($app)
+    public function __construct(KernelInterface $kernel)
     {
-        $this->app = $app;
+        $this->kernel = $kernel;
     }
 
-    public function getApp()
+    public function getKernel()
     {
-        return $this->app;
+        return $this->kernel;
     }
 }

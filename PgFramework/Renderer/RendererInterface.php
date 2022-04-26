@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Renderer;
 
 interface RendererInterface
 {
     /**
-     * Undocumented function
-     *
      * @param string $namespace
      * @param string $path
      * @return void
@@ -14,8 +14,6 @@ interface RendererInterface
     public function addPath(string $namespace, string $path = null);
 
     /**
-     * Undocumented function
-     *
      * @param string $view
      * @param array $params
      * @return string
@@ -23,8 +21,6 @@ interface RendererInterface
     public function render(string $view, array $params = []): string;
 
     /**
-     * Undocumented function
-     *
      * @param string $key
      * @param mixed $value
      * @return void

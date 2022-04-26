@@ -1,32 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
+use PgFramework\App;
 use PgFramework\Environnement\Environnement;
-use Middlewares\Whoops;
 use Symfony\Component\Dotenv\Dotenv;
 
-if (!class_exists(Dotenv::class)) {
-    throw new Exception("le library symfony/dotenv est pas installée, lancez composer symfony/dotenv!");
-}
+return (static function (): App {
+    if (!class_exists(Dotenv::class)) {
+        throw new Exception("le library symfony/dotenv est pas installée, lancez composer symfony/dotenv!");
+    }
 
-if (!isset($basePath)) {
-    $basePath = dirname(dirname(__DIR__));
-}
+    $app = new App();
 
-$dotenv = new Dotenv();
-$dotenv->bootEnv($basePath . '/.env');
+    if (!isset($basePath)) {
+        $basePath = $app->getProjectDir();
+    }
 
-$bootstrap = require 'App.php';
+    $dotenv = new Dotenv();
+    $dotenv->bootEnv($basePath . '/.env');
 
-$app = (new PgFramework\ApplicationEvent($bootstrap['config']))
-    ->addModules($bootstrap['modules'])
-    //->middlewares($bootstrap['middlewares'])
-    ->addListeners($bootstrap['listeners']);
+    $bootstrap = require 'App.php';
 
-if (Environnement::getEnv('APP_ENV', 'production') === 'dev') {
-    //$app->pipe(Whoops::class);
-    $whoops = new \Whoops\Run();
-    $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler());
-    $whoops->register();
-}
+    $app
+        ->addModules($bootstrap['modules'])
+        //->addMiddlewares($bootstrap['middlewares']);
+        ->addListeners($bootstrap['listeners']);
 
-return $app;
+    if (Environnement::getEnv('APP_ENV', 'prod') === 'dev') {
+        $whoops = new \Whoops\Run();
+        $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler());
+        $whoops->register();
+    }
+    return $app;
+})();

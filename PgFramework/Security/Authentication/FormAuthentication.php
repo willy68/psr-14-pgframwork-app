@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Security\Authentication;
 
+use Mezzio\Router\RouteResult;
 use PgFramework\Auth;
 use PgFramework\Auth\UserInterface;
 use Mezzio\Router\RouterInterface;
@@ -58,6 +61,13 @@ class FormAuthentication implements AuthenticationInterface
         }
     }
 
+    public function supports(ServerRequestInterface $request): bool
+    {
+        /** @var RouteResult $routeResult */
+        $routeResult = $request->getAttribute(RouteResult::class);
+        return $routeResult->getMatchedRouteName() === 'auth.login.post';
+    }
+
     public function authenticate(ServerRequestInterface $request): AuthenticateResultInterface
     {
         $credentials = $this->getCredentials($request);
@@ -90,7 +100,7 @@ class FormAuthentication implements AuthenticationInterface
             $credentials['rememberMe'] = true;
         }
 
-        if (!\is_string($credentials['identifier']) || $credentials['identifier']) {
+        if (!\is_string($credentials['identifier'])) {
             return null;
         }
 
@@ -109,9 +119,9 @@ class FormAuthentication implements AuthenticationInterface
     {
         $this->auth->setUser($user);
 
-        $path = $this->session->get('auth.redirect')  ?: $this->router->generateUri($this->options['redirect.success']);
+        $path = $this->session->get('auth.redirect') ?: $this->router->generateUri($this->options['redirect.success']);
         $this->session->delete('auth.redirect');
-        return  new ResponseRedirect($path);
+        return new ResponseRedirect($path);
     }
 
     public function onAuthenticateFailure(
@@ -120,5 +130,15 @@ class FormAuthentication implements AuthenticationInterface
     ): ?ResponseInterface {
         (new FlashService($this->session))->error('Identifiant ou mot de passe incorrect');
         return $this->redirect($this->options['auth.login']);
+    }
+
+    public function supportsRememberMe(ServerRequestInterface $request): bool
+    {
+        /** @var AuthenticateResultInterface $result */
+        if (($result = $request->getAttribute('auth.result'))) {
+            $credentials = $result->getCredentials();
+            return $credentials['rememberMe'] ?? false;
+        }
+        return false;
     }
 }

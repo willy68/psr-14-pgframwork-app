@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Database\ActiveRecord;
 
 use ActiveRecord;
@@ -14,8 +16,6 @@ class PaginatedModel extends ActiveRecord\Model
     public static $query;
 
     /**
-     * Undocumented function
-     *
      * @param int $perPage
      * @param int $currentPage
      * @return Pagerfanta
@@ -29,8 +29,6 @@ class PaginatedModel extends ActiveRecord\Model
     }
 
     /**
-     * Undocumented function
-     *
      * @return int
      */
     public static function getNbResults(): int
@@ -39,12 +37,10 @@ class PaginatedModel extends ActiveRecord\Model
         if (!empty(static::$paginatedCondition['conditions'])) {
             $options['conditions'] = static::$paginatedCondition['conditions'];
         }
-        return static::count($options);
+        return (int)static::count($options);
     }
 
     /**
-     * Undocumented function
-     *
      * @param int $offset
      * @param int $length
      * @return mixed
@@ -84,8 +80,6 @@ class PaginatedModel extends ActiveRecord\Model
     }
 
     /**
-     *
-     *
      * @param array $field
      * @return array
      */

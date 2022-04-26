@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Database;
 
 use Pagerfanta\Adapter\AdapterInterface;
@@ -7,15 +9,11 @@ use Pagerfanta\Adapter\AdapterInterface;
 class PaginatedQuery implements AdapterInterface
 {
     /**
-     * Undocumented variable
-     *
      * @var Query
      */
     private $query;
 
     /**
-     * Undocumented function
-     *
      * @param Query $query
      */
     public function __construct(Query $query)
@@ -24,8 +22,6 @@ class PaginatedQuery implements AdapterInterface
     }
 
     /**
-     * Undocumented function
-     *
      * @return int
      */
     public function getNbResults(): int
@@ -34,8 +30,6 @@ class PaginatedQuery implements AdapterInterface
     }
 
     /**
-     * Undocumented function
-     *
      * @param [type] $offset
      * @param [type] $length
      * @return QueryResult

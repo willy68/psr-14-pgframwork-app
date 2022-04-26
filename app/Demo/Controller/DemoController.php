@@ -1,22 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Demo\Controller;
 
 use DateTime;
 use App\Entity\Post;
 use App\Models\Client;
 use App\Auth\Models\User;
-use Doctrine\DBAL\Connection;
-use Doctrine\ORM\EntityManager;
 use App\Repository\PostRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use PgFramework\Router\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
-use PgFramework\Validator\ValidationRules;
 use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Invoker\Annotation\ParameterConverter;
-use Doctrine\ORM\Tools\DisconnectedClassMetadataFactory;
 use PgFramework\Database\ActiveRecord\ActiveRecordQuery;
 
 class DemoController
@@ -37,33 +36,21 @@ class DemoController
      * @param ContainerInterface $c
      * @return string
      */
+    #[Route('/', name: 'demo.index', methods: ['GET'])]
     public function index(
         ServerRequestInterface $request,
         RendererInterface $renderer,
         \PDO $pdo,
-        EntityManager $em,
+        EntityManagerInterface $em,
         ContainerInterface $c,
         ManagerRegistry $managerRegistry
     ): string {
         $conn = $managerRegistry->getManager();
 
-        /** @var EntityManager $paysagest */
-        /*$paysagest = $managerRegistry->getManager('paysagest');
-        $paysagest->getConfiguration()->setMetadataDriverImpl(
-            new \Doctrine\ORM\Mapping\Driver\DatabaseDriver(
-                $paysagest->getConnection()->getSchemaManager()
-            )
-        );
-        $cmf = new DisconnectedClassMetadataFactory();
-        $cmf->setEntityManager($paysagest);
-        $metadatas = $cmf->getAllMetadata();
-        */
-        //dd($metadatas, $cmf);
-        //dd($conn);
         /** @var PostRepository */
         $rp = $conn->getRepository(Post::class);
         $pc = $rp->findWithCategory(122);
-        //dd($pc);
+
         $query = new ActiveRecordQuery();
         $query
             ->where('id = ?', 'user_id = ?')
@@ -76,10 +63,9 @@ class DemoController
         /** @var PostRepository */
         $repo = $em->getRepository(Post::class);
         $doctrinePost = $repo->findWithCategory(122);
-        //dd($doctrinePost);
 
         $mysql_ver = $pdo->getAttribute(\PDO::ATTR_SERVER_VERSION);
-        $params = array_merge($request->getServerParams(), $user_array, [$mysql_ver], [$query->__toString()]);
+        $params = array_merge($request->getServerParams(), $user_array, [$mysql_ver], [$query]);
         return $renderer->render('@demo/index', compact('params'));
     }
 
@@ -89,6 +75,7 @@ class DemoController
      * @param RendererInterface $renderer
      * @return string
      */
+    #[Route('/react', name: 'demo.react', methods: ['GET'])]
     public function demoReact(RendererInterface $renderer): string
     {
         return $renderer->render('@demo/react');
@@ -103,6 +90,7 @@ class DemoController
      * @param \PgFramework\Renderer\RendererInterface $renderer
      * @return string
      */
+    #[Route('/demo/client/{id:\d+}', name: 'demo.client', methods: ['GET'])]
     public function demoClient(Client $client, RendererInterface $renderer): string
     {
         $client = $client->to_array(['include' => 'adresses']);

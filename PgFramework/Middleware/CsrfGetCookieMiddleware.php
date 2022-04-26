@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Middleware;
 
 use Dflydev\FigCookies\SetCookie;
@@ -56,32 +58,19 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
 
         $cookie = FigRequestCookies::get($request, $this->config['cookieName'])->getValue();
 
-        if (is_string($cookie) && strlen($cookie) > 0) {
-            [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
-            $cookie = $this->tokenManager->getToken($tokenId);
-            $request = $request->withAttribute($this->config['field'], $cookie);
-        }
-
-        if (\in_array($method, ['GET', 'HEAD'], true) && strlen($cookie) === 0) {
+        if (\in_array($method, ['GET', 'HEAD'], true) && null === $cookie) {
             $token = $this->getToken();
             $request = $request->withAttribute($this->config['field'], $token);
 
             $response = $handler->handle($request);
 
-            $setCookie = SetCookie::create('XSRF-TOKEN')
-                ->withValue($token)
-                // ->withExpires(time() + 3600)
-                ->withPath('/')
-                ->withDomain(null)
-                ->withSecure(false)
-                ->withHttpOnly(false);
-            return FigResponseCookies::set($response, $setCookie);
+            return $this->setCookie($token, $response);
         }
 
         if (\in_array($method, ['DELETE', 'PATCH', 'POST', 'PUT'], true)) {
             $body = $request->getParsedBody() ?: [];
             if ((\is_array($body) || $body instanceof \ArrayAccess) && !empty($body)) {
-                $token = $body[$this->config['field']];
+                $token = $body[$this->config['field']] ?? null;
                 $this->validateToken($token, $cookie);
 
                 return $handler->handle($request);
@@ -95,19 +84,28 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
             [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
             $token = $this->tokenManager->refreshToken($tokenId);
             $request = $request->withAttribute($this->config['field'], $token);
-        }
 
+            $response = $handler->handle($request);
+
+            return $this->setCookie($token, $response);
+        }
         return $handler->handle($request);
     }
 
-    protected function validateToken($token, $cookie)
+    protected function validateToken(?string $token = null, ?string $cookie = null)
     {
+        if (!$token) {
+            throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
+        }
+
         if (!$cookie) {
             throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
         }
+
         if (!$this->tokenManager->isTokenValid($token)) {
             throw new InvalidCsrfException('Le Csrf est incorrect');
         }
+
         if (!hash_equals($token, $cookie)) {
             throw new InvalidCsrfException('Le cookie Csrf est incorrect');
         }
@@ -122,5 +120,17 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
     {
         $this->tokenId = bin2hex(Security::randomBytes(8));
         return $this->tokenManager->getToken($this->tokenId);
+    }
+
+    protected function setCookie(string $token, ResponseInterface $response): ResponseInterface
+    {
+        $setCookie = SetCookie::create('XSRF-TOKEN')
+            ->withValue($token)
+            // ->withExpires(time() + 3600)
+            ->withPath('/')
+            ->withDomain(null)
+            ->withSecure(false)
+            ->withHttpOnly(false);
+        return FigResponseCookies::set($response, $setCookie);
     }
 }

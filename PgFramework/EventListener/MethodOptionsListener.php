@@ -1,14 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Response;
 use Mezzio\Router\RouteResult;
 use PgFramework\Event\RequestEvent;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
-use League\Event\ListenerPriority;
 use PgFramework\Event\Events;
-use PgFramework\Event\ResponseEvent;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class MethodOptionsListener implements EventSubscriberInterface
@@ -62,7 +62,7 @@ class MethodOptionsListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::REQUEST => ListenerPriority::HIGH
+            Events::REQUEST => 700
         ];
     }
 }

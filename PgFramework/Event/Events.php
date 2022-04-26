@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Event;
 
 class Events
@@ -10,4 +12,6 @@ class Events
     public const VIEW = 'event.view';
     public const RESPONSE = 'event.response';
     public const EXCEPTION = 'event.exception';
+    public const FINISH = 'event.finish';
+    public const TERMINATE = 'event.terminate';
 }

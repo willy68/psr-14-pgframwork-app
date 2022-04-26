@@ -3,7 +3,7 @@
 namespace App\Auth\Provider;
 
 use App\Auth\Entity\UserToken;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use PgFramework\Database\Hydrator;
 use PgFramework\Auth\TokenInterface;
 use PgFramework\Auth\Provider\TokenProviderInterface;
@@ -16,11 +16,11 @@ class UserTokenProvider implements TokenProviderInterface
     protected $entity;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $em;
 
-    public function __construct(EntityManager $em, string $entity = UserToken::class)
+    public function __construct(EntityManagerInterface $em, string $entity = UserToken::class)
     {
         $this->em = $em;
         $this->entity = $entity;

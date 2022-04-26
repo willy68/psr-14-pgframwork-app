@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Event;
 
 use Psr\EventDispatcher\StoppableEventInterface;

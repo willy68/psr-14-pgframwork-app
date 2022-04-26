@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Validator\Rules;
 
 use PgFramework\Validator\ValidationInterface;
@@ -17,7 +19,10 @@ class EmailValidation implements ValidationInterface
 
     public function isValid($var): bool
     {
-        return $this->checkEmail($var);
+        if (is_string($var)) {
+            return filter_var($var, FILTER_VALIDATE_EMAIL) !== false;
+        }
+        return false;
     }
 
     /**
@@ -43,19 +48,5 @@ class EmailValidation implements ValidationInterface
     public function getError(): string
     {
         return $this->error;
-    }
-
-    /**
-     * @param mixed $var
-     * @return bool
-     */
-    protected function checkEmail($var): bool
-    {
-        if (is_string($var)) {
-            if (filter_var($var, FILTER_VALIDATE_EMAIL) !== false) {
-                return true;
-            }
-        }
-        return false;
     }
 }

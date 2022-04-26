@@ -32,8 +32,8 @@ class FastRouteRouterFactory
     public function __invoke(ContainerInterface $container)
     {
         $cache = null;
-        if ($container->get('env') === 'production') {
-            $cache = 'tmp/route';
+        if ($container->get('env') === 'prod') {
+            $cache = $container->get('app.cache.dir') . '/route';
         }
 
         return new FastRouteRouter(null, null, [

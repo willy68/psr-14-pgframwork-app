@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Blog\Actions;
 
 use App\Entity\Category;
@@ -13,6 +15,7 @@ use PgFramework\Invoker\Annotation\ParameterConverter;
 /**
  * @Route("/blog")
  */
+#[Route('/blog')]
 class PostShowAction
 {
     use RouterAwareAction;
@@ -45,18 +48,19 @@ class PostShowAction
     /**
      * Show blog post
      *
-     * @Route("/{slug:[a-z\-0-9]+}-{id:[0-9]+}", name="blog.show", method={"GET"})
+     * @Route("/{slug:[a-z\-0-9]+}-{id:[0-9]+}", name="blog.show", methods={"GET"})
      *
      * @param string $slug
      * @param Post $post
      * @return mixed
      */
+    #[Route('/{slug:[a-z\-0-9]+}-{id:[0-9]+}', name:'blog.show', methods:['GET'])]
     public function __invoke(string $slug, Post $post)
     {
         if ($post->getSlug() !== $slug) {
             return $this->redirect('blog.show', [
-                'slug' => $post->slug,
-                'id' => $post->id
+                'slug' => $post->getSlug(),
+                'id' => $post->getId()
             ]);
         }
 
@@ -75,6 +79,8 @@ class PostShowAction
      * @param Post $post
      * @return string
      */
+    #[Route('/category/{category_id:[0-9]+}/post/{id:[0-9]+}', name:'blog.postShow')]
+    #[ParameterConverter('category', options:['id' => 'category_id'])]
     public function postShow(Category $category, Post $post): string
     {
         return $this->renderer->render('@blog/show', [
@@ -85,11 +91,12 @@ class PostShowAction
     /**
      * Show post with Doctrine
      *
-     * @Route("/post/{id:[0-9]+}", name="blog.showPost", method={"GET"})
+     * @Route("/post/{id:[0-9]+}", name="blog.showPost", methods={"GET"})
      *
      * @param Post $post
      * @return string
      */
+    #[Route('/post/{id:[0-9]+}', name:'blog.showPost', methods:['GET'])]
     public function showPost(Post $post): string
     {
         return $this->renderer->render('@blog/show', [
@@ -107,6 +114,8 @@ class PostShowAction
      * @param Post $post
      * @return string
      */
+    #[Route('/category/{category_slug:[a-z\-0-9]+}/post/{id:[0-9]+}', name:'blog.postCategoryShow', methods:['GET'])]
+    #[ParameterConverter('category', options:['slug' => 'category_slug'])]
     public function postCategoryShow(Category $category, Post $post): string
     {
         return $this->renderer->render('@blog/show', [

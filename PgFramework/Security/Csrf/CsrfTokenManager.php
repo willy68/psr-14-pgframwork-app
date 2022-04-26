@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Security\Csrf;
 
 use PgFramework\Security\Security;
@@ -95,13 +97,18 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
         return $this->formKey;
     }
 
+    public function generateId(): string
+    {
+        return bin2hex(Security::randomBytes(8));
+    }
+
     private function generateToken(?string $tokenId = null): string
     {
         $token = null;
         if (null !== $tokenId) {
             $token = $tokenId . self::DELIMITER . $this->generator->generateToken();
         } else {
-            $tokenId = bin2hex(Security::randomBytes(8));
+            $tokenId = $this->generateId();
             $token = $tokenId . self::DELIMITER . $this->generator->generateToken();
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Utils;
@@ -77,7 +79,7 @@ class MethodHeadListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::REQUEST => ['onRequest', ListenerPriority::HIGH],
+            Events::REQUEST => ['onRequest', 800],
             Events::RESPONSE => ['onResponse', ListenerPriority::LOW]
         ];
     }

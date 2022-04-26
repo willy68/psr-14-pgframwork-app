@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\EventListener;
 
 use Invoker\Invoker;
@@ -13,6 +15,7 @@ use Invoker\ParameterResolver\{
     AssociativeArrayResolver};
 use PgFramework\Invoker\ParameterResolver\ActiveRecordResolver;
 use Invoker\ParameterResolver\Container\TypeHintContainerResolver;
+use PgFramework\Annotation\AnnotationsLoader;
 use PgFramework\Invoker\ParameterResolver\ActiveRecordAnnotationsResolver;
 
 /**
@@ -58,7 +61,7 @@ class InvokerListener implements Listener
     {
         if (!$this->invoker) {
             $parameterResolver = new ResolverChain([
-                new ActiveRecordAnnotationsResolver(),
+                new ActiveRecordAnnotationsResolver($container->get(AnnotationsLoader::class)),
                 new ActiveRecordResolver(),
                 new NumericArrayResolver(),
                 new AssociativeArrayResolver(),

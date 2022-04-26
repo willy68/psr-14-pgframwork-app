@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This file is part of the Symfony package.
+ *
+ * (c) Fabien Potencier <fabien@symfony.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+declare(strict_types=1);
+
 namespace PgFramework\Security\Authentication;
 
 use PgFramework\Security\Authentication\Exception\AuthenticationFailureException;
@@ -9,6 +20,15 @@ use Psr\Http\Message\ServerRequestInterface;
 
 interface AuthenticationInterface
 {
+    /**
+     * Does the authenticator support the given Request?
+     *
+     * If this returns false, the authenticator will be skipped.
+     *
+     * @return bool
+     */
+    public function supports(ServerRequestInterface $request): bool;
+
     /**
      * Authenticate the request
      *
@@ -60,4 +80,13 @@ interface AuthenticationInterface
         ServerRequestInterface $request,
         AuthenticationFailureException $e
     ): ?ResponseInterface;
+
+    /**
+     * Does the authenticator supports RememberMe login cookie
+     * The onAuthenticationSuccess method must returns a Response object
+     *
+     * @param ServerRequestInterface $request
+     * @return boolean
+     */
+    public function supportsRememberMe(ServerRequestInterface $request): bool;
 }

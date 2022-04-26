@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Twig;
 
 use Twig\TwigFunction;
@@ -8,8 +10,6 @@ use Twig\Extension\AbstractExtension;
 class FormExtension extends AbstractExtension
 {
     /**
-   * Undocumented function
-   *
    * @return array
    */
     public function getFunctions(): array
@@ -23,8 +23,6 @@ class FormExtension extends AbstractExtension
     }
 
     /**
-     * Undocumented function
-     *
      * @param array $context
      * @param string $key
      * @param mixed $value
@@ -56,6 +54,7 @@ class FormExtension extends AbstractExtension
         } elseif (array_key_exists('options', $options)) {
             $input = $this->select($value, $options['options'], $attributes);
         } else {
+            $attributes['type'] = $options['type'] ?? 'text';
             $input = $this->input($value, $attributes);
         }
         return "<div class=\"form-group\">
@@ -66,8 +65,6 @@ class FormExtension extends AbstractExtension
     }
 
     /**
-     * Undocumented function
-     *
      * @param [type] $value
      * @return string
      */
@@ -80,8 +77,6 @@ class FormExtension extends AbstractExtension
     }
 
     /**
-     * Undocumented function
-     *
      * @param array $context
      * @param string $key
      * @return string
@@ -96,8 +91,6 @@ class FormExtension extends AbstractExtension
     }
 
     /**
-     * Undocumented function
-     *
      * @param string|null $value
      * @param array $attributes
      * @return string
@@ -111,8 +104,6 @@ class FormExtension extends AbstractExtension
 
 
     /**
-     * Undocumented function
-     *
      * @param string|null $value
      * @param array $options
      * @param array $attributes
@@ -136,22 +127,16 @@ class FormExtension extends AbstractExtension
     }
 
     /**
-     * Undocumented function
-     *
      * @param string|null $value
      * @param array $attributes
      * @return string
      */
     private function input(?string $value, array $attributes): string
     {
-        return "<input type=\"text\"" .
-            $this->getHtmlFromArray($attributes) .
-            " value=\"{$value}\"/>";
+        return "<input " . $this->getHtmlFromArray($attributes) . " value=\"{$value}\"/>";
     }
 
     /**
-     * Undocumented function
-     *
      * @param string|null $value
      * @param array $attributes
      * @return string
@@ -171,8 +156,6 @@ class FormExtension extends AbstractExtension
     }
 
     /**
-     * Undocumented function
-     *
      * @param array $attributes
      * @return void
      */
@@ -184,8 +167,6 @@ class FormExtension extends AbstractExtension
     }
 
     /**
-     * Undocumented function
-     *
      * @param array $attributes
      * @return string
      */

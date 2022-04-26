@@ -1,16 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Twig;
 
-use DateTime;
+use DateTimeInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
 class TimeExtension extends AbstractExtension
 {
   /**
-   * Undocumented function
-   *
    * @return array
    */
     public function getFilters(): array
@@ -21,14 +21,14 @@ class TimeExtension extends AbstractExtension
     }
 
     /**
-     * @param DateTime $date
+     * @param DateTimeInterface $date
      * @param string $format
      * @return string
      */
-    public function ago(DateTime $date, string $format = 'd/m/Y H:i')
+    public function ago(DateTimeInterface $date, string $format = 'd/m/Y H:i')
     {
         return '<time class="timeago" datetime="'  .
-        $date->format(DateTime::ISO8601) .
+        $date->format(DateTimeInterface::ISO8601) .
         '">' .
         $date->format($format) .
         '</time>';

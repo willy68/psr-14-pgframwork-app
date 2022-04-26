@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Event;
 
-use PgFramework\ApplicationInterface;
+use PgFramework\Kernel\KernelInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ViewEvent extends RequestEvent
@@ -11,9 +13,9 @@ class ViewEvent extends RequestEvent
 
     private $result;
 
-    public function __construct(ApplicationInterface $app, ServerRequestInterface $request, $result)
+    public function __construct(KernelInterface $kernel, ServerRequestInterface $request, $result)
     {
-        parent::__construct($app, $request);
+        parent::__construct($kernel, $request);
         $this->result = $result;
     }
 

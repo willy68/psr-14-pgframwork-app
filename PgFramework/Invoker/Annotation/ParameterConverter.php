@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PgFramework\Invoker\Annotation;
 
+use Attribute;
+use Doctrine\ORM\Mapping\Annotation;
 use PgFramework\Invoker\Exception\InvalidAnnotation;
 
 /**
@@ -17,10 +21,12 @@ use PgFramework\Invoker\Exception\InvalidAnnotation;
  * @api
  *
  * @Annotation
+ * @NamedArgumentConstructor
  * @Target({"METHOD"})
  *
  */
-final class ParameterConverter
+#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_FUNCTION | Attribute::IS_REPEATABLE)]
+final class ParameterConverter implements Annotation
 {
     /**
      * Parameters, indexed by the parameter number (index) or name.
@@ -30,21 +36,27 @@ final class ParameterConverter
      */
     private $parameters = [];
 
+    private $name;
+
+    private $options = [];
+
     /**
      * @throws InvalidAnnotation
      */
-    public function __construct(array $parameters)
+    public function __construct($parameters = [], string $name = null, $options = [])
     {
+        $this->parameters = $parameters;
+        $this->name = $parameters['value'] ?? (\is_string($parameters) ? $parameters : $name);
+        $this->options = $parameters['options'] ?? ([] !== $options ? $options : null);
+
         // Method param name
-        if (!isset($parameters['value'])) {
+        if (null === $this->name) {
             throw new InvalidAnnotation(sprintf(
                 '@ParameterConverter("name", options={"id" = "value"}) expects parameter "name", %s given.',
-                json_encode($parameters)
+                $name
             ));
             return;
         }
-
-        $this->parameters = $parameters;
     }
 
     /**
@@ -53,5 +65,21 @@ final class ParameterConverter
     public function getParameters(): array
     {
         return $this->parameters;
+    }
+
+    /**
+     * Get the value of name
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Get the value of options
+     */
+    public function getOptions()
+    {
+        return $this->options;
     }
 }

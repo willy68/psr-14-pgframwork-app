@@ -34,6 +34,7 @@ class DashboardAction
      *
      * @return string
      */
+    #[Route('/admin', name:'admin', methods:['GET'])]
     public function index(): string
     {
         $widgets = array_reduce($this->widgets, function ($html, AdminWidgetInterface $widget) {
