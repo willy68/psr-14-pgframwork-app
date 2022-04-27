@@ -27,6 +27,8 @@ use PgFramework\EventListener\RecordNotFoundListener;
 use PgFramework\EventListener\StringResponseListener;
 use PgFramework\Middleware\MethodNotAllowedMiddleware;
 use PgFramework\EventListener\MethodNotAllowedListener;
+use PgFramework\Session\Listener\SessionListener;
+use PgFramework\Session\Middleware\SessionMiddleware;
 
 return [
     /* Application modules. Place your own on the list */
@@ -42,6 +44,7 @@ return [
 
     /* Other middlewares must be put on Router, RouteGroup or Route */
     'middlewares' => [
+        SessionMiddleware::class,
         TrailingSlashMiddleware::class,
         MethodMiddleware::class,
         RouterMiddleware::class,
@@ -52,6 +55,7 @@ return [
     ],
 
     'listeners' => [
+        SessionListener::class,             //Request priority:   1000 Response: -1000
         RouterListener::class,              //Request priority:   900
         MethodHeadListener::class,          //Request priority:   800
         MethodOptionsListener::class,       //Request priority:   700

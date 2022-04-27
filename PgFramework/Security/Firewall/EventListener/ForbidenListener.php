@@ -12,7 +12,7 @@ use PgFramework\Session\FlashService;
 use PgFramework\HttpUtils\RequestUtils;
 use Psr\Http\Message\ResponseInterface;
 use PgFramework\Auth\ForbiddenException;
-use PgFramework\Session\SessionInterface;
+use Mezzio\Session\SessionInterface;
 use PgFramework\Response\ResponseRedirect;
 use PgFramework\Auth\FailedAccessException;
 use Psr\Http\Message\ServerRequestInterface;

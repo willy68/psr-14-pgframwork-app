@@ -10,7 +10,7 @@ use PgFramework\Auth\UserInterface;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Session\FlashService;
 use Psr\Http\Message\ResponseInterface;
-use PgFramework\Session\SessionInterface;
+use Mezzio\Session\SessionInterface;
 use PgFramework\Actions\RouterAwareAction;
 use PgFramework\Response\ResponseRedirect;
 use Psr\Http\Message\ServerRequestInterface;
@@ -120,7 +120,7 @@ class FormAuthentication implements AuthenticationInterface
         $this->auth->setUser($user);
 
         $path = $this->session->get('auth.redirect') ?: $this->router->generateUri($this->options['redirect.success']);
-        $this->session->delete('auth.redirect');
+        $this->session->unset('auth.redirect');
         return new ResponseRedirect($path);
     }
 

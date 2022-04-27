@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PgFramework\Session;
 
+use Mezzio\Session\SessionInterface;
+
 class FlashService
 {
     /**
@@ -59,7 +61,7 @@ class FlashService
     {
         if (is_null($this->messages)) {
             $this->messages = $this->session->get($this->sessionKey, []);
-            $this->session->delete($this->sessionKey);
+            $this->session->unset($this->sessionKey);
         }
 
         if (array_key_exists($type, $this->messages)) {

@@ -13,7 +13,7 @@ use PgFramework\DebugBar\DataCollector\AuthCollector;
 use PgFramework\DebugBar\PgDebugBar;
 use PgFramework\Event\ResponseEvent;
 use PgFramework\HttpUtils\RequestUtils;
-use PgFramework\Session\SessionInterface;
+use Mezzio\Session\SessionInterface;
 use PgFramework\DebugBar\DataCollector\RequestCollector;
 use PgFramework\DebugBar\DataCollector\RouteCollector;
 use PgFramework\Environnement\Environnement;

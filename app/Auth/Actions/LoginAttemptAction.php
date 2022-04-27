@@ -8,7 +8,7 @@ use PgFramework\Auth\AuthSession;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Session\FlashService;
 use PgFramework\Router\Annotation\Route;
-use PgFramework\Session\SessionInterface;
+use Mezzio\Session\SessionInterface;
 use PgFramework\Actions\RouterAwareAction;
 use PgFramework\Response\ResponseRedirect;
 use PgFramework\Renderer\RendererInterface;
@@ -68,7 +68,7 @@ class LoginAttemptAction
         $user = $this->auth->login($params['username'], $params['password']);
         if ($user) {
             $path = $this->session->get('auth.redirect')  ?: $this->router->generateUri('admin');
-            $this->session->delete('auth.redirect');
+            $this->session->unset('auth.redirect');
             $response = new ResponseRedirect($path);
             if ($params['rememberMe']) {
                 $response = $this->cookie->onLogin(

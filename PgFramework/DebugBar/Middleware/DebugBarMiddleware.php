@@ -12,7 +12,7 @@ use PgFramework\ApplicationInterface;
 use PgFramework\HttpUtils\RequestUtils;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use PgFramework\Session\SessionInterface;
+use Mezzio\Session\SessionInterface;
 use PgFramework\Environnement\Environnement;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;

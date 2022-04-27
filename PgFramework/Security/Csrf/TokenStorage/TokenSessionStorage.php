@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace PgFramework\Security\Csrf\TokenStorage;
 
-use PgFramework\Session\SessionInterface;
+use Mezzio\Session\SessionInterface;
 
 class TokenSessionStorage implements TokenStorageInterface
 {
     /**
-     * @var array|\ArrayAccess|SessionInterface
+     * @var SessionInterface
      */
     private $session;
 
@@ -28,7 +28,7 @@ class TokenSessionStorage implements TokenStorageInterface
     /**
      * CsrfMiddleware constructor.
      *
-     * @param array|\ArrayAccess|SessionInterface $session
+     * @param SessionInterface   $session
      * @param int                $limit      Limit the number of token to store in the session
      * @param string             $sessionKey
      * @param string             $formKey
@@ -46,7 +46,7 @@ class TokenSessionStorage implements TokenStorageInterface
 
     public function hasToken(string $tokenId): bool
     {
-        return isset($this->session[$this->sessionKey][$tokenId]);
+        return isset($this->session->toArray()[$this->sessionKey][$tokenId]);
     }
 
     public function getToken(?string $tokenId = null): ?string
@@ -55,13 +55,13 @@ class TokenSessionStorage implements TokenStorageInterface
             if (!$this->hasToken($tokenId)) {
                 return null;
             }
-            return (string) $this->session[$this->sessionKey][$tokenId];
+            return (string) $this->session->toArray()[$this->sessionKey][$tokenId];
         }
 
         // Try last insert id
-        $tokenId = $this->session[$this->lastIdField] ?? null;
+        $tokenId = $this->session->get($this->lastIdField) ?? null;
         if ($tokenId) {
-            return (string) $this->session[$this->sessionKey][$tokenId];
+            return (string) $this->session->toArray()[$this->sessionKey][$tokenId];
         }
 
         return null;
@@ -69,10 +69,10 @@ class TokenSessionStorage implements TokenStorageInterface
 
     public function setToken(string $tokenId, string $token): void
     {
-        $tokens = $this->session[$this->sessionKey] ?? [];
+        $tokens = $this->session->get($this->sessionKey) ?? [];
         $tokens[$tokenId] = $token;
-        $this->session[$this->sessionKey] = $this->limitTokens($tokens);
-        $this->session[$this->lastIdField] = $tokenId;
+        $this->session->set($this->sessionKey, $this->limitTokens($tokens));
+        $this->session->set($this->lastIdField, $tokenId);
     }
 
     public function removeToken(string $tokenId): ?string
@@ -81,13 +81,13 @@ class TokenSessionStorage implements TokenStorageInterface
             return null;
         }
 
-        $token = (string) $this->session[$this->sessionKey][$tokenId];
-        $tokens = $this->session[$this->sessionKey];
+        $token = (string) $this->session->toArray()[$this->sessionKey][$tokenId];
+        $tokens = $this->session->toArray()[$this->sessionKey];
         unset($tokens[$tokenId]);
-        $this->session[$this->sessionKey] = $tokens;
+        $this->session->set($this->sessionKey, $tokens);
 
         if ($tokenId === $this->session[$this->lastIdField]) {
-            unset($this->session[$this->lastIdField]);
+            $this->session->unset($this->lastIdField);
         }
 
         return $token;
@@ -102,7 +102,7 @@ class TokenSessionStorage implements TokenStorageInterface
      */
     private function testSession($session): void
     {
-        if (!\is_array($session) && !$session instanceof \ArrayAccess) {
+        if (!\is_array($session->toArray()) && !$session->toArray() instanceof \ArrayAccess) {
             throw new \TypeError('session is not an array');
         }
     }

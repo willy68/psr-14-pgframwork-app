@@ -150,9 +150,9 @@ return [
     PgSessionInterface::class => create(PHPSession::class),
     RequestMatcherInterface::class => create(RequestMatcher::class),
     CsrfMiddleware::class =>
-    create()->constructor(get(PgSessionInterface::class)),
+    create()->constructor(get(SessionInterface::class)),
     TokenStorageInterface::class =>
-    create(TokenSessionStorage::class)->constructor(get(PgSessionInterface::class)),
+    create(TokenSessionStorage::class)->constructor(get(SessionInterface::class)),
     TokenGeneratorInterface::class => create(TokenGenerator::class),
     CsrfTokenManagerInterface::class =>
     create(CsrfTokenManager::class)->constructor(

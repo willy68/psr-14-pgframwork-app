@@ -12,8 +12,7 @@ use DebugBar\DataCollector\Renderable;
 use Psr\Http\Message\ResponseInterface;
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;
-use Dflydev\FigCookies\FigResponseCookies;
-use PgFramework\Session\SessionInterface;
+use Mezzio\Session\SessionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -120,7 +119,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
 
         if ($this->session) {
             $sessionAttributes = [];
-            foreach ($this->session as $key => $value) {
+            foreach ($this->session->toArray() as $key => $value) {
                 $sessionAttributes[$key] = $value;
             }
             $data['data']['session_attributes'] = $sessionAttributes;

@@ -9,7 +9,7 @@ use Mezzio\Router\RouterInterface;
 use PgFramework\Validator\Validator;
 use PgFramework\Session\FlashService;
 use PgFramework\Router\Annotation\Route;
-use PgFramework\Session\SessionInterface;
+use Mezzio\Session\SessionInterface;
 use PgFramework\Actions\RouterAwareAction;
 use PgFramework\Response\ResponseRedirect;
 use PgFramework\Renderer\RendererInterface;
@@ -100,7 +100,7 @@ class RegisterAction
                 if ($user->getId()) {
                     (new FlashService($this->session))->success($this->messages['create']);
                     $path = $this->session->get('auth.redirect') ?: $this->router->generateUri('admin');
-                    $this->session->delete('auth.redirect');
+                    $this->session->unset('auth.redirect');
                     $response = new ResponseRedirect($path);
                     if ($params['connect']) {
                         $user = $this->auth->login($user->getUsername(), $params['password']);

@@ -6,7 +6,7 @@ namespace PgFramework\Auth;
 
 use PgFramework\Auth;
 use PgFramework\Auth\UserInterface;
-use PgFramework\Session\SessionInterface;
+use Mezzio\Session\SessionInterface;
 use PgFramework\Auth\Provider\UserProviderInterface;
 
 class AuthSession implements Auth
@@ -71,7 +71,7 @@ class AuthSession implements Auth
 
     public function logout(): void
     {
-        $this->session->delete($this->options['sessionName']);
+        $this->session->unset($this->options['sessionName']);
         $this->user = null;
     }
 
@@ -87,7 +87,7 @@ class AuthSession implements Auth
                 $this->user = $this->userProvider->getUser('id', $userId);
                 return $this->user;
             } catch (\Exception $e) {
-                $this->session->delete($this->options['sessionName']);
+                $this->session->unset($this->options['sessionName']);
                 return null;
             }
         }
