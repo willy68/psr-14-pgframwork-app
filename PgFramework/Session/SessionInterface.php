@@ -24,5 +24,13 @@ interface SessionInterface
      * @param string $key
      * @return void
      */
-    public function delete(string $key): void;
+    public function unset(string $key): void;
+
+    /**
+     * Check session has key
+     *
+     * @param string $key
+     * @return boolean
+     */
+    public function has(string $key): bool;
 }

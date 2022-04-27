@@ -7,7 +7,6 @@ namespace PgFramework\Session;
 class PHPSession implements SessionInterface, \ArrayAccess, \Iterator, \Countable
 {
     /**
-     *
      * @param string $key
      * @param mixed $default
      * @return mixed
@@ -22,7 +21,6 @@ class PHPSession implements SessionInterface, \ArrayAccess, \Iterator, \Countabl
     }
 
     /**
-     *
      * @param string $key
      * @param mixed $value
      * @return void
@@ -34,19 +32,21 @@ class PHPSession implements SessionInterface, \ArrayAccess, \Iterator, \Countabl
     }
 
     /**
-     *
      * @param string $key
      * @return void
      */
-    public function delete(string $key): void
+    public function unset(string $key): void
     {
         $this->ensureStarted();
         unset($_SESSION[$key]);
     }
 
-    /**
-     *
-     */
+    public function has(string $key): bool
+    {
+        $this->ensureStarted();
+        return array_key_exists($key, $_SESSION);
+    }
+
     private function ensureStarted()
     {
         if (session_status() === PHP_SESSION_NONE) {
@@ -91,7 +91,7 @@ class PHPSession implements SessionInterface, \ArrayAccess, \Iterator, \Countabl
     #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
-        $this->delete($offset);
+        $this->unset($offset);
     }
     #[\ReturnTypeWillChange]
     public function count()
