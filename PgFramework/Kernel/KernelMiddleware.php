@@ -95,6 +95,9 @@ class KernelMiddleware implements KernelInterface, RequestHandlerInterface
         return $this->shiftMiddleware($this->getContainer());
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getContainer(): ContainerInterface
     {
         return $this->container;

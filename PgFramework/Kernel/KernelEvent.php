@@ -67,6 +67,11 @@ class KernelEvent implements KernelInterface
     {
         $this->request = $request;
 
+        $container = $this->container;
+        if (! $container) {
+            $this->$container = $container = $request->getAttribute(ApplicationInterface::class)->getContainer();
+        }
+
         $event = new RequestEvent($this, $request);
         $event = $this->dispatcher->dispatch($event);
 
@@ -90,11 +95,6 @@ class KernelEvent implements KernelInterface
         $controller = $event->getController();
 
         $params = $this->getRequest()->getAttribute('_params');
-
-        $container = $this->container;
-        if (! $container) {
-            $container = $request->getAttribute(ApplicationInterface::class)->getContainer();
-        }
 
         // controller arguments
         if ($container instanceof \DI\Container) {
@@ -234,5 +234,13 @@ class KernelEvent implements KernelInterface
         $this->request = $request;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getContainer(): ContainerInterface
+    {
+        return $this->container;
     }
 }

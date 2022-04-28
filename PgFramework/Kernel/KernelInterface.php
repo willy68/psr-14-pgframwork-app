@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Kernel;
 
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -48,4 +49,11 @@ interface KernelInterface
      * @return ServerRequestInterface
      */
     public function getRequest(): ServerRequestInterface;
+
+    /**
+     * Get Container
+     *
+     * @return ContainerInterface
+     */
+    public function getContainer(): ContainerInterface;
 }
