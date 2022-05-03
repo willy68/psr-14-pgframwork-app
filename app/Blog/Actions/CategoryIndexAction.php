@@ -36,7 +36,7 @@ class CategoryIndexAction
 
     /**
      *
-     * @param Request $request
+     * @param ServerRequestInterface $request
      * @return string|Response
      */
     public function __invoke(ServerRequestInterface $request, EntityManagerInterface $em)
