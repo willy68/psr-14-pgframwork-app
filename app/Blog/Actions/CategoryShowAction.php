@@ -10,9 +10,9 @@ use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 /**
- * @Route("/blog/category/{slug:[a-z\-0-9]+}", name="blog.category")
+ * @Route("/blog/dcategory/{slug:[a-z\-0-9]+}", name="blog.dcategory")
  */
-#[Route('/blog/category/{slug:[a-z\-0-9]+}', name:'blog.category', methods:['GET'])]
+#[Route('/blog/dcategory/{slug:[a-z\-0-9]+}', name:'blog.dcategory', methods:['GET'])]
 class CategoryShowAction
 {
     /**
