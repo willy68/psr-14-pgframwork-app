@@ -113,8 +113,6 @@ class PostCrudController extends CrudController
             $params['category'] = $category;
             unset($params['category_id']);
         }
-        $params['published'] = isset($params['published']) ? (bool)$params['published'] : false;
-        $params['created_at'] = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $params['created_at']);
         return array_merge($params, [
             'updated_at' => new \DateTimeImmutable('now')
         ]);
