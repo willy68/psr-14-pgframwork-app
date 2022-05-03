@@ -35,7 +35,6 @@ class CategoryIndexAction
     }
 
     /**
-     *
      * @param ServerRequestInterface $request
      * @return string|Response
      */
@@ -45,23 +44,22 @@ class CategoryIndexAction
         $repo = $em->getRepository(Category::class);
         /** @var Category */
         $category = $repo->findOneBy(['slug' => $request->getAttribute('slug')]);
-        if ($category) {
-            $params = $request->getQueryParams();
-            // Init Query
-            /** @var PostRepository */
-            $postRepo = $em->getRepository(Post::class);
-            /** @var PaginatedQueryBuilder */
-            $builder =  $postRepo->buildFindPublicForCategory($category->getId());
-            $posts = $builder->paginate(12, $params['p'] ?? 1);
-            $categories = $repo->findAll();
-            $page = $params['p'] ?? 1;
-
-            return $this->renderer->render('@blog/index', compact('posts', 'categories', 'category', 'page'));
-        } else {
+        if (null === $category) {
             return new Response(404, [], $this->renderer->render(
                 'error404',
                 ['message' => 'Impossible de trouver cette categorie: ' . $request->getAttribute('slug')]
             ));
         }
+        $params = $request->getQueryParams();
+        // Init Query
+        /** @var PostRepository */
+        $postRepo = $em->getRepository(Post::class);
+        /** @var PaginatedQueryBuilder */
+        $builder =  $postRepo->buildFindPublicForCategory($category->getId());
+        $posts = $builder->paginate(12, $params['p'] ?? 1);
+        $categories = $repo->findAll();
+        $page = $params['p'] ?? 1;
+
+        return $this->renderer->render('@blog/index', compact('posts', 'categories', 'category', 'page'));
     }
 }
