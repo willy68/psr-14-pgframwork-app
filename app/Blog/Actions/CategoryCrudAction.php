@@ -34,8 +34,6 @@ class CategoryCrudAction extends CrudAction
     }
 
     /**
-     * Undocumented function
-     *
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param mixed|null $item
      * @return array
@@ -48,8 +46,6 @@ class CategoryCrudAction extends CrudAction
     }
 
     /**
-     * Undocumented function
-     *
      * @param Request $request
      * @return Validator
      */

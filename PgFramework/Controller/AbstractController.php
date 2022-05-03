@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Controller;
 
+use PgFramework\Validator\Validator;
 use PgFramework\HttpUtils\RequestUtils;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -16,7 +17,7 @@ class AbstractController
      * @param array $filter
      * @return array
      */
-    protected function getParams(ServerRequestInterface $request, array $filter): array
+    protected function getParams(ServerRequestInterface $request, array $filter = []): array
     {
         $params = RequestUtils::getPostParams($request);
         if (is_null($params)) {
@@ -54,5 +55,16 @@ class AbstractController
             });
         }
         return $options;
+    }
+
+    /**
+     * Get validator form fields
+     *
+     * @param Request $request
+     * @return Validator
+     */
+    protected function getValidator(ServerRequestInterface $request): Validator
+    {
+        return new Validator(array_merge($request->getParsedBody(), $request->getUploadedFiles()));
     }
 }

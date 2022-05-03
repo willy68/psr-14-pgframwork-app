@@ -30,6 +30,7 @@ class PostIndexAction
     }
 
     /**
+     * Get all public articles with ActiveRecord
      *
      * @Route("/dblog", name="blog.indexAR", methods={"GET"})
      *
@@ -49,6 +50,7 @@ class PostIndexAction
     }
 
     /**
+     * Get All Articles with Doctrine
      *
      * @Route("/blog", name="blog.index", methods={"GET"})
      *

@@ -187,7 +187,7 @@ class Post
     /**
      * Get the value of createdAt
      *
-     * @return  DateTime
+     * @return  DateTimeImmutable
      */
     public function getCreatedAt()
     {
@@ -197,12 +197,15 @@ class Post
     /**
      * Set the value of createdAt
      *
-     * @param  DateTime  $createdAt
+     * @param DateTimeImmutable|string $createdAt
      *
      * @return  self
      */
-    public function setCreatedAt(DateTimeImmutable $createdAt)
+    public function setCreatedAt($createdAt)
     {
+        if (is_string($createdAt)) {
+            $createdAt = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $createdAt);
+        }
         $this->created_at = $createdAt;
 
         return $this;
@@ -211,7 +214,7 @@ class Post
     /**
      * Get the value of updatedAt
      *
-     * @return  DateTime
+     * @return  DateTimeImmutable
      */
     public function getUpdatedAt()
     {
@@ -221,12 +224,15 @@ class Post
     /**
      * Set the value of updatedAt
      *
-     * @param  DateTime  $updatedAt
+     * @param DateTimeImmutable|string $updatedAt
      *
      * @return  self
      */
-    public function setUpdatedAt(DateTimeImmutable $updatedAt)
+    public function setUpdatedAt($updatedAt)
     {
+        if (is_string($updatedAt)) {
+            $updatedAt = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $updatedAt);
+        }
         $this->updated_at = $updatedAt;
 
         return $this;
@@ -258,7 +264,7 @@ class Post
 
     /**
      *
-     * @return void
+     * @return string
      */
     public function getThumb()
     {
@@ -268,7 +274,7 @@ class Post
 
     /**
      *
-     * @return void
+     * @return string
      */
     public function getImageUrl()
     {
@@ -278,7 +284,7 @@ class Post
     /**
      * Get the value of category
      */
-    public function getCategory(): Category
+    public function getCategory(): ?Category
     {
         return $this->category;
     }
@@ -309,13 +315,13 @@ class Post
     /**
      * Set the value of published
      *
-     * @param  bool  $published
+     * @param $published
      *
-     * @return  self
+     * @return self
      */
-    public function setPublished(bool $published)
+    public function setPublished($published)
     {
-        $this->published = $published;
+        $this->published = (bool)$published;
 
         return $this;
     }
