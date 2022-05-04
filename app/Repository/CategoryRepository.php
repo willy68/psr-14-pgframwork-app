@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Entity\Category;
 use Pagerfanta\Pagerfanta;
 use Doctrine\ORM\QueryBuilder;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
@@ -20,7 +19,7 @@ class CategoryRepository extends PaginatedEntityRepository
     {
         $builder = $this->createQueryBuilder();
         $builder->select('c')
-            ->from(Category::class, 'c');
+            ->from($this->getEntityName(), 'c');
 
         return $builder;
     }

@@ -2,8 +2,6 @@
 
 namespace App\Repository;
 
-use App\Entity\Post;
-use Doctrine\ORM\Query;
 use Pagerfanta\Pagerfanta;
 use Doctrine\ORM\QueryBuilder;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
@@ -21,7 +19,7 @@ class PostRepository extends PaginatedEntityRepository
     {
         $builder = $this->createQueryBuilder();
         $builder->select('p')
-            ->from(Post::class, 'p')
+            ->from($this->getEntityName(), 'p')
             ->join('p.category', 'c', 'c = p.category')
             ->orderBy('p.created_at', 'DESC');
 
@@ -43,7 +41,7 @@ class PostRepository extends PaginatedEntityRepository
      * Get all records for one category
      *
      * @param int $category_id
-     * @return Query
+     * @return PaginatedQueryBuilder
      */
     public function buildFindPublicForCategory(int $category_id): PaginatedQueryBuilder
     {
@@ -53,10 +51,10 @@ class PostRepository extends PaginatedEntityRepository
     /**
      * paginate Posts
      *
-     * @param \Doctrine\ORM\QueryBuilder $query
+     * @param QueryBuilder $query
      * @param int $perPage
      * @param int $currentPage
-     * @return \Pagerfanta\Pagerfanta
+     * @return Pagerfanta
      */
     public function paginate(QueryBuilder $query, int $perPage, int $currentPage = 1): Pagerfanta
     {
@@ -70,6 +68,7 @@ class PostRepository extends PaginatedEntityRepository
      * Get one record for one category
      *
      * @param int $id
+     * @return mixed
      */
     public function findWithCategory(int $id)
     {

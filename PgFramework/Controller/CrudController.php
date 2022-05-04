@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 use PgFramework\Actions\RouterAwareAction;
+use PgFramework\Database\Doctrine\PaginatedEntityRepository;
 use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -103,6 +104,7 @@ class CrudController
     public function index(ServerRequestInterface $request): string
     {
         $params = $request->getQueryParams();
+        /** @var PaginatedEntityRepository */
         $repo = $this->em->getRepository($this->entity);
         $items = $repo->buildFindAll()->paginate(12, (int)($params['p'] ?? 1));
 

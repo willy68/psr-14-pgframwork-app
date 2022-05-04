@@ -11,7 +11,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use PgFramework\Router\Annotation\Route;
 use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use PgFramework\Database\Doctrine\PaginatedQueryBuilder;
 
 /**
  * @Route("/blog/category/{slug:[a-z\-0-9]+}", name="blog.category")
@@ -54,9 +53,7 @@ class CategoryIndexAction
         // Init Query
         /** @var PostRepository */
         $postRepo = $em->getRepository(Post::class);
-        /** @var PaginatedQueryBuilder */
-        $builder =  $postRepo->buildFindPublicForCategory($category->getId());
-        $posts = $builder->paginate(12, $params['p'] ?? 1);
+        $posts = $postRepo->buildFindPublicForCategory($category->getId())->paginate(12, $params['p'] ?? 1);
         $categories = $repo->findAll();
         $page = $params['p'] ?? 1;
 

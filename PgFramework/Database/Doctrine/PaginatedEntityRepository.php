@@ -27,4 +27,15 @@ class PaginatedEntityRepository extends EntityRepository
 
         return $builder;
     }
+    /**
+     * Get all records
+     *
+     * @return PaginatedQueryBuilder
+     */
+    public function buildFindAll(): PaginatedQueryBuilder
+    {
+        $builder = $this->createQueryBuilder();
+
+        return $builder;
+    }
 }
