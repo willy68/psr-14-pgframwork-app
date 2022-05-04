@@ -2,27 +2,34 @@
 
 namespace App\Blog;
 
+use App\Entity\Post;
 use App\Admin\AdminWidgetInterface;
-use App\Blog\Models\Posts;
+use Doctrine\ORM\EntityManagerInterface;
 use PgFramework\Renderer\RendererInterface;
 
 class BlogWidget implements AdminWidgetInterface
 {
     /**
-     * Undocumented variable
-     *
      * @var RendererInterface
      */
     private $renderer;
 
-    public function __construct(RendererInterface $renderer)
+    /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+
+    public function __construct(RendererInterface $renderer, EntityManagerInterface $em)
     {
         $this->renderer = $renderer;
+        $this->em = $em;
     }
 
     public function render(): string
     {
-        $count = Posts::count();
+        /** @var PostRepository */
+        $repo = $this->em->getRepository(Post::class);
+        $count = $repo->count([]);
         return $this->renderer->render('@blog/admin/widget', compact('count'));
     }
 
