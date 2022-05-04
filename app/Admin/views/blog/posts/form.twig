@@ -31,4 +31,4 @@
   </div>
 </div>
 {{ field('content', item.content, "Contenu", {type: 'textarea'}) }}
-{{ field('created_at', item.created_at | date("Y-m-d H:i:s"), "Date de création", {class: 'datepicker'}) }}
+{{ field('created_at', item.created_at is null ? item.getCreatedAt().format("Y-m-d H:i:s") : item.created_at | date("Y-m-d H:i:s"), "Date de création", {class: 'datepicker'}) }}
