@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Blog\Actions;
+namespace App\Admin\Actions\Blog;
 
 use App\Blog\Models\Categories;
 use App\Blog\Table\CategoryTable;
@@ -13,9 +13,9 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 class CategoryCrudAction extends CrudAction
 {
-    protected $viewPath = '@blog/admin/categories';
+    protected $viewPath = '@admin/blog/categories';
 
-    protected $routePrefix = 'blog.admin.category';
+    protected $routePrefix = 'admin.blog.category';
 
     /**
      * Class model

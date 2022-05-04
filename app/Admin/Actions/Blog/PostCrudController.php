@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Blog\Actions;
+namespace App\Admin\Actions\Blog;
 
 use App\Entity\Post;
 use App\Blog\PostUpload;
@@ -16,9 +16,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class PostCrudController extends CrudController
 {
-    protected $viewPath = '@blog/admin/posts';
+    protected $viewPath = '@admin/blog/posts';
 
-    protected $routePrefix = 'blog.admin';
+    protected $routePrefix = 'admin.blog';
 
     protected $entity = Post::class;
 

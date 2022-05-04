@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Blog\Actions;
+namespace App\Admin\Actions\Blog;
 
 use App\Entity\Category;
 use Mezzio\Router\RouterInterface;
@@ -13,9 +13,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class CategoryCrudController extends CrudController
 {
-    protected $viewPath = '@blog/admin/categories';
+    protected $viewPath = '@admin/blog/categories';
 
-    protected $routePrefix = 'blog.admin.category';
+    protected $routePrefix = 'admin.blog.category';
 
     protected $entity = Category::class;
 

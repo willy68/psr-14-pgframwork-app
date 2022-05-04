@@ -1,7 +1,7 @@
 <?php
 
 use App\Admin\AdminModule;
-use App\Blog\BlogAdminWidget;
+use App\Admin\BlogAdminWidget;
 use App\Admin\AdminTwigExtension;
 
 return [

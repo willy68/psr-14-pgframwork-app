@@ -5,11 +5,11 @@ namespace App\Admin;
 use PgFramework\Module;
 use Mezzio\Router\RouteCollector;
 use PgFramework\Renderer\TwigRenderer;
-use App\Blog\Actions\CategoryCrudController;
-use App\Blog\Actions\PostCrudController;
 use PgFramework\Auth\LoggedInMiddleware;
 use Mezzio\Router\RouteCollectionInterface;
 use PgFramework\Renderer\RendererInterface;
+use App\Admin\Actions\Blog\PostCrudController;
+use App\Admin\Actions\Blog\CategoryCrudController;
 use PgFramework\Auth\Middleware\CookieLoginMiddleware;
 
 class AdminModule extends Module
@@ -29,10 +29,10 @@ class AdminModule extends Module
         $renderer->addPath('admin', __DIR__ . '/views');
 
         /** @var RouteCollector $router*/
-        $router->crud("$prefix/posts", PostCrudController::class, 'blog.admin')
+        $router->crud("$prefix/posts", PostCrudController::class, 'admin.blog')
             ->middleware(CookieLoginMiddleware::class)
             ->middleware(LoggedInMiddleware::class);
-        $router->crud("$prefix/categories", CategoryCrudController::class, 'blog.admin.category')
+        $router->crud("$prefix/categories", CategoryCrudController::class, 'admin.blog.category')
             ->middleware(CookieLoginMiddleware::class)
             ->middleware(LoggedInMiddleware::class);
         if ($renderer instanceof TwigRenderer) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Blog\Actions;
+namespace App\Admin\Actions\Blog;
 
 use Mezzio\Router\RouterInterface;
 use App\Blog\PostUpload;
@@ -17,9 +17,9 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 class PostCrudAction extends CrudAction
 {
-    protected $viewPath = '@blog/admin/posts';
+    protected $viewPath = '@admin/blog/posts';
 
-    protected $routePrefix = 'blog.admin';
+    protected $routePrefix = 'admin.blog';
 
     protected $model = Posts::class;
 
