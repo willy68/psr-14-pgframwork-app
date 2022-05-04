@@ -37,9 +37,6 @@
 			{% for row in posts | batch(3) %}
 				<div class="card-deck mb-4">
 					{% for post in row %}
-					{#<pre>
-						{{ dump(post) }}
-					</pre>#}
 						<div class="card">
 							{% if post.category %}
 								<div class="card-header">
