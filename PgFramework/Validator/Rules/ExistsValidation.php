@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Validator\Rules;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use PgFramework\Validator\ValidationInterface;
 
