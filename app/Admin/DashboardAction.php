@@ -10,22 +10,13 @@ use PgFramework\Renderer\RendererInterface;
 class DashboardAction
 {
     /**
-     *
      * @var RendererInterface
      */
     private $renderer;
 
-    /**
-     *
-     * @var AdminWidgetInterface[]
-     */
-    private $widgets;
-
-    public function __construct(RendererInterface $renderer, array $widgets)
+    public function __construct(RendererInterface $renderer)
     {
-
         $this->renderer = $renderer;
-        $this->widgets = $widgets;
     }
 
     /**
@@ -37,9 +28,6 @@ class DashboardAction
     #[Route('/admin', name:'admin', methods:['GET'])]
     public function index(): string
     {
-        $widgets = array_reduce($this->widgets, function ($html, AdminWidgetInterface $widget) {
-            return $html . $widget->render();
-        }, '');
-        return $this->renderer->render('@admin/dashboard', compact('widgets'));
+        return $this->renderer->render('@admin/dashboard');
     }
 }
