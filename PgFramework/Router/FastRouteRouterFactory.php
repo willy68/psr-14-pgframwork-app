@@ -29,7 +29,7 @@ use Psr\Container\ContainerInterface;
  */
 class FastRouteRouterFactory
 {
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): FastRouteRouter
     {
         $cache = null;
         if ($container->get('env') === 'prod') {

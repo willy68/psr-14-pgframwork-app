@@ -42,8 +42,9 @@
     },
     "autoload": {
         "psr-4": {
+            "PgFramework\\": "PgFramework",
             "App\\": "app",
-            "PgFramework\\": "PgFramework"
+            "Tests\\": "tests"
         }
     },
     "require-dev": {
