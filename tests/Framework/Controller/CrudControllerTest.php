@@ -1,53 +1,70 @@
 <?php
 
-namespace Tests\PgFramework\Actions;
+namespace Tests\PgFramework\Controller;
 
+use App\Entity\Post;
 use Pagerfanta\Pagerfanta;
-use PgFramework\Database\Query;
-use PgFramework\Database\Table;
 use PHPUnit\Framework\TestCase;
 use GuzzleHttp\Psr7\ServerRequest;
 use Mezzio\Router\FastRouteRouter;
-use PgFramework\Actions\CrudAction;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PgFramework\Session\FlashService;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
+use PgFramework\Controller\CrudController;
+use PgFramework\Database\Doctrine\PaginatedEntityRepository;
 use PgFramework\Renderer\RendererInterface;
+use PgFramework\Database\Doctrine\PaginatedQueryBuilder;
+use stdClass;
 
-class CrudActionTest extends TestCase
+class CrudControllerTest extends TestCase
 {
     private $flash;
-    private $table;
+    private $renderer;
+    private $queryBuilder;
+    private $repository;
+    private $em;
+    private $om;
 
     public function setUp(): void
     {
-        $this->table = $this->getMockBuilder(Table::class)->disableOriginalConstructor()->getMock();
-        $this->query = $this->getMockBuilder(Query::class)->getMock();
-        $this->table->method('getEntity')->willReturn(\stdClass::class);
-        $this->table->method('findAll')->willReturn($this->query);
-        $this->table->method('find')->willReturnCallback(function ($id) {
+        $this->flash = $this->getMockBuilder(FlashService::class)->disableOriginalConstructor()->getMock();
+        $this->renderer = $this->getMockBuilder(RendererInterface::class)->getMock();
+        $this->queryBuilder = $this->getMockBuilder(PaginatedQueryBuilder::class)
+        ->disableOriginalConstructor()
+        ->getMock();
+        $this->em = $this->getMockBuilder(EntityManagerInterface::class)->getMock();
+        $this->om = $this->getMockBuilder(ManagerRegistry::class)->disableOriginalConstructor()->getMock();
+        $this->om->method('getManagerForClass')->willReturn(EntityManagerInterface::class);
+        $this->repository = $this->getMockBuilder(PaginatedEntityRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->repository->method('find')->willReturnCallback(function ($id) {
             $object = new \stdClass();
             $object->id = (int)$id;
             return $object;
         });
-        $this->flash = $this->getMockBuilder(FlashService::class)->disableOriginalConstructor()->getMock();
-        $this->renderer = $this->getMockBuilder(RendererInterface::class)->getMock();
+        $this->em->method('getRepository')->willReturn($this->repository);
     }
 
-    private function makeCrudAction(): CrudAction
+    private function makeCrudAction(): CrudController
     {
         $this->renderer->method('render')->willReturn('');
         $router = $this->getMockBuilder(FastRouteRouter::class)->disableOriginalConstructor()->getMock();
         $router->method('generateUri')->willReturnCallback(function ($url) {
             return $url;
         });
-        /** @var FastRouteRouter $router */
-        $action = new CrudAction($this->renderer, $router, $this->table, $this->flash);
+        /**
+         * @var FastRouteRouter $router
+         * @var ManagerRegistry $om
+         */
+        $action = new CrudController($this->renderer, $this->om, $router, $this->flash);
         $property = (new \ReflectionClass($action))->getProperty('viewPath');
         $property->setAccessible(true);
         $property->setValue($action, '@demo');
-        $property = (new \ReflectionClass($action))->getProperty('acceptedParams');
+        $property = (new \ReflectionClass($action))->getProperty('em');
         $property->setAccessible(true);
-        $property->setValue($action, ['name']);
+        $property->setValue($action, $this->em);
         return $action;
     }
 
@@ -55,7 +72,8 @@ class CrudActionTest extends TestCase
     {
         $request = new ServerRequest('GET', '/demo');
         $pager = new Pagerfanta(new ArrayAdapter([1, 2]));
-        $this->query->method('paginate')->willReturn($pager);
+        $this->repository->method('buildFindAll')->willReturn($this->queryBuilder);
+        $this->queryBuilder->method('paginate')->willReturn($pager);
         $this->renderer
             ->expects($this->once())
             ->method('render')
@@ -81,29 +99,10 @@ class CrudActionTest extends TestCase
         call_user_func([$this->makeCrudAction(), 'edit'], $request);
     }
 
-    public function testEditWithParams()
-    {
-        $id = 3;
-        $request = (new ServerRequest('POST', '/demo'))
-            ->withAttribute('id', $id)
-            ->withParsedBody(['name' => 'demo']);
-        $this->table
-            ->expects($this->once())
-            ->method('update')
-            ->with($id, ['name' => 'demo']);
-        $response = call_user_func([$this->makeCrudAction(), 'edit'], $request);
-        $this->assertEquals(['.index'], $response->getHeader('Location'));
-    }
-
     public function testDelete()
     {
-        $id = 3;
-        $request = (new ServerRequest('DELETE', '/demo'))
-            ->withAttribute('id', $id);
-        $this->table
-            ->expects($this->once())
-            ->method('delete')
-            ->with($id);
+        $request = new ServerRequest('DELETE', '/demo');
+        $this->em->expects($this->once())->method('remove');
         $response = call_user_func([$this->makeCrudAction(), 'delete'], $request);
         $this->assertEquals(['.index'], $response->getHeader('Location'));
     }
@@ -123,17 +122,5 @@ class CrudActionTest extends TestCase
                 })
             );
         call_user_func([$this->makeCrudAction(), 'create'], $request);
-    }
-
-    public function testCreateWithParams()
-    {
-        $request = (new ServerRequest('POST', '/new'))
-            ->withParsedBody(['name' => 'demo']);
-        $this->table
-            ->expects($this->once())
-            ->method('insert')
-            ->with(['name' => 'demo']);
-        $response = call_user_func([$this->makeCrudAction(), 'create'], $request);
-        $this->assertEquals(['.index'], $response->getHeader('Location'));
     }
 }
