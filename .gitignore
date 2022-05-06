@@ -6,7 +6,7 @@
 *.swp
 vendor/*
 composer.lock
-phpunit.xml
+.phpunit.result.cache
 
 # IDEs and editors
 /.idea

@@ -1,9 +1,8 @@
 <?php
+
 namespace Tests\Framework\Auth;
 
-use Framework\Auth;
-use Framework\Middleware\TrailingSlashMiddleware;
-use GuzzleHttp\Psr7\Response;
+use PgFramework\Auth;
 use GuzzleHttp\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -11,11 +10,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class LoggedInMiddlewareTest extends TestCase
 {
-
     public function makeMiddleware($user)
     {
         $auth = $this->getMockBuilder(Auth::class)->getMock();
         $auth->method('getUser')->willReturn($user);
+        /** @var Auth $auth */
         return new Auth\LoggedInMiddleware($auth);
     }
 
@@ -24,6 +23,7 @@ class LoggedInMiddlewareTest extends TestCase
         $delegate = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
         $response = $this->getMockBuilder(ResponseInterface::class)->getMock();
         $delegate->expects($calls)->method('handle')->willReturn($response);
+        /** @var RequestHandlerInterface $delegate */
         return $delegate;
     }
 
@@ -39,7 +39,7 @@ class LoggedInMiddlewareTest extends TestCase
 
     public function testNextIfUser()
     {
-        $user = $this->getMockBuilder(Auth\User::class)->getMock();
+        $user = $this->getMockBuilder(Auth\UserInterface::class)->getMock();
         $request = (new ServerRequest('GET', '/demo/'));
         $this->makeMiddleware($user)->process(
             $request,
