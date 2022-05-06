@@ -31,8 +31,8 @@ class CrudControllerTest extends TestCase
         $this->flash = $this->getMockBuilder(FlashService::class)->disableOriginalConstructor()->getMock();
         $this->renderer = $this->getMockBuilder(RendererInterface::class)->getMock();
         $this->queryBuilder = $this->getMockBuilder(PaginatedQueryBuilder::class)
-        ->disableOriginalConstructor()
-        ->getMock();
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->em = $this->getMockBuilder(EntityManagerInterface::class)->getMock();
         $this->om = $this->getMockBuilder(ManagerRegistry::class)->disableOriginalConstructor()->getMock();
         $this->om->method('getManagerForClass')->willReturn(EntityManagerInterface::class);
@@ -77,8 +77,7 @@ class CrudControllerTest extends TestCase
         $this->renderer
             ->expects($this->once())
             ->method('render')
-            ->with('@demo/index', ['items' => $pager])
-        ;
+            ->with('@demo/index', ['items' => $pager]);
         call_user_func([$this->makeCrudAction(), 'index'], $request);
     }
 
@@ -101,8 +100,19 @@ class CrudControllerTest extends TestCase
 
     public function testDelete()
     {
-        $request = new ServerRequest('DELETE', '/demo');
-        $this->em->expects($this->once())->method('remove');
+        $id = 3;
+        $request = (new ServerRequest('DELETE', '/demo'))
+            ->withAttribute('id', $id);
+        $this->repository->expects($this->once())->method('find');
+        $this->em
+            ->expects($this->once())
+            ->method('remove')
+            ->with(
+                $this->callback(function ($item) use ($id) {
+                    $this->assertEquals($id, $item->id);
+                    return true;
+                })
+            );
         $response = call_user_func([$this->makeCrudAction(), 'delete'], $request);
         $this->assertEquals(['.index'], $response->getHeader('Location'));
     }
