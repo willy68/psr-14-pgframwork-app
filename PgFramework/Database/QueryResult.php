@@ -40,10 +40,10 @@ class QueryResult implements \ArrayAccess, \Iterator
     public function get(int $index)
     {
         if ($this->entity) {
-            if (!isset($this->hydratedRecords[$this->index])) {
-                $this->hydratedRecords[$this->index] = Hydrator::hydrate($this->records[$index], $this->entity);
+            if (!isset($this->hydratedRecords[$index])) {
+                $this->hydratedRecords[$index] = Hydrator::hydrate($this->records[$index], $this->entity);
             }
-            return $this->hydratedRecords[$this->index];
+            return $this->hydratedRecords[$index];
         }
         return $this->entity;
     }
