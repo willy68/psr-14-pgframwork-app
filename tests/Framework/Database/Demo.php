@@ -1,9 +1,9 @@
 <?php
+
 namespace Tests\Framework\Database;
 
 class Demo
 {
-
     private $slug;
 
     public function getslug()

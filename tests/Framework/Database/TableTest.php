@@ -1,13 +1,13 @@
 <?php
+
 namespace Tests\Framework\Database;
 
-use Framework\Database\Table;
+use PgFramework\Database\Table;
 use PDO;
 use PHPUnit\Framework\TestCase;
 
 class TableTest extends TestCase
 {
-
     /**
      * @var Table
      */

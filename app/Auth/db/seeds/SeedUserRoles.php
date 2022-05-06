@@ -2,7 +2,7 @@
 
 use Phinx\Seed\AbstractSeed;
 
-class AddUserRoles extends AbstractSeed
+class SeedUserRoles extends AbstractSeed
 {
     /**
      * Run Method.

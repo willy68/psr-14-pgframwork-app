@@ -1,12 +1,12 @@
 <?php
+
 namespace Tests\Framework\Database;
 
-use Framework\Database\Query;
+use PgFramework\Database\Query;
 use Tests\DatabaseTestCase;
 
 class QueryTest extends DatabaseTestCase
 {
-
     public function testSimpleQuery()
     {
         $query = (new Query())->from('posts')->select('name');
