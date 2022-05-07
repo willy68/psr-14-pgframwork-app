@@ -1,9 +1,7 @@
 <?php
 namespace Tests\Framework;
 
-use Framework\App;
-use Framework\Middleware\RouterMiddleware;
-use GuzzleHttp\Psr7\Request;
+use PgFramework\App;
 use GuzzleHttp\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;

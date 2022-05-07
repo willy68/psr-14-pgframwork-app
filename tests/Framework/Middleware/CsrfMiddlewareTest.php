@@ -1,8 +1,9 @@
 <?php
+
 namespace Tests\Framework\Middleware;
 
-use Framework\Exception\CsrfInvalidException;
-use Framework\Middleware\CsrfMiddleware;
+use PgFramework\Exception\CsrfInvalidException;
+use PgFramework\Middleware\CsrfMiddleware;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
@@ -10,7 +11,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class CsrfMiddlewareTest extends TestCase
 {
-
     /**
      * @var CsrfMiddleware
      */
