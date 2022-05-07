@@ -1,14 +1,14 @@
 <?php
+
 namespace Tests\Framework\Middleware;
 
-use Framework\Middleware\MethodMiddleware;
+use PgFramework\Middleware\MethodMiddleware;
 use GuzzleHttp\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Server\RequestHandlerInterface;
 
 class MethodMiddlewareTest extends TestCase
 {
-
     /**
      * @var MethodMiddleware
      */
@@ -22,7 +22,7 @@ class MethodMiddlewareTest extends TestCase
     public function testAddMethod()
     {
         $delegate = $this->getMockBuilder(RequestHandlerInterface::class)
-            ->setMethods(['handle'])
+            ->onlyMethods(['handle'])
             ->getMock();
 
         $delegate->expects($this->once())
@@ -33,6 +33,7 @@ class MethodMiddlewareTest extends TestCase
 
         $request = (new ServerRequest('POST', '/demo'))
             ->withParsedBody(['_method' => 'DELETE']);
+            /** @var RequestHandlerInterface $delegate */
         $this->middleware->process($request, $delegate);
     }
 }
