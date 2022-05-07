@@ -15,27 +15,16 @@ use Psr\Http\Server\RequestHandlerInterface;
 class PageNotFoundMiddleware implements MiddlewareInterface
 {
     /**
-     * Undocumented variable
-     *
      * @var RendererInterface
      */
     private $renderer;
 
     /**
-     *
-     *
-     * @var RouterInterface
-     */
-    private $router;
-
-    /**
-     *
      * @param RendererInterface $renderer
      */
-    public function __construct(RendererInterface $renderer, RouterInterface $router)
+    public function __construct(RendererInterface $renderer)
     {
         $this->renderer = $renderer;
-        $this->router = $router;
     }
 
     /**
