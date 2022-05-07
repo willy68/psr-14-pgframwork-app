@@ -1,8 +1,8 @@
 <?php
+
 namespace Tests\Framework\Middleware;
 
-use Framework\Middleware\NotFoundMiddleware;
-use Framework\Middleware\TrailingSlashMiddleware;
+use PgFramework\Middleware\TrailingSlashMiddleware;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
@@ -10,10 +10,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class TrailingSlashMiddlewareTest extends TestCase
 {
-
-    /**
-     * @var RequestHandlerInterface
-     */
     private $handler;
 
     public function setUp(): void
@@ -23,7 +19,7 @@ class TrailingSlashMiddlewareTest extends TestCase
 
     public function testRedirectIfSlash()
     {
-        $request = (new ServerRequest('GET', '/demo/'));
+        $request = new ServerRequest('GET', '/demo/');
         $middleware = new TrailingSlashMiddleware();
         $this->handler
             ->expects($this->never())
@@ -37,7 +33,7 @@ class TrailingSlashMiddlewareTest extends TestCase
 
     public function testCallNextIfNoSlash()
     {
-        $request = (new ServerRequest('GET', '/demo'));
+        $request = new ServerRequest('GET', '/demo');
         $response = new Response();
         $middleware = new TrailingSlashMiddleware();
         $this->handler
