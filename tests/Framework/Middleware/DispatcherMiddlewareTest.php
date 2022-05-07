@@ -2,6 +2,7 @@
 
 namespace Tests\Framework\Middleware;
 
+use GuzzleHttp\Psr7\Response;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\TestCase;
@@ -27,8 +28,14 @@ class DispatcherMiddlewareTest extends TestCase
         $container->method('get')->willReturn($router);
         $handler = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
         $response = $this->getMockBuilder(ResponseInterface::class)->getMock();
+        $response = new Response();
 
-        $handler->expects($this->once())->method('handle')->willReturn($response);
+        $handler
+            ->expects($this->once())
+            ->method('handle')
+            ->will($this->returnCallback(function ($request) use ($response) {
+                return $response;
+            }));
         /** @var ContainerInterface $container */
         $dispatcher = new DispatcherMiddleware($container);
         /** @var RequestHandlerInterface $handler */
@@ -57,7 +64,14 @@ class DispatcherMiddlewareTest extends TestCase
         $delegate = $this->getMockBuilder(RequestHandlerInterface::class)->getMock();
         $container = $this->getMockBuilder(ContainerInterface::class)->getMock();
 
-        $delegate->expects($this->once())->method('handle')->willReturn($response);
+        $delegate
+        ->expects($this->once())
+        ->method('handle')
+        ->will($this->returnCallback(function ($request) use ($response) {
+            $routeResult = $request->getAttribute(RouteResult::class);
+            $this->assertTrue($routeResult->isMethodFailure());
+            return $response;
+        }));
 
         $request = (new ServerRequest('GET', '/demo'))->withAttribute(RouteResult::class, $routeResult);
         /** @var ContainerInterface $container */
