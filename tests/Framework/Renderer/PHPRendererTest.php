@@ -1,12 +1,12 @@
 <?php
+
 namespace Tests\Framework;
 
-use Framework\Renderer;
+use PgFramework\Renderer;
 use PHPUnit\Framework\TestCase;
 
-class RendererTest extends TestCase
+class PHPRendererTest extends TestCase
 {
-
     private $renderer;
 
     public function setUp(): void
