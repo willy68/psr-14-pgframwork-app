@@ -31,14 +31,14 @@ class RouterMiddleware implements MiddlewareInterface
     {
         $result = $this->router->match($request);
 
-        if ($result->isFailure()) {
-            return $next->handle($request);
-        }
         if ($result->isMethodFailure()) {
             $request = $request->withAttribute(
                 get_class($result),
                 $result
             );
+            return $next->handle($request);
+        }
+        if ($result->isFailure()) {
             return $next->handle($request);
         }
         $params = $result->getMatchedParams();
