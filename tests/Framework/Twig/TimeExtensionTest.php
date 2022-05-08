@@ -1,12 +1,12 @@
 <?php
+
 namespace Tests\Framework\Twig;
 
-use Framework\Twig\TimeExtension;
+use PgFramework\Twig\TimeExtension;
 use PHPUnit\Framework\TestCase;
 
 class TimeExtensionTest extends TestCase
 {
-
     /**
      * @var TimeExtension
      */
@@ -21,11 +21,11 @@ class TimeExtensionTest extends TestCase
     {
         $date = new \DateTime();
         $format = 'd/m/Y H:i';
-        $result = '<span class="timeago" datetime="' .
+        $result = '<time class="timeago" datetime="' .
             $date->format(\DateTime::ISO8601) .
             '">' .
             $date->format($format) .
-            '</span>';
+            '</time>';
         $this->assertEquals($result, $this->timeExtension->ago($date));
     }
 }
