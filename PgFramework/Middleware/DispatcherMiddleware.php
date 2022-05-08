@@ -63,8 +63,8 @@ class DispatcherMiddleware implements MiddlewareInterface
         $this->router = $this->container->get(RouterInterface::class);
         $this->prepareMiddlewareStack($result);
 
-        return (new CombinedMiddleware($this->container, (array)$this->router->getMiddlewareStack(), $next))
-            ->process($request, $next);
+        $middleware = new CombinedMiddleware($this->container, (array)$this->router->getMiddlewareStack());
+        return $middleware->process($request, $next);
     }
 
     /**

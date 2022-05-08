@@ -49,8 +49,8 @@ class KernelMiddleware implements KernelInterface, RequestHandlerInterface
             throw new Exception('Aucun middleware n\'a intercepté cette requête');
         }
 
-        return (new CombinedMiddleware($this->container, (array)$this->getMiddlewareStack(), $this))
-            ->process($request, $this);
+        $middleware = new CombinedMiddleware($this->container, (array)$this->getMiddlewareStack());
+        return $middleware->process($request, $this);
     }
 
     public function handleException(Throwable $e, ServerRequestInterface $request): ResponseInterface

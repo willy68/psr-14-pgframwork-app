@@ -151,10 +151,10 @@ class App extends AbstractApplication
 
     /**
      *
-     * @param string $middleware
+     * @param mixed $middleware
      * @return self
      */
-    public function addMiddleware(string $middleware): self
+    public function addMiddleware($middleware): self
     {
         $this->middlewares[] = $middleware;
         return $this;
