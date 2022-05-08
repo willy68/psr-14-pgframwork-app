@@ -7,6 +7,8 @@ namespace PgFramework\Twig;
 use Twig\TwigFunction;
 use Twig\Extension\AbstractExtension;
 
+use function DI\value;
+
 class FormExtension extends AbstractExtension
 {
     /**
@@ -36,10 +38,15 @@ class FormExtension extends AbstractExtension
         $error = $this->getErrorHTML($context, $key);
         $value = $this->convertValue($value);
         $attributes = [
-            'class' => ($options['class'] ?? '') . 'form-control',
+            'class' => 'form-control' . (isset($options['class']) ? ' ' . $options['class'] : ''),
             'name'  => $key,
-            'id'    => $key
+            'id'    => $key,
         ];
+        if (isset($options['attributes'])) {
+            foreach ($options['attributes'] as $attribute => $val) {
+                $attributes[$attribute] = $val;
+            }
+        }
         if ($error) {
             $attributes['class'] .= ' is-invalid';
         } elseif (isset($context['submited']) && $context['submited']) {
@@ -57,11 +64,12 @@ class FormExtension extends AbstractExtension
             $attributes['type'] = $options['type'] ?? 'text';
             $input = $this->input($value, $attributes);
         }
-        return "<div class=\"form-group\">
-        <label for=\"{$key}\">{$label}</label>
-        {$input}
-        {$error}
-      </div>";
+        return "
+            <div class=\"form-group\">
+              <label for=\"{$key}\">{$label}</label>
+              {$input}
+              {$error}
+            </div>";
     }
 
     /**
@@ -99,7 +107,7 @@ class FormExtension extends AbstractExtension
     {
         return "<textarea " .
             $this->getHtmlFromArray($attributes) .
-            " rows=\"10\">{$value}</textarea>";
+            ">{$value}</textarea>";
     }
 
     /**
@@ -115,7 +123,7 @@ class FormExtension extends AbstractExtension
             function (string $html, string $key) use ($options, $value) {
                 $params = ['value' => $key, 'selected' => $key === $value];
                 return $html .
-                "<option " . $this->getHtmlFromArray($params) . " > {$options[$key]} </option>";
+                "<option " . $this->getHtmlFromArray($params) . ">{$options[$key]}</option>";
             },
             ""
         );

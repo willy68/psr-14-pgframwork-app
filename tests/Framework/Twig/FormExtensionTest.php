@@ -2,12 +2,11 @@
 
 namespace Tests\Framework\Twig;
 
-use Framework\Twig\FormExtension;
+use PgFramework\Twig\FormExtension;
 use PHPUnit\Framework\TestCase;
 
 class FormExtensionTest extends TestCase
 {
-
     /**
      * @var FormExtension
      */
@@ -36,7 +35,7 @@ class FormExtensionTest extends TestCase
         $this->assertSimilar("
             <div class=\"form-group\">
               <label for=\"name\">Titre</label>
-              <input class=\"form-control\" name=\"name\" id=\"name\" type=\"text\" value=\"demo\">
+              <input class=\"form-control\" name=\"name\" id=\"name\" type=\"text\" value=\"demo\"/>
               
             </div>", $html);
     }
@@ -53,7 +52,7 @@ class FormExtensionTest extends TestCase
         $this->assertSimilar("
             <div class=\"form-group\">
               <label for=\"name\">Titre</label>
-              <input class=\"form-control demo\" name=\"name\" id=\"name\" type=\"text\" value=\"demo\">
+              <input class=\"form-control demo\" name=\"name\" id=\"name\" type=\"text\" value=\"demo\"/>
               
             </div>
         ", $html);
@@ -66,12 +65,12 @@ class FormExtensionTest extends TestCase
             'name',
             'demo',
             'Titre',
-            ['type' => 'textarea']
+            ['type' => 'textarea', 'attributes' => ['rows' => '10']],
         );
         $this->assertSimilar("
             <div class=\"form-group\">
               <label for=\"name\">Titre</label>
-              <textarea class=\"form-control\" name=\"name\" id=\"name\">demo</textarea>
+              <textarea class=\"form-control\" name=\"name\" id=\"name\" rows=\"10\">demo</textarea>
               
             </div>
         ", $html);
@@ -82,10 +81,10 @@ class FormExtensionTest extends TestCase
         $context = ['errors' => ['name' => 'erreur']];
         $html = $this->formExtension->field($context, 'name', 'demo', 'Titre');
         $this->assertSimilar("
-            <div class=\"form-group has-danger\">
+            <div class=\"form-group\">
               <label for=\"name\">Titre</label>
-              <input class=\"form-control form-control-danger\" name=\"name\" id=\"name\" type=\"text\" value=\"demo\">
-              <small class=\"form-text text-muted\">erreur</small>
+              <input class=\"form-control is-invalid\" name=\"name\" id=\"name\" type=\"text\" value=\"demo\"/>
+              <div class=\"invalid-feedback\">erreur</div>
             </div>
         ", $html);
     }
