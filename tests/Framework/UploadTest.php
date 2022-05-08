@@ -1,13 +1,13 @@
 <?php
+
 namespace Tests\Framework;
 
-use Framework\Upload;
+use PgFramework\Upload;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UploadedFileInterface;
 
 class UploadTest extends TestCase
 {
-
     /**
      * @var Upload
      */
@@ -41,6 +41,7 @@ class UploadTest extends TestCase
             ->method('moveTo')
             ->with($this->equalTo('tests' . DIRECTORY_SEPARATOR . 'demo.jpg'));
 
+        /** @var UploadedFileInterface $uploadedFile */
         $this->assertEquals('demo.jpg', $this->upload->upload($uploadedFile));
     }
 
@@ -60,6 +61,7 @@ class UploadTest extends TestCase
             ->method('moveTo')
             ->with($this->equalTo('tests' . DIRECTORY_SEPARATOR . 'demo.jpg'));
 
+        /** @var UploadedFileInterface $uploadedFile */
         $this->assertNull($this->upload->upload($uploadedFile));
     }
 
@@ -81,6 +83,7 @@ class UploadTest extends TestCase
             ->method('moveTo')
             ->with($this->equalTo('tests' . DIRECTORY_SEPARATOR . 'demo_copy.jpg'));
 
+        /** @var UploadedFileInterface $uploadedFile */
         $this->assertEquals('demo_copy.jpg', $this->upload->upload($uploadedFile));
     }
 
@@ -91,6 +94,7 @@ class UploadTest extends TestCase
             ->getMock();
         $file->method('getError')->willReturn(UPLOAD_ERR_CANT_WRITE);
         $file->expects($this->never())->method('moveTo');
+        /** @var UploadedFileInterface $file */
         $this->upload->upload($file);
     }
 
@@ -111,6 +115,7 @@ class UploadTest extends TestCase
         $property->setAccessible(true);
         $property->setValue($this->upload, ['thumb' => [100, 200]]);
         // On s'attend à obtenir une image miniature
+        /** @var UploadedFileInterface $file */
         $this->upload->upload($file);
         $this->assertTrue(in_array(100, getimagesize('tests' . DIRECTORY_SEPARATOR . 'demo_thumb.png')));
         $this->assertTrue(in_array(200, getimagesize('tests' . DIRECTORY_SEPARATOR . 'demo_thumb.png')));
@@ -129,8 +134,8 @@ class UploadTest extends TestCase
         touch('tests/demo.png');
         touch('tests/demo_thumb.png');
         $this->upload->delete('demo.png');
-        $this->assertFileNotExists('tests/demo.png');
-        $this->assertFileNotExists('tests/demo_thumb.png');
+        $this->assertFileDoesNotExist('tests/demo.png');
+        $this->assertFileDoesNotExist('tests/demo_thumb.png');
         @unlink('tests/demo.png');
         @unlink('tests/demo_thumb.png');
     }
