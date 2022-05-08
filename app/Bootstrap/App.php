@@ -9,26 +9,28 @@ use App\Demo\DemoModule;
 use App\Admin\AdminModule;
 use App\Api\ApiClientModule;
 use Application\Console\ConsoleModule;
-use PgFramework\DebugBar\EventListener\DebugBarListener;
-use PgFramework\DebugBar\Middleware\DebugBarMiddleware;
 use PgFramework\Security\Firewall\Firewall;
 use PgFramework\Middleware\MethodMiddleware;
 use PgFramework\Middleware\RouterMiddleware;
 use PgFramework\EventListener\RouterListener;
 use PgFramework\Middleware\ApiHeadMiddleware;
 use PgFramework\Middleware\ApiOptionsMiddleware;
+use PgFramework\Middleware\DispatcherMiddleware;
 use PgFramework\EventListener\CsrfCookieListener;
 use PgFramework\EventListener\MethodHeadListener;
+use PgFramework\Session\Listener\SessionListener;
+use PgFramework\Middleware\PageNotFoundMiddleware;
 use PgFramework\EventListener\ActiveRecordListener;
 use PgFramework\EventListener\PageNotFoundListener;
 use PgFramework\Middleware\TrailingSlashMiddleware;
 use PgFramework\EventListener\MethodOptionsListener;
 use PgFramework\EventListener\RecordNotFoundListener;
 use PgFramework\EventListener\StringResponseListener;
-use PgFramework\Middleware\MethodNotAllowedMiddleware;
-use PgFramework\EventListener\MethodNotAllowedListener;
-use PgFramework\Session\Listener\SessionListener;
 use PgFramework\Session\Middleware\SessionMiddleware;
+use PgFramework\Middleware\MethodNotAllowedMiddleware;
+use PgFramework\DebugBar\Middleware\DebugBarMiddleware;
+use PgFramework\EventListener\MethodNotAllowedListener;
+use PgFramework\DebugBar\EventListener\DebugBarListener;
 
 return [
     /* Application modules. Place your own on the list */
@@ -52,6 +54,8 @@ return [
         ApiOptionsMiddleware::class,
         MethodNotAllowedMiddleware::class,
         DebugBarMiddleware::class,
+        DispatcherMiddleware::class,
+        PageNotFoundMiddleware::class
     ],
 
     'listeners' => [

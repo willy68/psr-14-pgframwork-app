@@ -1,8 +1,8 @@
 <?php
+
 namespace Tests\Framework;
 
 use PgFramework\App;
-use GuzzleHttp\Psr7\ServerRequest;
 use PgFramework\Kernel\KernelMiddleware;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -11,7 +11,6 @@ use Psr\Http\Server\MiddlewareInterface;
 
 class AppTest extends TestCase
 {
-
     /**
      * @var App
      */
@@ -33,12 +32,9 @@ class AppTest extends TestCase
         $response = $this->getMockBuilder(ResponseInterface::class)->getMock();
         $middleware = $this->getMockBuilder(MiddlewareInterface::class)->getMock();
         $middleware->expects($this->once())->method('process')->willReturn($response);
-        $request = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
         $this->app->addMiddleware($middleware);
-        /** @var ServerRequestInterface $request */
-        $this->app->run($request);
+        $this->app->run();
         $this->assertInstanceOf(KernelMiddleware::class, $this->app->getKernel());
-
     }
 
     public function testPipe()
@@ -46,30 +42,29 @@ class AppTest extends TestCase
         $middleware = $this->getMockBuilder(MiddlewareInterface::class)->getMock();
         $middleware2 = $this->getMockBuilder(MiddlewareInterface::class)->getMock();
         $response = $this->getMockBuilder(ResponseInterface::class)->getMock();
-        $request = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
         $middleware->expects($this->once())->method('process')->willReturn($response);
         $middleware2->expects($this->never())->method('process')->willReturn($response);
-        $this->assertEquals($response, $this->app->addMiddleware($middleware)->run($request));
+        $this->assertEquals($response, $this->app->addMiddlewares([$middleware,$middleware2])->run());
     }
 
     public function testPipeWithClosure()
     {
         $middleware = $this->getMockBuilder(MiddlewareInterface::class)->getMock();
         $response = $this->getMockBuilder(ResponseInterface::class)->getMock();
-        $request = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
         $middleware->expects($this->once())->method('process')->willReturn($response);
         $this->app
             ->addMiddleware(function ($request, $next) {
                 return $next($request);
             })
             ->addMiddleware($middleware);
-        $this->assertEquals($response, $this->app->run($request));
+        $this->assertEquals($response, $this->app->run());
     }
 
     public function testPipeWithoutMiddleware()
     {
+        $request = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
         $this->expectException(\Exception::class);
-        $this->app->run($this->getMockBuilder(ServerRequestInterface::class)->getMock());
+        $this->app->run();
     }
 /*
     public function testPipeWithPrefix()

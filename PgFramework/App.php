@@ -226,12 +226,6 @@ class App extends AbstractApplication
             if (!$this->kernel instanceof KernelMiddleware) {
                 throw new RuntimeException('Aucun Kernel ou le Kernel ne gère pas les middlewares');
             }
-            $this->addMiddlewares(
-                [
-                    DispatcherMiddleware::class,
-                    PageNotFoundMiddleware::class
-                ]
-            );
             $this->kernel->setCallbacks($this->middlewares);
         }
 
