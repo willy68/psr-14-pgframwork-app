@@ -13,6 +13,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Mezzio\Session\SessionInterface;
 use PgFramework\Response\ResponseRedirect;
 use PgFramework\Auth\FailedAccessException;
+use PgFramework\Auth\UserInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
@@ -46,7 +47,7 @@ class ForbidenMiddleware implements MiddlewareInterface
             }
             return $this->redirectAdminHome($request);
         } catch (\TypeError $error) {
-            if (strpos($error->getMessage(), User::class) !== false) {
+            if (strpos($error->getMessage(), UserInterface::class) !== false) {
                 if (RequestUtils::isJson($request)) {
                     return new Response(403, [], $error->getMessage() . ' ' . $error->getCode());
                 }
