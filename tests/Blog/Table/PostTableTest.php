@@ -4,12 +4,11 @@ namespace Tests\App\Blog\Table;
 
 use App\Blog\Entity\Post;
 use App\Blog\Table\PostTable;
-use Framework\Database\NoRecordException;
+use PgFramework\Database\NoRecordException;
 use Tests\DatabaseTestCase;
 
 class PostTableTest extends DatabaseTestCase
 {
-
     /**
      * @var PostTable
      */
