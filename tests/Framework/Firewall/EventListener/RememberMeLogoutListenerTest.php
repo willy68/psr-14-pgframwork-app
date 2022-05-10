@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Framework\Auth;
+namespace Tests\Framework\Firewall\EventListener;
 
 use PgFramework\Auth;
 use PHPUnit\Framework\TestCase;
