@@ -6,7 +6,6 @@ use PgFramework\Auth;
 use PHPUnit\Framework\TestCase;
 use PgFramework\Auth\UserInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 use PgFramework\Auth\RememberMe\RememberMeInterface;
 use PgFramework\Event\ResponseEvent;
 use PgFramework\Security\Firewall\EventListener\RememberMeLogoutListener;
