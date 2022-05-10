@@ -34,17 +34,12 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
      */
     private $tokenManager;
 
-    /**
-     * CsrfMiddleware constructor.
-     *
-     * @param array|\ArrayAccess $session
-     * @param int                $limit      Limit the number of token to store in the session
-     * @param string             $sessionKey
-     * @param string             $formKey
-     */
-    public function __construct(CsrfTokenManagerInterface $tokenManager)
+    public function __construct(CsrfTokenManagerInterface $tokenManager, $config = [])
     {
         $this->tokenManager = $tokenManager;
+        if (!empty($config)) {
+            $this->config = array_merge($this->config, $config);
+        }
     }
 
     /**
@@ -58,9 +53,18 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
 
         $cookie = FigRequestCookies::get($request, $this->config['cookieName'])->getValue();
 
-        if (\in_array($method, ['GET', 'HEAD'], true) && null === $cookie) {
-            $token = $this->getToken();
-            $request = $request->withAttribute($this->config['field'], $token);
+        if (\in_array($method, ['GET', 'HEAD'], true)) {
+            if (null === $cookie) {
+                $token = $this->getToken();
+                $request = $request->withAttribute($this->config['field'], $token);
+            } else {
+                [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
+                $token = $this->tokenManager->getToken();
+                [$lastTokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $token);
+                if ($tokenId !== $lastTokenId) {
+                    $request = $request->withAttribute($this->config['field'], $token);
+                }
+            }
 
             $response = $handler->handle($request);
 
@@ -124,7 +128,7 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
 
     protected function setCookie(string $token, ResponseInterface $response): ResponseInterface
     {
-        $setCookie = SetCookie::create('XSRF-TOKEN')
+        $setCookie = SetCookie::create($this->config['cookieName'])
             ->withValue($token)
             // ->withExpires(time() + 3600)
             ->withPath('/')
