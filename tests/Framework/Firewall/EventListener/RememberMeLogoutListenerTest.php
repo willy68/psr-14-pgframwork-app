@@ -3,13 +3,15 @@
 namespace Tests\Framework\Firewall\EventListener;
 
 use PgFramework\Auth;
+use PgFramework\Event\Events;
 use PHPUnit\Framework\TestCase;
+use League\Event\ListenerPriority;
 use PgFramework\Auth\UserInterface;
-use Psr\Http\Message\ResponseInterface;
-use PgFramework\Auth\RememberMe\RememberMeInterface;
 use PgFramework\Event\ResponseEvent;
-use PgFramework\Security\Firewall\EventListener\RememberMeLogoutListener;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use PgFramework\Auth\RememberMe\RememberMeInterface;
+use PgFramework\Security\Firewall\EventListener\RememberMeLogoutListener;
 
 class RememberMeLogoutListenerTest extends TestCase
 {
@@ -55,5 +57,16 @@ class RememberMeLogoutListenerTest extends TestCase
         $this->cookie->expects($this->never())->method('onLogout');
 
         ($this->makeListener($user))($this->makeEvent($request, $response));
+    }
+
+    public function testSubscribeEvent()
+    {
+        $method = $this
+            ->getMockBuilder(RememberMeLogoutListener::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $method->expects($this->never())->method('getSubscribedEvents')->willReturnMap([
+            Events::RESPONSE => ListenerPriority::HIGH
+        ]);
     }
 }
