@@ -12,8 +12,6 @@ use PgFramework\Event\RequestEvent;
 use PgFramework\Event\ResponseEvent;
 use PgFramework\Auth\RememberMe\RememberMeInterface;
 use PgFramework\Security\Firewall\EventListener\RememberMeLoginListener;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 class RememberMeLoginListenerTest extends TestCase
 {
