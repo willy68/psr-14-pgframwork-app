@@ -61,12 +61,9 @@ class RememberMeLogoutListenerTest extends TestCase
 
     public function testSubscribeEvent()
     {
-        $method = $this
-            ->getMockBuilder(RememberMeLogoutListener::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $method->expects($this->never())->method('getSubscribedEvents')->willReturnMap([
-            Events::RESPONSE => ListenerPriority::HIGH
-        ]);
+        $this->assertEquals(
+            [Events::RESPONSE => ListenerPriority::HIGH],
+            RememberMeLogoutListener::getSubscribedEvents()
+        );
     }
 }

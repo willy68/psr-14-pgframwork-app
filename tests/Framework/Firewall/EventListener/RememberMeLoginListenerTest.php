@@ -27,7 +27,6 @@ class RememberMeLoginListenerTest extends TestCase
     public function makeListener($user)
     {
         $this->auth->expects($this->once())->method('getUser')->willReturn($user);
-        /** @var Auth $auth */
         return new RememberMeLoginListener($this->auth, $this->cookie);
     }
 
@@ -74,7 +73,6 @@ class RememberMeLoginListenerTest extends TestCase
 
     public function testResumeCookieInResponse()
     {
-        /** @var Auth $auth */
         $rememberMe = new RememberMeLoginListener($this->auth, $this->cookie);
         $response = (new Response())->withAddedHeader('Set-Cookie', 'auth_login');
         $request = (new ServerRequest('GET', '/demo/'));
@@ -90,13 +88,12 @@ class RememberMeLoginListenerTest extends TestCase
 
     public function testSubscribeEvent()
     {
-        $method = $this
-            ->getMockBuilder(RememberMeLoginListener::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $method->expects($this->never())->method('getSubscribedEvents')->willReturnMap([
-            Events::REQUEST => ['onAuthentication', ListenerPriority::HIGH],
-            Events::RESPONSE => ['onResponse', ListenerPriority::LOW]
-        ]);
+        $this->assertEquals(
+            [
+                Events::REQUEST => ['onAuthentication', ListenerPriority::HIGH],
+                Events::RESPONSE => ['onResponse', ListenerPriority::LOW]
+            ],
+            RememberMeLoginListener::getSubscribedEvents()
+        );
     }
 }
