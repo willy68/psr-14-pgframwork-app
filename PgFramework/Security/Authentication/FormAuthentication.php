@@ -24,6 +24,8 @@ class FormAuthentication implements AuthenticationInterface
 {
     use RouterAwareAction;
 
+    protected $matchedRouteName = 'auth.login.post';
+
     protected $auth;
 
     protected $userProvider;
@@ -65,7 +67,7 @@ class FormAuthentication implements AuthenticationInterface
     {
         /** @var RouteResult $routeResult */
         $routeResult = $request->getAttribute(RouteResult::class);
-        return $routeResult->getMatchedRouteName() === 'auth.login.post';
+        return $routeResult->getMatchedRouteName() === $this->matchedRouteName;
     }
 
     public function authenticate(ServerRequestInterface $request): AuthenticateResultInterface
