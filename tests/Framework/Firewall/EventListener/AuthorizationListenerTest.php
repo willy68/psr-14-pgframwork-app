@@ -9,6 +9,7 @@ use GuzzleHttp\Psr7\ServerRequest;
 use League\Event\ListenerPriority;
 use PgFramework\Event\RequestEvent;
 use PgFramework\Auth\FailedAccessException;
+use PgFramework\Auth\ForbiddenException;
 use PgFramework\Security\Authorization\VoterManager;
 use PgFramework\Security\Firewall\AccessMapInterface;
 use PgFramework\Security\Firewall\EventListener\AuthorizationListener;
@@ -74,6 +75,17 @@ class AuthorizationListenerTest extends TestCase
         $event->expects($this->never())->method('setRequest')->with($request);
         $this->expectException(FailedAccessException::class);
         $this->makeListener($user, [['ROLE_ADMIN']], false)($event);
+    }
+
+    public function testThrowIfNoUser()
+    {
+        $this->auth->expects($this->once())->method('getUser')->willReturn(null);
+        $this->voterManager->expects($this->never())->method('decide')->willReturn(false);
+        $request = (new ServerRequest('GET', '/demo'));
+        $event = $this->makeRequestEvent($request);
+        $event->expects($this->never())->method('setRequest')->with($request);
+        $this->expectException(ForbiddenException::class);
+        $this->makeListener(null, [['ROLE_ADMIN']], false)($event);
     }
 
     public function testSubscribeEvent()
