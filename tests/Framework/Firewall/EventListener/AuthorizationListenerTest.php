@@ -3,8 +3,10 @@
 namespace Tests\Framework\Firewall\EventListener;
 
 use PgFramework\Auth;
+use PgFramework\Event\Events;
 use PHPUnit\Framework\TestCase;
 use GuzzleHttp\Psr7\ServerRequest;
+use League\Event\ListenerPriority;
 use PgFramework\Event\RequestEvent;
 use PgFramework\Auth\FailedAccessException;
 use PgFramework\Security\Authorization\VoterManager;
@@ -72,5 +74,13 @@ class AuthorizationListenerTest extends TestCase
         $event->expects($this->never())->method('setRequest')->with($request);
         $this->expectException(FailedAccessException::class);
         $this->makeListener($user, [['ROLE_ADMIN']], false)($event);
+    }
+
+    public function testSubscribeEvent()
+    {
+        $this->assertEquals(
+            [Events::REQUEST => ListenerPriority::LOW],
+            AuthorizationListener::getSubscribedEvents()
+        );
     }
 }
