@@ -1,7 +1,7 @@
 <?php
 
 use PgFramework\Environnement\Environnement;
-use PgFramework\Security\Firewall\EventListener\ForbidenListener;
+use PgFramework\Security\Firewall\EventListener\ForbiddenListener;
 use PgFramework\Auth;
 use PgFramework\Auth\{
     AuthSession,
@@ -54,7 +54,7 @@ return [
     UserProviderInterface::class => get(UserProvider::class),
     TokenProviderInterface::class => get(UserTokenProvider::class),
     ForbidenMiddleware::class => autowire()->constructorParameter('loginPath', get('auth.login')),
-    ForbidenListener::class => autowire()->constructorParameter('loginPath', get('auth.login')),
+    ForbiddenListener::class => autowire()->constructorParameter('loginPath', get('auth.login')),
     'password.hasher.config' => add([
         'algo' => \PASSWORD_ARGON2I,
         'options' => [

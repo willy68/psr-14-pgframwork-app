@@ -18,7 +18,7 @@ use PgFramework\Auth\FailedAccessException;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
-class ForbidenListener implements EventSubscriberInterface
+class ForbiddenListener implements EventSubscriberInterface
 {
     private $loginPath;
 

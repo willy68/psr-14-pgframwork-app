@@ -13,7 +13,7 @@ use PgFramework\Event\ExceptionEvent;
 use PgFramework\Session\ArraySession;
 use PgFramework\Auth\ForbiddenException;
 use Psr\Http\Message\ServerRequestInterface;
-use PgFramework\Security\Firewall\EventListener\ForbidenListener;
+use PgFramework\Security\Firewall\EventListener\ForbiddenListener;
 
 class ForbidenListenerTest extends TestCase
 {
@@ -48,7 +48,7 @@ class ForbidenListenerTest extends TestCase
     {
         $session = $this->session;
         /** @var SessionInterface $session */
-        return new ForbidenListener('/login', $session);
+        return new ForbiddenListener('/login', $session);
     }
 
     public function testCatchForbiddenException()
@@ -106,7 +106,7 @@ class ForbidenListenerTest extends TestCase
     {
         $this->assertEquals(
             [Events::EXCEPTION => ListenerPriority::HIGH],
-            ForbidenListener::getSubscribedEvents()
+            ForbiddenListener::getSubscribedEvents()
         );
     }
 }

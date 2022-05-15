@@ -3,7 +3,7 @@
 use App\Auth\Listener\RehashPasswordListener;
 use PgFramework\Security\Authorization\Voter\VoterRoles;
 use PgFramework\Security\Authentication\FormAuthentication;
-use PgFramework\Security\Firewall\EventListener\ForbidenListener;
+use PgFramework\Security\Firewall\EventListener\ForbiddenListener;
 use PgFramework\Security\Firewall\EventListener\AuthorizationListener;
 use PgFramework\Security\Firewall\EventListener\AuthenticationListener;
 use PgFramework\Security\Firewall\EventListener\RememberMeLoginListener;
@@ -16,7 +16,7 @@ return [
                 RememberMeLoginListener::class,
             ],
             'default.main.listeners' => [
-                ForbidenListener::class,
+                ForbiddenListener::class,
                 RememberMeLoginListener::class,
             ]
         ],
