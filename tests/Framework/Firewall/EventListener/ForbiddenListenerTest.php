@@ -15,7 +15,7 @@ use PgFramework\Auth\ForbiddenException;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Security\Firewall\EventListener\ForbiddenListener;
 
-class ForbidenListenerTest extends TestCase
+class ForbiddenListenerTest extends TestCase
 {
     /**
      * @var SessionInterface
