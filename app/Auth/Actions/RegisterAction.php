@@ -74,9 +74,11 @@ class RegisterAction
     }
 
     /**
-     * @Route("/register", name="auth.register")
+     * @Route("/register", name="auth.register", methods={"GET"})
+     * @Route("/register", methods={"POST"})
      */
-    #[Route(path: "/register", name: "auth.register")]
+    #[Route(path: "/register", name: "auth.register", methods: ['GET'])]
+    #[Route(path: "/register", methods: ['POST'])]
     public function __invoke(ServerRequestInterface $request)
     {
         $user = new User();

@@ -38,7 +38,8 @@
         "league/event": "^3.0",
         "symfony/cache": "^5.4",
         "mezzio/mezzio-session": "^1.6",
-        "mezzio/mezzio-session-ext": "^1.12"
+        "mezzio/mezzio-session-ext": "^1.12",
+        "symfony/mailer": "^6.0"
     },
     "autoload": {
         "psr-4": {

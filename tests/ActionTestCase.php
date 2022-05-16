@@ -10,7 +10,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class ActionTestCase extends TestCase
 {
-
     protected function makeRequest(string $path = '/', array $params = []): ServerRequestInterface
     {
         $method = empty($params) ? 'GET' : 'POST';

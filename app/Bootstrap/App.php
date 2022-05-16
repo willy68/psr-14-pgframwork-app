@@ -8,6 +8,7 @@ use App\Blog\BlogModule;
 use App\Demo\DemoModule;
 use App\Admin\AdminModule;
 use App\Api\ApiClientModule;
+use App\Contact\ContactModule;
 use Application\Console\ConsoleModule;
 use PgFramework\Security\Firewall\Firewall;
 use PgFramework\Middleware\MethodMiddleware;
@@ -39,6 +40,7 @@ return [
         DemoModule::class,
         AdminModule::class,
         BlogModule::class,
+        ContactModule::class,
         AuthModule::class,
         //ApiModule::class,
         //ApiClientModule::class,

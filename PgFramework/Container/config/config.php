@@ -79,6 +79,7 @@ use PgFramework\EventDispatcher\EventDispatcher;
 use PgFramework\EventListener\CsrfListener;
 use PgFramework\EventListener\CsrfListenerInterface;
 use PgFramework\Kernel\KernelEvent;
+use PgFramework\Mailer\MailerFactory;
 use PgFramework\Router\RoutesMapFactory;
 use PgFramework\Router\RoutesMapInterface;
 use PgFramework\Security\Firewall\EventListener\AuthenticationListener;
@@ -88,6 +89,7 @@ use PgFramework\Session\SessionFactory;
 use PgFramework\Session\SessionPersistenceFactory;
 use Tuupola\Middleware\JwtAuthentication;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Mailer\MailerInterface;
 
 use function DI\add;
 use function DI\autowire;
@@ -215,6 +217,8 @@ return [
             ]
         );
     },
+    'mail.to' => 'admin@admin.fr',
+    MailerInterface::class => factory(MailerFactory::class),
     Configuration::class => factory(DoctrineConfigFactory::class),
     'doctrine.proxies.dir' => __DIR__ . '/app/Proxies',
     'doctrine.proxies.namespace' => 'App\Proxies',
