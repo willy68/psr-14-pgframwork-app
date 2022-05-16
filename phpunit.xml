@@ -3,7 +3,8 @@
   <coverage>
     <include>
       <directory suffix=".php">PgFramework</directory>
-      </include>
+      <directory suffix=".php">app</directory>
+    </include>
       <exclude>
         <directory>tests</directory>
       </exclude>
