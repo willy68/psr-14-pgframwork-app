@@ -53,8 +53,8 @@ class ContactAction
     }
 
     /**
-     * @Route("/register", name="contact", methods={"GET"})
-     * @Route("/register", methods={"POST"})
+     * @Route("/contact", name="contact", methods={"GET"})
+     * @Route("/contact", methods={"POST"})
      *
      * @param ServerRequestInterface $request
      * @return RedirectResponse|string
