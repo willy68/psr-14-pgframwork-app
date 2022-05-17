@@ -13,7 +13,7 @@ class MailerFactory
     public function __invoke(ContainerInterface $c): MailerInterface
     {
         if ($c->get('env') === 'prod') {
-            $transport = Transport::fromDsn($c->get('dsn'));
+            $transport = Transport::fromDsn($c->get('mailer.dsn'));
         } else {
             $transport = Transport::fromDsn('smtp://localhost:1025');
         }
