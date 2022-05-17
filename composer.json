@@ -39,7 +39,8 @@
         "symfony/cache": "^5.4",
         "mezzio/mezzio-session": "^1.6",
         "mezzio/mezzio-session-ext": "^1.12",
-        "symfony/mailer": "^5.4"
+        "symfony/mailer": "^5.4",
+        "ramsey/uuid": "^4.3"
     },
     "autoload": {
         "psr-4": {
