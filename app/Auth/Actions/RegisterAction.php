@@ -74,8 +74,7 @@ class RegisterAction
     }
 
     /**
-     * @Route("/register", name="auth.register", methods={"GET"})
-     * @Route("/register", methods={"POST"})
+     * @Route("/register", name="auth.register")
      */
     #[Route(path: "/register", name: "auth.register", methods: ['GET'])]
     #[Route(path: "/register", methods: ['POST'])]
