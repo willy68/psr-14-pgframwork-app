@@ -20,8 +20,6 @@ use PgFramework\Environnement\Environnement;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Annotation\AnnotationsLoader;
 use PgFramework\Router\Loader\DirectoryLoader;
-use PgFramework\Middleware\DispatcherMiddleware;
-use PgFramework\Middleware\PageNotFoundMiddleware;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 
 /**
@@ -272,16 +270,14 @@ class App extends AbstractApplication
 
     protected function getRunTimeDefinitions(): array
     {
-        $projectDir = realpath($this->getProjectDir()) ?: $this->getProjectDir();
-
         // Get all config file definitions
         $config = FileUtils::getFiles($this->getConfigDir(), 'php', '.dist.');
         $this->config = array_merge($this->config, array_keys($config));
 
         return [
             ApplicationInterface::class => $this,
-            'app.project.dir' => $projectDir,
-            'app.cache.dir'   => $projectDir . '/tmp/cache',
+            'app.project.dir' => $this->projectDir,
+            'app.cache.dir'   => $this->projectDir . '/tmp/cache',
         ];
     }
 
