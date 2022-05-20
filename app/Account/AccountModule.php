@@ -21,7 +21,9 @@ class AccountModule extends Module
         $renderer->addPath('account', __DIR__ . '/views');
         $router->get('/inscription', SignupAction::class, 'account.signup');
         $router->post('/inscription', SignupAction::class);
-        $router->get('/mon-profil', [LoggedInMiddleware::class, AccountAction::class], 'account');
-        $router->post('/mon-profil', [LoggedInMiddleware::class, AccountEditAction::class]);
+        $router->get('/mon-profil', AccountAction::class, 'account')
+            ->middleware(LoggedInMiddleware::class);
+        $router->post('/mon-profil', AccountEditAction::class)
+            ->middleware(LoggedInMiddleware::class);
     }
 }

@@ -47,9 +47,10 @@ class AccountEditAction
         $params = $request->getParsedBody();
         $validator = (new Validator($params))
             ->confirm('password')
-            ->required('firstname', 'lastname');
+            ->required('username', 'firstname', 'lastname');
         if ($validator->isValid()) {
             $userParams = [
+                'username'  => $params['username'],
                 'firstname' => $params['firstname'],
                 'lastname'  => $params['lastname']
             ];

@@ -8,9 +8,9 @@
     <form action="{{ path('auth.register') }} " method="post">
       {{ csrf_input() }}
       {{ field('username', user.username, 'Nom d\'utilisateur') }}
-      {{ field('password', null, 'Mot de passe', {type: 'password'}) }}
       {{ field('email', user.email, "Email", {type: 'email'}) }}
-      {{ field('email_confirm', null, "Confirmer l'Email", {type: 'email'}) }}
+      {{ field('password', null, 'Mot de passe', {type: 'password'}) }}
+      {{ field('password_confirm', null, "Confirmer le mot de passe", {type: 'password'}) }}
       {{ field('connect', null, "Se connecter", {type: 'checkbox'}) }}
       <button class="btn btn-primary">S'enregistrer</button>
     </form>

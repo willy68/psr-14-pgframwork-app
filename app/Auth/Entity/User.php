@@ -38,6 +38,21 @@ class User implements UserInterface
     public $username;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string
+     */
+    #[Column(type: Types::STRING, nullable: true)]
+    private $firstname;
+
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string
+     */
+    #[Column(type: Types::STRING, nullable: true)]
+    private $lastname;
+
+    /**
      * @ORM\Column(type="string")
      * @var string
      */
@@ -164,5 +179,45 @@ class User implements UserInterface
     public function getRoles(): array
     {
         return $this->roles;
+    }
+
+    /**
+     * Get the value of firstname
+     */
+    public function getFirstname()
+    {
+        return $this->firstname;
+    }
+
+    /**
+     * Set the value of firstname
+     *
+     * @return  self
+     */
+    public function setFirstname($firstname)
+    {
+        $this->firstname = $firstname;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of lastname
+     */
+    public function getLastname()
+    {
+        return $this->lastname;
+    }
+
+    /**
+     * Set the value of lastname
+     *
+     * @return  self
+     */
+    public function setLastname($lastname)
+    {
+        $this->lastname = $lastname;
+
+        return $this;
     }
 }

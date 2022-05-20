@@ -12,8 +12,9 @@
 
   <form action="" method="post">
     {{ csrf_input() }}
-    {{ field('firstname', user.firstname, 'Prénom') }}
-    {{ field('lastname', user.lastname, 'Nom') }}
+    {{ field('username', user.getUsername(), 'username') }}
+    {{ field('firstname', user.getFirstname(), 'Prénom') }}
+    {{ field('lastname', user.getLastname(), 'Nom') }}
     <h2>Changer de mot de passe</h2>
     <p>Laissez vide pour ne rien changer</p>
     {{ field('password', null, 'Mot de passe', {type: 'password'}) }}

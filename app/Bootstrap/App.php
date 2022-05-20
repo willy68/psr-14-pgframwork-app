@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Account\AccountModule;
 use App\Api\ApiModule;
 use App\Auth\AuthModule;
 use App\Blog\BlogModule;
@@ -42,6 +43,7 @@ return [
         BlogModule::class,
         ContactModule::class,
         AuthModule::class,
+        AccountModule::class,
         //ApiModule::class,
         //ApiClientModule::class,
     ],

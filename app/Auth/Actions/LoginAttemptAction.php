@@ -67,7 +67,7 @@ class LoginAttemptAction
         $params = $request->getParsedBody();
         $user = $this->auth->login($params['username'], $params['password']);
         if ($user) {
-            $path = $this->session->get('auth.redirect')  ?: $this->router->generateUri('admin');
+            $path = $this->session->get('auth.redirect')  ?: $this->router->generateUri('account');
             $this->session->unset('auth.redirect');
             $response = new ResponseRedirect($path);
             if ($params['rememberMe']) {

@@ -28,7 +28,7 @@ class AddRoleToUsers extends AbstractMigration
     public function change()
     {
         $this->table('users')
-            ->addColumn('role', 'string', ['default' => 'user'])
+            ->addColumn('roles', 'json', ['default' => '["ROLE_USER"]'])
             ->update();
     }
 }

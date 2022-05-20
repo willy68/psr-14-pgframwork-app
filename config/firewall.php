@@ -35,7 +35,7 @@ return [
             'voters.rules' => [
                 [
                     // Overhide main rules
-                    'path' => '^/admin/posts/(\d+)',
+                    //'path' => '^/admin/posts/(\d+)',
                     // Other RequestMatcher rules overhide main rules
                     //'method' => ['GET','POST'],
                     //'host' => localhost,

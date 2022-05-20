@@ -41,7 +41,7 @@ class FormAuthentication implements AuthenticationInterface
         'password' => 'password',
         'rememberMe' => 'rememberMe',
         'auth.login' => 'auth.login',
-        'redirect.success' => 'admin'
+        'redirect.success' => 'account'
     ];
 
     public function __construct(

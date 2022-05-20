@@ -17,12 +17,7 @@ class User extends \App\Auth\User
     /**
      * @var string
      */
-    private $role;
-
-    public function getRoles(): array
-    {
-        return [$this->role];
-    }
+    private $roles;
 
     /**
      * @return string
@@ -56,10 +51,7 @@ class User extends \App\Auth\User
         $this->lastname = $lastname;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getRole()
+    public function getRoles(): array
     {
         return $this->role;
     }
@@ -67,8 +59,9 @@ class User extends \App\Auth\User
     /**
      * @param mixed $role
      */
-    public function setRole($role)
+    public function setRoles($roles)
     {
-        $this->role = $role;
+        $roles = json_decode($roles);
+        $this->roles = $roles;
     }
 }

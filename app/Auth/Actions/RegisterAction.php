@@ -54,7 +54,7 @@ class RegisterAction
      * @var array
      */
     protected $messages = [
-        'create' => "Utilisateur à bien été créé"
+        'create' => "Votre compte à bien été créé"
     ];
 
     public function __construct(
@@ -101,11 +101,10 @@ class RegisterAction
 
                 if ($user->getId()) {
                     (new FlashService($this->session))->success($this->messages['create']);
-                    $path = $this->session->get('auth.redirect') ?: $this->router->generateUri('admin');
-                    $this->session->unset('auth.redirect');
+                    $path = $this->router->generateUri('account');
                     $response = new ResponseRedirect($path);
                     if ($params['connect']) {
-                        $user = $this->auth->login($user->getUsername(), $params['password']);
+                        $user = $this->auth->setUser($user);
                     }
                     return $response;
                 }
@@ -132,8 +131,8 @@ class RegisterAction
             ->addRules([
                 'username' => 'min:2|unique:App\Auth\Entity\User,username,,Cet utilisateur existe déjà',
                 'email'    => 'email|unique:App\Auth\Entity\User,email,,Cet Email existe déjà',
-                'email_confirm' => 'email|confirm:email',
                 'password'      => 'min:4',
+                'password_confirm' => 'password|confirm:password',
             ]);
         return $validator;
     }
