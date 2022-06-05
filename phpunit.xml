@@ -6,7 +6,11 @@
       <directory suffix=".php">app</directory>
     </include>
       <exclude>
-        <directory>tests</directory>
+        <directory suffix=".php">tests</directory>
+        <directory suffix=".php">*/Entity</directory>
+        <directory suffix=".php">*/*/Entity</directory>
+        <directory suffix=".php">*/Models</directory>
+        <directory suffix=".php">*/*/Models</directory>
       </exclude>
   </coverage>
   <testsuites>

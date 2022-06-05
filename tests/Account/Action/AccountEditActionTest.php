@@ -1,16 +1,17 @@
 <?php
+
 namespace Tests\App\Account\Action;
 
-use Framework\Auth;
+use PgFramework\Auth;
 use App\Account\User;
 use Prophecy\Argument;
 use App\Auth\UserTable;
 use Tests\ActionTestCase;
-use Framework\Session\FlashService;
+use PgFramework\Session\FlashService;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use App\Account\Action\AccountEditAction;
-use Framework\Renderer\RendererInterface;
+use PgFramework\Renderer\RendererInterface;
 
 class AccountEditActionTest extends ActionTestCase
 {
