@@ -34,7 +34,7 @@ class AnnotationsLoader
     }
 
     /**
-     * Recherche la première annotation de method
+     * Recherche l'annotation de method pour une classe precise
      *
      * @param \ReflectionMethod $method
      * @return Annotation|null
@@ -44,19 +44,17 @@ class AnnotationsLoader
         // Look for class annotation
         $reader = $this->getReader();
         if ($reader instanceof AttributeReader) {
-            $annotations = $reader->getMethodAttributes($method);
+            $annotations = $reader->getMethodAttributes($method)[$this->annotationClass] ?? null;
         } else {
-            $annotations = $reader->getMethodAnnotation($method);
+            $annotations = $reader->getMethodAnnotation($method, $this->annotationClass);
         }
 
         if ($annotations instanceof RepeatableAttributeCollection) {
             foreach ($annotations as $annot) {
                 return $annot;
             }
-        } else {
-            return $annotations;
         }
-        return null;
+        return $annotations;
     }
 
     /**
