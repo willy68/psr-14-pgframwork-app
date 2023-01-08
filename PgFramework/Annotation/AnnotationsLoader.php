@@ -42,18 +42,19 @@ class AnnotationsLoader
     public function getMethodAnnotation(ReflectionMethod $method): ?Annotation
     {
         // Look for class annotation
-        $annotation = $this->getReader()
-            ->getMethodAnnotation(
-                $method,
-                $this->annotationClass
-            );
+        $reader = $this->getReader();
+        if ($reader instanceof AttributeReader) {
+            $annotations = $reader->getMethodAttributes($method);
+        } else {
+            $annotations = $reader->getMethodAnnotation($method);
+        }
 
-        if ($annotation instanceof RepeatableAttributeCollection) {
-            foreach ($annotation as $annot) {
+        if ($annotations instanceof RepeatableAttributeCollection) {
+            foreach ($annotations as $annot) {
                 return $annot;
             }
         } else {
-            return $annotation;
+            return $annotations;
         }
         return null;
     }
@@ -67,10 +68,12 @@ class AnnotationsLoader
     public function getMethodAnnotations(ReflectionMethod $method): ?iterable
     {
         // Look for class annotation
-        $annotations = $this->getReader()
-            ->getMethodAnnotations(
-                $method
-            );
+        $reader = $this->getReader();
+        if ($reader instanceof AttributeReader) {
+            $annotations = $reader->getMethodAttributes($method);
+        } else {
+            $annotations = $reader->getMethodAnnotations($method);
+        }
 
         foreach ($annotations as $annotation) {
             if ($annotation instanceof RepeatableAttributeCollection) {
@@ -101,7 +104,7 @@ class AnnotationsLoader
         // Look for class annotation
         $reader = $this->getReader();
         if ($reader instanceof AttributeReader) {
-            $annotation = $reader->getClassAnnotations($class)[$this->annotationClass] ?? null;
+            $annotation = $reader->getClassAttributes($class)[$this->annotationClass] ?? null;
         } else {
             $annotation = $reader->getClassAnnotation($class, $this->annotationClass);
         }

@@ -15,9 +15,9 @@ class User extends \App\Auth\User
     private $lastname;
 
     /**
-     * @var string
+     * @var array
      */
-    private $roles;
+    private $roles = [];
 
     /**
      * @return string
@@ -53,7 +53,7 @@ class User extends \App\Auth\User
 
     public function getRoles(): array
     {
-        return $this->role;
+        return $this->roles;
     }
 
     /**
