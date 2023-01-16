@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PgFramework\Invoker\Annotation;
 
 use Attribute;
-use Doctrine\ORM\Mapping\Annotation;
+use Doctrine\ORM\Mapping\MappingAttribute;
 use PgFramework\Invoker\Exception\InvalidAnnotation;
 
 /**
@@ -26,7 +26,7 @@ use PgFramework\Invoker\Exception\InvalidAnnotation;
  *
  */
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_FUNCTION | Attribute::IS_REPEATABLE)]
-final class ParameterConverter implements Annotation
+final class ParameterConverter implements MappingAttribute
 {
     /**
      * Parameters, indexed by the parameter number (index) or name.

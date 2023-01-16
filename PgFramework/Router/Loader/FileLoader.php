@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace PgFramework\Router\Loader;
 
-use Doctrine\ORM\Mapping\Annotation;
 use ReflectionMethod;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteCollector;
-use PgFramework\Annotation\AnnotationsLoader;
 use PgFramework\Parser\PhpTokenParser;
+use Doctrine\ORM\Mapping\MappingAttribute;
+use PgFramework\Annotation\AnnotationsLoader;
 
 class FileLoader
 {
@@ -83,7 +83,7 @@ class FileLoader
      * @return Route
      */
     protected function addRoute(
-        Annotation $methodAnnotation,
+        MappingAttribute $methodAnnotation,
         ReflectionMethod $method,
         ?object $classAnnotation
     ): Route {

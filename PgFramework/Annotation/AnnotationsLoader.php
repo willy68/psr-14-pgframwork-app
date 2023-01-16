@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace PgFramework\Annotation;
 
+use ReflectionClass;
 use ReflectionMethod;
-use Doctrine\ORM\Mapping\Annotation;
-use Doctrine\ORM\Mapping\Driver\AttributeReader;
 use PgFramework\Router\Annotation\Route;
+use Doctrine\ORM\Mapping\MappingAttribute;
+use Doctrine\ORM\Mapping\Driver\AttributeReader;
 use Doctrine\ORM\Mapping\Driver\RepeatableAttributeCollection;
 
 class AnnotationsLoader
@@ -39,7 +40,7 @@ class AnnotationsLoader
      * @param \ReflectionMethod $method
      * @return Annotation|null
      */
-    public function getMethodAnnotation(ReflectionMethod $method): ?Annotation
+    public function getMethodAnnotation(ReflectionMethod $method): ?MappingAttribute
     {
         // Look for class annotation
         $reader = $this->getReader();
@@ -93,7 +94,7 @@ class AnnotationsLoader
      * @param \ReflectionClass $class
      * @return Annotation|null
      */
-    public function getClassAnnotation(\ReflectionClass $class): ?Annotation
+    public function getClassAnnotation(ReflectionClass $class): ?MappingAttribute
     {
         if ($class->isAbstract()) {
             return null;
@@ -121,7 +122,7 @@ class AnnotationsLoader
      * @param \ReflectionClass $class
      * @return iterable|null
      */
-    public function getClassAnnotations(\ReflectionClass $class): ?iterable
+    public function getClassAnnotations(ReflectionClass $class): ?iterable
     {
         if ($class->isAbstract()) {
             return null;
