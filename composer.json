@@ -20,7 +20,7 @@
         "ext-pdo": "*",
         "symfony/dotenv": "^5.0",
         "doctrine/orm": "^2.8",
-        "doctrine/annotations": "^1.11",
+        "doctrine/annotations": "^1.13 || ^2",
         "guzzlehttp/psr7": "^1.6",
         "php-di/php-di": "^6.0",
         "php-di/invoker": "^2.2",

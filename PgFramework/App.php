@@ -20,7 +20,6 @@ use PgFramework\Environnement\Environnement;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Annotation\AnnotationsLoader;
 use PgFramework\Router\Loader\DirectoryLoader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
 
 /**
  * Application
@@ -185,10 +184,6 @@ class App extends AbstractApplication
         $this->request = $request->withAttribute(ApplicationInterface::class, $this);
 
         $container = $this->getContainer();
-
-        if (class_exists(AnnotationRegistry::class)) {
-            AnnotationRegistry::registerLoader('class_exists');
-        }
 
         /** @var Module */
         foreach ($this->modules as $module) {

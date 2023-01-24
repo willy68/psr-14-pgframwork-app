@@ -47,6 +47,7 @@ class AnnotationsLoader
         if ($reader instanceof AttributeReader) {
             $annotations = $reader->getMethodAttributes($method)[$this->annotationClass] ?? null;
         } else {
+            /** @var AnnotationReader */
             $annotations = $reader->getMethodAnnotation($method, $this->annotationClass);
         }
 
