@@ -10,6 +10,7 @@ use Mezzio\Router\RouteCollector;
 use PgFramework\Parser\PhpTokenParser;
 use Doctrine\ORM\Mapping\MappingAttribute;
 use PgFramework\Annotation\AnnotationsLoader;
+use PgFramework\Router\Annotation\Route as AnnotRoute;
 
 class FileLoader
 {
@@ -26,6 +27,7 @@ class FileLoader
         }
         $this->collector = $collector;
         $this->annotationsLoader = $annotationsLoader;
+        $this->annotationsLoader->setAnnotation(AnnotRoute::class);
     }
 
     /**
