@@ -2,13 +2,14 @@
 
 namespace App\Demo;
 
+use App\Demo\Controller\DemoController;
 use PgFramework\Module;
 use PgFramework\Renderer\RendererInterface;
 
 class DemoModule extends Module
 {
     public const ANNOTATIONS = [
-        __DIR__ . '/Controller'
+        DemoController::class
     ];
 
     public function __construct(RendererInterface $renderer)

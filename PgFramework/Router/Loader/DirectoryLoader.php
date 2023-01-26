@@ -29,6 +29,11 @@ class DirectoryLoader extends FileLoader
                 $routes[] = $res;
             }
         }
+
+        if (empty($routes)) {
+            return null;
+        }
+
         return $routes;
     }
 }
