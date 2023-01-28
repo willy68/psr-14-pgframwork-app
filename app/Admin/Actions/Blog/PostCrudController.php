@@ -90,7 +90,7 @@ class PostCrudController extends CrudController
     {
         $params = array_merge($request->getParsedBody(), $request->getUploadedFiles());
         if (isset($params['delete']) && $params['delete'] == 1) {
-            $this->postUpload->delete($item->image);
+            $this->postUpload->delete($item->getImage());
             $params['image'] = "";
         } elseif ($item) {
             // Upload du fichier
