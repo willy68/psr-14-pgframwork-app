@@ -6,7 +6,6 @@ use ReflectionClass;
 use ReflectionMethod;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteCollector;
-use Doctrine\ORM\Mapping\MappingAttribute;
 use PgFramework\Annotation\AnnotationsLoader;
 use PgFramework\Router\Annotation\Route as AnnotRoute;
 
@@ -49,6 +48,7 @@ class RouteLoader
 
         $routes = [];
         foreach ($reflectionClass->getMethods() as $method) {
+            /** @var \PgFramework\Router\Annotation\Route */
             foreach ($this->annotationsLoader->getMethodAnnotations($method) as $methodAnnotation) {
                 $routes[] = $this->addRoute($methodAnnotation, $method, $classAnnotation);
             }
@@ -76,15 +76,15 @@ class RouteLoader
     /**
      * Add route to router
      *
-     * @param object $methodAnnotation
+     * @param AnnotRoute $methodAnnotation
      * @param \ReflectionMethod $method
-     * @param object|null $classAnnotation
+     * @param AnnotRoute|null $classAnnotation
      * @return Route
      */
     protected function addRoute(
-        MappingAttribute $methodAnnotation,
+        AnnotRoute $methodAnnotation,
         ReflectionMethod $method,
-        ?object $classAnnotation
+        ?AnnotRoute $classAnnotation
     ): Route {
 
         $path = $methodAnnotation->getPath();

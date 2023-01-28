@@ -37,7 +37,7 @@ class AnnotationsLoader
      * Recherche l'annotation de method pour une classe precise
      *
      * @param \ReflectionMethod $method
-     * @return Annotation|null
+     * @return MappingAttribute|null
      */
     public function getMethodAnnotation(ReflectionMethod $method): ?MappingAttribute
     {
@@ -48,7 +48,6 @@ class AnnotationsLoader
         if ($this->reader instanceof AttributeReader) {
             $annotations = $this->reader->getMethodAttributes($method)[$this->annotationClass] ?? null;
         } else {
-            /** @var AnnotationReader */
             $annotations = $this->reader->getMethodAnnotation($method, $this->annotationClass);
         }
 
@@ -97,7 +96,7 @@ class AnnotationsLoader
      * Recherche la première annotation de class
      *
      * @param \ReflectionClass $class
-     * @return Annotation|null
+     * @return MappingAttribute|null
      */
     public function getClassAnnotation(ReflectionClass $class): ?MappingAttribute
     {
