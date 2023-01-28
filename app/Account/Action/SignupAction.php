@@ -11,8 +11,11 @@ use PgFramework\Validator\Validator;
 use PgFramework\Session\FlashService;
 use PgFramework\Renderer\RendererInterface;
 use PgFramework\Response\ResponseRedirect;
+use PgFramework\Router\Annotation\Route;
 use Psr\Http\Message\ServerRequestInterface;
 
+#[Route('/inscription', name: 'account.signup', methods:['GET'])]
+#[Route('/inscription', methods:['POST'])]
 class SignupAction
 {
     /**
@@ -68,7 +71,8 @@ class SignupAction
             $userParams = [
                 'username' => $params['username'],
                 'email'    => $params['email'],
-                'password' => password_hash($params['password'], PASSWORD_DEFAULT)
+                'password' => password_hash($params['password'], PASSWORD_DEFAULT),
+                'roles'    => json_encode(['ROLE_USER'])
             ];
             $this->userTable->insert($userParams);
             $user = Hydrator::hydrate($userParams, User::class);

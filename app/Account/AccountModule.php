@@ -2,11 +2,6 @@
 
 namespace App\Account;
 
-use App\Account\Action\AccountAction;
-use App\Account\Action\AccountEditAction;
-use App\Account\Action\SignupAction;
-use Mezzio\Router\RouteCollector;
-use PgFramework\Auth\LoggedInMiddleware;
 use PgFramework\Module;
 use PgFramework\Renderer\RendererInterface;
 
@@ -18,10 +13,8 @@ class AccountModule extends Module
 
     public const ANNOTATIONS = [__DIR__ . '/Action'];
 
-    public function __construct(RouteCollector $router, RendererInterface $renderer)
+    public function __construct(RendererInterface $renderer)
     {
         $renderer->addPath('account', __DIR__ . '/views');
-        $router->get('/inscription', SignupAction::class, 'account.signup');
-        $router->post('/inscription', SignupAction::class);
     }
 }

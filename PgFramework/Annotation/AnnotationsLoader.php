@@ -140,7 +140,11 @@ class AnnotationsLoader
             $this->reader = $this->getReader();
         }
 
-        $annotations = $this->reader->getClassAnnotations($class);
+        if ($this->reader instanceof AttributeReader) {
+            $annotations = $this->reader->getClassAttributes($class);
+        } else {
+            $annotations = $this->reader->getClassAnnotations($class);
+        }
 
         foreach ($annotations as $annotation) {
             if ($annotation instanceof RepeatableAttributeCollection) {

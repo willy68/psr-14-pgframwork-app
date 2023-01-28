@@ -52,14 +52,16 @@ class RouteLoader
         }
 
         if (empty($routes) && $classAnnotation && $reflectionClass->hasMethod('__invoke')) {
-            $routes[] = $this->collector->route(
-                $classAnnotation->getPath(),
-                $reflectionClass->getName(),
-                $classAnnotation->getName(),
-                $classAnnotation->getMethods()
-            )
-                ->setSchemes($classAnnotation->getSchemes())
-                ->middlewares($classAnnotation->getMiddlewares());
+            foreach ($this->annotationsLoader->getClassAnnotations($reflectionClass) as $classAnnotation) {
+                $routes[] = $this->collector->route(
+                    $classAnnotation->getPath(),
+                    $reflectionClass->getName(),
+                    $classAnnotation->getName(),
+                    $classAnnotation->getMethods()
+                )
+                    ->setSchemes($classAnnotation->getSchemes())
+                    ->middlewares($classAnnotation->getMiddlewares());
+            }
         }
 
         gc_mem_caches();

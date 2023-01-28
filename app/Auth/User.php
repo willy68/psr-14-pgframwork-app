@@ -14,7 +14,7 @@ class User implements UserInterface
 
     public $password;
 
-    private $roles = [];
+    public $roles;
 
     /**
      *
