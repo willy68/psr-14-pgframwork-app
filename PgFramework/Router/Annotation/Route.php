@@ -10,7 +10,7 @@ use PgFramework\Router\Annotation\Exception\RouteAnnotationException;
 
 /**
  *
- * Ex: @Route("/route/{id:\d+}", name="path.route", methods={"GET"})
+ * Ex: @Route("/route/{id:\d+}", name="path.route", methods={"GET"}, middlewares={loginMiddleware::class})
  *
  * @Annotation
  * @NamedArgumentConstructor
@@ -27,6 +27,7 @@ class Route implements MappingAttribute
     private $host;
     private $methods = [];
     private $schemes = [];
+    private $middlewares = [];
 
     public function __construct(
         $parameters = [],
@@ -34,7 +35,8 @@ class Route implements MappingAttribute
         string $name = null,
         string $host = null,
         $methods = [],
-        $schemes = []
+        $schemes = [],
+        $middlewares = []
     ) {
         $this->parameters = $parameters;
 
@@ -43,6 +45,7 @@ class Route implements MappingAttribute
         $this->host = $parameters['host'] ??  (!\is_null($host) ? $host : null);
         $this->methods = $parameters['methods'] ?? ([] !== $methods ? $methods : null);
         $this->schemes = $parameters['schemes'] ?? ([] !== $schemes ? $schemes : null);
+        $this->middlewares = $middlewares;
 
         // Method param name
         if (null === $this->path) {
@@ -97,5 +100,13 @@ class Route implements MappingAttribute
     public function getSchemes(): ?array
     {
         return $this->schemes;
+    }
+
+    /**
+     * Get the middlawares value
+     */
+    public function getMiddlewares(): array
+    {
+        return $this->middlewares;
     }
 }

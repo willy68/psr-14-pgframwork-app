@@ -16,14 +16,12 @@ class AccountModule extends Module
 
     public const DEFINITIONS = __DIR__ . '/definitions.php';
 
+    public const ANNOTATIONS = [__DIR__ . '/Action'];
+
     public function __construct(RouteCollector $router, RendererInterface $renderer)
     {
         $renderer->addPath('account', __DIR__ . '/views');
         $router->get('/inscription', SignupAction::class, 'account.signup');
         $router->post('/inscription', SignupAction::class);
-        $router->get('/mon-profil', AccountAction::class, 'account')
-            ->middleware(LoggedInMiddleware::class);
-        $router->post('/mon-profil', AccountEditAction::class)
-            ->middleware(LoggedInMiddleware::class);
     }
 }

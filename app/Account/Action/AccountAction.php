@@ -3,9 +3,12 @@
 namespace App\Account\Action;
 
 use PgFramework\Auth;
+use PgFramework\Auth\LoggedInMiddleware;
 use PgFramework\Renderer\RendererInterface;
+use PgFramework\Router\Annotation\Route;
 use Psr\Http\Message\ServerRequestInterface;
 
+#[Route('/mon-profil', name:'account', methods:['GET'], middlewares:[LoggedInMiddleware::class])]
 class AccountAction
 {
     /**

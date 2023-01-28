@@ -29,10 +29,14 @@ class RouteCollector extends DataCollector implements Renderable, AssetProvider
 
     public function collect()
     {
+        $text = 'route fail';
+        $data = [
+            'text' => $text,
+            'data' => []
+        ];
+
         if (null === $this->routeResult) {
-            return $data = [
-                'text' => 'route fail'
-            ];
+            return $data;
         }
 
         $route = $this->routeResult->getMatchedRoute();
@@ -47,7 +51,6 @@ class RouteCollector extends DataCollector implements Renderable, AssetProvider
             $methods = $data['data']['methods'] ?? [];
             $text = implode(', ', $methods) . ' ' . $route->getPath();
         }
-
         foreach ($data['data'] as $key => $value) {
             $data['data'][$key] = $this->getVarDumper()->renderVar($value);
         }

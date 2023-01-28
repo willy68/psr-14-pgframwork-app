@@ -58,7 +58,8 @@ class RouteLoader
                 $classAnnotation->getName(),
                 $classAnnotation->getMethods()
             )
-                ->setSchemes($classAnnotation->getSchemes());
+                ->setSchemes($classAnnotation->getSchemes())
+                ->middlewares($classAnnotation->getMiddlewares());
         }
 
         gc_mem_caches();
@@ -94,6 +95,7 @@ class RouteLoader
             $methodAnnotation->getName(),
             $methodAnnotation->getMethods()
         )
-            ->setSchemes($methodAnnotation->getSchemes());
+            ->setSchemes($methodAnnotation->getSchemes())
+            ->middlewares($methodAnnotation->getMiddlewares());
     }
 }

@@ -6,10 +6,12 @@ use PgFramework\Auth;
 use App\Auth\UserTable;
 use PgFramework\Validator\Validator;
 use PgFramework\Session\FlashService;
-use PgFramework\Renderer\RendererInterface;
+use PgFramework\Router\Annotation\Route;
 use PgFramework\Response\ResponseRedirect;
+use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+#[Route('/mon-profil', methods:['POST'], middlewares:[LoggedInMiddleware::class])]
 class AccountEditAction
 {
     /**
