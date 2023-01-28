@@ -6,21 +6,19 @@ namespace PgFramework\Parser;
 
 class PhpTokenParser
 {
-    public function __construct()
-    {
-        if (!\function_exists('token_get_all')) {
-            throw new \LogicException("Function token_get_all don't exists in this system");
-        }
-    }
-
     /**
      * Returns the full class name for the first class in the file.
      *
      * @param string $file A PHP file path
      * @return string|false Full class name if found, false otherwise
+     * @throws \LogicException
      */
     public static function findClass($file)
     {
+        if (!\function_exists('token_get_all')) {
+            throw new \LogicException("Function token_get_all don't exists in this system");
+        }
+
         $class = false;
         $namespace = false;
         $tokens = token_get_all(file_get_contents($file));
