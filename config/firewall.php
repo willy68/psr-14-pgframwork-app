@@ -6,6 +6,7 @@ use PgFramework\Security\Authentication\FormAuthentication;
 use PgFramework\Security\Firewall\EventListener\ForbiddenListener;
 use PgFramework\Security\Firewall\EventListener\AuthorizationListener;
 use PgFramework\Security\Firewall\EventListener\AuthenticationListener;
+use PgFramework\Security\Firewall\EventListener\LoggedInListener;
 use PgFramework\Security\Firewall\EventListener\RememberMeLoginListener;
 use PgFramework\Security\Firewall\EventListener\RememberMeLogoutListener;
 
@@ -45,6 +46,12 @@ return [
                         'ROLE_ADMIN',
                     ],
                 ],
+            ],
+        ],
+        [
+            'path' => '^/mon-profil',
+            'listeners' => [
+                LoggedInListener::class
             ],
         ],
         [   // Use no default listeners

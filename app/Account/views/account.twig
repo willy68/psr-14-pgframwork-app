@@ -4,12 +4,6 @@
 
   <h1>Mon compte</h1>
 
-  {% if flash('success') %}
-    <div class="alert alert-success">
-      {{ flash('success') }}
-    </div>
-  {% endif %}
-
   <form action="" method="post">
     {{ csrf_input() }}
     {{ field('username', user.getUsername(), 'username') }}
