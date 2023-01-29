@@ -47,7 +47,7 @@ class AuthorizationListener implements EventSubscriberInterface
         if (!$this->voterManager->decide($this->auth, $attributes, $request)) {
             throw new FailedAccessException('Vous n\'avez pas l\'authorisation pour executer cette action');
         }
-        $event->setRequest($request);
+        $event->setRequest($request->withAttribute('_user', $this->auth->getUser()));
     }
 
     public static function getSubscribedEvents()

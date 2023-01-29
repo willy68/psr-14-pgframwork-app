@@ -38,7 +38,7 @@ return [
                     // Overhide main rules
                     //'path' => '^/admin/posts/(\d+)',
                     // Other RequestMatcher rules overhide main rules
-                    //'method' => ['GET','POST'],
+                    //'methods' => ['GET','POST'],
                     //'host' => localhost,
                     //'schemes' => ['https','http'],
                     //'port' => 8000,
@@ -50,13 +50,14 @@ return [
         ],
         [
             'path' => '^/mon-profil',
+            'methods' => ['GET', 'POST'],
             'listeners' => [
                 LoggedInListener::class
             ],
         ],
         [   // Use no default listeners
             'path' => '^/login',
-            'method' => ['POST'],
+            'methods' => ['POST'],
             // No default listener for this specific route
             'no.default.listeners' => true,
             // For Firewall RequestEvent

@@ -9,22 +9,22 @@ use Psr\Http\Message\ServerRequestInterface;
 class RequestMatcher implements RequestMatcherInterface
 {
     protected $path;
-    protected $method = [];
+    protected $methods = [];
     protected $host;
     protected $schemes = [];
     protected $port;
 
     public function __construct(
         string $path = null,
-        array $method = null,
+        array $methods = null,
         string $host = null,
-        string $scheme = null,
+        array $schemes = null,
         string $port = null
     ) {
         $this->setPath($path);
-        $this->setMethod($method);
+        $this->setMethod($methods);
         $this->setHost($host);
-        $this->setSchemes($scheme);
+        $this->setSchemes($schemes);
         $this->setPort($port);
     }
 

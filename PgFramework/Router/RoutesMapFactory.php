@@ -19,7 +19,7 @@ class RoutesMapFactory
                 $map->add(
                     new RequestMatcher(
                         $rule['path'] ?? null,
-                        $rule['method'] ?? null,
+                        $rule['methods'] ?? null,
                         $rule['host'] ?? null,
                         $rule['schemes'] ?? null,
                         $rule['port'] ?? null
