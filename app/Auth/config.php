@@ -22,6 +22,7 @@ use App\Auth\{
     Provider\UserProvider,
     Provider\UserTokenProvider
 };
+use PgFramework\Security\Authentication\FormAuthentication;
 
 use function DI\{
     add,
@@ -55,6 +56,14 @@ return [
     TokenProviderInterface::class => get(UserTokenProvider::class),
     ForbidenMiddleware::class => autowire()->constructorParameter('loginPath', get('auth.login')),
     ForbiddenListener::class => autowire()->constructorParameter('loginPath', get('auth.login')),
+    FormAuthentication::class => autowire()->constructorParameter('options', [
+        'identifier' => 'username',
+        'password' => 'password',
+        'rememberMe' => 'rememberMe',
+        'auth.login' => 'auth.login',
+        'redirect.success' => 'account',
+        'matched.route.name' => 'auth.login.post'
+    ]),
     'password.hasher.config' => add([
         'algo' => \PASSWORD_ARGON2I,
         'options' => [
