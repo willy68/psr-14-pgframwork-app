@@ -85,6 +85,7 @@ class CsrfCookieListener implements EventSubscriberInterface
             }
 
             [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
+            $this->tokenManager->removeToken($tokenId);
             $token = $this->tokenManager->refreshToken($tokenId);
             $request = $request->withAttribute($this->config['field'], $token);
         }
