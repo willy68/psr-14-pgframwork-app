@@ -69,7 +69,7 @@ class TokenSessionStorage implements TokenStorageInterface
 
     public function setToken(string $tokenId, string $token): void
     {
-        $tokens = $this->session->get($this->sessionKey) ?? [];
+        $tokens = $this->session->toArray()[$this->sessionKey] ?? [];
         $tokens[$tokenId] = $token;
         $this->session->set($this->sessionKey, $this->limitTokens($tokens));
         $this->session->set($this->lastIdField, $tokenId);
@@ -81,12 +81,12 @@ class TokenSessionStorage implements TokenStorageInterface
             return null;
         }
 
-        $tokens = $this->session->get($this->sessionKey);
+        $tokens = $this->session->toArray()[$this->sessionKey];
         $token = $tokens[$tokenId];
         unset($tokens[$tokenId]);
         $this->session->set($this->sessionKey, $tokens);
 
-        if ($tokenId === $this->session[$this->lastIdField]) {
+        if ($tokenId === $this->session->toArray()[$this->lastIdField]) {
             $this->session->unset($this->lastIdField);
         }
 

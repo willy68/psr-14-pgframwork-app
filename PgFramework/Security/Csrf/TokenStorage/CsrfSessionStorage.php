@@ -36,7 +36,7 @@ class CsrfSessionStorage implements CsrfStorageInterface
 
     public function setToken(string $token): void
     {
-        $tokens = $this->session->get($this->sessionKey) ?? [];
+        $tokens = $this->session->toArray()[$this->sessionKey] ?? [];
         $tokens[] = $token;
         $this->session->set($this->sessionKey, $this->limitTokens($tokens));
     }
