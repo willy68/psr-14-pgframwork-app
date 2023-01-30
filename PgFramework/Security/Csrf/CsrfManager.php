@@ -1,14 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
 namespace PgFramework\Security\Csrf;
 
-use PgFramework\Security\Security;
 use PgFramework\Security\Csrf\TokenStorage\TokenStorageInterface;
 use PgFramework\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
-class CsrfTokenManager implements CsrfTokenManagerInterface
+class CsrfManager implements CsrfTokenManagerInterface
 {
     private $storage;
     private $generator;
@@ -34,15 +31,9 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
                 return $this->storage->getToken($tokenId);
             }
             // Create new one for this id
-            return $this->generateToken($tokenId);
+            return $this->refreshToken($tokenId);
         }
-
-        // Get last token
-        $token = $this->storage->getToken();
-        if (null === $token) {
-            return $this->generateToken();
-        }
-        return $token;
+        return $this->generateToken();
     }
 
     /**
@@ -73,13 +64,7 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
         }
         [, $knownToken] = explode(self::DELIMITER, $this->storage->getToken($tokenId));
 
-        $knownToken = Security::unsaltToken($knownToken);
-        $token = Security::unsaltToken($token);
-        if (false === Security::verifyToken($token)) {
-            return false;
-        }
-
-        return hash_equals(base64_decode($knownToken), base64_decode($token));
+        return ($token === $knownToken);
     }
 
     /**
@@ -100,12 +85,11 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
 
     public function generateId(): string
     {
-        return bin2hex(Security::randomBytes(8));
+        return bin2hex(random_bytes(8));
     }
 
     private function generateToken(?string $tokenId = null): string
     {
-        $token = null;
         if (null !== $tokenId) {
             $token = $tokenId . self::DELIMITER . $this->generator->generateToken();
         } else {

@@ -125,15 +125,15 @@ class UserToken implements TokenInterface
     }
 
     /**
-     * Set the value of credentials
+     * Set the value of credential
      *
-     * @param  string  $credentials
+     * @param  string  $credential
      *
      * @return  self
      */
-    public function setCredentials(string $credentials)
+    public function setCredential(string $credential)
     {
-        $this->credentials = $credentials;
+        $this->credential = $credential;
 
         return $this;
     }
