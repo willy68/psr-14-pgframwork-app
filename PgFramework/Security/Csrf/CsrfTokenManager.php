@@ -98,7 +98,7 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
         return $this->formKey;
     }
 
-    public function generateId(): string
+    private function generateId(): string
     {
         return bin2hex(Security::randomBytes(8));
     }

@@ -2,7 +2,7 @@
 
 namespace PgFramework\Security\Csrf\TokenGenerator;
 
-class CsrfGenerator implements TokenGeneratorInterface
+class CsrfGenerator implements CsrfGeneratorInterface
 {
     /**
      * Generate and store a random token.

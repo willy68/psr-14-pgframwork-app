@@ -81,8 +81,8 @@ class TokenSessionStorage implements TokenStorageInterface
             return null;
         }
 
-        $token = (string) $this->session->toArray()[$this->sessionKey][$tokenId];
-        $tokens = $this->session->toArray()[$this->sessionKey];
+        $tokens = $this->session->get($this->sessionKey);
+        $token = $tokens[$tokenId];
         unset($tokens[$tokenId]);
         $this->session->set($this->sessionKey, $tokens);
 

@@ -4,21 +4,10 @@ namespace PgFramework\Security\Csrf\TokenStorage;
 
 use Mezzio\Session\SessionInterface;
 
-class CsrfSessionStorage implements TokenStorageInterface
+class CsrfSessionStorage implements CsrfStorageInterface
 {
-    /**
-     * @var SessionInterface
-     */
     private $session;
-
-    /**
-     * @var string
-     */
     private $sessionKey;
-
-    /**
-     * @var int
-     */
     private $limit;
 
     /**
@@ -40,37 +29,37 @@ class CsrfSessionStorage implements TokenStorageInterface
         $this->limit = $limit;
     }
 
-    public function hasToken(string $tokenId): bool
+    public function hasToken(string $token): bool
     {
-        return isset($this->session->toArray()[$this->sessionKey][$tokenId]);
+        return \in_array($token, $this->session->toArray()[$this->sessionKey] ?? []);
     }
 
-    public function getToken(?string $tokenId = null): ?string
-    {
-        if ($tokenId || !$this->hasToken($tokenId)) {
-            return null;
-        }
-        return (string) $this->session->toArray()[$this->sessionKey][$tokenId];
-    }
-
-    public function setToken(string $tokenId, string $token): void
+    public function setToken(string $token): void
     {
         $tokens = $this->session->get($this->sessionKey) ?? [];
-        $tokens[$tokenId] = $token;
+        $tokens[] = $token;
         $this->session->set($this->sessionKey, $this->limitTokens($tokens));
     }
 
-    public function removeToken(string $tokenId): ?string
+    public function removeToken(string $token): string
     {
-        if (!$this->hasToken($tokenId)) {
-            return null;
-        }
-
-        $token = (string) $this->session->toArray()[$this->sessionKey][$tokenId];
-        $tokens = $this->session->toArray()[$this->sessionKey];
-        unset($tokens[$tokenId]);
+        $tokens = array_filter(
+            $this->session->toArray()[$this->sessionKey] ?? [],
+            function ($t) use ($token) {
+                return $token !== $t;
+            }
+        );
+        $this->session->set($this->sessionKey, $tokens);
 
         return $token;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSessionKey(): string
+    {
+        return $this->sessionKey;
     }
 
     /**
@@ -85,14 +74,6 @@ class CsrfSessionStorage implements TokenStorageInterface
         if (!\is_array($session->toArray()) && !$session->toArray() instanceof \ArrayAccess) {
             throw new \TypeError('session is not an array');
         }
-    }
-
-    /**
-     * @return string
-     */
-    public function getSessionKey(): string
-    {
-        return $this->sessionKey;
     }
 
     /**
