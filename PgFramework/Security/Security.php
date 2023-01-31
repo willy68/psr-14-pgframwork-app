@@ -53,6 +53,11 @@ class Security
         return random_bytes($length);
     }
 
+    public static function generateId(int $length = 8): string
+    {
+        return bin2hex(Security::randomBytes($length));
+    }
+
     /**
      * Get a salt from Envirennement variable
      *

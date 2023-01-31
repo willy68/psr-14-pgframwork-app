@@ -1,14 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
-namespace PgFramework\EventListener;
+namespace PgFramework\Security\Csrf\Listener;
 
 use GuzzleHttp\Psr7\Response;
 use PgFramework\Event\Events;
 use Dflydev\FigCookies\SetCookie;
 use League\Event\ListenerPriority;
-use PgFramework\Security\Security;
 use PgFramework\Event\RequestEvent;
 use PgFramework\Event\ResponseEvent;
 use PgFramework\Event\ExceptionEvent;
@@ -18,7 +15,7 @@ use Grafikart\Csrf\InvalidCsrfException;
 use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
 use PgFramework\Response\ResponseRedirect;
-use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
+use PgFramework\Security\Csrf\CsrfManagerInterface;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class CsrfCookieListener implements EventSubscriberInterface
@@ -32,21 +29,12 @@ class CsrfCookieListener implements EventSubscriberInterface
         'httponly' => true,
         'samesite' => null,
     ];
-
-    /**
-     * @var FlashService
-     */
     private $flashService;
+    private $csrfManager;
 
-    /**
-     *
-     * @var CsrfTokenManagerInterface
-     */
-    private $tokenManager;
-
-    public function __construct(CsrfTokenManagerInterface $tokenManager, FlashService $flashService, array $config = [])
+    public function __construct(CsrfManagerInterface $csrfManager, FlashService $flashService, array $config = [])
     {
-        $this->tokenManager = $tokenManager;
+        $this->csrfManager = $csrfManager;
         $this->flashService = $flashService;
         $this->config = array_merge($this->config, $config);
     }
@@ -59,7 +47,7 @@ class CsrfCookieListener implements EventSubscriberInterface
         $cookie = FigRequestCookies::get($request, $this->config['cookieName'])->getValue();
 
         if (\in_array($method, ['GET', 'HEAD'], true) && null === $cookie) {
-            $token = $this->getToken();
+            $token = $this->csrfManager->getToken();
             $request = $request->withAttribute($this->config['field'], $token);
         }
 
@@ -76,8 +64,8 @@ class CsrfCookieListener implements EventSubscriberInterface
                 $this->validateToken($token, $cookie);
             }
 
-            [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
-            $token = $this->tokenManager->refreshToken($tokenId);
+            $this->csrfManager->removeToken($token);
+            $token = $this->csrfManager->getToken();
             $request = $request->withAttribute($this->config['field'], $token);
         }
         $event->setRequest($request);
@@ -107,14 +95,9 @@ class CsrfCookieListener implements EventSubscriberInterface
         $e = $event->getException();
         $request = $event->getRequest();
         $token = $request->getAttribute($this->config['field']);
-        $tokenId = '';
-        if ($token) {
-            [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $token);
-        }
-
         if ($e instanceof InvalidCsrfException) {
             if ($token) {
-                $this->tokenManager->removeToken($tokenId);
+                $this->csrfManager->removeToken($token);
             }
 
             if (RequestUtils::isJson($request)) {
@@ -137,6 +120,11 @@ class CsrfCookieListener implements EventSubscriberInterface
         }
     }
 
+    public function getFormKey(): string
+    {
+        return $this->config['field'];
+    }
+
     protected function validateToken(?string $token = null, ?string $cookie = null)
     {
         if (!$token) {
@@ -147,24 +135,13 @@ class CsrfCookieListener implements EventSubscriberInterface
             throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
         }
 
-        if (!$this->tokenManager->isTokenValid($token)) {
+        if (!$this->csrfManager->isTokenValid($token)) {
             throw new InvalidCsrfException('Le Csrf est incorrect');
         }
 
-        if (!hash_equals($token, $cookie)) {
+        if ($token !== $cookie) {
             throw new InvalidCsrfException('Le cookie Csrf est incorrect');
         }
-    }
-
-    public function getFormKey(): string
-    {
-        return $this->config['field'];
-    }
-
-    public function getToken(): string
-    {
-        $tokenId = Security::generateId(8);
-        return $this->tokenManager->getToken($tokenId);
     }
 
     public static function getSubscribedEvents()

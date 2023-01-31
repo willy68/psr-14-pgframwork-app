@@ -98,18 +98,13 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
         return $this->formKey;
     }
 
-    private function generateId(): string
-    {
-        return bin2hex(Security::randomBytes(8));
-    }
-
     private function generateToken(?string $tokenId = null): string
     {
         $token = null;
         if (null !== $tokenId) {
             $token = $tokenId . self::DELIMITER . $this->generator->generateToken();
         } else {
-            $tokenId = $this->generateId();
+            $tokenId = $this->generator->generateId();
             $token = $tokenId . self::DELIMITER . $this->generator->generateToken();
         }
 
