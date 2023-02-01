@@ -34,7 +34,7 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
                 return $this->storage->getToken($tokenId);
             }
             // Create new one for this id
-            return $this->generateToken($tokenId);
+            return $this->refreshToken($tokenId);
         }
 
         // Get last token
