@@ -50,16 +50,17 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
      */
     public function refreshToken(string $tokenId): string
     {
-        return $this->generateToken($tokenId);
+        $token = $tokenId . self::DELIMITER . $this->generator->generateToken();
+        $this->storage->setToken($tokenId, $token);
+        return $token;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function removeToken(string $tokenId): string
+    public function removeToken(string $tokenId): ?string
     {
-        $this->storage->removeToken($tokenId);
-        return $tokenId;
+        return $this->storage->removeToken($tokenId);
     }
 
     /**
@@ -98,15 +99,13 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
         return $this->formKey;
     }
 
-    private function generateToken(?string $tokenId = null): string
+    /**
+     * {@inheritdoc}
+     */
+    public function generateToken(): string
     {
-        $token = null;
-        if (null !== $tokenId) {
-            $token = $tokenId . self::DELIMITER . $this->generator->generateToken();
-        } else {
-            $tokenId = $this->generator->generateId();
-            $token = $tokenId . self::DELIMITER . $this->generator->generateToken();
-        }
+        $tokenId = $this->generator->generateId();
+        $token = $tokenId . self::DELIMITER . $this->generator->generateToken();
 
         $this->storage->setToken($tokenId, $token);
         return $token;

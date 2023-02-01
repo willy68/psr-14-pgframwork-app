@@ -59,7 +59,7 @@ class CsrfCookieListener implements EventSubscriberInterface
         $cookie = FigRequestCookies::get($request, $this->config['cookieName'])->getValue();
 
         if (\in_array($method, ['GET', 'HEAD'], true) && null === $cookie) {
-            $token = $this->getToken();
+            $token = $this->tokenManager->generateToken();
             $request = $request->withAttribute($this->config['field'], $token);
         }
 
@@ -159,12 +159,6 @@ class CsrfCookieListener implements EventSubscriberInterface
     public function getFormKey(): string
     {
         return $this->config['field'];
-    }
-
-    public function getToken(): string
-    {
-        $tokenId = Security::generateId(8);
-        return $this->tokenManager->getToken($tokenId);
     }
 
     public static function getSubscribedEvents()
