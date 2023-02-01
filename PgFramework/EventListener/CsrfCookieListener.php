@@ -8,7 +8,6 @@ use GuzzleHttp\Psr7\Response;
 use PgFramework\Event\Events;
 use Dflydev\FigCookies\SetCookie;
 use League\Event\ListenerPriority;
-use PgFramework\Security\Security;
 use PgFramework\Event\RequestEvent;
 use PgFramework\Event\ResponseEvent;
 use PgFramework\Event\ExceptionEvent;
@@ -48,7 +47,7 @@ class CsrfCookieListener implements EventSubscriberInterface
     {
         $this->tokenManager = $tokenManager;
         $this->flashService = $flashService;
-        $this->config = array_merge($this->config, $config);
+        $this->config = \array_merge($this->config, $config);
     }
 
     public function onRequest(RequestEvent $event)
@@ -76,7 +75,7 @@ class CsrfCookieListener implements EventSubscriberInterface
                 $this->validateToken($token, $cookie);
             }
 
-            [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
+            [$tokenId] = \explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
             $token = $this->tokenManager->refreshToken($tokenId);
             $request = $request->withAttribute($this->config['field'], $token);
         }
@@ -151,7 +150,7 @@ class CsrfCookieListener implements EventSubscriberInterface
             throw new InvalidCsrfException('Le Csrf est incorrect');
         }
 
-        if (!hash_equals($token, $cookie)) {
+        if (!\hash_equals($token, $cookie)) {
             throw new InvalidCsrfException('Le cookie Csrf est incorrect');
         }
     }
