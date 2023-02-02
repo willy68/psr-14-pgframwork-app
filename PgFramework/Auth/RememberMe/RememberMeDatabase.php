@@ -9,6 +9,7 @@ use Dflydev\FigCookies\SetCookie;
 use Psr\Http\Message\ResponseInterface;
 use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
+use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Auth\Provider\UserProviderInterface;
 use PgFramework\Auth\Provider\TokenProviderInterface;
@@ -58,7 +59,8 @@ class RememberMeDatabase extends AbstractRememberMe
                 'series' => $series,
                 'credential' => $user->getUsername(),
                 'random_password' => $randomPassword,
-                'expiration_date' => new \DateTime()
+                'expiration_date' => (new \DateTime())
+                    ->setTimestamp(time() +  $this->options['lifetime'])
             ]
         );
 
@@ -86,7 +88,7 @@ class RememberMeDatabase extends AbstractRememberMe
 
         $cookie = FigRequestCookies::get($request, $this->options['name']);
         if (!$cookie->getValue()) {
-            return $this->cancelCookie($request);
+            return $request;
         }
 
         try {
@@ -118,7 +120,7 @@ class RememberMeDatabase extends AbstractRememberMe
                 $authenticate = false;
             }
             // expiration outdated
-            if ($token->getExpirationDate()->getTimestamp() + $this->options['lifetime'] < time()) {
+            if ($token->getExpirationDate()->getTimestamp() < time()) {
                 $authenticate = false;
             }
             // Remove token from database
@@ -133,7 +135,8 @@ class RememberMeDatabase extends AbstractRememberMe
             $this->tokenProvider->updateToken(
                 [
                     'random_password' => $randomPassword,
-                    'expiration_date' => new \DateTime()
+                    'expiration_date' => (new \DateTime())
+                        ->setTimestamp(time() +  $this->options['lifetime'])
                 ],
                 $token->getId()
             );

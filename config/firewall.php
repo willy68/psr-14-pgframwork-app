@@ -7,18 +7,16 @@ use PgFramework\Security\Firewall\EventListener\ForbiddenListener;
 use PgFramework\Security\Firewall\EventListener\AuthorizationListener;
 use PgFramework\Security\Firewall\EventListener\AuthenticationListener;
 use PgFramework\Security\Firewall\EventListener\LoggedInListener;
-use PgFramework\Security\Firewall\EventListener\RememberMeLoginListener;
 use PgFramework\Security\Firewall\EventListener\RememberMeLogoutListener;
 
 return [
     'security.firewall.rules' => \DI\add([
         [
             'default.listeners' => [
-                RememberMeLoginListener::class,
+                LoggedInListener::class,
             ],
             'default.main.listeners' => [
                 ForbiddenListener::class,
-                RememberMeLoginListener::class,
             ]
         ],
         [   // Use only default listeners
@@ -51,9 +49,6 @@ return [
         [
             'path' => '^/mon-profil',
             'methods' => ['GET', 'POST'],
-            'listeners' => [
-                LoggedInListener::class
-            ],
         ],
         [   // Use no default listeners
             'path' => '^/login',
