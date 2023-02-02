@@ -153,9 +153,9 @@ class CsrfCookieListener implements EventSubscriberInterface
         return $this->config['field'];
     }
 
-    private function createCookie(string $token, ?int $expiry = null): \Dflydev\FigCookies\SetCookie
+    private function createCookie(string $token, ?int $expiry = null): SetCookie
     {
-        return $setCookie = SetCookie::create($this->config['cookieName'])
+        return SetCookie::create($this->config['cookieName'])
             ->withValue($token)
             ->withExpires(($expiry === null) ? $this->config['expiry'] : $expiry)
             ->withPath('/')
