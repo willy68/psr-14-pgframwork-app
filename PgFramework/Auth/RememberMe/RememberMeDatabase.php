@@ -9,7 +9,6 @@ use Dflydev\FigCookies\SetCookie;
 use Psr\Http\Message\ResponseInterface;
 use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
-use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Auth\Provider\UserProviderInterface;
 use PgFramework\Auth\Provider\TokenProviderInterface;
@@ -65,14 +64,7 @@ class RememberMeDatabase extends AbstractRememberMe
         );
 
         // Create random password cookie [$series, $username, $randomPassword]
-        $cookie = SetCookie::create($this->options['name'])
-            ->withValue($this->encodeCookie([$series, $user->getUsername(), $randomPassword]))
-            ->withExpires(time() +  $this->options['lifetime'])
-            ->withPath($this->options['path'])
-            ->withDomain($this->options['domain'])
-            ->withSecure($this->options['secure'])
-            ->withHttpOnly($this->options['httpOnly']);
-        return FigResponseCookies::set($response, $cookie);
+        return FigResponseCookies::set($response, $this->createCookie($series, $user, $randomPassword));
     }
 
     /**
@@ -110,7 +102,7 @@ class RememberMeDatabase extends AbstractRememberMe
         }
 
         if (!$authenticate) {
-            return $this->cancelCookie($request);
+            return $request->withAttribute($this->options['attribute'], $this->cancelCookie());
         }
 
         $user = $this->userProvider->getUser($this->options['field'], $token->getCredential());
@@ -126,7 +118,7 @@ class RememberMeDatabase extends AbstractRememberMe
             // Remove token from database
             if (!$authenticate) {
                 $this->tokenProvider->deleteToken($token->getId());
-                return $this->cancelCookie($request);
+                return $request->withAttribute($this->options['attribute'], $this->cancelCookie());
             }
 
             // Update cookie and database token
@@ -141,16 +133,8 @@ class RememberMeDatabase extends AbstractRememberMe
                 $token->getId()
             );
 
-            $cookie = SetCookie::create($this->options['name'])
-                ->withValue($this->encodeCookie([$series, $user->getUsername(), $randomPassword]))
-                ->withExpires(time() +  $this->options['lifetime'])
-                ->withPath($this->options['path'])
-                ->withDomain($this->options['domain'])
-                ->withSecure($this->options['secure'])
-                ->withHttpOnly($this->options['httpOnly']);
-
             return $request->withAttribute('_user', $user)
-                ->withAttribute($this->options['attribute'], $cookie);
+                ->withAttribute($this->options['attribute'], $this->createCookie($series, $user, $randomPassword));
         }
         return $request;
     }
@@ -178,14 +162,7 @@ class RememberMeDatabase extends AbstractRememberMe
                     $this->tokenProvider->deleteToken($token->getId());
                 }
                 // Delete cookie
-                $cookiePassword = SetCookie::create($this->options['name'])
-                    ->withValue('')
-                    ->withExpires(time() - 3600)
-                    ->withPath($this->options['path'])
-                    ->withDomain($this->options['domain'])
-                    ->withSecure($this->options['secure'])
-                    ->withHttpOnly($this->options['httpOnly']);
-                $response = FigResponseCookies::set($response, $cookiePassword);
+                $response = FigResponseCookies::set($response, $this->cancelCookie());
             }
         }
         return $response;
@@ -210,16 +187,25 @@ class RememberMeDatabase extends AbstractRememberMe
         return $response;
     }
 
-
-    protected function cancelCookie(ServerRequestInterface $request): ServerRequestInterface
+    protected function createCookie(string $series, UserInterface $user, string $randomPassword): SetCookie
     {
-        $cookie = SetCookie::create($this->options['name'])
+        return SetCookie::create($this->options['name'])
+            ->withValue($this->encodeCookie([$series, $user->getUsername(), $randomPassword]))
+            ->withExpires(time() +  $this->options['lifetime'])
+            ->withPath($this->options['path'])
+            ->withDomain($this->options['domain'])
+            ->withSecure($this->options['secure'])
+            ->withHttpOnly($this->options['httpOnly']);
+    }
+
+    protected function cancelCookie(): SetCookie
+    {
+        return SetCookie::create($this->options['name'])
             ->withValue('')
             ->withExpires(time() - 3600)
             ->withPath($this->options['path'])
             ->withDomain($this->options['domain'])
             ->withSecure($this->options['secure'])
             ->withHttpOnly($this->options['httpOnly']);
-        return $request->withAttribute($this->options['attribute'], $cookie);
     }
 }
