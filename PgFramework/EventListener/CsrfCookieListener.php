@@ -57,9 +57,14 @@ class CsrfCookieListener implements EventSubscriberInterface
 
         $cookie = FigRequestCookies::get($request, $this->config['cookieName'])->getValue();
 
-        if (\in_array($method, ['GET', 'HEAD'], true) && null === $cookie) {
-            $token = $this->tokenManager->generateToken();
-            $request = $request->withAttribute($this->config['field'], $token);
+        if (\in_array($method, ['GET', 'HEAD'], true)) {
+            if (null === $cookie || !$this->tokenManager->isTokenValid($cookie)) {
+                $token = $this->tokenManager->getToken();
+                $request = $request->withAttribute(
+                    $this->config['field'],
+                    $this->createCookie($token)
+                );
+            }
         }
 
         if (\in_array($method, ['DELETE', 'PATCH', 'POST', 'PUT'], true)) {
@@ -77,7 +82,7 @@ class CsrfCookieListener implements EventSubscriberInterface
 
             [$tokenId] = \explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
             $token = $this->tokenManager->refreshToken($tokenId);
-            $request = $request->withAttribute($this->config['field'], $token);
+            $request = $request->withAttribute($this->config['field'], $this->createCookie($token));
         }
         $event->setRequest($request);
     }
@@ -86,17 +91,10 @@ class CsrfCookieListener implements EventSubscriberInterface
     {
         $response = $event->getResponse();
         $request = $event->getRequest();
-        $token = $request->getAttribute($this->config['field']);
+        $cookie = $request->getAttribute($this->config['field']);
 
-        if (null !== $token) {
-            $setCookie = SetCookie::create($this->config['cookieName'])
-                ->withValue($token)
-                ->withExpires($this->config['expiry'])
-                ->withPath('/')
-                ->withDomain(null)
-                ->withSecure($this->config['secure'])
-                ->withHttpOnly($this->config['httponly']);
-            $response = FigResponseCookies::set($response, $setCookie);
+        if (null !== $cookie) {
+            $response = FigResponseCookies::set($response, $cookie);
             $event->setResponse($response);
         }
     }
@@ -104,15 +102,16 @@ class CsrfCookieListener implements EventSubscriberInterface
     public function onException(ExceptionEvent $event)
     {
         $e = $event->getException();
-        $request = $event->getRequest();
-        $token = $request->getAttribute($this->config['field']);
-        $tokenId = '';
-        if ($token) {
-            [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $token);
-        }
 
         if ($e instanceof InvalidCsrfException) {
+            $request = $event->getRequest();
+            $token = $request->getAttribute($this->config['field']);
+            $tokenId = null;
+
             if ($token) {
+                [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $token->getValue());
+            }
+            if ($tokenId) {
                 $this->tokenManager->removeToken($tokenId);
             }
 
@@ -123,13 +122,7 @@ class CsrfCookieListener implements EventSubscriberInterface
                 $response = new ResponseRedirect('/');
             }
 
-            $setCookie = SetCookie::create($this->config['cookieName'])
-                ->withValue('')
-                ->withExpires(time() - 3600)
-                ->withPath('/')
-                ->withDomain(null)
-                ->withSecure($this->config['secure'])
-                ->withHttpOnly($this->config['httponly']);
+            $setCookie = $this->createCookie('', time() - 3600);
             $response = FigResponseCookies::set($response, $setCookie);
 
             $event->setResponse($response);
@@ -158,6 +151,17 @@ class CsrfCookieListener implements EventSubscriberInterface
     public function getFormKey(): string
     {
         return $this->config['field'];
+    }
+
+    private function createCookie(string $token, ?int $expiry = null): \Dflydev\FigCookies\SetCookie
+    {
+        return $setCookie = SetCookie::create($this->config['cookieName'])
+            ->withValue($token)
+            ->withExpires(($expiry === null) ? $this->config['expiry'] : $expiry)
+            ->withPath('/')
+            ->withDomain(null)
+            ->withSecure($this->config['secure'])
+            ->withHttpOnly($this->config['httponly']);
     }
 
     public static function getSubscribedEvents()
