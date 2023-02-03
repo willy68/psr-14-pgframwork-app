@@ -4,18 +4,13 @@ declare(strict_types=1);
 
 namespace PgFramework\DebugBar;
 
-use Exception;
 use DebugBar\DebugBar;
 use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Message\ResponseInterface;
-use Grafikart\Csrf\InvalidCsrfException;
-use ActiveRecord\Exceptions\RecordNotFound;
 use DebugBar\DataCollector\MemoryCollector;
 use DebugBar\DataCollector\PhpInfoCollector;
 use DebugBar\DataCollector\MessagesCollector;
 use DebugBar\DataCollector\TimeDataCollector;
-use DebugBar\DataCollector\ExceptionsCollector;
-use PgFramework\Router\Exception\PageNotFoundException;
 
 /**
  * Based on https://github.com/barryvdh/laravel-debugbar/blob/master/src/LaravelDebugbar.php
@@ -28,19 +23,6 @@ class PgDebugBar extends DebugBar
             ->addCollector(new MessagesCollector())
             ->addCollector(new TimeDataCollector())
             ->addCollector(new MemoryCollector());
-
-        try {
-            // Peut-être placer tous ça dans un listener d'exception
-            $exceptionCollector = (new ExceptionsCollector())->useHtmlVarDumper(false);
-            $exceptionCollector->setChainExceptions(true);
-            $exceptionCollector->addThrowable(new Exception());
-            $exceptionCollector->addThrowable(new InvalidCsrfException());
-            $exceptionCollector->addThrowable(new RecordNotFound());
-            $exceptionCollector->addThrowable(new PageNotFoundException());
-
-            $this->addCollector($exceptionCollector);
-        } catch (\Exception $e) {
-        }
     }
 
     /**
