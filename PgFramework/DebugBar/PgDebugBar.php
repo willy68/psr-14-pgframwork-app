@@ -11,6 +11,7 @@ use DebugBar\DataCollector\MemoryCollector;
 use DebugBar\DataCollector\PhpInfoCollector;
 use DebugBar\DataCollector\MessagesCollector;
 use DebugBar\DataCollector\TimeDataCollector;
+use DebugBar\DataCollector\ExceptionsCollector;
 
 /**
  * Based on https://github.com/barryvdh/laravel-debugbar/blob/master/src/LaravelDebugbar.php
@@ -23,6 +24,11 @@ class PgDebugBar extends DebugBar
             ->addCollector(new MessagesCollector())
             ->addCollector(new TimeDataCollector())
             ->addCollector(new MemoryCollector());
+
+        $exceptionCollector = (new ExceptionsCollector())->useHtmlVarDumper(false);
+        $exceptionCollector->setChainExceptions(true);
+
+        $this->addCollector($exceptionCollector);
     }
 
     /**

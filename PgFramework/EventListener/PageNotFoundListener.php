@@ -29,13 +29,6 @@ class PageNotFoundListener implements EventSubscriberInterface
     {
         $e = $event->getException();
         if ($e instanceof PageNotFoundException) {
-            $c = $event->getKernel()->getContainer();
-            $appEnv = $c->get('env');
-            if ($appEnv === 'dev') {
-                $debugBar = $c->get(DebugBar::class);
-                $exceptionsCollector = $debugBar->getCollector('exceptions');
-                $exceptionsCollector->addThrowable($e);
-            }
             $event->setResponse(new Response(404, [], $this->renderer->render('error404')));
         }
     }

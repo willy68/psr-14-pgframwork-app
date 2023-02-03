@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use DebugBar\DataCollector\ExceptionsCollector;
 use DebugBar\DebugBar;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
@@ -253,6 +252,5 @@ return [
         'default' => 'doctrine.manager.default',
     ]),
     ManagerRegistry::class => factory(OrmManagerFactory::class),
-    ExceptionsCollector::class => factory(ExceptionCollectorFactory::class),
     DebugBar::class => factory(DebugBarFactory::class)
 ];

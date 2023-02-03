@@ -34,6 +34,7 @@ use PgFramework\Middleware\MethodNotAllowedMiddleware;
 use PgFramework\DebugBar\Middleware\DebugBarMiddleware;
 use PgFramework\EventListener\MethodNotAllowedListener;
 use PgFramework\DebugBar\EventListener\DebugBarListener;
+use PgFramework\EventListener\ExceptionsCollectorListener;
 use PgFramework\Security\Firewall\EventListener\RememberMeLoginListener;
 
 return [
@@ -79,5 +80,6 @@ return [
         StringResponseListener::class,      //View priority:      100
         DebugBarListener::class,            //Response priority: -1000
         RecordNotFoundListener::class,      //Exception priority: 100
+        ExceptionsCollectorListener::class  //Exception priority: 1000
     ],
 ];
