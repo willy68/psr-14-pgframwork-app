@@ -34,7 +34,7 @@ use PgFramework\Middleware\MethodNotAllowedMiddleware;
 use PgFramework\DebugBar\Middleware\DebugBarMiddleware;
 use PgFramework\EventListener\MethodNotAllowedListener;
 use PgFramework\DebugBar\EventListener\DebugBarListener;
-use PgFramework\EventListener\ExceptionsCollectorListener;
+use PgFramework\DebugBar\EventListener\ExceptionsCollectorListener;
 use PgFramework\Security\Firewall\EventListener\RememberMeLoginListener;
 
 return [

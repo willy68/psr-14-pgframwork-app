@@ -1,6 +1,6 @@
 <?php
 
-namespace PgFramework\EventListener;
+namespace PgFramework\DebugBar\EventListener;
 
 use DebugBar\DataCollector\ExceptionsCollector;
 use DebugBar\DebugBar;
