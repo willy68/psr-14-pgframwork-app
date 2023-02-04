@@ -80,6 +80,5 @@ return [
         StringResponseListener::class,      //View priority:      100
         DebugBarListener::class,            //Response priority: -1000
         RecordNotFoundListener::class,      //Exception priority: 100
-        ExceptionsCollectorListener::class  //Exception priority: 1000
     ],
 ];

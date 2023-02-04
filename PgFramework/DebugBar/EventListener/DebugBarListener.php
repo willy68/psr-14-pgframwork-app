@@ -17,6 +17,7 @@ use Mezzio\Session\SessionInterface;
 use PgFramework\DebugBar\DataCollector\RequestCollector;
 use PgFramework\DebugBar\DataCollector\RouteCollector;
 use PgFramework\Environnement\Environnement;
+use PgFramework\Event\ExceptionEvent;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class DebugBarListener implements EventSubscriberInterface
@@ -71,10 +72,23 @@ class DebugBarListener implements EventSubscriberInterface
         $event->setResponse($this->debugBar->injectDebugbar($response));
     }
 
+    public function onException(ExceptionEvent $event)
+    {
+        if (Environnement::getEnv('APP_ENV', 'prod') !== 'dev') {
+            return;
+        }
+
+        $e = $event->getException();
+        /** @var ExceptionsCollector */
+        $exceptionsCollector = $this->debugBar->getCollector('exceptions');
+        $exceptionsCollector->addThrowable($e);
+    }
+
     public static function getSubscribedEvents()
     {
         return [
-            Events::RESPONSE => ['onResponse', -1000]
+            Events::RESPONSE => ['onResponse', -1000],
+            Events::EXCEPTION => ['onException',1000]
         ];
     }
 }
