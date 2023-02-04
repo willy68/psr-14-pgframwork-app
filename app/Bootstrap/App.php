@@ -78,7 +78,7 @@ return [
         CsrfCookieListener::class,          //Request priority:   400 Response: -100 Exception: 0
         Firewall::class,                    //Request priority:   300
         StringResponseListener::class,      //View priority:      100
-        DebugBarListener::class,            //Response priority: -1000
+        DebugBarListener::class,            //Response priority: -1000 Exception: 1000
         RecordNotFoundListener::class,      //Exception priority: 100
     ],
 ];
