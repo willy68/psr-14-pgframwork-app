@@ -1,12 +1,12 @@
 <?php
 
-use App\Auth\Listener\RehashPasswordListener;
 use PgFramework\Security\Authorization\Voter\VoterRoles;
 use PgFramework\Security\Authentication\FormAuthentication;
 use PgFramework\Security\Firewall\EventListener\ForbiddenListener;
 use PgFramework\Security\Firewall\EventListener\AuthorizationListener;
 use PgFramework\Security\Firewall\EventListener\AuthenticationListener;
 use PgFramework\Security\Firewall\EventListener\LoggedInListener;
+use PgFramework\Security\Firewall\EventListener\RehashPasswordListener;
 use PgFramework\Security\Firewall\EventListener\RememberMeLogoutListener;
 
 return [

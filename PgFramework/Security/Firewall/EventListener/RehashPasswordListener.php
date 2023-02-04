@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Auth\Listener;
+namespace PgFramework\Security\Firewall\EventListener;
 
 use App\Auth\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
