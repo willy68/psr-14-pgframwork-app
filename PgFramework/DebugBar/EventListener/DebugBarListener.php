@@ -8,16 +8,16 @@ use DebugBar\DebugBar;
 use PgFramework\Event\Events;
 use Mezzio\Router\RouteResult;
 use Mezzio\Router\RouterInterface;
-use PgFramework\ApplicationInterface;
-use PgFramework\DebugBar\DataCollector\AuthCollector;
+use Mezzio\Session\SessionInterface;
 use PgFramework\DebugBar\PgDebugBar;
 use PgFramework\Event\ResponseEvent;
-use PgFramework\HttpUtils\RequestUtils;
-use Mezzio\Session\SessionInterface;
-use PgFramework\DebugBar\DataCollector\RequestCollector;
-use PgFramework\DebugBar\DataCollector\RouteCollector;
-use PgFramework\Environnement\Environnement;
 use PgFramework\Event\ExceptionEvent;
+use PgFramework\HttpUtils\RequestUtils;
+use PgFramework\Environnement\Environnement;
+use DebugBar\DataCollector\ExceptionsCollector;
+use PgFramework\DebugBar\DataCollector\AuthCollector;
+use PgFramework\DebugBar\DataCollector\RouteCollector;
+use PgFramework\DebugBar\DataCollector\RequestCollector;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class DebugBarListener implements EventSubscriberInterface
@@ -51,8 +51,7 @@ class DebugBarListener implements EventSubscriberInterface
             return;
         }
 
-        /** @var ApplicationInterface */
-        $app = $request->getAttribute(ApplicationInterface::class);
+        $c = $event->getKernel()->getContainer();
 
         $this->debugBar->addCollector(
             (new RequestCollector($request, $response, $this->session))
@@ -62,12 +61,12 @@ class DebugBarListener implements EventSubscriberInterface
         $routeResult = $request->getAttribute(RouteResult::class);
         $this->debugBar->addCollector(
             new RouteCollector(
-                $app->getContainer()->get(RouterInterface::class),
+                $c->get(RouterInterface::class),
                 $routeResult
             )
         );
 
-        $this->debugBar->addCollector($app->getContainer()->get(AuthCollector::class));
+        $this->debugBar->addCollector($c->get(AuthCollector::class));
 
         $event->setResponse($this->debugBar->injectDebugbar($response));
     }
