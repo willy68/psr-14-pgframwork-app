@@ -12,10 +12,14 @@ use PgFramework\Security\Firewall\EventListener\RememberMeLogoutListener;
 return [
     'security.firewall.rules' => \DI\add([
         [
+            // Default internal firewall dispatcher (dispatch only RequestEvent)
             'default.listeners' => [
+                // Priority 100
                 LoggedInListener::class,
             ],
+            // Default main dispatcher (all Events except RequestEvent)
             'default.main.listeners' => [
+                // Priority 100
                 ForbiddenListener::class,
             ]
         ],
@@ -26,9 +30,12 @@ return [
             //'host' => null,
             //'schemes' => [],
             //'port' => null,
+            // Add to internal firewall dispatcher RequestEvent
             'listeners' => [
+                // Priority -100
                 AuthorizationListener::class,
             ],
+            // Add to main dispatcher (all Events except RequestEvent)
             //'main.listeners' => [
             //]
             'voters.rules' => [
@@ -53,29 +60,34 @@ return [
         [   // Use no default listeners
             'path' => '^/login',
             'methods' => ['POST'],
-            // No default listener for this specific route
+            // No default (main and internal) listener for this specific route
             'no.default.listeners' => true,
-            // For Firewall RequestEvent
+            // Add firewall RequestEvent
             'listeners' => [
+                // Priority 100
                 AuthenticationListener::class
             ],
-            // For LoginSuccessEvent
+            // Add main LoginSuccessEvent
             'main.listeners' => [
+                // Priority 100
                 RehashPasswordListener::class
             ]
         ],
         [
+            // Use default internal and main listener
             'path' => '^/logout',
+            // For main ResponseEvent
             'main.listeners' => [
+                // Priority 100
                 RememberMeLogoutListener::class,
             ]
         ],
     ]),
-    // Add your authenticators here
+    // Add your authenticators here (used by AuthenticationListener)
     'security.authenticators' => \DI\add([
         \DI\get(FormAuthentication::class),
     ]),
-    // Add your Voter class here
+    // Add your Voter class here (used by AuthorizationListener)
     'security.voters' => \DI\add([
         \DI\get(VoterRoles::class),
     ]),
