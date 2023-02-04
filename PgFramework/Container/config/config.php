@@ -75,7 +75,6 @@ use PgFramework\Database\Doctrine\DoctrineConfigFactory;
 use PgFramework\Database\Doctrine\EntityManagerFactory;
 use PgFramework\Database\Doctrine\OrmManagerFactory;
 use PgFramework\DebugBar\DebugBarFactory;
-use PgFramework\DebugBar\ExceptionCollectorFactory;
 use PgFramework\EventDispatcher\EventDispatcher;
 use PgFramework\EventListener\CsrfListener;
 use PgFramework\EventListener\CsrfListenerInterface;
