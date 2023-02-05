@@ -24,8 +24,8 @@ return (static function (): App {
 
     $app
         ->addModules($bootstrap['modules'])
-        //->addMiddlewares($bootstrap['middlewares']);
-        ->addListeners($bootstrap['listeners']);
+        ->addMiddlewares($bootstrap['middlewares']);
+        //->addListeners($bootstrap['listeners']);
 
     if (Environnement::getEnv('APP_ENV', 'prod') === 'dev') {
         $whoops = new \Whoops\Run();

@@ -9,12 +9,13 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
+use PgFramework\Security\Security;
 use Grafikart\Csrf\InvalidCsrfException;
 use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class CsrfCookieMiddleware implements MiddlewareInterface
+class CsrfGetCookieMiddleware implements MiddlewareInterface
 {
     protected $config = [
         'cookieName' => 'XSRF-TOKEN',
@@ -33,12 +34,17 @@ class CsrfCookieMiddleware implements MiddlewareInterface
      */
     private $tokenManager;
 
-    public function __construct(CsrfTokenManagerInterface $tokenManager, $config = [])
+    /**
+     * CsrfMiddleware constructor.
+     *
+     * @param array|\ArrayAccess $session
+     * @param int                $limit      Limit the number of token to store in the session
+     * @param string             $sessionKey
+     * @param string             $formKey
+     */
+    public function __construct(CsrfTokenManagerInterface $tokenManager)
     {
         $this->tokenManager = $tokenManager;
-        if (!empty($config)) {
-            $this->config = array_merge($this->config, $config);
-        }
     }
 
     /**
@@ -77,7 +83,7 @@ class CsrfCookieMiddleware implements MiddlewareInterface
                 $this->validateToken($headerCookie, $cookie);
             }
 
-            [$tokenId] = \explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
+            [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
             $token = $this->tokenManager->refreshToken($tokenId);
             $request = $request->withAttribute($this->config['field'], $token);
 
@@ -102,7 +108,7 @@ class CsrfCookieMiddleware implements MiddlewareInterface
             throw new InvalidCsrfException('Le Csrf est incorrect');
         }
 
-        if (!\hash_equals($token, $cookie)) {
+        if (!hash_equals($token, $cookie)) {
             throw new InvalidCsrfException('Le cookie Csrf est incorrect');
         }
     }
@@ -114,13 +120,13 @@ class CsrfCookieMiddleware implements MiddlewareInterface
 
     protected function setCookie(string $token, ResponseInterface $response): ResponseInterface
     {
-        $setCookie = SetCookie::create($this->config['cookieName'])
+        $setCookie = SetCookie::create('XSRF-TOKEN')
             ->withValue($token)
-            ->withExpires($this->config['expiry'])
+            // ->withExpires(time() + 3600)
             ->withPath('/')
             ->withDomain(null)
-            ->withSecure($this->config['secure'])
-            ->withHttpOnly($this->config['httponly']);
+            ->withSecure(false)
+            ->withHttpOnly(false);
         return FigResponseCookies::set($response, $setCookie);
     }
 }

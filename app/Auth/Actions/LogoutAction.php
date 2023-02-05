@@ -3,14 +3,15 @@
 namespace App\Auth\Actions;
 
 use PgFramework\Auth\AuthSession;
+use PgFramework\Auth\Middleware\CookieLogoutMiddleware;
 use PgFramework\Session\FlashService;
 use PgFramework\Router\Annotation\Route;
 use PgFramework\Response\ResponseRedirect;
 
 /**
- * @Route("/logout", name="auth.logout", methods={"POST"})
+ * @Route("/logout", name="auth.logout", methods={"POST"}, middlewares={CookieLogoutMiddleware::class})
  */
-#[Route('/logout', name:'auth.logout', methods:['POST'])]
+#[Route('/logout', name:'auth.logout', methods:['POST'], middlewares:[CookieLogoutMiddleware::class])]
 class LogoutAction
 {
     /**
