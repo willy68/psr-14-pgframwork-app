@@ -74,8 +74,6 @@ class CsrfGetCookieMiddleware implements MiddlewareInterface
             if ((\is_array($body) || $body instanceof \ArrayAccess) && !empty($body)) {
                 $token = $body[$this->config['field']] ?? null;
                 $this->validateToken($token, $cookie);
-
-                return $handler->handle($request);
             } elseif (!$request->hasHeader($this->config['header'])) {
                 throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
             } else {
