@@ -74,6 +74,20 @@ class User implements UserInterface
     public $roles = [];
 
     /**
+     * @ORM\Column(type="string")
+     * @var string
+     */
+    #[Column(type: TYPES::STRING, nullable: true)]
+    protected $password_reset;
+
+    /**
+     * @ORM\Column(type="datetime")
+     * @var DateTime
+     */
+    #[Column(type: TYPES::DATETIME_MUTABLE)]
+    protected $password_reset_at;
+
+    /**
      * Get the value of id
      *
      * @return int

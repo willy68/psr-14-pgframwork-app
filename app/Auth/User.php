@@ -16,8 +16,11 @@ class User implements UserInterface
 
     public $roles;
 
+    public $passwordReset;
+
+    public $passwordResetAt;
+
     /**
-     *
      * @return int
      */
     public function getId(): int
@@ -25,9 +28,7 @@ class User implements UserInterface
         return (int)$this->id;
     }
 
-        /**
-     * Undocumented function
-     *
+    /**
      * @return string
      */
     public function getUsername(): string
@@ -36,8 +37,6 @@ class User implements UserInterface
     }
 
     /**
-     * Undocumented function
-     *
      * @return string[]
      */
     public function getRoles(): array
@@ -63,5 +62,38 @@ class User implements UserInterface
     public function getPassword(): string
     {
         return $this->password;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPasswordReset()
+    {
+        return $this->passwordReset;
+    }
+
+    /**
+     * @param mixed $passwordReset
+     */
+    public function setPasswordReset($passwordReset)
+    {
+        $this->passwordReset = $passwordReset;
+    }
+
+    public function setPasswordResetAt($date)
+    {
+        if (is_string($date)) {
+            $this->passwordResetAt = new \DateTime($date);
+        } else {
+            $this->passwordResetAt = $date;
+        }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPasswordResetAt(): ?\DateTime
+    {
+        return $this->passwordResetAt;
     }
 }
