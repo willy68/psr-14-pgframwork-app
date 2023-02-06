@@ -7,10 +7,15 @@ use App\Auth\UserTable;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Validator\Validator;
 use PgFramework\Session\FlashService;
+use PgFramework\Router\Annotation\Route;
 use PgFramework\Response\ResponseRedirect;
 use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * @Route("/password/reset/{id:\d+}/{token}", name="auth.reset")
+ */
+#[Route('/password/reset/{id:\d+}/{token}', name:'auth.reset')]
 class PasswordResetAction
 {
     /**

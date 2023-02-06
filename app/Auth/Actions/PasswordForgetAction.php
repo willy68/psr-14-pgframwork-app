@@ -6,11 +6,16 @@ use App\Auth\UserTable;
 use PgFramework\Validator\Validator;
 use PgFramework\Session\FlashService;
 use App\Auth\Mailer\PasswordResetMailer;
+use PgFramework\Router\Annotation\Route;
 use PgFramework\Response\ResponseRedirect;
 use ActiveRecord\Exceptions\RecordNotFound;
 use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * @Route("/password", name="auth.password")
+ */
+#[Route('/password', name:'auth.password')]
 class PasswordForgetAction
 {
     /**

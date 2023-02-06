@@ -22,6 +22,7 @@ use App\Auth\{
     Provider\UserProvider,
     Provider\UserTokenProvider
 };
+use App\Auth\Mailer\PasswordResetMailer;
 use PgFramework\Security\Authentication\FormAuthentication;
 
 use function DI\{
@@ -33,6 +34,7 @@ use function DI\{
 
 return [
     'auth.login' => '/login',
+    'auth.entity'        => \App\Auth\User::class,
     'twig.extensions' => add([
         get(AuthTwigExtension::class)
     ]),
@@ -46,6 +48,7 @@ return [
     UserInterface::class => factory(function (Auth $auth) {
         return $auth->getUser();
     })->parameter('auth', get(Auth::class)),
+    \App\Auth\UserTable::class => autowire()->constructorParameter('entity', \DI\get('auth.entity')),
     RememberMeInterface::class => get(RememberMeDatabase::class),
     RememberMeDatabase::class =>
     autowire()->constructorParameter('salt', Environnement::getEnv('APP_KEY', 'abcdefghijklmnop123456789')),
@@ -73,5 +76,6 @@ return [
             'threads' => PASSWORD_ARGON2_DEFAULT_THREADS
         ]
 
-    ])
+        ]),
+    PasswordResetMailer::class => autowire()->constructorParameter('from', \DI\get('mail.from'))
 ];
