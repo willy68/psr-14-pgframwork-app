@@ -20,6 +20,7 @@
       {{ field('username', null, 'Nom d\'utilisateur') }}
       {{ field('password', null, 'Mot de passe', {type: 'password'}) }}
       {{ field('rememberMe', null, "Se souvenir de moi:", {type: 'checkbox'}) }}
+      <p><a href="{{ path('auth.password') }}">Mot de passe oublié?</a></p>
       <button class="btn btn-primary">Se connecter</button>
     </form>
   </div>

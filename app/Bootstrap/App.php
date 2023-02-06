@@ -34,6 +34,7 @@ use PgFramework\Middleware\MethodNotAllowedMiddleware;
 use PgFramework\DebugBar\Middleware\DebugBarMiddleware;
 use PgFramework\EventListener\MethodNotAllowedListener;
 use PgFramework\DebugBar\EventListener\DebugBarListener;
+use PgFramework\Middleware\RendererRequestMiddleware;
 use PgFramework\Security\Firewall\EventListener\RememberMeLoginListener;
 
 return [
@@ -54,6 +55,7 @@ return [
     'middlewares' => [
         SessionMiddleware::class,
         TrailingSlashMiddleware::class,
+        RendererRequestMiddleware::class,
         MethodMiddleware::class,
         RouterMiddleware::class,
         ApiHeadMiddleware::class,

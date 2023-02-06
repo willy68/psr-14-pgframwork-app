@@ -6,12 +6,12 @@ use App\Auth\User;
 use Prophecy\Argument;
 use App\Auth\UserTable;
 use Tests\ActionTestCase;
-use Framework\Session\FlashService;
+use PgFramework\Session\FlashService;
 use Prophecy\PhpUnit\ProphecyTrait;
 use App\Auth\Mailer\PasswordResetMailer;
-use App\Auth\Action\PasswordForgetAction;
-use Framework\Database\NoRecordException;
-use Framework\Renderer\RendererInterface;
+use App\Auth\Actions\PasswordForgetAction;
+use PgFramework\Database\NoRecordException;
+use PgFramework\Renderer\RendererInterface;
 
 class PasswordForgetActionTest extends ActionTestCase
 {
@@ -61,14 +61,14 @@ class PasswordForgetActionTest extends ActionTestCase
     public function testWithGoodEmail()
     {
         $user = new User();
-        $user->id = 3;
-        $user->email = 'john@doe.fr';
+        $user->setId(3);
+        $user->setEmail('john@doe.fr');
         $token = "fake";
         $request = $this->makeRequest('/demo', ['email' => $user->email]);
         $this->userTable->findBy('email', 'john@doe.fr')->willReturn($user);
         $this->userTable->resetPassword(3)->willReturn($token);
-        $this->mailer->send($user->email, [
-            'id' => $user->id,
+        $this->mailer->send($user->getEmail(), [
+            'id' => $user->getId(),
             'token' => $token
         ])->shouldBeCalled();
         $this->renderer->render()->shouldNotBeCalled();

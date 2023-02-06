@@ -3,14 +3,14 @@
 namespace Tests\App\Auth\Action;
 
 use App\Auth\User;
-use Framework\Router;
+use PgFramework\Router;
 use Prophecy\Argument;
 use App\Auth\UserTable;
 use Tests\ActionTestCase;
-use Framework\Session\FlashService;
+use PgFramework\Session\FlashService;
 use Prophecy\PhpUnit\ProphecyTrait;
-use App\Auth\Action\PasswordResetAction;
-use Framework\Renderer\RendererInterface;
+use App\Auth\Actions\PasswordResetAction;
+use PgFramework\Renderer\RendererInterface;
 
 class PasswordResetActionTest extends ActionTestCase
 {
