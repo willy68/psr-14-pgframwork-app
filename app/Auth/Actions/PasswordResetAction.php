@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Auth\Action;
+namespace App\Auth\Actions;
 
 use App\Auth\User;
 use App\Auth\UserTable;

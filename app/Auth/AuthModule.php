@@ -4,8 +4,6 @@ namespace App\Auth;
 
 use PgFramework\Module;
 use PgFramework\Renderer\RendererInterface;
-use PgFramework\Auth\Middleware\CookieLogoutMiddleware;
-use Mezzio\Router\RouteCollector;
 
 class AuthModule extends Module
 {
@@ -19,13 +17,8 @@ class AuthModule extends Module
         __DIR__ . '/Actions'
     ];
 
-    public function __construct(RendererInterface $renderer, RouteCollector $collector)
+    public function __construct(RendererInterface $renderer)
     {
         $renderer->addPath('auth', __DIR__ . '/views');
-
-        /*$route = $collector->getRouteName('auth.logout');
-        if ($route) {
-            $route->middleware(CookieLogoutMiddleware::class);
-        }*/
     }
 }

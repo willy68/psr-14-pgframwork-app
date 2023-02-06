@@ -4,6 +4,7 @@ namespace App\Account\Action;
 
 use PgFramework\Auth;
 use App\Auth\UserTable;
+use PgFramework\Auth\LoggedInMiddleware;
 use PgFramework\Validator\Validator;
 use PgFramework\Session\FlashService;
 use PgFramework\Router\Annotation\Route;
