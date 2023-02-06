@@ -2,14 +2,15 @@
 
 namespace App\Auth\Entity;
 
+use DateTime;
+use Doctrine\ORM\Mapping\Id;
 use Doctrine\DBAL\Types\Types;
-use PgFramework\Auth\UserInterface;
+use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use PgFramework\Auth\UserInterface;
 use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\Table;
 
 /**
  * @ORM\Entity
@@ -74,17 +75,17 @@ class User implements UserInterface
     public $roles = [];
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      * @var string
      */
     #[Column(type: TYPES::STRING, nullable: true)]
     protected $password_reset;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      * @var DateTime
      */
-    #[Column(type: TYPES::DATETIME_MUTABLE)]
+    #[Column(type: TYPES::DATETIME_MUTABLE, nullable: true)]
     protected $password_reset_at;
 
     /**
@@ -233,5 +234,38 @@ class User implements UserInterface
         $this->lastname = $lastname;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPasswordReset()
+    {
+        return $this->password_reset;
+    }
+
+    /**
+     * @param mixed $passwordReset
+     */
+    public function setPasswordReset($passwordReset)
+    {
+        $this->password_reset = $passwordReset;
+    }
+
+    public function setPasswordResetAt($date)
+    {
+        if (is_string($date)) {
+            $this->password_reset_at = \DateTime::createFromFormat('Y-m-d H:i:s', $date);
+        } else {
+            $this->password_reset_at = $date;
+        }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPasswordResetAt(): ?DateTime
+    {
+        return $this->password_reset_at;
     }
 }
