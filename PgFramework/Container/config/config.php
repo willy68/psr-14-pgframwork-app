@@ -218,6 +218,7 @@ return [
         );
     },
     'mail.to' => 'admin@admin.fr',
+    'mail.from' => 'noreply@admin.fr',
     MailerInterface::class => factory(MailerFactory::class),
     Configuration::class => factory(DoctrineConfigFactory::class),
     'doctrine.proxies.dir' => __DIR__ . '/app/Proxies',
