@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use PgFramework\Renderer\RendererInterface;
 use ActiveRecord\Exceptions\RecordNotFound;
+use PgFramework\Database\NoRecordException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
@@ -32,11 +33,13 @@ class RecordNotFoundMiddleware implements MiddlewareInterface
     {
         try {
             return $handler->handle($request);
-        } catch (RecordNotFound $e) {
-            return new Response(404, [], $this->renderer->render(
-                'error404',
-                ['message' => $e->getMessage()]
-            ));
+        } catch (\Exception $e) {
+            if ($e instanceof RecordNotFound || $e instanceof NoRecordException) {
+                return new Response(404, [], $this->renderer->render(
+                    'error404',
+                    ['message' => $e->getMessage()]
+                ));
+            }
         }
     }
 }
