@@ -57,6 +57,9 @@ class AccountEditAction
                 'firstname' => $params['firstname'],
                 'lastname'  => $params['lastname']
             ];
+            if (!empty($params['email'])) {
+                $userParams['email'] = $params['email'];
+            }
             if (!empty($params['password'])) {
                 $userParams['password'] = password_hash($params['password'], PASSWORD_DEFAULT);
             }

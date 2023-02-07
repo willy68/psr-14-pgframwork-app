@@ -9,6 +9,9 @@
     {{ field('username', user.getUsername(), 'username') }}
     {{ field('firstname', user.getFirstname(), 'Prénom') }}
     {{ field('lastname', user.getLastname(), 'Nom') }}
+    <p>Laissez vide pour ne rien changer</p>
+    {{ field('email', user.getEmail(), 'Email', {type: 'email'}) }}
+
     <h2>Changer de mot de passe</h2>
     <p>Laissez vide pour ne rien changer</p>
     {{ field('password', null, 'Mot de passe', {type: 'password'}) }}
