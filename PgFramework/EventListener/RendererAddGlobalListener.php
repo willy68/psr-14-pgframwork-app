@@ -7,7 +7,7 @@ use PgFramework\Event\RequestEvent;
 use PgFramework\Renderer\RendererInterface;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
-class RendererAddGlobal implements EventSubscriberInterface
+class RendererAddGlobalListener implements EventSubscriberInterface
 {
     /**
      * @var RendererInterface
@@ -35,7 +35,7 @@ class RendererAddGlobal implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::EXCEPTION => 850
+            Events::REQUEST => 850
         ];
     }
 }

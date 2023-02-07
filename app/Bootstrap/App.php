@@ -34,7 +34,7 @@ use PgFramework\Middleware\MethodNotAllowedMiddleware;
 use PgFramework\DebugBar\Middleware\DebugBarMiddleware;
 use PgFramework\EventListener\MethodNotAllowedListener;
 use PgFramework\DebugBar\EventListener\DebugBarListener;
-use PgFramework\EventListener\RendererAddGlobal;
+use PgFramework\EventListener\RendererAddGlobalListener;
 use PgFramework\Middleware\RendererRequestMiddleware;
 use PgFramework\Security\Firewall\EventListener\RememberMeLoginListener;
 
@@ -71,7 +71,7 @@ return [
     'listeners' => [
         SessionListener::class,             //Request priority:   1000 Response: -1000
         RouterListener::class,              //Request priority:   900
-        RendererAddGlobal::class,           //Request priority:   850
+        RendererAddGlobalListener::class,   //Request priority:   850
         MethodHeadListener::class,          //Request priority:   800
         MethodOptionsListener::class,       //Request priority:   700
         MethodNotAllowedListener::class,    //Request priority:   600
