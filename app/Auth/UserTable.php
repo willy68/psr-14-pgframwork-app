@@ -2,8 +2,9 @@
 
 namespace App\Auth;
 
-use PgFramework\Database\Table;
+use App\Auth\User;
 use Ramsey\Uuid\Uuid;
+use PgFramework\Database\Table;
 
 class UserTable extends Table
 {

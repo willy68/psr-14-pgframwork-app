@@ -7,17 +7,17 @@ class User extends \App\Auth\User
     /**
      * @var string
      */
-    private $firstname;
+    public $firstname;
 
     /**
      * @var string
      */
-    private $lastname;
+    public $lastname;
 
     /**
      * @var array
      */
-    private $roles = [];
+    public $roles = [];
 
     /**
      * @return string

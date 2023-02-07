@@ -8,7 +8,7 @@ use PgFramework\Session\FlashService;
 use App\Auth\Mailer\PasswordResetMailer;
 use PgFramework\Router\Annotation\Route;
 use PgFramework\Response\ResponseRedirect;
-use ActiveRecord\Exceptions\RecordNotFound;
+use PgFramework\Database\NoRecordException;
 use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -66,7 +66,7 @@ class PasswordForgetAction
                 ]);
                 $this->flashService->success('Un email vous a été envoyé');
                 return new ResponseRedirect($request->getUri()->getPath());
-            } catch (RecordNotFound $e) {
+            } catch (NoRecordException $e) {
                 $errors = ['email' => 'Aucun utilisateur ne correspond à cet email'];
             }
         } else {
