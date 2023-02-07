@@ -6,6 +6,7 @@ use App\Auth\UserTable;
 use PgFramework\Validator\Validator;
 use PgFramework\Session\FlashService;
 use App\Auth\Mailer\PasswordResetMailer;
+use Mezzio\Router\RouterInterface;
 use PgFramework\Router\Annotation\Route;
 use PgFramework\Response\ResponseRedirect;
 use PgFramework\Database\NoRecordException;
@@ -18,31 +19,22 @@ use Psr\Http\Message\ServerRequestInterface;
 #[Route('/password', name:'auth.password')]
 class PasswordForgetAction
 {
-    /**
-     * @var RendererInterface
-     */
     private $renderer;
-    /**
-     * @var UserTable
-     */
     private $userTable;
-    /**
-     * @var PasswordResetMailer
-     */
+    private $router;
     private $mailer;
-    /**
-     * @var FlashService
-     */
     private $flashService;
 
     public function __construct(
         RendererInterface $renderer,
         UserTable $userTable,
+        RouterInterface $router,
         PasswordResetMailer $mailer,
         FlashService $flashService
     ) {
         $this->renderer = $renderer;
         $this->userTable = $userTable;
+        $this->router = $router;
         $this->mailer = $mailer;
         $this->flashService = $flashService;
     }
@@ -65,7 +57,7 @@ class PasswordForgetAction
                     'token' => $token
                 ]);
                 $this->flashService->success('Un email vous a été envoyé');
-                return new ResponseRedirect($request->getUri()->getPath());
+                return new ResponseRedirect($this->router->generateUri('blog.index'));
             } catch (NoRecordException $e) {
                 $errors = ['email' => 'Aucun utilisateur ne correspond à cet email'];
             }
