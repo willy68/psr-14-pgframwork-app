@@ -33,7 +33,7 @@ class RecordNotFoundMiddleware implements MiddlewareInterface
     {
         try {
             return $handler->handle($request);
-        } catch (\Exception $e) {
+        } catch (RecordNotFound $e) {
             if ($e instanceof RecordNotFound || $e instanceof NoRecordException) {
                 return new Response(404, [], $this->renderer->render(
                     'error404',
@@ -41,5 +41,6 @@ class RecordNotFoundMiddleware implements MiddlewareInterface
                 ));
             }
         }
+        return $handler->handle($request);
     }
 }
