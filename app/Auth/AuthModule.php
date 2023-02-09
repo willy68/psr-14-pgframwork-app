@@ -20,12 +20,13 @@ class AuthModule extends Module
     public const SEEDS = __DIR__ . '/db/seeds';
 
     public const ANNOTATIONS = [
-        LoginAction::class,
+        __DIR__ . '/Actions'
+        /*LoginAction::class,
         LoginAttemptAction::class,
         LogoutAction::class,
         PasswordForgetAction::class,
         PasswordResetAction::class,
-        RegisterAction::class
+        RegisterAction::class*/
     ];
 
     public function __construct(RendererInterface $renderer)

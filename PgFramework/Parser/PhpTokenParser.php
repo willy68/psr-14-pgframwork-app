@@ -21,14 +21,17 @@ class PhpTokenParser
 
         $class = false;
         $namespace = false;
+        $semiColon = false;
         $tokens = token_get_all(file_get_contents($file));
 
         $nsToken = [\T_NS_SEPARATOR, \T_STRING];
-        if (PHP_VERSION_ID >= 80000 && \defined('T_NAME_QUALIFIED')) {
-            $nsToken[] = T_NAME_QUALIFIED;
-        }
-        if (PHP_VERSION_ID >= 80000 && \defined('T_NAME_FULLY_QUALIFIED')) {
-            $nsToken[] = T_NAME_FULLY_QUALIFIED;
+        if (PHP_VERSION_ID >= 80000) {
+            if (\defined('T_NAME_QUALIFIED')) {
+                $nsToken[] = T_NAME_QUALIFIED;
+            }
+            if (\defined('T_NAME_FULLY_QUALIFIED')) {
+                $nsToken[] = T_NAME_FULLY_QUALIFIED;
+            }
         }
 
         for ($i = 0, $count = \count($tokens); $i < $count; $i++) {
@@ -36,6 +39,10 @@ class PhpTokenParser
 
             if (!\is_array($token)) {
                 continue;
+            }
+
+            if (\T_DOUBLE_COLON === $token[0]) {
+                $semiColon = true;
             }
 
             if (true === $class && \T_STRING === $token[0]) {
@@ -50,7 +57,10 @@ class PhpTokenParser
                 } while ($i < $count && \is_array($token) && \in_array($token[0], $nsToken));
             }
             if (\T_CLASS === $token[0]) {
-                $class = true;
+                if($semiColon === false) {
+                    $class = true;
+                }
+                $semiColon = false;
             }
             if (\T_NAMESPACE === $token[0]) {
                 $namespace = true;

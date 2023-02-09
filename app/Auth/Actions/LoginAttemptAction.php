@@ -20,7 +20,12 @@ use PgFramework\Auth\RememberMe\RememberMeInterface;
 /**
  * @Route("/login", methods={"POST"}, name="auth.login.post", middlewares={RehashPasswordMiddleware::class, AuthenticationMiddleware::class})
  */
-#[Route('/login', methods:['POST'], name:'auth.login.post', middlewares:[RehashPasswordMiddleware::class,AuthenticationMiddleware::class])]
+#[Route(
+    '/login',
+    methods: ['POST'],
+    name: 'auth.login.post',
+    middlewares: [RehashPasswordMiddleware::class, AuthenticationMiddleware::class]
+)]
 class LoginAttemptAction
 {
     use RouterAwareAction;
