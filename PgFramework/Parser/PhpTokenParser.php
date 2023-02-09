@@ -24,8 +24,11 @@ class PhpTokenParser
         $tokens = token_get_all(file_get_contents($file));
 
         $nsToken = [\T_NS_SEPARATOR, \T_STRING];
-        if (\defined('T_NAME_QUALIFIED')) {
+        if (PHP_VERSION_ID >= 80000 && \defined('T_NAME_QUALIFIED')) {
             $nsToken[] = T_NAME_QUALIFIED;
+        }
+        if (PHP_VERSION_ID >= 80000 && \defined('T_NAME_FULLY_QUALIFIED')) {
+            $nsToken[] = T_NAME_FULLY_QUALIFIED;
         }
 
         for ($i = 0, $count = \count($tokens); $i < $count; $i++) {
