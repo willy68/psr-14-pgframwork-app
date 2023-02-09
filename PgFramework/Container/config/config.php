@@ -70,6 +70,7 @@ use Mezzio\Router\RouteCollector;
 use Mezzio\Router\RouterInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionPersistenceInterface;
+use PgFramework\Auth\Middleware\AuthenticationMiddleware;
 use PgFramework\Database\ActiveRecord\ActiveRecordFactory;
 use PgFramework\Database\Doctrine\DoctrineConfigFactory;
 use PgFramework\Database\Doctrine\EntityManagerFactory;
@@ -165,6 +166,8 @@ return [
     autowire(DefaultPasswordHasher::class)
         ->constructorParameter('config', get('password.hasher.config')),
     AuthenticationListener::class => \DI\autowire()
+        ->constructorParameter('authenticators', get('security.authenticators')),
+    AuthenticationMiddleware::class => \DI\autowire()
         ->constructorParameter('authenticators', get('security.authenticators')),
     JwtAuthentication::class => factory(JwtMiddlewareFactory::class),
     Invoker::class => factory(InvokerFactory::class),
