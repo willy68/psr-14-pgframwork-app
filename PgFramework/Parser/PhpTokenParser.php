@@ -44,7 +44,6 @@ class PhpTokenParser
             if (\T_DOUBLE_COLON === $token[0]) {
                 $nextToken = $tokens[$i+1];
                 if (\is_array($nextToken) && $nextToken[0] === \T_CLASS) {
-                    dd($nextToken, $file);
                     $semiColon = true;
                 }
                 continue;
