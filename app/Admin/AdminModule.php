@@ -31,10 +31,8 @@ class AdminModule extends Module
 
         /** @var RouteCollector $router*/
         $router->crud("$prefix/posts", PostCrudController::class, 'admin.blog')
-            ->middleware(CookieLoginMiddleware::class)
             ->middleware(LoggedInMiddleware::class);
         $router->crud("$prefix/categories", CategoryCrudController::class, 'admin.blog.category')
-            ->middleware(CookieLoginMiddleware::class)
             ->middleware(LoggedInMiddleware::class);
         if ($renderer instanceof TwigRenderer) {
             $renderer->getTwig()->addExtension($adminTwigExtension);
