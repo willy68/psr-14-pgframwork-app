@@ -42,7 +42,12 @@ class PhpTokenParser
             }
 
             if (\T_DOUBLE_COLON === $token[0]) {
-                $semiColon = true;
+                $nextToken = $tokens[$i+1];
+                if (\is_array($nextToken) && $nextToken[0] === \T_CLASS) {
+                    dd($nextToken, $file);
+                    $semiColon = true;
+                }
+                continue;
             }
 
             if (true === $class && \T_STRING === $token[0]) {
@@ -69,7 +74,7 @@ class PhpTokenParser
         return false;
     }
     /*
-    public function extractPhpClasses(string $path)
+    public function findClasses(string $path)
     {
         $code = file_get_contents($path);
         $tokens = @token_get_all($code);
