@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Admin;
+namespace App\Admin\Actions;
 
+use PgFramework\Auth\LoggedInMiddleware;
 use PgFramework\Router\Annotation\Route;
 use PgFramework\Renderer\RendererInterface;
+use PgFramework\Auth\Middleware\CookieLoginMiddleware;
 
 /**
  */
@@ -21,11 +23,16 @@ class DashboardAction
 
     /**
      *
-     * @Route("/admin", name="admin", methods={"GET"})
+     * @Route("/admin", name="admin", methods={"GET"}, middlawares={CookieLoginMiddleware::class,LoggedInMiddleware::class})
      *
      * @return string
      */
-    #[Route('/admin', name:'admin', methods:['GET'])]
+    #[Route(
+        '/admin',
+        name:'admin',
+        methods:['GET'],
+        middlewares:[CookieLoginMiddleware::class,LoggedInMiddleware::class]
+    )]
     public function index(): string
     {
         return $this->renderer->render('@admin/dashboard');

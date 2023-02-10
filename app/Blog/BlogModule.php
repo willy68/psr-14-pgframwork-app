@@ -2,6 +2,10 @@
 
 namespace App\Blog;
 
+use App\Blog\Actions\CategoryIndexAction;
+use App\Blog\Actions\CategoryShowAction;
+use App\Blog\Actions\PostIndexAction;
+use App\Blog\Actions\PostShowAction;
 use PgFramework\Module;
 use PgFramework\Renderer\TwigRenderer;
 use PgFramework\Renderer\RendererInterface;
@@ -18,7 +22,10 @@ class BlogModule extends Module
     public const SEEDS = __DIR__ . '/db/seeds';
 
     public const ANNOTATIONS = [
-        __DIR__ . '/Actions'
+        CategoryIndexAction::class,
+        CategoryShowAction::class,
+        PostIndexAction::class,
+        PostShowAction::class
     ];
 
     /**

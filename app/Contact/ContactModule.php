@@ -8,12 +8,10 @@ use PgFramework\Renderer\RendererInterface;
 class ContactModule extends Module
 {
     public const DEFINITIONS = __DIR__ . '/definitions.php';
-    public const ANNOTATIONS = [__DIR__];
+    public const ANNOTATIONS = [ContactAction::class];
 
     public function __construct(RendererInterface $renderer)
     {
         $renderer->addPath('contact', __DIR__);
-        //$router->get('/contact', ContactAction::class, 'contact');
-        //$router->post('/contact', ContactAction::class);
     }
 }

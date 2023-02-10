@@ -10,6 +10,7 @@ use Mezzio\Router\RouteCollectionInterface;
 use PgFramework\Renderer\RendererInterface;
 use App\Admin\Actions\Blog\PostCrudController;
 use App\Admin\Actions\Blog\CategoryCrudController;
+use App\Admin\Actions\DashboardAction;
 use PgFramework\Auth\Middleware\CookieLoginMiddleware;
 
 class AdminModule extends Module
@@ -17,7 +18,7 @@ class AdminModule extends Module
     public const DEFINITIONS = __DIR__ . '/config.php';
 
     public const ANNOTATIONS = [
-        __DIR__
+        DashboardAction::class
     ];
 
     public function __construct(
