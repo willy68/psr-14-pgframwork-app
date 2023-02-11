@@ -8,7 +8,9 @@ use PgFramework\Renderer\RendererInterface;
 use PgFramework\Auth\Middleware\CookieLoginMiddleware;
 
 /**
+ * @Route("/admin", name="admin", methods={"GET"}, middlawares={LoggedInMiddleware::class})
  */
+#[Route('/admin', name:'admin', methods:['GET'], middlewares:[LoggedInMiddleware::class])]
 class DashboardAction
 {
     /**
@@ -22,18 +24,9 @@ class DashboardAction
     }
 
     /**
-     *
-     * @Route("/admin", name="admin", methods={"GET"}, middlawares={LoggedInMiddleware::class})
-     *
      * @return string
      */
-    #[Route(
-        '/admin',
-        name:'admin',
-        methods:['GET'],
-        middlewares:[LoggedInMiddleware::class]
-    )]
-    public function index(): string
+    public function __invoke(): string
     {
         return $this->renderer->render('@admin/dashboard');
     }

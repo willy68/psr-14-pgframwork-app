@@ -11,7 +11,6 @@ use PgFramework\Renderer\RendererInterface;
 use App\Admin\Actions\Blog\PostCrudController;
 use App\Admin\Actions\Blog\CategoryCrudController;
 use App\Admin\Actions\DashboardAction;
-use PgFramework\Auth\Middleware\CookieLoginMiddleware;
 
 class AdminModule extends Module
 {
