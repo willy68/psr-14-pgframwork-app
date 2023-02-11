@@ -16,6 +16,8 @@ class SessionFactory
     {
         $persistence = $c->get(SessionPersistenceInterface::class);
         $request = $c->get(ApplicationInterface::class)->getRequest();
-        return new LazySession($persistence, $request);
+        $session = new LazySession($persistence, $request);
+        $session->set('SESSION_LIFETIME_KEY', $session->getSessionLifetime());
+        return $session;
     }
 }
