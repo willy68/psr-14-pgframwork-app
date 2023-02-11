@@ -23,7 +23,7 @@ class DashboardAction
 
     /**
      *
-     * @Route("/admin", name="admin", methods={"GET"}, middlawares={CookieLoginMiddleware::class,LoggedInMiddleware::class})
+     * @Route("/admin", name="admin", methods={"GET"}, middlawares={LoggedInMiddleware::class})
      *
      * @return string
      */
@@ -31,7 +31,7 @@ class DashboardAction
         '/admin',
         name:'admin',
         methods:['GET'],
-        middlewares:[CookieLoginMiddleware::class,LoggedInMiddleware::class]
+        middlewares:[LoggedInMiddleware::class]
     )]
     public function index(): string
     {
