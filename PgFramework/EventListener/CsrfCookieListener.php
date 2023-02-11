@@ -56,6 +56,7 @@ class CsrfCookieListener implements EventSubscriberInterface
         $method = $request->getMethod();
 
         $cookie = FigRequestCookies::get($request, $this->config['cookieName'])->getValue();
+        [$tokenId] = \explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
 
         if (\in_array($method, ['GET', 'HEAD'], true)) {
             if (null === $cookie || !$this->tokenManager->isTokenValid($cookie)) {
@@ -64,6 +65,7 @@ class CsrfCookieListener implements EventSubscriberInterface
                     $this->config['field'],
                     $this->createCookie($token)
                 );
+                $event->setResponse(new ResponseRedirect($request->getUri()->getPath()));
             }
         }
 

@@ -6,13 +6,14 @@ namespace PgFramework\Middleware;
 
 use Dflydev\FigCookies\SetCookie;
 use Psr\Http\Message\ResponseInterface;
+use Grafikart\Csrf\InvalidCsrfException;
 use Psr\Http\Server\MiddlewareInterface;
 use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
-use Grafikart\Csrf\InvalidCsrfException;
-use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
+use PgFramework\Response\ResponseRedirect;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
 
 class CsrfCookieMiddleware implements MiddlewareInterface
 {
@@ -53,14 +54,17 @@ class CsrfCookieMiddleware implements MiddlewareInterface
         $cookie = FigRequestCookies::get($request, $this->config['cookieName'])->getValue();
 
         if (\in_array($method, ['GET', 'HEAD'], true)) {
-            if (null === $cookie) {
-                $cookie = $this->tokenManager->generateToken();
-                $request = $request->withAttribute($this->config['field'], $cookie);
+            if (null === $cookie || !$this->tokenManager->isTokenValid($cookie)) {
+                $token = $this->tokenManager->getToken();
+                $request = $request->withAttribute(
+                    $this->config['field'],
+                    $this->createCookie($token)
+                );
+                return FigResponseCookies::set(
+                    new ResponseRedirect($request->getUri()->getPath()),
+                    $this->createCookie($token)
+                );
             }
-
-            $response = $handler->handle($request);
-
-            return $this->setCookie($cookie, $response);
         }
 
         if (\in_array($method, ['DELETE', 'PATCH', 'POST', 'PUT'], true)) {
@@ -120,5 +124,16 @@ class CsrfCookieMiddleware implements MiddlewareInterface
             ->withSecure($this->config['secure'])
             ->withHttpOnly($this->config['httponly']);
         return FigResponseCookies::set($response, $setCookie);
+    }
+
+    private function createCookie(string $token, ?int $expiry = null): SetCookie
+    {
+        return SetCookie::create($this->config['cookieName'])
+            ->withValue($token)
+            ->withExpires(($expiry === null) ? $this->config['expiry'] : $expiry)
+            ->withPath('/')
+            ->withDomain(null)
+            ->withSecure($this->config['secure'])
+            ->withHttpOnly($this->config['httponly']);
     }
 }
