@@ -56,10 +56,6 @@ class CsrfCookieMiddleware implements MiddlewareInterface
         if (\in_array($method, ['GET', 'HEAD'], true)) {
             if (null === $cookie || !$this->tokenManager->isTokenValid($cookie)) {
                 $token = $this->tokenManager->getToken();
-                $request = $request->withAttribute(
-                    $this->config['field'],
-                    $this->createCookie($token)
-                );
                 return FigResponseCookies::set(
                     new ResponseRedirect($request->getUri()->getPath()),
                     $this->createCookie($token)
