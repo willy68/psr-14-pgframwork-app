@@ -4,49 +4,67 @@ namespace PgFramework\Auth\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use PgFramework\Router\RoutesMapInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use PgFramework\EventDispatcher\EventDispatcher;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use PgFramework\Auth\RememberMe\RememberMeInterface;
+use PgFramework\Security\Firewall\Event\LoginFailureEvent;
+use PgFramework\Security\Firewall\Event\LoginSuccessEvent;
 use PgFramework\Security\Authentication\AuthenticationInterface;
 use PgFramework\Security\Authentication\Exception\AuthenticationFailureException;
 
 class AuthenticationMiddleware implements MiddlewareInterface
 {
     /**
-     * AuthenticationInterface Array
-     *
      * @var AuthenticationInterface[]
      */
     private $authenticators;
 
     private $rememberMe;
 
+    /**
+     * @var EventDispatcher
+     */
+    private $dispatcher;
+
+    private $map;
+
     public function __construct(
         array $authenticators,
-        RememberMeInterface $rememberMe
+        RememberMeInterface $rememberMe,
+        EventDispatcherInterface $dispatcher,
+        RoutesMapInterface $map
     ) {
         $this->authenticators = $authenticators;
         $this->rememberMe = $rememberMe;
+        $this->dispatcher = $dispatcher;
+        $this->map = $map;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        [$listeners] = $this->map->getListeners($request);
+        foreach ($listeners as $listener) {
+            $this->dispatcher->addSubscriber($listener);
+        }
         foreach ($this->authenticators as $authenticator) {
             if ($authenticator->supports($request)) {
                 try {
                     $result = $authenticator->authenticate($request);
 
                     /** @var LoginSuccessEvent */
-                    //$loginSuccessEvent = $this->dispatcher->dispatch(new LoginSuccessEvent($result));
-                    //$result = $loginSuccessEvent->getResult();
+                    $loginSuccessEvent = $this->dispatcher->dispatch(new LoginSuccessEvent($result));
+                    $result = $loginSuccessEvent->getResult();
                 } catch (AuthenticationFailureException $e) {
 
                     /** @var LoginFailureEvent */
-                    //$loginFailureEvent = $this->dispatcher->dispatch(new LoginFailureEvent($e));
+                    $loginFailureEvent = $this->dispatcher->dispatch(new LoginFailureEvent($e));
 
                     $response = $authenticator->onAuthenticateFailure(
                         $request,
-                        $e //$loginFailureEvent->getException()
+                        $loginFailureEvent->getException()
                     );
                     if ($response instanceof ResponseInterface) {
                         return $response;
