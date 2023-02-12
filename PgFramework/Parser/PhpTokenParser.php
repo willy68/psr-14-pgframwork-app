@@ -21,7 +21,7 @@ class PhpTokenParser
 
         $class = false;
         $namespace = false;
-        $semiColon = false;
+        $doubleColon = false;
         $tokens = token_get_all(file_get_contents($file));
 
         $nsToken = [\T_NS_SEPARATOR, \T_STRING];
@@ -34,6 +34,8 @@ class PhpTokenParser
             }
         }
 
+        $skipToken = [T_DOC_COMMENT, T_WHITESPACE, T_COMMENT];
+
         for ($i = 0, $count = \count($tokens); $i < $count; $i++) {
             $token = $tokens[$i];
 
@@ -41,12 +43,17 @@ class PhpTokenParser
                 continue;
             }
 
-            if (\T_DOUBLE_COLON === $token[0]) {
-                $nextToken = $tokens[$i+1];
-                if (\is_array($nextToken) && $nextToken[0] === \T_CLASS) {
-                    $semiColon = true;
-                }
-                continue;
+            if (true === $doubleColon) {
+                $doubleColon = false;
+                do {
+                    if ( \T_CLASS === $token[0]) {
+                        $doubleColon = true;
+                        break;
+                    } elseif (!\in_array($token[0], $skipToken, TRUE)) {
+                        break;
+                    }
+                    $token = $tokens[++$i];
+                } while ($i < $count && \is_array($token));
             }
 
             if (true === $class && \T_STRING === $token[0]) {
@@ -60,11 +67,14 @@ class PhpTokenParser
                     $token = $tokens[++$i];
                 } while ($i < $count && \is_array($token) && \in_array($token[0], $nsToken));
             }
+            if (\T_DOUBLE_COLON === $token[0]) {
+                $doubleColon = true;
+            }
             if (\T_CLASS === $token[0]) {
-                if($semiColon === false) {
+                if($doubleColon === false) {
                     $class = true;
                 }
-                $semiColon = false;
+                $doubleColon = false;
             }
             if (\T_NAMESPACE === $token[0]) {
                 $namespace = true;
