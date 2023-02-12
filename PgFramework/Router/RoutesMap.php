@@ -26,6 +26,6 @@ class RoutesMap implements RoutesMapInterface
             }
         }
 
-        return [null];
+        return [[]];
     }
 }
