@@ -109,7 +109,7 @@ return [
         ->constructorParameter('entryPoints', get('twig.entrypoints')),
     //CsrfExtension::class => create()
     //    ->constructor(get(CsrfListenerInterface::class)),
-    'twig.extensions' => [
+    'twig.extensions' => \DI\add([
         get(RouterTwigExtension::class),
         get(PagerFantaExtension::class),
         get(TextExtension::class),
@@ -118,7 +118,7 @@ return [
         get(FormExtension::class),
         get(CsrfExtension::class),
         get(WebpackExtension::class),
-    ],
+    ]),
     'form.validations' => \DI\add([
         'required' => RequiredValidation::class,
         'min' => MinValidation::class,
