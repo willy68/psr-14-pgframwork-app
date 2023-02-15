@@ -11,20 +11,19 @@ use PgFramework\Router\Annotation\Route;
 use Mezzio\Session\SessionInterface;
 use PgFramework\Actions\RouterAwareAction;
 use PgFramework\Auth\Middleware\AuthenticationMiddleware;
-use PgFramework\Auth\Middleware\RehashPasswordMiddleware;
 use PgFramework\Response\ResponseRedirect;
 use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Auth\RememberMe\RememberMeInterface;
 
 /**
- * @Route("/login", methods={"POST"}, name="auth.login.post", middlewares={RehashPasswordMiddleware::class, AuthenticationMiddleware::class})
+ * @Route("/login", methods={"POST"}, name="auth.login.post", middlewares={AuthenticationMiddleware::class})
  */
 #[Route(
     '/login',
     methods: ['POST'],
     name: 'auth.login.post',
-    middlewares: [RehashPasswordMiddleware::class, AuthenticationMiddleware::class]
+    middlewares: [AuthenticationMiddleware::class]
 )]
 class LoginAttemptAction
 {
