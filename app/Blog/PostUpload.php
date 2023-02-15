@@ -2,7 +2,7 @@
 
 namespace App\Blog;
 
-use PgFramework\Upload;
+use PgFramework\File\Upload;
 
 class PostUpload extends Upload
 {

@@ -2,7 +2,7 @@
 
 namespace Tests\Framework;
 
-use PgFramework\Upload;
+use PgFramework\File\Upload;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UploadedFileInterface;
 

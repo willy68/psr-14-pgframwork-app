@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PgFramework;
+namespace PgFramework\File;
 
 use Intervention\Image\ImageManager;
 use Psr\Http\Message\UploadedFileInterface;
