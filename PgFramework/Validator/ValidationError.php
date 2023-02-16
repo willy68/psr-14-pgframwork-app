@@ -36,7 +36,9 @@ class ValidationError
         'exists' => "Le champ %s n'existe pas dans la table %s",
         'unique' => "Le champ %s doit être unique",
         'filetype' => "Le champ %s n'est pas au format valide (%s)",
-        'uploaded' => "Vous devez uploaded un fichier"
+        'uploaded' => "Vous devez uploaded un fichier",
+        'email' => "Le champ %s doit être une adresse E-mail valide",
+        'confirm' => "Le champ %s doit être identique avec le champ %s",
     ];
 
     private $attributes;
