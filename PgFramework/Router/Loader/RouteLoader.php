@@ -5,9 +5,9 @@ namespace PgFramework\Router\Loader;
 use PgRouter\Route;
 use ReflectionClass;
 use ReflectionMethod;
+use PgRouter\RouteCollectionInterface;
 use PgFramework\Annotation\AnnotationsLoader;
 use PgFramework\Router\Annotation\Route as AnnotRoute;
-use PgRouter\RouteCollectionInterface;
 
 class RouteLoader
 {
@@ -53,6 +53,7 @@ class RouteLoader
 
         if (empty($routes) && $classAnnotation && $reflectionClass->hasMethod('__invoke')) {
             foreach ($this->annotationsLoader->getClassAnnotations($reflectionClass) as $classAnnotation) {
+                /** @var Route $route */
                 $routes[] = $this->collector->route(
                     $classAnnotation->getPath(),
                     $reflectionClass->getName(),
