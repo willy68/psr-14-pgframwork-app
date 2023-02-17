@@ -18,6 +18,7 @@ tests/html
 .settings/
 *.sublime-workspace
 .editorconfig
+*.code-workspace
 
 # IDE - VSCode
 .vscode/*
