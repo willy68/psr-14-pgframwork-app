@@ -3,24 +3,24 @@
 namespace App\Api;
 
 use PgFramework\Module;
-use Mezzio\Router\RouteGroup;
-use Mezzio\Router\FastRouteRouter;
-use Mezzio\Router\RouterInterface;
+use PgRouter\RouteGroup;
 use App\Api\Client\ClientController;
 use Tuupola\Middleware\JwtAuthentication;
 use App\Api\Client\Adresse\AdresseController;
 use App\Api\Client\Civilite\CiviliteController;
+use PgFramework\Middleware\BodyParserMiddleware;
+use App\Api\Client\AdresseType\AdresseTypeController;
 use PgFramework\Middleware\ContentTypeJsonMiddleware;
 use PgFramework\Middleware\CorsAllowOriginMiddleware;
-use App\Api\Client\AdresseType\AdresseTypeController;
-use PgFramework\Middleware\BodyParserMiddleware;
+use PgRouter\RouteCollectionInterface;
+use PgRouter\RouteCollector;
 
 class ApiClientModule extends Module
 {
-    public function __construct(RouterInterface $router)
+    public function __construct(RouteCollectionInterface $router)
     {
 
-        /** @var FastRouteRouter $router */
+        /** @var RouteCollector $router */
         $router->group('/api', function (RouteGroup $route) {
             // Client
             $route->get(

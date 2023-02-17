@@ -64,9 +64,6 @@ use PgFramework\Validator\Rules\{
 use Invoker\CallableResolver;
 use Invoker\Invoker;
 use Invoker\ParameterResolver\ParameterResolver;
-use Mezzio\Router\FastRouteRouter;
-use Mezzio\Router\RouteCollectionInterface;
-use Mezzio\Router\RouteCollector;
 use Mezzio\Router\RouterInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionPersistenceInterface;
@@ -88,6 +85,9 @@ use PgFramework\Security\Hasher\DefaultPasswordHasher;
 use PgFramework\Security\Hasher\PasswordHasherInterface;
 use PgFramework\Session\SessionFactory;
 use PgFramework\Session\SessionPersistenceFactory;
+use PgRouter\RouteCollectionInterface;
+use PgRouter\RouteCollector;
+use PgRouter\Router;
 use Tuupola\Middleware\JwtAuthentication;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -186,7 +186,8 @@ return [
     },
     'routes.listeners' => \DI\add([]),
     RoutesMapInterface::class => factory(RoutesMapFactory::class),
-    RouterInterface::class => factory(FastRouteRouterFactory::class),
+    RouterInterface::class => factory(RouterFactory::class),
+    Router::class => factory(RouterFactory::class),
     FastRouteRouter::class => factory(FastRouteRouterFactory::class),
     'duplicate.route' => true,
     RouteCollector::class => \DI\autowire()

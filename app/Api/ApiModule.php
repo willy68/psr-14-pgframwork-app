@@ -3,10 +3,8 @@
 namespace App\Api;
 
 use PgFramework\Module;
-use Mezzio\Router\RouteGroup;
+use PgRouter\RouteGroup;
 use App\Api\User\UserController;
-use Mezzio\Router\FastRouteRouter;
-use Mezzio\Router\RouterInterface;
 use App\Api\Controller\ApiController;
 use App\Api\User\Role\RoleController;
 use App\Api\Cpville\CpvilleController;
@@ -16,6 +14,8 @@ use App\Api\DernierCode\DernierCodeController;
 use PgFramework\Middleware\BodyParserMiddleware;
 use PgFramework\Middleware\ContentTypeJsonMiddleware;
 use PgFramework\Middleware\CorsAllowOriginMiddleware;
+use PgRouter\RouteCollectionInterface;
+use PgRouter\RouteCollector;
 
 class ApiModule extends Module
 {
@@ -29,9 +29,9 @@ class ApiModule extends Module
      * ApiModule constructor.
      * @param Router $router
      */
-    public function __construct(RouterInterface $router)
+    public function __construct(RouteCollectionInterface $router)
     {
-        /** @var FastRouteRouter $router */
+        /** @var RouteCollector $router */
         $router->get('/api', ApiController::class . '::index', 'api.index')
             ->middleware(CorsAllowOriginMiddleware::class)
             ->middleware(ContentTypeJsonMiddleware::class);

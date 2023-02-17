@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace PgFramework\Middleware;
 
-use Mezzio\Router\Route;
-use Mezzio\Router\RouteGroup;
+use PgRouter\Route;
+use PgRouter\Router;
+use PgRouter\RouteGroup;
 use Mezzio\Router\RouteResult;
-use Mezzio\Router\FastRouteRouter;
 use Mezzio\Router\RouterInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -27,7 +27,7 @@ class DispatcherMiddleware implements MiddlewareInterface
     /**
      * Router
      *
-     * @var FastRouteRouter
+     * @var Router
      */
     private $router;
 

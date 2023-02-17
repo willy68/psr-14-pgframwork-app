@@ -2,12 +2,12 @@
 
 namespace Tests\Framework\Middleware;
 
+use PgRouter\Route;
+use PgRouter\Router;
 use GuzzleHttp\Psr7\Response;
-use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\TestCase;
 use GuzzleHttp\Psr7\ServerRequest;
-use Mezzio\Router\FastRouteRouter;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -22,7 +22,7 @@ class DispatcherMiddlewareTest extends TestCase
         };
         $route = new Route('/demo', $callback);
         $routeResult = RouteResult::fromRoute($route);
-        $router = $this->getMockBuilder(FastRouteRouter::class)->getMock();
+        $router = $this->getMockBuilder(Router::class)->getMock();
         $request = (new ServerRequest('GET', '/demo'))->withAttribute(RouteResult::class, $routeResult);
         $container = $this->getMockBuilder(ContainerInterface::class)->getMock();
         $container->method('get')->willReturn($router);

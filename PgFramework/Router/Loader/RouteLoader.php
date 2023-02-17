@@ -2,12 +2,12 @@
 
 namespace PgFramework\Router\Loader;
 
+use PgRouter\Route;
 use ReflectionClass;
 use ReflectionMethod;
-use Mezzio\Router\Route;
-use Mezzio\Router\RouteCollector;
 use PgFramework\Annotation\AnnotationsLoader;
 use PgFramework\Router\Annotation\Route as AnnotRoute;
+use PgRouter\RouteCollectionInterface;
 
 class RouteLoader
 {
@@ -16,7 +16,7 @@ class RouteLoader
     protected $annotationsLoader;
 
     public function __construct(
-        RouteCollector $collector,
+        RouteCollectionInterface $collector,
         AnnotationsLoader $annotationsLoader
     ) {
         $this->collector = $collector;

@@ -3,14 +3,14 @@
 namespace App\Admin;
 
 use PgFramework\Module;
-use Mezzio\Router\RouteCollector;
+use PgRouter\RouteCollector;
+use App\Admin\Actions\DashboardAction;
 use PgFramework\Renderer\TwigRenderer;
+use PgRouter\RouteCollectionInterface;
 use PgFramework\Auth\LoggedInMiddleware;
-use Mezzio\Router\RouteCollectionInterface;
 use PgFramework\Renderer\RendererInterface;
 use App\Admin\Actions\Blog\PostCrudController;
 use App\Admin\Actions\Blog\CategoryCrudController;
-use App\Admin\Actions\DashboardAction;
 
 class AdminModule extends Module
 {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Router\Loader;
 
-use Mezzio\Router\Route;
+use PgRouter\Route;
 use PgFramework\Parser\PhpTokenParser;
 
 class FileLoader extends RouteLoader

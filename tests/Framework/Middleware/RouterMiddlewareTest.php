@@ -2,13 +2,13 @@
 
 namespace Tests\Framework\Middleware;
 
-use PgFramework\Middleware\RouterMiddleware;
+use PgRouter\Route;
 use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Psr7\ServerRequest;
-use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
-use Mezzio\Router\RouterInterface;
 use PHPUnit\Framework\TestCase;
+use GuzzleHttp\Psr7\ServerRequest;
+use Mezzio\Router\RouterInterface;
+use PgFramework\Middleware\RouterMiddleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 

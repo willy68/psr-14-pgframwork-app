@@ -6,7 +6,6 @@ use App\Entity\Post;
 use Pagerfanta\Pagerfanta;
 use PHPUnit\Framework\TestCase;
 use GuzzleHttp\Psr7\ServerRequest;
-use Mezzio\Router\FastRouteRouter;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PgFramework\Session\FlashService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,6 +14,7 @@ use PgFramework\Controller\CrudController;
 use PgFramework\Database\Doctrine\PaginatedEntityRepository;
 use PgFramework\Renderer\RendererInterface;
 use PgFramework\Database\Doctrine\PaginatedQueryBuilder;
+use PgRouter\Router;
 use stdClass;
 
 class CrudControllerTest extends TestCase
@@ -50,12 +50,12 @@ class CrudControllerTest extends TestCase
     private function makeCrudAction(): CrudController
     {
         $this->renderer->method('render')->willReturn('');
-        $router = $this->getMockBuilder(FastRouteRouter::class)->disableOriginalConstructor()->getMock();
+        $router = $this->getMockBuilder(Router::class)->disableOriginalConstructor()->getMock();
         $router->method('generateUri')->willReturnCallback(function ($url) {
             return $url;
         });
         /**
-         * @var FastRouteRouter $router
+         * @var Router $router
          * @var ManagerRegistry $om
          */
         $action = new CrudController($this->renderer, $this->om, $router, $this->flash);

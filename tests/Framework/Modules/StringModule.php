@@ -2,11 +2,11 @@
 
 namespace Tests\Framework\Modules;
 
-use Mezzio\Router\FastRouteRouter;
+use PgRouter\RouteCollector;
 
 class StringModule
 {
-    public function __construct(FastRouteRouter $router)
+    public function __construct(RouteCollector $router)
     {
         $router->get('/demo', function () {
             return 'DEMO';

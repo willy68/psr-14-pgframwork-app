@@ -7,16 +7,18 @@ use PgFramework\Database\Query;
 use PgFramework\Database\Table;
 use PHPUnit\Framework\TestCase;
 use GuzzleHttp\Psr7\ServerRequest;
-use Mezzio\Router\FastRouteRouter;
 use PgFramework\Actions\CrudAction;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PgFramework\Session\FlashService;
 use PgFramework\Renderer\RendererInterface;
+use PgRouter\Router;
 
 class CrudActionTest extends TestCase
 {
     private $flash;
     private $table;
+    private $query;
+    private $renderer;
 
     public function setUp(): void
     {
@@ -36,11 +38,11 @@ class CrudActionTest extends TestCase
     private function makeCrudAction(): CrudAction
     {
         $this->renderer->method('render')->willReturn('');
-        $router = $this->getMockBuilder(FastRouteRouter::class)->disableOriginalConstructor()->getMock();
+        $router = $this->getMockBuilder(Router::class)->disableOriginalConstructor()->getMock();
         $router->method('generateUri')->willReturnCallback(function ($url) {
             return $url;
         });
-        /** @var FastRouteRouter $router */
+        /** @var Router $router */
         $action = new CrudAction($this->renderer, $router, $this->table, $this->flash);
         $property = (new \ReflectionClass($action))->getProperty('viewPath');
         $property->setAccessible(true);
