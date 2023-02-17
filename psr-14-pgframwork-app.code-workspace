@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../PgRouter"
+		},
+		{
+			"path": "../pgconsole"
+		},
+		{
+			"path": "../PgModule"
+		}
+	],
+	"settings": {}
+}
