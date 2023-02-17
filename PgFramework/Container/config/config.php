@@ -20,7 +20,6 @@ use PgFramework\Twig\{
     PagerFantaExtension,
     WebpackExtension
 };
-use PgFramework\Router\FastRouteRouterFactory;
 use PgFramework\Router\RouterTwigExtension;
 use PgFramework\Session\PHPSession;
 use PgFramework\Session\SessionInterface as PgSessionInterface;
@@ -78,6 +77,7 @@ use PgFramework\EventListener\CsrfListener;
 use PgFramework\EventListener\CsrfListenerInterface;
 use PgFramework\Kernel\KernelEvent;
 use PgFramework\Mailer\MailerFactory;
+use PgFramework\Router\RouterFactory;
 use PgFramework\Router\RoutesMapFactory;
 use PgFramework\Router\RoutesMapInterface;
 use PgFramework\Security\Firewall\EventListener\AuthenticationListener;
@@ -188,7 +188,6 @@ return [
     RoutesMapInterface::class => factory(RoutesMapFactory::class),
     RouterInterface::class => factory(RouterFactory::class),
     Router::class => factory(RouterFactory::class),
-    FastRouteRouter::class => factory(FastRouteRouterFactory::class),
     'duplicate.route' => true,
     RouteCollector::class => \DI\autowire()
         ->constructorParameter("detectDuplicates", \DI\get('duplicate.route')),

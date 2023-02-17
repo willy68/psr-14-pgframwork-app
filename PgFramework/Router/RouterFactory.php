@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace PgFramework\Router;
 
 use PgRouter\Router;
-use Mezzio\Router\FastRouteRouter;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -38,8 +37,8 @@ class RouterFactory
         }
 
         return new Router(null, null, [
-            FastRouteRouter::CONFIG_CACHE_ENABLED => !is_null($cache),
-            FastRouteRouter::CONFIG_CACHE_FILE => $cache
+            Router::CONFIG_CACHE_ENABLED => !is_null($cache),
+            Router::CONFIG_CACHE_FILE => $cache
         ]);
     }
 }
