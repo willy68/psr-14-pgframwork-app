@@ -15,7 +15,7 @@
         }
     ],
     "require": {
-        "php": "~8.0.0 || ~8.1.0",
+        "php": "^7.4 || ~8.0.0 || ~8.1.0",
         "ext-json": "*",
         "ext-pdo": "*",
         "symfony/dotenv": "^5.0",
@@ -26,7 +26,7 @@
         "php-di/invoker": "^2.2",
         "twig/twig": "^3.0",
         "willy68/response-sender": "^1.0.0",
-        "willy68/pg-router": "dev-main",
+        "willy68/pg-router": "^1.0.0",
         "willy68/php-activerecord-psr-4": "dev-master",
         "willy68/pgmodule": "^1.0",
         "tuupola/http-factory": "^1.1",
