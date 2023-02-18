@@ -2,7 +2,7 @@
 
 namespace App\Auth;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use PgFramework\Auth\User;
 use PgFramework\Auth\UserInterface;
 use Mezzio\Session\SessionInterface;

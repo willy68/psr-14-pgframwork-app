@@ -2,7 +2,7 @@
 
 namespace Tests\Framework\Auth;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use PHPUnit\Framework\TestCase;
 use GuzzleHttp\Psr7\ServerRequest;
 use Psr\Http\Message\ResponseInterface;

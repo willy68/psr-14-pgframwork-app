@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\DebugBar\DataCollector;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use DebugBar\DataCollector\Renderable;
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;

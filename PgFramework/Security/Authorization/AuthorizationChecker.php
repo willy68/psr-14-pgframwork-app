@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Security\Authorization;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use PgFramework\Auth\ForbiddenException;
 
 class AuthorizationChecker implements AuthorizationCheckerInterface

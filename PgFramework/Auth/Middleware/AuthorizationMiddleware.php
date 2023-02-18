@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Auth\Middleware;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use Psr\Http\Message\ResponseInterface;
 use PgFramework\Auth\ForbiddenException;
 use Psr\Http\Server\MiddlewareInterface;

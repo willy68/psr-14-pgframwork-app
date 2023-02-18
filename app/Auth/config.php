@@ -2,7 +2,7 @@
 
 use PgFramework\Environnement\Environnement;
 use PgFramework\Security\Firewall\EventListener\ForbiddenListener;
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use PgFramework\Auth\{
     AuthSession,
     UserInterface,

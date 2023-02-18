@@ -2,7 +2,7 @@
 
 namespace Tests\App\Account\Action;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use App\Account\User;
 use Prophecy\Argument;
 use App\Auth\UserTable;

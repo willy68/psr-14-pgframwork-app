@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Security\Authorization;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 
 /**
  * VoterManagerInterface makes authorization decisions.

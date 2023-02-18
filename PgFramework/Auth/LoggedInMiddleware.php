@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Auth;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;

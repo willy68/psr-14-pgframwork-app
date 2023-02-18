@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PgFramework\Security\Authentication;
 
 use Mezzio\Router\RouteResult;
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use PgFramework\Auth\UserInterface;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Session\FlashService;

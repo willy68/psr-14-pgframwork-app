@@ -2,7 +2,7 @@
 
 namespace App\Auth\Twig;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use Twig\TwigFunction;
 use Twig\Extension\AbstractExtension;
 

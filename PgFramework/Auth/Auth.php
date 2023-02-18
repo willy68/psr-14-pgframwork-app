@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PgFramework;
+namespace PgFramework\Auth;
 
 use PgFramework\Auth\UserInterface;
 

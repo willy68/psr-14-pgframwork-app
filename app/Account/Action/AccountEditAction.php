@@ -2,7 +2,7 @@
 
 namespace App\Account\Action;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use App\Auth\UserTable;
 use PgFramework\Auth\LoggedInMiddleware;
 use PgFramework\Validator\Validator;

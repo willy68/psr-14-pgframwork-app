@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Auth;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use PgFramework\Auth\UserInterface;
 use Mezzio\Session\SessionInterface;
 use PgFramework\Auth\Provider\UserProviderInterface;

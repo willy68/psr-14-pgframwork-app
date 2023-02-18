@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Security\Authorization\Voter;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 
 abstract class AbstractVoter implements VoterInterface
 {

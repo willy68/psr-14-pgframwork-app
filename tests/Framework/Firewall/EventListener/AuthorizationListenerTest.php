@@ -2,7 +2,7 @@
 
 namespace Tests\Framework\Firewall\EventListener;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use PgFramework\Event\Events;
 use PHPUnit\Framework\TestCase;
 use GuzzleHttp\Psr7\ServerRequest;

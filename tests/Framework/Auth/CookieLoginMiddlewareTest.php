@@ -2,7 +2,7 @@
 
 namespace Tests\Framework\Auth;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use GuzzleHttp\Psr7\ServerRequest;
 use PgFramework\Auth\Middleware\CookieLoginMiddleware;
 use PgFramework\Auth\RememberMe\RememberMeInterface;
