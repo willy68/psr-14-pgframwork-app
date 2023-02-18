@@ -18,12 +18,12 @@ class AuthCollector extends DataCollector implements Renderable, AssetProvider
         $this->auth = $auth;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'auth';
     }
 
-    public function collect()
+    public function collect(): array
     {
         $user = $this->auth->getUser();
         if (null === $user) {
@@ -50,7 +50,7 @@ class AuthCollector extends DataCollector implements Renderable, AssetProvider
         return $data;
     }
 
-    public function getWidgets()
+    public function getWidgets(): array
     {
         return [
             "auth" => [
@@ -71,7 +71,7 @@ class AuthCollector extends DataCollector implements Renderable, AssetProvider
     /**
      * @return array
      */
-    public function getAssets()
+    public function getAssets(): array
     {
         return $this->getVarDumper()->getAssets();
     }

@@ -8,9 +8,11 @@ use PgFramework\Security\Firewall\EventListener\AuthenticationListener;
 use PgFramework\Security\Firewall\EventListener\LoggedInListener;
 use PgFramework\Security\Firewall\EventListener\RehashPasswordListener;
 use PgFramework\Security\Firewall\EventListener\RememberMeLogoutListener;
+use function DI\add;
+use function DI\get;
 
 return [
-    'security.firewall.rules' => \DI\add([
+    'security.firewall.rules' => add([
         [
             // Default internal firewall dispatcher (dispatch only RequestEvent)
             'default.listeners' => [
@@ -40,9 +42,9 @@ return [
             //]
             'voters.rules' => [
                 [
-                    // Overhide main rules
+                    // Override main rules
                     //'path' => '^/admin/posts/(\d+)',
-                    // Other RequestMatcher rules overhide main rules
+                    // Other RequestMatcher rules override main rules
                     //'methods' => ['GET','POST'],
                     //'host' => localhost,
                     //'schemes' => ['https','http'],
@@ -84,11 +86,11 @@ return [
         ],
     ]),
     // Add your authenticators here (used by AuthenticationListener)
-    'security.authenticators' => \DI\add([
-        \DI\get(FormAuthentication::class),
+    'security.authenticators' => add([
+        get(FormAuthentication::class),
     ]),
     // Add your Voter class here (used by AuthorizationListener)
-    'security.voters' => \DI\add([
-        \DI\get(VoterRoles::class),
+    'security.voters' => add([
+        get(VoterRoles::class),
     ]),
 ];

@@ -45,7 +45,7 @@ class DebugBarMiddleware implements MiddlewareInterface
 
         $response = $handler->handle($request);
 
-        /** @var ApplicationInterface */
+        /** @var ApplicationInterface $app*/
         $app = $request->getAttribute(ApplicationInterface::class);
 
         $this->debugBar->addCollector(

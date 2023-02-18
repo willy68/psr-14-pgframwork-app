@@ -26,7 +26,7 @@ class PgDebugBar extends DebugBar
             ->addCollector(new MemoryCollector());
 
         $exceptionCollector = (new ExceptionsCollector())->useHtmlVarDumper(false);
-        $exceptionCollector->setChainExceptions(true);
+        $exceptionCollector->setChainExceptions();
 
         $this->addCollector($exceptionCollector);
     }
@@ -37,7 +37,7 @@ class PgDebugBar extends DebugBar
      * @param ResponseInterface $response A Response instance
      * Based on https://github.com/symfony/WebProfilerBundle/blob/master/EventListener/WebDebugToolbarListener.php
      */
-    public function injectDebugbar(ResponseInterface $response)
+    public function injectDebugbar(ResponseInterface $response): ResponseInterface
     {
         $content = $response->getBody()->getContents();
 

@@ -9,6 +9,7 @@ use DebugBar\DataCollector\Renderable;
 use DebugBar\DataCollector\DataCollector;
 use Mezzio\Router\RouteResult;
 use Mezzio\Router\RouterInterface;
+use PgRouter\Route;
 
 class RouteCollector extends DataCollector implements Renderable, AssetProvider
 {
@@ -22,12 +23,12 @@ class RouteCollector extends DataCollector implements Renderable, AssetProvider
         $this->router = $router;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'route';
     }
 
-    public function collect()
+    public function collect(): array
     {
         $data = [
             'text' => 'route fail',
@@ -38,6 +39,7 @@ class RouteCollector extends DataCollector implements Renderable, AssetProvider
             return $data;
         }
 
+        /** @var false|Route $route */
         $route = $this->routeResult->getMatchedRoute();
         if ($route) {
             $data['data'] = [
@@ -58,7 +60,7 @@ class RouteCollector extends DataCollector implements Renderable, AssetProvider
         return $data;
     }
 
-    public function getWidgets()
+    public function getWidgets(): array
     {
         return [
             "route" => [
@@ -79,7 +81,7 @@ class RouteCollector extends DataCollector implements Renderable, AssetProvider
     /**
      * @return array
      */
-    public function getAssets()
+    public function getAssets(): array
     {
         return $this->getVarDumper()->getAssets();
     }

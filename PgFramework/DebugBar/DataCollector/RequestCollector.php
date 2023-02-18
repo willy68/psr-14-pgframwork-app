@@ -53,7 +53,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return 'request';
     }
@@ -61,7 +61,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
     /**
      * @return array
      */
-    public function getAssets()
+    public function getAssets(): array
     {
         return $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : array();
     }
@@ -69,7 +69,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
     /**
      * {@inheritDoc}
      */
-    public function getWidgets()
+    public function getWidgets(): array
     {
         $widget = $this->isHtmlVarDumperUsed()
             ? "PhpDebugBar.Widgets.HtmlVariableListWidget"
@@ -91,7 +91,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
     /**
      * {@inheritdoc}
      */
-    public function collect()
+    public function collect(): array
     {
         $request = $this->request;
         $response = $this->response;
@@ -153,7 +153,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
         return $data;
     }
 
-    private function getCookieHeader($name, $value, $expires, $path, $domain, $secure, $httponly)
+    private function getCookieHeader($name, $value, $expires, $path, $domain, $secure, $httponly): string
     {
         $cookie = sprintf('%s=%s', $name, urlencode($value));
 
@@ -166,7 +166,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
                 $expires = strtotime($expires);
                 if (false === $expires || -1 == $expires) {
                     throw new InvalidArgumentException(
-                        sprintf('The "expires" cookie parameter is not valid.', $expires)
+                        sprintf('The "expires" %d cookie parameter is not valid.', $expires)
                     );
                 }
             }
@@ -202,7 +202,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
      * @param bool $value
      * @return $this
      */
-    public function useHtmlVarDumper($value = true)
+    public function useHtmlVarDumper(bool $value = true): self
     {
         $this->useHtmlVarDumper = $value;
         return $this;
@@ -212,9 +212,9 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
      * Indicates whether the Symfony HtmlDumper will be used to dump variables for rich variable
      * rendering.
      *
-     * @return mixed
+     * @return bool
      */
-    public function isHtmlVarDumperUsed()
+    public function isHtmlVarDumperUsed(): bool
     {
         return $this->useHtmlVarDumper;
     }
