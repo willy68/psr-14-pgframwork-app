@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace PgFramework;
 
 use Exception;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use RuntimeException;
 use DI\ContainerBuilder;
 use PgRouter\RouteCollector;
@@ -20,6 +22,8 @@ use PgFramework\Environnement\Environnement;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Annotation\AnnotationsLoader;
 use PgFramework\Router\Loader\DirectoryLoader;
+use Throwable;
+use function dirname;
 
 /**
  * Application
@@ -74,7 +78,7 @@ class App extends AbstractApplication
     private $request;
 
     /**
-     * Dir where the composer.json file is located
+     * Dir where the composer.json file location
      *
      * @var string
      */
@@ -170,9 +174,11 @@ class App extends AbstractApplication
 
     /**
      *
-     * @param  ServerRequestInterface|null $request
+     * @param ServerRequestInterface|null $request
      * @return ResponseInterface
-     * @throws Exception
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws Throwable
      */
     public function run(?ServerRequestInterface $request = null): ResponseInterface
     {
@@ -185,7 +191,7 @@ class App extends AbstractApplication
 
         $container = $this->getContainer();
 
-        /** @var Module */
+        /** @var Module $module*/
         foreach ($this->modules as $module) {
             if (!empty($module::ANNOTATIONS)) {
                 $loader = new DirectoryLoader(
@@ -196,7 +202,7 @@ class App extends AbstractApplication
                     $loader->load($dir);
                 }
             }
-            $module = $container->get((string)$module);
+            $container->get((string)$module);
         }
 
         if (!empty($this->listeners)) {
@@ -224,7 +230,7 @@ class App extends AbstractApplication
 
         try {
             return $this->kernel->handle($this->request);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->kernel->handleException($e, $this->kernel->getRequest());
         }
     }
@@ -252,7 +258,7 @@ class App extends AbstractApplication
                 $builder->addDefinitions($config);
             }
 
-            /** @var Module */
+            /** @var Module $module*/
             foreach ($this->modules as $module) {
                 if ($module::DEFINITIONS) {
                     $builder->addDefinitions($module::DEFINITIONS);
@@ -299,7 +305,7 @@ class App extends AbstractApplication
      *
      * @return  ServerRequestInterface
      */
-    public function getRequest()
+    public function getRequest(): ServerRequestInterface
     {
         return $this->request;
     }
@@ -311,7 +317,7 @@ class App extends AbstractApplication
      *
      * @return  self
      */
-    public function setRequest(ServerRequestInterface $request)
+    public function setRequest(ServerRequestInterface $request): self
     {
         $this->request = $request;
 
@@ -319,19 +325,19 @@ class App extends AbstractApplication
     }
 
     /**
-     * Gets the application root dir (path of the project's composer file).
+     * Gets the application root dir (path of the project composer file).
      *
      * https://github.com/symfony/symfony/blob/6.0/src/Symfony/Component/HttpKernel/Kernel.php#method_getProjectDir
      */
     public function getProjectDir(): string
     {
         if (!isset($this->projectDir)) {
-            $dir = $rootDir = \dirname(__DIR__);
+            $dir = $rootDir = dirname(__DIR__);
             while (!is_file($dir . '/composer.json')) {
-                if ($dir === \dirname($dir)) {
+                if ($dir === dirname($dir)) {
                     return $this->projectDir = $rootDir;
                 }
-                $dir = \dirname($dir);
+                $dir = dirname($dir);
             }
             $this->projectDir = $dir;
         }
