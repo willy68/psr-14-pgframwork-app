@@ -65,15 +65,15 @@ class CsrfCookieMiddleware implements MiddlewareInterface
 
         if (\in_array($method, ['DELETE', 'PATCH', 'POST', 'PUT'], true)) {
             $body = $request->getParsedBody() ?: [];
+
             if ((\is_array($body) || $body instanceof \ArrayAccess) && !empty($body)) {
                 $token = $body[$this->config['field']] ?? null;
-                $this->validateToken($token, $cookie);
             } elseif (!$request->hasHeader($this->config['header'])) {
                 throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
             } else {
-                $headerCookie = $request->getHeaderLine($this->config['header']);
-                $this->validateToken($headerCookie, $cookie);
+                $token = $request->getHeaderLine($this->config['header']);
             }
+            $this->validateToken($token, $cookie);
 
             [$tokenId] = \explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
             $token = $this->tokenManager->refreshToken($tokenId);

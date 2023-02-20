@@ -74,13 +74,12 @@ class CsrfCookieListener implements EventSubscriberInterface
 
             if ((\is_array($body) || $body instanceof \ArrayAccess) && !empty($body)) {
                 $token = $body[$this->config['field']] ?? null;
-                $this->validateToken($token, $cookie);
             } elseif (!$request->hasHeader($this->config['header'])) {
                 throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
             } else {
                 $token = $request->getHeaderLine($this->config['header']);
-                $this->validateToken($token, $cookie);
             }
+            $this->validateToken($token, $cookie);
 
             [$tokenId] = \explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
             $token = $this->tokenManager->refreshToken($tokenId);
