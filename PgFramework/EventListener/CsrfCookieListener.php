@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\EventListener;
 
+use ArrayAccess;
 use GuzzleHttp\Psr7\Response;
 use PgFramework\Event\Events;
 use Dflydev\FigCookies\SetCookie;
@@ -20,9 +21,15 @@ use PgFramework\Response\ResponseRedirect;
 use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
+use function array_merge;
+use function explode;
+use function hash_equals;
+use function in_array;
+use function is_array;
+
 class CsrfCookieListener implements EventSubscriberInterface
 {
-    protected $config = [
+    protected array $config = [
         'cookieName' => 'XSRF-TOKEN',
         'header' => 'X-CSRF-TOKEN',
         'field' => '_csrf',
@@ -32,33 +39,30 @@ class CsrfCookieListener implements EventSubscriberInterface
         'samesite' => null,
     ];
 
-    /**
-     * @var FlashService
-     */
-    private $flashService;
+    private FlashService $flashService;
 
-    /**
-     *
-     * @var CsrfTokenManagerInterface
-     */
-    private $tokenManager;
+    private CsrfTokenManagerInterface $tokenManager;
 
     public function __construct(CsrfTokenManagerInterface $tokenManager, FlashService $flashService, array $config = [])
     {
         $this->tokenManager = $tokenManager;
         $this->flashService = $flashService;
-        $this->config = \array_merge($this->config, $config);
+        $this->config = array_merge($this->config, $config);
     }
 
-    public function onRequest(RequestEvent $event)
+    /**
+     * @param RequestEvent $event
+     * @return void
+     * @throws InvalidCsrfException
+     */
+    public function onRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
         $method = $request->getMethod();
 
         $cookie = FigRequestCookies::get($request, $this->config['cookieName'])->getValue();
-        [$tokenId] = \explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
 
-        if (\in_array($method, ['GET', 'HEAD'], true)) {
+        if (in_array($method, ['GET', 'HEAD'], true)) {
             if (null === $cookie || !$this->tokenManager->isTokenValid($cookie)) {
                 $token = $this->tokenManager->getToken();
                 $request = $request->withAttribute(
@@ -69,10 +73,10 @@ class CsrfCookieListener implements EventSubscriberInterface
             }
         }
 
-        if (\in_array($method, ['DELETE', 'PATCH', 'POST', 'PUT'], true)) {
+        if (in_array($method, ['DELETE', 'PATCH', 'POST', 'PUT'], true)) {
             $body = $request->getParsedBody() ?: [];
 
-            if ((\is_array($body) || $body instanceof \ArrayAccess) && !empty($body)) {
+            if ((is_array($body) || $body instanceof ArrayAccess) && !empty($body)) {
                 $token = $body[$this->config['field']] ?? null;
             } elseif (!$request->hasHeader($this->config['header'])) {
                 throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
@@ -81,14 +85,18 @@ class CsrfCookieListener implements EventSubscriberInterface
             }
             $this->validateToken($token, $cookie);
 
-            [$tokenId] = \explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
+            [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $cookie);
             $token = $this->tokenManager->refreshToken($tokenId);
             $request = $request->withAttribute($this->config['field'], $this->createCookie($token));
         }
         $event->setRequest($request);
     }
 
-    public function onResponse(ResponseEvent $event)
+    /**
+     * @param ResponseEvent $event
+     * @return void
+     */
+    public function onResponse(ResponseEvent $event): void
     {
         $response = $event->getResponse();
         $request = $event->getRequest();
@@ -100,7 +108,11 @@ class CsrfCookieListener implements EventSubscriberInterface
         }
     }
 
-    public function onException(ExceptionEvent $event)
+    /**
+     * @param ExceptionEvent $event
+     * @return void
+     */
+    public function onException(ExceptionEvent $event): void
     {
         $e = $event->getException();
 
@@ -130,7 +142,13 @@ class CsrfCookieListener implements EventSubscriberInterface
         }
     }
 
-    protected function validateToken(?string $token = null, ?string $cookie = null)
+    /**
+     * @param string|null $token
+     * @param string|null $cookie
+     * @return void
+     * @throws InvalidCsrfException
+     */
+    protected function validateToken(?string $token = null, ?string $cookie = null): void
     {
         if (!$token) {
             throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
@@ -144,7 +162,7 @@ class CsrfCookieListener implements EventSubscriberInterface
             throw new InvalidCsrfException('Le Csrf est incorrect');
         }
 
-        if (!\hash_equals($token, $cookie)) {
+        if (!hash_equals($token, $cookie)) {
             throw new InvalidCsrfException('Le cookie Csrf est incorrect');
         }
     }
@@ -160,7 +178,7 @@ class CsrfCookieListener implements EventSubscriberInterface
             ->withValue($token)
             ->withExpires(($expiry === null) ? $this->config['expiry'] : $expiry)
             ->withPath('/')
-            ->withDomain(null)
+            ->withDomain()
             ->withSecure($this->config['secure'])
             ->withHttpOnly($this->config['httponly']);
     }
