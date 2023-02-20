@@ -15,14 +15,11 @@ interface ApplicationInterface
      *
      * @param  ServerRequestInterface|null $request
      * @return ResponseInterface
-     * @throws Exception
      */
     public function run(?ServerRequestInterface $request = null): ResponseInterface;
 
     /**
-     *
      * @return ContainerInterface
-     * @throws Exception
      */
     public function getContainer(): ContainerInterface;
 

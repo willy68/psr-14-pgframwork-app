@@ -50,7 +50,7 @@ class AuthorizationListener implements EventSubscriberInterface
         $event->setRequest($request->withAttribute('_user', $this->auth->getUser()));
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::REQUEST => ListenerPriority::LOW

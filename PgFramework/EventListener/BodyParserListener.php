@@ -187,7 +187,7 @@ class BodyParserListener implements EventSubscriberInterface
         return null;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::REQUEST => ListenerPriority::LOW

@@ -46,7 +46,7 @@ class RememberMeLoginListener implements EventSubscriberInterface
         $event->setResponse($this->rememberMe->resume($request, $response));
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::REQUEST => ['onAuthentication', 450],

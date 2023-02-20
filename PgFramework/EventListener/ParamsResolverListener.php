@@ -42,7 +42,7 @@ class ParamsResolverListener implements EventSubscriberInterface
         $event->setParams($params);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::PARAMETERS => ['onResolve', 10]

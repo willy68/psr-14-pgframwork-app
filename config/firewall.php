@@ -32,7 +32,7 @@ return [
             //'host' => null,
             //'schemes' => [],
             //'port' => null,
-            // Add to internal firewall dispatcher RequestEvent
+            // Add to internal firewall dispatcher RequestEvent.
             'listeners' => [
                 // Priority -100
                 AuthorizationListener::class,

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace PgFramework\DebugBar\EventListener;
 
-use DebugBar\{DebugBar, DataCollector\ExceptionsCollector};
+use DebugBar\{DebugBar, DataCollector\ExceptionsCollector, DebugBarException};
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Mezzio\{Router\RouteResult, Router\RouterInterface, Session\SessionInterface};
 use PgFramework\DebugBar\DataCollector\AuthCollector;
 use PgFramework\DebugBar\DataCollector\RequestCollector;
@@ -35,7 +37,14 @@ class DebugBarListener implements EventSubscriberInterface
         $this->session = $session;
     }
 
-    public function onResponse(ResponseEvent $event)
+    /**
+     * @param ResponseEvent $event
+     * @return void
+     * @throws DebugBarException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function onResponse(ResponseEvent $event): void
     {
         if (Environnement::getEnv('APP_ENV', 'prod') !== 'dev') {
             return;
@@ -52,7 +61,7 @@ class DebugBarListener implements EventSubscriberInterface
 
         $this->debugBar->addCollector(
             (new RequestCollector($request, $response, $this->session))
-                ->useHtmlVarDumper(true)
+                ->useHtmlVarDumper()
         );
 
         $routeResult = $request->getAttribute(RouteResult::class);
@@ -68,19 +77,24 @@ class DebugBarListener implements EventSubscriberInterface
         $event->setResponse($this->debugBar->injectDebugbar($response));
     }
 
-    public function onException(ExceptionEvent $event)
+    /**
+     * @param ExceptionEvent $event
+     * @return void
+     * @throws DebugBarException
+     */
+    public function onException(ExceptionEvent $event): void
     {
         if (Environnement::getEnv('APP_ENV', 'prod') !== 'dev') {
             return;
         }
 
         $e = $event->getException();
-        /** @var ExceptionsCollector */
+        /** @var ExceptionsCollector $exceptionsCollector*/
         $exceptionsCollector = $this->debugBar->getCollector('exceptions');
         $exceptionsCollector->addThrowable($e);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::RESPONSE => ['onResponse', -1000],

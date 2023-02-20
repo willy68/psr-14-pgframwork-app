@@ -37,7 +37,7 @@ class LoggedInListener implements EventSubscriberInterface
         $event->setRequest($request->withAttribute('_user', $user));
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::REQUEST => ListenerPriority::HIGH

@@ -70,7 +70,7 @@ class CsrfListener implements EventSubscriberInterface
         return $this->formKey;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::REQUEST => ListenerPriority::HIGH

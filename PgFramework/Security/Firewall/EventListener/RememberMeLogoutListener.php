@@ -44,7 +44,7 @@ class RememberMeLogoutListener implements EventSubscriberInterface
         $event->setResponse($response);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::RESPONSE => ListenerPriority::HIGH

@@ -7,6 +7,7 @@ namespace PgFramework;
 use Exception;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use RuntimeException;
 use DI\ContainerBuilder;
 use PgRouter\RouteCollector;
@@ -35,67 +36,24 @@ class App extends AbstractApplication
 
     public const COMPILED_CONTAINER_DIRECTORY = '/tmp/di';
 
-    /**
-     *
-     * @var ContainerInterface
-     */
-    private $container = null;
+    private ?ContainerInterface $container = null;
 
-    /**
-     * Kernel type
-     *
-     * @var KernelInterface
-     */
-    private $kernel;
+    private ?KernelInterface $kernel;
 
-    /**
-     *
-     * @var array
-     */
-    private $config = [];
+    private array $config = [];
 
-    /**
-     *
-     * @var array
-     */
-    private $modules = [];
+    private array $modules = [];
 
-    /**
-     *
-     * @var array
-     */
-    private $middlewares = [];
+    private array $middlewares = [];
 
-    /**
-     *
-     * @var array
-     */
-    private $listeners = [];
+    private array $listeners = [];
 
-    /**
-     *
-     * @var ServerRequestInterface
-     */
-    private $request;
+    private ServerRequestInterface $request;
 
-    /**
-     * Dir where the composer.json file location
-     *
-     * @var string
-     */
-    private $projectDir;
+    private string $projectDir;
 
-    /**
-     * Dir where the container definitions files is located
-     *
-     * @var string
-     */
-    private $configDir;
+    private string $configDir;
 
-    /**
-     * App constructor
-     *
-     */
     public function __construct(?KernelInterface $kernel = null)
     {
         $this->config[] = __DIR__ . '/Container/config/config.php';
@@ -130,9 +88,8 @@ class App extends AbstractApplication
     }
 
     /**
-     *
      * @param string $listener
-     * @return self
+     * @return $this
      */
     public function addListener(string $listener): self
     {
@@ -152,11 +109,10 @@ class App extends AbstractApplication
     }
 
     /**
-     *
-     * @param mixed $middleware
-     * @return self
+     * @param string|callable|MiddlewareInterface $middleware
+     * @return $this
      */
-    public function addMiddleware($middleware): self
+    public function addMiddleware(string|callable|MiddlewareInterface $middleware): self
     {
         $this->middlewares[] = $middleware;
         return $this;
@@ -203,7 +159,7 @@ class App extends AbstractApplication
                     $loader->load($dir);
                 }
             }
-            $container->get((string)$module);
+            $container->get($module);
         }
 
         if (!empty($this->listeners)) {

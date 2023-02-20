@@ -32,7 +32,7 @@ class RendererAddGlobalListener implements EventSubscriberInterface
         $this->renderer->addGlobal('domain', $domain);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::REQUEST => 850

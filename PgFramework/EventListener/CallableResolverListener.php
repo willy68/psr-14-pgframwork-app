@@ -25,7 +25,7 @@ class CallableResolverListener implements EventSubscriberInterface
         $event->setController($controller);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::CONTROLLER => ['onResolve', 10]

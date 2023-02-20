@@ -19,7 +19,7 @@ class ActiveRecordListener implements EventSubscriberInterface
         $app->getContainer()->get('ActiveRecord');
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::REQUEST => 500
