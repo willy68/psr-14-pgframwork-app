@@ -46,10 +46,10 @@ class PhpTokenParser
             if (true === $doubleColon) {
                 $doubleColon = false;
                 do {
-                    if ( \T_CLASS === $token[0]) {
+                    if (\T_CLASS === $token[0]) {
                         $doubleColon = true;
                         break;
-                    } elseif (!\in_array($token[0], $skipToken, TRUE)) {
+                    } elseif (!\in_array($token[0], $skipToken, true)) {
                         break;
                     }
                     $token = $tokens[++$i];
@@ -71,7 +71,7 @@ class PhpTokenParser
                 $doubleColon = true;
             }
             if (\T_CLASS === $token[0]) {
-                if($doubleColon === false) {
+                if ($doubleColon === false) {
                     $class = true;
                 }
                 $doubleColon = false;

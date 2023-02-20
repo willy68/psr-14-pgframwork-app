@@ -6,16 +6,16 @@ namespace PgFramework\DebugBar\EventListener;
 
 use DebugBar\{DebugBar, DataCollector\ExceptionsCollector};
 use Mezzio\{Router\RouteResult, Router\RouterInterface, Session\SessionInterface};
-use PgFramework\{Event\Events,
-    DebugBar\PgDebugBar,
-    Event\ResponseEvent,
-    Event\ExceptionEvent,
-    HttpUtils\RequestUtils,
-    Environnement\Environnement,
-    DebugBar\DataCollector\AuthCollector,
-    DebugBar\DataCollector\RouteCollector,
-    DebugBar\DataCollector\RequestCollector,
-    EventDispatcher\EventSubscriberInterface};
+use PgFramework\DebugBar\DataCollector\AuthCollector;
+use PgFramework\DebugBar\DataCollector\RequestCollector;
+use PgFramework\DebugBar\DataCollector\RouteCollector;
+use PgFramework\DebugBar\PgDebugBar;
+use PgFramework\Environnement\Environnement;
+use PgFramework\Event\Events;
+use PgFramework\Event\ExceptionEvent;
+use PgFramework\Event\ResponseEvent;
+use PgFramework\EventDispatcher\EventSubscriberInterface;
+use PgFramework\HttpUtils\RequestUtils;
 
 class DebugBarListener implements EventSubscriberInterface
 {
