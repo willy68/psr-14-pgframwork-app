@@ -3,7 +3,7 @@
 {% block title %}
 	{% if category %}
 		Categorie:
-		{{ category.name }}
+		{{ category.getName }}
 		{% if page > 1 %}, page
 			{{ page }}
 		{% endif %}
@@ -19,7 +19,7 @@
 
 	{% if category %}
 		<h1>Categorie:
-			{{ category.name }}
+			{{ category.getName }}
 			{% if page > 1 %}, page
 				{{ page }}
 			{% endif %}
@@ -38,43 +38,39 @@
 				<div class="card-deck mb-4">
 					{% for post in row %}
 						<div class="card">
-							{% if post.category %}
+							{% if post.getCategory %}
 								<div class="card-header">
-									{{ post.category.name }}
+									{{ post.getCategory.getName }}
 								</div>
 							{% endif %}
-							{% if post.image %}
-							<img src="{{ post.thumb }}" alt="{{ post.name }} " style="width: 100%;">
+							{% if post.getImage %}
+							<img src="{{ post.getThumb }}" alt="{{ post.getName }} " style="width: 100%;">
 							{% endif %}
 							<div class="card-body">
 								<h4 class="card-title">
-									<a href="{{ path('blog.show', {slug: post.slug, id: post.id}) }}">
+									<a href="{{ path('blog.show', {slug: post.getSlug, id: post.getId}) }}">
 										{{ post.name }}
 									</a>
 								</h4>
 								<p class="card-text">
-									{{ post.content | excerpt | nl2br }}
+									{{ post.getContent | excerpt | nl2br }}
 								</p>
 								<p class="text-muted">
-									{% if post.created_at %}
-									{{ post.created_at | ago }}
-									{% else %}
-									{{ post.getCreatedAt | ago }} 
-									{% endif %}
+									{{ post.getCreatedAt | ago }}
 								</p>
 
 							</div>
 							<div class="card-footer">
-								<a href="{{ path('blog.show', {slug: post.slug, id: post.id}) }}" class="btn btn-primary">
+								<a href="{{ path('blog.show', {slug: post.getSlug, id: post.getId}) }}" class="btn btn-primary">
 									Voir l'article
 								</a>
-								<a href="{{ path('blog.postShow', {category_id: post.category.id, id: post.id}) }}" class="btn btn-primary">
+								<a href="{{ path('blog.postShow', {category_id: post.getCategory.getId, id: post.getId}) }}" class="btn btn-primary">
 									Voir l'article
 								</a>
-								<a href="{{ path('blog.postCategoryShow', {category_slug: post.category.slug, id: post.id}) }}" class="btn btn-primary">
+								<a href="{{ path('blog.postCategoryShow', {category_slug: post.getCategory.getSlug, id: post.getId}) }}" class="btn btn-primary">
 									Voir l'article
 								</a>
-								<a href="{{ path('blog.showPost', {id: post.id}) }}" class="btn btn-primary">
+								<a href="{{ path('blog.showPost', {id: post.getId}) }}" class="btn btn-primary">
 									Article Doctrine
 								</a>
 							</div>
@@ -85,7 +81,7 @@
 			{% endfor %}
 
 			{% if category %}
-				{{ paginate(posts, 'blog.category', {slug: category.slug}) }}
+				{{ paginate(posts, 'blog.category', {slug: category.getSlug}) }}
 			{% else %}
 				{{ paginate(posts, 'blog.index') }}
 			{% endif %}
@@ -94,9 +90,9 @@
 		<div class="col-md-3">
 			<ul class="list-group">
         {% for c in categories %}
-				<li class="list-group-item {% if c.id == category.id %} active {% endif %}">
-						<a style="color:inherit" href="{{ path('blog.category', {slug: c.slug}) }}">
-							{{ c.name }}
+				<li class="list-group-item {% if c.getId == category.getId %} active {% endif %}">
+						<a style="color:inherit" href="{{ path('blog.category', {slug: c.getSlug}) }}">
+							{{ c.getName }}
 						</a>
 					</li>
 				  {% endfor %}

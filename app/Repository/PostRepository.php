@@ -21,7 +21,7 @@ class PostRepository extends PaginatedEntityRepository
         $builder->select('p')
             ->from($this->getEntityName(), 'p')
             ->join('p.category', 'c', 'c = p.category')
-            ->orderBy('p.created_at', 'DESC');
+            ->orderBy('p.createdAt', 'DESC');
 
         return $builder;
     }
@@ -35,7 +35,7 @@ class PostRepository extends PaginatedEntityRepository
     {
         return $this->buildFindAll()
             ->where('p.published = 1')
-            ->andWhere('p.created_at < CURRENT_TIMESTAMP()');
+            ->andWhere('p.createdAt < CURRENT_TIMESTAMP()');
     }
     /**
      * Get all records for one category

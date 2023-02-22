@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\DBAL\Types\Types;
@@ -57,15 +58,15 @@ class Post
      * @ORM\Column(type="datetime_immutable")
      * @var DateTimeImmutable
      */
-    #[Column(type: TYPES::DATETIME_IMMUTABLE)]
-    protected $created_at;
+    #[Column(name: 'created_at', type: TYPES::DATETIME_IMMUTABLE)]
+    protected $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
      * @var DateTime
      */
-    #[Column(type: TYPES::DATETIME_MUTABLE)]
-    protected $updated_at;
+    #[Column(name: 'updated_at', type: TYPES::DATETIME_MUTABLE)]
+    protected $updatedAt;
 
     /**
      * @ORM\Column(type="string")
@@ -191,7 +192,7 @@ class Post
      */
     public function getCreatedAt()
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
     /**
@@ -206,7 +207,7 @@ class Post
         if (is_string($createdAt)) {
             $createdAt = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $createdAt);
         }
-        $this->created_at = $createdAt;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
@@ -214,26 +215,26 @@ class Post
     /**
      * Get the value of updatedAt
      *
-     * @return  DateTimeImmutable
+     * @return  DateTime
      */
     public function getUpdatedAt()
     {
-        return $this->updated_at;
+        return $this->updatedAt;
     }
 
     /**
      * Set the value of updatedAt
      *
-     * @param DateTimeImmutable|string $updatedAt
+     * @param DateTime|string $updatedAt
      *
      * @return  self
      */
     public function setUpdatedAt($updatedAt)
     {
         if (is_string($updatedAt)) {
-            $updatedAt = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $updatedAt);
+            $updatedAt = DateTime::createFromFormat('Y-m-d H:i:s', $updatedAt);
         }
-        $this->updated_at = $updatedAt;
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

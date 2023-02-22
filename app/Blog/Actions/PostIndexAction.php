@@ -62,7 +62,7 @@ class PostIndexAction
     public function index(Request $request, EntityManagerInterface $em): string
     {
         $params = $request->getQueryParams();
-        /** @var PostRepository */
+        /** @var PostRepository $repo*/
         $repo = $em->getRepository(Post::class);
         $posts = $repo->buildFindPublic()->paginate(12, $params['p'] ?? 1);
         $categories = $em->getRepository(Category::class)->findAll();
