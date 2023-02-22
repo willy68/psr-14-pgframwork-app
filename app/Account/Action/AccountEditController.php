@@ -43,8 +43,7 @@ class AccountEditController
      */
     public function __invoke(ServerRequestInterface $request): ResponseRedirect|string
     {
-        $authUser = $this->auth->getUser();
-        $user = $this->em->find(User::class, $authUser->getId());
+        $user = $this->em->find(User::class, $this->auth->getUser()->getId());
         $params = $request->getParsedBody();
         $validator = (new Validator($params))
             ->confirm('password')
