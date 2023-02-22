@@ -26,7 +26,7 @@ class SignupController
     private FlashService $flashService;
     private PasswordHasherInterface $passwordHasher;
 
-    public  function __construct(
+    public function __construct(
         RendererInterface $renderer,
         RouterInterface $router,
         EntityManagerInterface $em,

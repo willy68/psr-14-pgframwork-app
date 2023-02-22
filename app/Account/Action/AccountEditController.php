@@ -23,7 +23,7 @@ class AccountEditController
     private Auth $auth;
     private PasswordHasherInterface $hasher;
 
-    public function  __construct(
+    public function __construct(
         RendererInterface $renderer,
         FlashService $flashService,
         Auth $auth,
