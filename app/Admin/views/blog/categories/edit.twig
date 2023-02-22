@@ -4,13 +4,13 @@
 
 {% block body %}
 
-<h1>Editer la categorie {{ item.name }} </h1>
+<h1>Edite la categorie {{ item.getName }} </h1>
 
-<form action="{{ path(routePrefix ~ '.edit', {id: item.id}) }}" method="POST">
+<form action="{{ path(routePrefix ~ '.edit', {id: item.getId}) }}" method="POST">
 
   {% include viewPath ~ "/form.twig" %}
 
-  <button type="submit" class="btn btn-primary">Editer</button>
+  <button type="submit" class="btn btn-primary">Edite</button>
 </form>
 
 {% endblock %}

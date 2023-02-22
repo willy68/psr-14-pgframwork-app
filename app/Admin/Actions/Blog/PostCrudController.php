@@ -5,13 +5,14 @@ namespace App\Admin\Actions\Blog;
 use App\Entity\Post;
 use App\Blog\PostUpload;
 use App\Entity\Category;
-use Doctrine\ORM\EntityManager;
+use DateTimeImmutable;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Validator\Validator;
 use PgFramework\Session\FlashService;
 use Doctrine\Persistence\ManagerRegistry;
 use PgFramework\Controller\CrudController;
 use PgFramework\Renderer\RendererInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class PostCrudController extends CrudController
@@ -42,7 +43,11 @@ class PostCrudController extends CrudController
         $this->postUpload = $postUpload;
     }
 
-    public function delete(ServerRequestInterface $request)
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface|string
+     */
+    public function delete(ServerRequestInterface $request): string|ResponseInterface
     {
         /** @var Post $post */
         $post = $this->em->find($this->entity, $request->getAttribute('id'));
@@ -58,7 +63,6 @@ class PostCrudController extends CrudController
      */
     protected function formParams(array $params): array
     {
-        /** @var EntityManager */
         $em = $this->om->getManagerForClass(Category::class);
         $qb = $em->createQueryBuilder();
         $qb->select(['u.id', 'u.name'])
@@ -75,15 +79,16 @@ class PostCrudController extends CrudController
     /**
      * @return Post
      */
-    protected function getNewEntity()
+    protected function getNewEntity(): Post
     {
         $post = new Post();
-        $post->setCreatedAt(new \DateTimeImmutable('now'));
+        $post->setCreatedAt(new DateTimeImmutable('now'));
         return $post;
     }
 
     /**
-     * @param Post $item
+     * @param ServerRequestInterface $request
+     * @param null $item
      * @return array
      */
     protected function getParams(ServerRequestInterface $request, $item = null): array
@@ -114,7 +119,7 @@ class PostCrudController extends CrudController
             unset($params['category_id']);
         }
         return array_merge($params, [
-            'updated_at' => new \DateTimeImmutable('now')
+            'updated_at' => new DateTimeImmutable('now')
         ]);
     }
 

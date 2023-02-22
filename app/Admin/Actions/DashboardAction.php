@@ -5,7 +5,6 @@ namespace App\Admin\Actions;
 use PgFramework\Auth\LoggedInMiddleware;
 use PgFramework\Router\Annotation\Route;
 use PgFramework\Renderer\RendererInterface;
-use PgFramework\Auth\Middleware\CookieLoginMiddleware;
 
 /**
  * @Route("/admin", name="admin", methods={"GET"}, middlawares={LoggedInMiddleware::class})

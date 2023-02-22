@@ -22,14 +22,14 @@ class AdminTwigExtension extends AbstractExtension
         ];
     }
 
-    public function renderMenu()
+    public function renderMenu(): string
     {
         return array_reduce($this->widgets, function ($html, AdminWidgetInterface $widget) {
             return $html . $widget->renderMenu();
         }, '');
     }
 
-    public function render()
+    public function render(): string
     {
         return array_reduce($this->widgets, function ($html, AdminWidgetInterface $widget) {
             return $html . $widget->render();

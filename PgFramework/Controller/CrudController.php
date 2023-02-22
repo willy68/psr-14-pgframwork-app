@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace PgFramework\Controller;
 
+use Psr\Http\Message\ResponseInterface;
 use stdClass;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Database\Hydrator;
 use PgFramework\Validator\Validator;
 use PgFramework\Session\FlashService;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Exception\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 use PgFramework\Actions\RouterAwareAction;
 use PgFramework\Database\Doctrine\PaginatedEntityRepository;
@@ -86,7 +86,6 @@ class CrudController
     ) {
         $this->renderer = $renderer;
         $this->om = $om;
-        /** @var  EntityManagerInterface */
         $this->em = $this->om->getManagerForClass($this->entity);
         $this->router = $router;
         $this->flash = $flash;
@@ -96,7 +95,7 @@ class CrudController
     }
 
     /**
-     * Liste les entitys Method GET
+     * Liste-les entities Method GET
      *
      * @param ServerRequestInterface $request
      * @return string
@@ -104,7 +103,7 @@ class CrudController
     public function index(ServerRequestInterface $request): string
     {
         $params = $request->getQueryParams();
-        /** @var PaginatedEntityRepository */
+        /** @var PaginatedEntityRepository $repo*/
         $repo = $this->em->getRepository($this->entity);
         $items = $repo->buildFindAll()->paginate(12, (int)($params['p'] ?? 1));
 
@@ -116,36 +115,31 @@ class CrudController
      *
      * @param ServerRequestInterface $request
      * @return ResponseInterface|string
-     * @throws NoRecordException
      */
-    public function edit(ServerRequestInterface $request)
+    public function edit(ServerRequestInterface $request): string|ResponseInterface
     {
         $repo = $this->em->getRepository($this->entity);
         $item = $repo->find($request->getAttribute('id'));
         $errors = false;
-        $submited = false;
+        $submitted = false;
 
         if ($request->getMethod() === 'POST') {
             $validator = $this->getValidator($request);
             if ($validator->isValid()) {
                 Hydrator::hydrate($this->getParams($request, $item), $item);
-                try {
-                    $this->em->persist($item);
-                    $this->em->flush();
-                } catch (ORMException $e) {
-                    throw $e;
-                }
+                $this->em->persist($item);
+                $this->em->flush();
                 $this->flash->success($this->messages['edit']);
                 return $this->redirect($this->routePrefix . '.index');
             }
-            $submited = true;
+            $submitted = true;
             Hydrator::hydrate($request->getParsedBody(), $item);
             $errors = $validator->getErrors();
         }
 
         return $this->renderer->render(
             $this->viewPath . '/edit',
-            $this->formParams(compact('item', 'errors', 'submited'))
+            $this->formParams(compact('item', 'errors', 'submitted'))
         );
     }
 
@@ -155,32 +149,28 @@ class CrudController
      * @param ServerRequestInterface $request
      * @return ResponseInterface|string
      */
-    public function create(ServerRequestInterface $request)
+    public function create(ServerRequestInterface $request): string|ResponseInterface
     {
         $item = $this->getNewEntity();
         $errors = false;
-        $submited = false;
+        $submitted = false;
         if ($request->getMethod() === 'POST') {
             $validator = $this->getValidator($request);
             if ($validator->isValid()) {
                 Hydrator::hydrate($this->getParams($request, $item), $item);
-                try {
-                    $this->em->persist($item);
-                    $this->em->flush();
-                } catch (ORMException $e) {
-                    throw $e;
-                }
+                $this->em->persist($item);
+                $this->em->flush();
                 $this->flash->success($this->messages['create']);
                 return $this->redirect($this->routePrefix . '.index');
             }
-            $submited = true;
+            $submitted = true;
             Hydrator::hydrate($request->getParsedBody(), $item);
             $errors = $validator->getErrors();
         }
 
         return $this->renderer->render(
             $this->viewPath . '/create',
-            $this->formParams(compact('item', 'errors', 'submited'))
+            $this->formParams(compact('item', 'errors', 'submitted'))
         );
     }
 
@@ -190,7 +180,7 @@ class CrudController
      * @param ServerRequestInterface $request
      * @return ResponseInterface|string
      */
-    public function delete(ServerRequestInterface $request)
+    public function delete(ServerRequestInterface $request): string|ResponseInterface
     {
         $item = $this->em->getRepository($this->entity)->find($request->getAttribute('id'));
         $this->em->remove($item);
@@ -202,7 +192,7 @@ class CrudController
     /**
      * Filtre les paramètres reçu par la requête
      *
-     * @param Request $request
+     * @param ServerRequestInterface $request
      * @param mixed|null $item
      * @return array
      */
@@ -216,7 +206,7 @@ class CrudController
     /**
      * get filtered Post params
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param ServerRequestInterface $request
      * @param array $filter
      * @param bool $useKey
      * @return array
@@ -247,7 +237,7 @@ class CrudController
     /**
      * Get validator form fields
      *
-     * @param Request $request
+     * @param ServerRequestInterface $request
      * @return Validator
      */
     protected function getValidator(ServerRequestInterface $request): Validator
@@ -258,7 +248,7 @@ class CrudController
     /**
      * @return mixed
      */
-    protected function getNewEntity()
+    protected function getNewEntity(): mixed
     {
         return new $this->entity();
     }

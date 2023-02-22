@@ -6,7 +6,7 @@
 
 <p class="text-left">
   <a href="{{ path(routePrefix ~ '.create') }}" class="btn btn-primary">
-    Ajouter une categorie
+    Ajouter une catégorie
   </a>
 </p>
 
@@ -21,12 +21,12 @@
     {% set token_input = csrf_input() %}
     {% for item in items %}
     <tr>
-      <td> {{ item.name }} </td>
+      <td> {{ item.getName }} </td>
       <td>
-        <a href="{{ path(routePrefix ~ '.edit', {id: item.id}) }}" class="btn btn-primary">
-          Editer
+        <a href="{{ path(routePrefix ~ '.edit', {id: item.getId}) }}" class="btn btn-primary">
+          Edite
         </a>
-        <form style="display: inline" action="{{ path(routePrefix ~ '.delete', {id: item.id}) }}" method="POST" onsubmit="return confirm('êtes-vous sûr?')">
+        <form style="display: inline" action="{{ path(routePrefix ~ '.delete', {id: item.getId}) }}" method="POST" onsubmit="return confirm('êtes-vous sûr?')">
           <input type="hidden" name="_method" value="DELETE">
           <button class="btn btn-danger">Supprimer</button>
           {{ token_input | raw }}
