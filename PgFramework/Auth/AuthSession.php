@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace PgFramework\Auth;
 
-use PgFramework\Auth\Auth;
-use PgFramework\Auth\UserInterface;
 use Mezzio\Session\SessionInterface;
 use PgFramework\Auth\Provider\UserProviderInterface;
 
@@ -27,7 +25,7 @@ class AuthSession implements Auth
     private $session;
 
     /**
-     * @var User
+     * @var UserInterface
      */
     private $user;
 
@@ -50,7 +48,7 @@ class AuthSession implements Auth
 
     /**
      *
-     * @param string $username
+     * @param string $identifier
      * @param string $password
      * @return UserInterface|null
      */
@@ -88,7 +86,6 @@ class AuthSession implements Auth
                 return $this->user;
             } catch (\Exception $e) {
                 $this->session->unset($this->options['sessionName']);
-                return null;
             }
         }
         return null;
@@ -96,7 +93,7 @@ class AuthSession implements Auth
 
     /**
      *
-     * @param User $user
+     * @param UserInterface $user
      * @return Auth
      */
     public function setUser(UserInterface $user): Auth

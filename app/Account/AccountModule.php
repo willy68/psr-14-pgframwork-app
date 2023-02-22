@@ -3,8 +3,8 @@
 namespace App\Account;
 
 use App\Account\Action\AccountAction;
-use App\Account\Action\AccountEditAction;
-use App\Account\Action\SignupAction;
+use App\Account\Action\AccountEditController;
+use App\Account\Action\SignupController;
 use PgFramework\Module;
 use PgFramework\Renderer\RendererInterface;
 
@@ -16,8 +16,8 @@ class AccountModule extends Module
 
     public const ANNOTATIONS = [
         AccountAction::class,
-        AccountEditAction::class,
-        SignupAction::class
+        AccountEditController::class,
+        SignupController::class
     ];
 
     public function __construct(RendererInterface $renderer)
