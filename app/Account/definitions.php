@@ -1,5 +1,7 @@
 <?php
 
+use App\Auth\Entity\User;
+
 return [
-    'auth.entity' => \App\Account\User::class
+    'auth.entity' => User::class
 ];

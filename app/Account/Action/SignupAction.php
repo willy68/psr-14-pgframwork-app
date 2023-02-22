@@ -2,11 +2,12 @@
 
 namespace App\Account\Action;
 
-use App\Auth\User;
+use App\Auth\Entity\User;
 use App\Auth\UserTable;
 use App\Auth\DatabaseAuth;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Database\Hydrator;
+use PgFramework\Security\Hasher\PasswordHasherInterface;
 use PgFramework\Validator\Validator;
 use PgFramework\Session\FlashService;
 use PgFramework\Renderer\RendererInterface;
@@ -38,19 +39,22 @@ class SignupAction
      * @var FlashService
      */
     private $flashService;
+    private PasswordHasherInterface $hasher;
 
     public function __construct(
         RendererInterface $renderer,
         UserTable $userTable,
         RouterInterface $router,
         DatabaseAuth $auth,
-        FlashService $flashService
+        FlashService $flashService,
+        PasswordHasherInterface $hasher
     ) {
         $this->renderer = $renderer;
         $this->userTable = $userTable;
         $this->router = $router;
         $this->auth = $auth;
         $this->flashService = $flashService;
+        $this->hasher = $hasher;
     }
 
     public function __invoke(ServerRequestInterface $request): ResponseRedirect|string
@@ -61,7 +65,7 @@ class SignupAction
         $params = $request->getParsedBody();
         $validator = (new Validator($params))
             ->required('username', 'email', 'password', 'password_confirm')
-            ->length('username', 5)
+            ->length('username', 4)
             ->email('email')
             ->confirm('password')
             ->length('password', 4)
@@ -71,7 +75,7 @@ class SignupAction
             $userParams = [
                 'username' => $params['username'],
                 'email'    => $params['email'],
-                'password' => password_hash($params['password'], PASSWORD_DEFAULT),
+                'password' => $this->hasher->hash($params['password']),
                 'roles'    => json_encode(['ROLE_USER'])
             ];
             $this->userTable->insert($userParams);

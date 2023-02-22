@@ -2,7 +2,8 @@
 
 namespace App\Auth;
 
-use App\Auth\User;
+use App\Auth\Entity\User;
+use PDO;
 use Ramsey\Uuid\Uuid;
 use PgFramework\Database\Table;
 
@@ -10,7 +11,7 @@ class UserTable extends Table
 {
     protected $table = "users";
 
-    public function __construct(\PDO $pdo, string $entity = User::class)
+    public function __construct(PDO $pdo, string $entity = User::class)
     {
         $this->entity = $entity;
         parent::__construct($pdo);

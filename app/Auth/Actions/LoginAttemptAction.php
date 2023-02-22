@@ -21,8 +21,8 @@ use PgFramework\Auth\RememberMe\RememberMeInterface;
  */
 #[Route(
     '/login',
-    methods: ['POST'],
     name: 'auth.login.post',
+    methods: ['POST'],
     middlewares: [AuthenticationMiddleware::class]
 )]
 class LoginAttemptAction

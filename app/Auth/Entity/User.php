@@ -6,7 +6,6 @@ use DateTime;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Table;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use PgFramework\Auth\UserInterface;
@@ -95,15 +94,16 @@ class User implements UserInterface
      */
     public function getId(): int
     {
-        return (int)$this->id;
+        return $this->id;
     }
 
     /**
      * Set the value of id
      *
+     * @param $id
      * @return  self
      */
-    public function setId($id)
+    public function setId($id): static
     {
         $this->id = $id;
 
@@ -123,9 +123,10 @@ class User implements UserInterface
     /**
      * Set the value of username
      *
+     * @param $username
      * @return  self
      */
-    public function setUsername($username)
+    public function setUsername($username): static
     {
         $this->username = $username;
 
@@ -143,9 +144,10 @@ class User implements UserInterface
     /**
      * Set the value of email
      *
+     * @param $email
      * @return  self
      */
-    public function setEmail($email)
+    public function setEmail($email): static
     {
         $this->email = $email;
 
@@ -165,9 +167,10 @@ class User implements UserInterface
     /**
      * Set the value of password
      *
+     * @param $password
      * @return  self
      */
-    public function setPassword($password)
+    public function setPassword($password): static
     {
         $this->password = $password;
 
@@ -177,9 +180,10 @@ class User implements UserInterface
     /**
      * Set the value of roles
      *
+     * @param $roles
      * @return  self
      */
-    public function setRoles($roles)
+    public function setRoles($roles): static
     {
         $this->roles = $roles;
 
@@ -198,8 +202,9 @@ class User implements UserInterface
 
     /**
      * Get the value of firstname
+     * @return string|null
      */
-    public function getFirstname()
+    public function getFirstname(): ?string
     {
         return $this->firstname;
     }
@@ -207,9 +212,10 @@ class User implements UserInterface
     /**
      * Set the value of firstname
      *
+     * @param $firstname
      * @return  self
      */
-    public function setFirstname($firstname)
+    public function setFirstname($firstname): static
     {
         $this->firstname = $firstname;
 
@@ -218,8 +224,9 @@ class User implements UserInterface
 
     /**
      * Get the value of lastname
+     * @return string|null
      */
-    public function getLastname()
+    public function getLastname(): ?string
     {
         return $this->lastname;
     }
@@ -227,9 +234,10 @@ class User implements UserInterface
     /**
      * Set the value of lastname
      *
+     * @param $lastname
      * @return  self
      */
-    public function setLastname($lastname)
+    public function setLastname($lastname): static
     {
         $this->lastname = $lastname;
 
@@ -237,17 +245,17 @@ class User implements UserInterface
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
-    public function getPasswordReset()
+    public function getPasswordReset(): ?string
     {
         return $this->password_reset;
     }
 
     /**
-     * @param mixed $passwordReset
+     * @param string $passwordReset
      */
-    public function setPasswordReset($passwordReset)
+    public function setPasswordReset(string $passwordReset)
     {
         $this->password_reset = $passwordReset;
     }
@@ -266,6 +274,6 @@ class User implements UserInterface
      */
     public function getPasswordResetAt(): ?DateTime
     {
-        return $this->password_reset_at;
+        return $this->passwordResetAt;
     }
 }
