@@ -27,7 +27,7 @@ class SignupAction
      */
     private $userTable;
     /**
-     * @var Router
+     * @var RouterInterface
      */
     private $router;
     /**
@@ -53,7 +53,7 @@ class SignupAction
         $this->flashService = $flashService;
     }
 
-    public function __invoke(ServerRequestInterface $request)
+    public function __invoke(ServerRequestInterface $request): ResponseRedirect|string
     {
         if ($request->getMethod() === 'GET') {
             return $this->renderer->render('@account/signup');

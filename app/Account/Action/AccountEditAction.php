@@ -44,7 +44,7 @@ class AccountEditAction
         $this->userTable = $userTable;
     }
 
-    public function __invoke(ServerRequestInterface $request)
+    public function __invoke(ServerRequestInterface $request): ResponseRedirect|string
     {
         $user = $this->auth->getUser();
         $params = $request->getParsedBody();
@@ -63,7 +63,7 @@ class AccountEditAction
             if (!empty($params['password'])) {
                 $userParams['password'] = password_hash($params['password'], PASSWORD_DEFAULT);
             }
-            $this->userTable->update($user->id, $userParams);
+            $this->userTable->update($user->getId(), $userParams);
             $this->flashService->success('Votre compte a bien été mis à jour');
             return new ResponseRedirect($request->getUri()->getPath());
         }
