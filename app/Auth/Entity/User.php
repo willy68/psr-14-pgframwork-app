@@ -185,7 +185,7 @@ class User implements UserInterface
      */
     public function setRoles($roles): static
     {
-        $this->roles = $roles;
+        $this->roles = is_string($roles) ? json_decode($roles) : $roles;
 
         return $this;
     }
@@ -254,23 +254,31 @@ class User implements UserInterface
 
     /**
      * @param string $passwordReset
+     * @return static
      */
-    public function setPasswordReset(string $passwordReset)
+    public function setPasswordReset(string $passwordReset): static
     {
         $this->passwordReset = $passwordReset;
+
+        return $this;
     }
 
-    public function setPasswordResetAt($date)
+    /**
+     * @param $date
+     * @return static
+     */
+    public function setPasswordResetAt($date): static
     {
         if (is_string($date)) {
             $this->passwordResetAt = \DateTime::createFromFormat('Y-m-d H:i:s', $date);
         } else {
             $this->passwordResetAt = $date;
         }
+        return $this;
     }
 
     /**
-     * @return mixed
+     * @return DateTime|null
      */
     public function getPasswordResetAt(): ?DateTime
     {

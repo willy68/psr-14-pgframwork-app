@@ -2,7 +2,7 @@
 
 namespace App\Auth\Actions;
 
-use App\Auth\User;
+use App\Auth\Entity\User;
 use App\Auth\UserTable;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Validator\Validator;

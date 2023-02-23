@@ -2,6 +2,7 @@
 
 namespace App\Auth\Actions;
 
+use App\Auth\Entity\User;
 use App\Auth\UserTable;
 use PgFramework\Validator\Validator;
 use PgFramework\Session\FlashService;
@@ -50,10 +51,11 @@ class PasswordForgetAction
             ->email('email');
         if ($validator->isValid()) {
             try {
+                /** @var User $user */
                 $user = $this->userTable->findBy('email', $params['email']);
-                $token = $this->userTable->resetPassword($user->id);
-                $this->mailer->send($user->email, [
-                    'id' => $user->id,
+                $token = $this->userTable->resetPassword($user->getId());
+                $this->mailer->send($user->getEmail(), [
+                    'id' => $user->getId(),
                     'token' => $token
                 ]);
                 $this->flashService->success('Un email vous a été envoyé');
