@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PgFramework\Database\Doctrine;
 
 use DebugBar\DebugBar;
-use Doctrine\DBAL\Logging\DebugStack;
 use Psr\Container\ContainerInterface;
 use DebugBar\Bridge\DoctrineCollector;
 use Doctrine\Persistence\ManagerRegistry;
@@ -26,8 +25,7 @@ class OrmManagerFactory
         if ($debug && $c->has(DebugBar::class)) {
             /** @var DebugBar */
             $debugBar = $c->get(DebugBar::class);
-            $debugStack = new DebugStack();
-            $om->getConnection()->getConfiguration()->setSQLLogger($debugStack);
+            $debugStack = $om->getConnection()->getConfiguration()->getSQLLogger();
             $debugBar->addCollector(new DoctrineCollector($debugStack));
         }
 
