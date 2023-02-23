@@ -2,6 +2,7 @@
 
 namespace App\Middleware;
 
+use Exception;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -33,7 +34,7 @@ class RecordNotFoundMiddleware implements MiddlewareInterface
     {
         try {
             return $handler->handle($request);
-        } catch (RecordNotFound $e) {
+        } catch (Exception $e) {
             if ($e instanceof RecordNotFound || $e instanceof NoRecordException) {
                 return new Response(404, [], $this->renderer->render(
                     'error404',
