@@ -5,6 +5,7 @@ namespace App\Account\Action;
 use PgFramework\Auth\Auth;
 use App\Auth\UserTable;
 use PgFramework\Auth\LoggedInMiddleware;
+use PgFramework\Security\Hasher\PasswordHasherInterface;
 use PgFramework\Validator\Validator;
 use PgFramework\Session\FlashService;
 use PgFramework\Router\Annotation\Route;
@@ -31,10 +32,12 @@ class AccountEditAction
      * @var UserTable
      */
     private $userTable;
+    private PasswordHasherInterface $hasher;
 
     public function __construct(
         RendererInterface $renderer,
         Auth $auth,
+        PasswordHasherInterface $hasher,
         FlashService $flashService,
         UserTable $userTable
     ) {
@@ -42,6 +45,7 @@ class AccountEditAction
         $this->auth = $auth;
         $this->flashService = $flashService;
         $this->userTable = $userTable;
+        $this->hasher = $hasher;
     }
 
     public function __invoke(ServerRequestInterface $request): ResponseRedirect|string
@@ -61,7 +65,7 @@ class AccountEditAction
                 $userParams['email'] = $params['email'];
             }
             if (!empty($params['password'])) {
-                $userParams['password'] = password_hash($params['password'], PASSWORD_DEFAULT);
+                $userParams['password'] = $this->hasher->hash($params['password']);
             }
             $this->userTable->update($user->getId(), $userParams);
             $this->flashService->success('Votre compte a bien été mis à jour');

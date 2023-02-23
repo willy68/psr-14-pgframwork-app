@@ -34,7 +34,7 @@ use function DI\{
 
 return [
     'auth.login' => '/login',
-    'auth.entity'        => \App\Auth\User::class,
+    'auth.entity'        => \App\Auth\Entity\User::class,
     'twig.extensions' => add([
         get(AuthTwigExtension::class)
     ]),

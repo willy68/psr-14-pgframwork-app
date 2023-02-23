@@ -79,8 +79,9 @@ class SignupAction
                 'roles'    => json_encode(['ROLE_USER'])
             ];
             $this->userTable->insert($userParams);
+            /** @var User $user */
             $user = Hydrator::hydrate($userParams, User::class);
-            $user->id = $this->userTable->getPdo()->lastInsertId();
+            $user->setId($this->userTable->getPdo()->lastInsertId());
             $this->auth->setUser($user);
             $this->flashService->success('Votre compte a bien été créé');
             return new ResponseRedirect($this->router->generateUri('account'));

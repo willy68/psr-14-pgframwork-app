@@ -74,18 +74,18 @@ class User implements UserInterface
     public $roles = [];
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(name="password_reset" ,type="string", nullable=true)
      * @var string
      */
-    #[Column(type: TYPES::STRING, nullable: true)]
-    protected $password_reset;
+    #[Column(name: 'password_reset', type: TYPES::STRING, nullable: true)]
+    protected $passwordReset;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(name="password_reset_at" ,type="datetime", nullable=true)
      * @var DateTime
      */
-    #[Column(type: TYPES::DATETIME_MUTABLE, nullable: true)]
-    protected $password_reset_at;
+    #[Column(name: 'password_reset_at', type: TYPES::DATETIME_MUTABLE, nullable: true)]
+    protected $passwordResetAt;
 
     /**
      * Get the value of id
@@ -249,7 +249,7 @@ class User implements UserInterface
      */
     public function getPasswordReset(): ?string
     {
-        return $this->password_reset;
+        return $this->passwordReset;
     }
 
     /**
@@ -257,15 +257,15 @@ class User implements UserInterface
      */
     public function setPasswordReset(string $passwordReset)
     {
-        $this->password_reset = $passwordReset;
+        $this->passwordReset = $passwordReset;
     }
 
     public function setPasswordResetAt($date)
     {
         if (is_string($date)) {
-            $this->password_reset_at = \DateTime::createFromFormat('Y-m-d H:i:s', $date);
+            $this->passwordResetAt = \DateTime::createFromFormat('Y-m-d H:i:s', $date);
         } else {
-            $this->password_reset_at = $date;
+            $this->passwordResetAt = $date;
         }
     }
 
