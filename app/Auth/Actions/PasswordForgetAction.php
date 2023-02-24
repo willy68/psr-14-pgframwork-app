@@ -40,7 +40,11 @@ class PasswordForgetAction
         $this->flashService = $flashService;
     }
 
-    public function __invoke(ServerRequestInterface $request)
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseRedirect|string
+     */
+    public function __invoke(ServerRequestInterface $request): ResponseRedirect|string
     {
         if ($request->getMethod() === 'GET') {
             return $this->renderer->render('@auth/password');

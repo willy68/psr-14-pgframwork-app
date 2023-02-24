@@ -2,6 +2,7 @@
 
 namespace App\Auth\Mailer;
 
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mime\Email;
 use PgFramework\Renderer\RendererInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -19,7 +20,13 @@ class PasswordResetMailer
         $this->from = $from;
     }
 
-    public function send(string $to, array $params)
+    /**
+     * @param string $to
+     * @param array $params
+     * @return void
+     * @throws TransportExceptionInterface
+     */
+    public function send(string $to, array $params): void
     {
         $message = (new Email())
             ->from($this->from)

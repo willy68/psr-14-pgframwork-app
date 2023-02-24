@@ -5,6 +5,7 @@ namespace App\Auth\Actions;
 use App\Auth\Entity\User;
 use App\Auth\UserTable;
 use Mezzio\Router\RouterInterface;
+use PgFramework\Database\NoRecordException;
 use PgFramework\Validator\Validator;
 use PgFramework\Session\FlashService;
 use PgFramework\Router\Annotation\Route;
@@ -27,7 +28,7 @@ class PasswordResetAction
      */
     private $userTable;
     /**
-     * @var Router
+     * @var RouterInterface
      */
     private $router;
     /**
@@ -47,7 +48,12 @@ class PasswordResetAction
         $this->flashService = $flashService;
     }
 
-    public function __invoke(ServerRequestInterface $request)
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseRedirect|string
+     * @throws NoRecordException
+     */
+    public function __invoke(ServerRequestInterface $request): ResponseRedirect|string
     {
         /** @var User $user */
         $user = $this->userTable->find($request->getAttribute('id'));
