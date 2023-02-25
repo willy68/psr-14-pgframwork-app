@@ -13,6 +13,7 @@ use PgFramework\Response\ResponseRedirect;
 use PgFramework\Database\NoRecordException;
 use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 /**
  * @Route("/password", name="auth.password")
@@ -43,6 +44,7 @@ class PasswordForgetAction
     /**
      * @param ServerRequestInterface $request
      * @return ResponseRedirect|string
+     * @throws TransportExceptionInterface
      */
     public function __invoke(ServerRequestInterface $request): ResponseRedirect|string
     {
