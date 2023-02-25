@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\App\Auth;
+namespace Tests\Framework\Auth;
 
 use Mezzio\Session\SessionInterface;
 use PgFramework\Auth\FailedAccessException;
 use PgFramework\Auth\ForbiddenException;
-use PgFramework\Auth\Middleware\ForbidenMiddleware;
+use PgFramework\Auth\Middleware\ForbiddenMiddleware;
 use PgFramework\Auth\UserInterface;
 use PgFramework\Session\ArraySession;
 use PHPUnit\Framework\TestCase;
@@ -45,7 +45,7 @@ class ForbiddenMiddlewareTest extends TestCase
     {
         $session = $this->session;
         /** @var SessionInterface $session */
-        return new ForbidenMiddleware('/login', $session);
+        return new ForbiddenMiddleware('/login', $session);
     }
 
     public function testCatchForbiddenException()
