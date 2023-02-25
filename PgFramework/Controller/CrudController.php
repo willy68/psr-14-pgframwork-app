@@ -21,52 +21,23 @@ class CrudController
 {
     use RouterAwareAction;
 
-    /**
-     * @var RendererInterface
-     */
-    private $renderer;
+    private RendererInterface $renderer;
 
-    /**
-     * @var ManagerRegistry
-     */
-    protected $om;
+    protected ManagerRegistry $om;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $em;
+    protected ?EntityManagerInterface $em;
 
-    /**
-     * Entity class
-     *
-     * @var string
-     */
-    protected $entity = stdClass::class;
+    protected string $entity = stdClass::class;
 
-    /**
-     * @var RouterInterface
-     */
-    private $router;
+    private RouterInterface $router;
 
-    /**
-     * @var FlashService
-     */
-    private $flash;
+    private FlashService $flash;
 
-    /**
-     * @var string
-     */
-    protected $viewPath;
+    protected string $viewPath = '';
 
-    /**
-     * @var string
-     */
-    protected $routePrefix;
+    protected string $routePrefix = '';
 
-    /**
-     * @var array
-     */
-    protected $messages = [
+    protected array $messages = [
         'create' => "L'élément a bien été créé",
         'edit' => "L'élément a bien été modifié",
         'delete' => "L'élément a bien été supprimé"
@@ -196,7 +167,7 @@ class CrudController
      * @param mixed|null $item
      * @return array
      */
-    protected function getParams(ServerRequestInterface $request, $item = null): array
+    protected function getParams(ServerRequestInterface $request, mixed $item = null): array
     {
         return array_filter(array_merge($request->getParsedBody(), $request->getUploadedFiles()), function ($key) {
             return in_array($key, []);

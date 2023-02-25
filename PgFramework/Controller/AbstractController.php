@@ -11,7 +11,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class AbstractController
 {
     /**
-     * Return filter Post body from SPA or Web
+     * Return filter Post body from an SPA or Web
      *
      * @param ServerRequestInterface $request
      * @param array $filter
@@ -20,7 +20,7 @@ class AbstractController
     protected function getParams(ServerRequestInterface $request, array $filter = []): array
     {
         $params = RequestUtils::getPostParams($request);
-        if (is_null($params)) {
+        if (empty($params)) {
             return [];
         }
         return array_filter($params, function ($key) use ($filter) {
@@ -29,7 +29,7 @@ class AbstractController
     }
 
     /**
-     * Récupère les queryParams de la requète filtrer par les clés
+     * Récupérer les queryParams de la request filtrer par les clés
      * du tableau $filter
      *
      * @param ServerRequestInterface $request
@@ -39,11 +39,11 @@ class AbstractController
      */
     protected function getQueryOption(ServerRequestInterface $request, array $options, ?array $filter = []): array
     {
-        if (empty($filter)) {
-            $filter = ['limit', 'offset', 'order', 'include'];
-        }
         $queryOptions = $request->getQueryParams();
         if (!empty($queryOptions)) {
+            if (empty($filter)) {
+                $filter = ['limit', 'offset', 'order', 'include'];
+            }
             array_walk($queryOptions, function ($value, $key) use (&$options, $filter) {
                 if (in_array($key, $filter)) {
                     if ($key === 'include') {
@@ -60,7 +60,7 @@ class AbstractController
     /**
      * Get validator form fields
      *
-     * @param Request $request
+     * @param ServerRequestInterface $request
      * @return Validator
      */
     protected function getValidator(ServerRequestInterface $request): Validator

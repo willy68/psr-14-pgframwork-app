@@ -13,18 +13,17 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class CategoryCrudController extends CrudController
 {
-    protected $viewPath = '@admin/blog/categories';
+    protected string $viewPath = '@admin/blog/categories';
 
-    protected $routePrefix = 'admin.blog.category';
+    protected string $routePrefix = 'admin.blog.category';
 
-    protected $entity = Category::class;
+    protected string $entity = Category::class;
 
     /**
      * @param RendererInterface $renderer
      * @param ManagerRegistry $om
      * @param RouterInterface $router
      * @param FlashService $flash
-     * @param PostUpload $postUpload
      */
     public function __construct(
         RendererInterface $renderer,
@@ -40,7 +39,7 @@ class CategoryCrudController extends CrudController
      * @param mixed|null $item
      * @return array
      */
-    protected function getParams(ServerRequestInterface $request, $item = null): array
+    protected function getParams(ServerRequestInterface $request, mixed $item = null): array
     {
         return array_filter($request->getParsedBody(), function ($key) {
             return in_array($key, ['name', 'slug']);

@@ -17,11 +17,11 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class PostCrudController extends CrudController
 {
-    protected $viewPath = '@admin/blog/posts';
+    protected string $viewPath = '@admin/blog/posts';
 
-    protected $routePrefix = 'admin.blog';
+    protected string $routePrefix = 'admin.blog';
 
-    protected $entity = Post::class;
+    protected string $entity = Post::class;
 
     protected $postUpload;
 
@@ -88,10 +88,10 @@ class PostCrudController extends CrudController
 
     /**
      * @param ServerRequestInterface $request
-     * @param null $item
+     * @param mixed|null $item
      * @return array
      */
-    protected function getParams(ServerRequestInterface $request, $item = null): array
+    protected function getParams(ServerRequestInterface $request, mixed $item = null): array
     {
         $params = array_merge($request->getParsedBody(), $request->getUploadedFiles());
         if (isset($params['delete']) && $params['delete'] == 1) {

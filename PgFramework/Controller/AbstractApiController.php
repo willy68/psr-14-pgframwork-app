@@ -17,20 +17,20 @@ class AbstractApiController extends AbstractController
      *
      * @var string
      */
-    protected $model = Model::class;
+    protected string $model = Model::class;
 
     /**
      * Attributs du model
      *
      * @var array
      */
-    protected $attributes = [];
+    protected array $attributes = [];
 
     /**
      *
      * @var string
      */
-    protected $foreignKey;
+    protected string $foreignKey;
 
     /**
      * AbstractApiController constructor.
@@ -51,12 +51,11 @@ class AbstractApiController extends AbstractController
         $options = [];
         $attributes = $request->getAttributes();
 
-        if (!empty($this->foreignKey) && (isset($attributes[$this->foreignKey]))) {
-            $options['conditions'] = [$this->foreignKey . ' = ?', $attributes[$this->foreignKey]];
-        }
-
-        $options = $this->getQueryOption($request, $options);
         try {
+            $options = $this->getQueryOption($request, $options);
+            if (!empty($this->foreignKey) && (isset($attributes[$this->foreignKey]))) {
+                $options['conditions'] = [$this->foreignKey . ' = ?', $attributes[$this->foreignKey]];
+            }
             if (!empty($options)) {
                 $models = $this->model::all($options);
             } else {
@@ -76,7 +75,7 @@ class AbstractApiController extends AbstractController
     }
 
     /**
-     * Get model by id
+     * Get model by ID
      *
      * @param ServerRequestInterface $request
      * @return ResponseInterface
@@ -84,9 +83,9 @@ class AbstractApiController extends AbstractController
     public function get(ServerRequestInterface $request): ResponseInterface
     {
         $options = [];
-        $options = $this->getQueryOption($request, $options);
-        $id = $request->getAttribute('id', 0);
         try {
+            $options = $this->getQueryOption($request, $options);
+            $id = $request->getAttribute('id', 0);
             $model = $this->model::find($id);
         } catch (RecordNotFound $e) {
             return new Response(404);
@@ -105,8 +104,8 @@ class AbstractApiController extends AbstractController
      */
     public function update(ServerRequestInterface $request): ResponseInterface
     {
-        $id = (int) $request->getAttribute('id', 0);
         try {
+        $id = (int) $request->getAttribute('id', 0);
             $model = $this->model::find($id);
         } catch (RecordNotFound $e) {
             return new Response(404);
@@ -172,7 +171,7 @@ class AbstractApiController extends AbstractController
     /**
      * Get fields from model
      *
-     * @param array $filter if empty use ['id', 'created_at', 'updated_at']
+     * @param array $filter If empty use ['id', 'created_at', 'updated_at']
      * qui sont gérées par ActiveRecord
      * @return array
      */
@@ -192,13 +191,13 @@ class AbstractApiController extends AbstractController
     /**
      *
      * Transform le tableau $record
-     * en un tableau d'objets json
+     * en un tableau d’objets json
      *
      * @param array $records
      * @param array $include
      * @return string
      */
-    public function jsonArray(array $records, $include = []): string
+    public function jsonArray(array $records, array $include = []): string
     {
         $json = join(',', array_map(function ($record) use ($include) {
             return $record->to_json($include);
