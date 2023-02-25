@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace PgFramework\Auth\Service;
 
 /**
- * Functions utiles pour la génération,
- * le décodage et la validation d'un token
+ * Fonctions utiles pour la génération,
+ * le décodage et la validation d’un token.
  */
 interface UtilTokenInterface
 {
@@ -14,10 +14,10 @@ interface UtilTokenInterface
      * Génère un token à partir des champs credential, password et salt
      *
      * @param string $credential (ex. username ou email)
-     * @param string $password mot de passe généré par la fonction password_hash
-     * habituellement
-     * @param string $salt par défaut à une chaine vide
-     * mais peut être une variable d'environnement ou autre
+     * @param string $password Mot de passe généré par la fonction password_hash()
+     * habituellement.
+     * @param string $salt Par défaut à une chaine vide
+     * mais peut-être une variable d’environnement ou autre.
      * @return string
      */
     public function getToken(
@@ -28,9 +28,9 @@ interface UtilTokenInterface
 
     /**
      * Retourne les différentes parties du token en un tableau,
-     * s'il n'est fait que d'une partie le tableau n'aura qu'une entrée
+     * s’il n’est fait que d’une partie le tableau n’aura qu’une entrée.
      *
-     * @param string $token Le token a décoder
+     * @param string $token Le token à décoder
      * @return array
      */
     public function decodeToken(string $token): array;
@@ -40,10 +40,10 @@ interface UtilTokenInterface
      *
      * @param string $token
      * @param string $credential (ex. username ou email)
-     * @param string $password mot de passe généré par la fonction password_hash
-     * habituellement
-     * @param string $salt par défaut à une chaine vide
-     * mais peut être une variable d'environnement ou autre
+     * @param string $password Mot de passe généré par la fonction password_hash
+     * habituellement.
+     * @param string $salt Par défaut à une chaine vide
+     * mais peut-être une variable d’environnement ou autre.
      * @return bool
      */
     public function validateToken(

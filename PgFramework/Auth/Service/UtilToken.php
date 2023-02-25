@@ -10,15 +10,10 @@ class UtilToken implements UtilTokenInterface
 {
     public const SEPARATOR = ':';
 
-    /**
-     * Algorithme de cryptage
-     *
-     * @var string
-     */
-    protected $algo = 'sha256';
+    protected string $algo = 'sha256';
 
     /**
-     * Initialise l'algorithme de cryptage si null vaut sha256 par défaut
+     * Initialise l’algorithme de cryptage si null vaut sha256 par défaut
      *
      * @param string|null $algo
      */
@@ -27,13 +22,13 @@ class UtilToken implements UtilTokenInterface
         $this->setAlgo($algo);
     }
     /**
-     * Génère un token à partir des champs credential, password et sécurity
+     * Génère un token à partir des champs credential, password et security
      *
      * @param string $credential (ex. username ou email)
-     * @param string $password mot de passe généré par la fonction password_hash
-     * habituellement
-     * @param string $salt par défaut à une chaine vide
-     * mais peut être une variable d'environnement ou autre
+     * @param string $password Mot de passe généré par la fonction password_hash()
+     * habituellement.
+     * @param string $salt Par défaut à une chaine vide
+     * mais peut-être une variable d’environnement ou autre.
      * @return string
      */
     public function getToken(
@@ -48,9 +43,9 @@ class UtilToken implements UtilTokenInterface
 
     /**
      * Retourne les différentes parties du token en un tableau,
-     * s'il n'est fait que d'une partie le tableau n'aura qu'une entrée
+     * s’il n’est fait que d’une partie le tableau n’aura qu’une entrée.
      *
-     * @param string $token Le token a décoder
+     * @param string $token Le token à décoder
      * @return array
      */
     public function decodeToken(string $token): array
@@ -65,10 +60,10 @@ class UtilToken implements UtilTokenInterface
      *
      * @param string $token
      * @param string $credential (ex. username ou email)
-     * @param string $password mot de passe généré par la fonction password_hash
-     * habituellement
-     * @param string $salt par défaut à une chaine vide
-     * mais peut être une variable d'environnement ou autre
+     * @param string $password Mot de passe généré par la fonction password_hash()
+     * habituellement.
+     * @param string $salt Par défaut à une chaine vide
+     * mais peut-être une variable d’environnement ou autre
      * @return bool
      */
     public function validateToken(
@@ -89,7 +84,7 @@ class UtilToken implements UtilTokenInterface
     }
 
     /**
-     * Initialise l'algorithme de cryptage si null vaut sha256 par défaut
+     * Initialise l’algorithme de cryptage si null vaut sha256 par défaut
      *
      * @param string|null $algo
      * @return UtilTokenInterface
