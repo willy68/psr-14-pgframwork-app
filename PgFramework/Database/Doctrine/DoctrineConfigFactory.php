@@ -4,18 +4,26 @@ declare(strict_types=1);
 
 namespace PgFramework\Database\Doctrine;
 
+use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\DocParser;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Configuration;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 class DoctrineConfigFactory
 {
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws AnnotationException
+     * @throws NotFoundExceptionInterface
+     */
     public function __invoke(ContainerInterface $c): Configuration
     {
         // Create a simple "default" Doctrine ORM configuration for Annotations
@@ -50,7 +58,6 @@ class DoctrineConfigFactory
             );
         }
 
-        /** @var MappingDriver */
         $config->setMetadataDriverImpl($annotDriver);
         $config->setProxyDir($c->get('app.cache.dir') . $c->get('doctrine.proxies.dir'));
         $config->setProxyNamespace($c->get('doctrine.proxies.namespace'));
