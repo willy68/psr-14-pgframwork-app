@@ -14,7 +14,7 @@ class AnnotationsLoader
 {
     use AnnotationReaderTrait;
 
-    protected $annotationClass;
+    protected ?string $annotationClass;
 
     public function __construct(string $annotationClass = null, $reader = null)
     {

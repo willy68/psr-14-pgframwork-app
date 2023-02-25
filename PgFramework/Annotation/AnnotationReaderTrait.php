@@ -9,7 +9,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
 
 trait AnnotationReaderTrait
 {
-    protected $reader = null;
+    protected mixed $reader = null;
 
     protected function getReader()
     {
