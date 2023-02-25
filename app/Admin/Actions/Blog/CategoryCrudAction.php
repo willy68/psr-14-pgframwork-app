@@ -13,9 +13,9 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 class CategoryCrudAction extends CrudAction
 {
-    protected $viewPath = '@admin/blog/categories';
+    protected string $viewPath = '@admin/blog/categories';
 
-    protected $routePrefix = 'admin.blog.category';
+    protected string $routePrefix = 'admin.blog.category';
 
     /**
      * Class model

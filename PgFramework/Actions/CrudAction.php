@@ -2,6 +2,7 @@
 
 namespace PgFramework\Actions;
 
+use PgFramework\Database\NoRecordException;
 use PgFramework\Database\Table;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Database\Hydrator;
@@ -15,48 +16,24 @@ class CrudAction
 {
     use RouterAwareAction;
 
-    /**
-     * @var RendererInterface
-     */
-    private $renderer;
+    private RendererInterface $renderer;
 
-    /**
-     * @var RouterInterface
-     */
-    private $router;
+    private RouterInterface $router;
 
-    /**
-     * @var Table
-     */
-    protected $table;
+    protected Table $table;
 
-    /**
-     * @var FlashService
-     */
-    private $flash;
+    private FlashService $flash;
 
-    /**
-     * @var string
-     */
-    protected $viewPath;
+    protected string $viewPath;
 
-    /**
-     * @var string
-     */
-    protected $routePrefix;
+    protected string $routePrefix;
 
-    /**
-     * @var string
-     */
-    protected $messages = [
+    protected array $messages = [
         'create' => "L'élément a bien été créé",
         'edit'   => "L'élément a bien été modifié"
     ];
 
-    /**
-     * @var array
-     */
-    protected $acceptedParams = [];
+    protected array $acceptedParams = [];
 
     public function __construct(
         RendererInterface $renderer,
@@ -70,7 +47,7 @@ class CrudAction
         $this->flash = $flash;
     }
 
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): string|ResponseInterface
     {
         $this->renderer->addGlobal('viewPath', $this->viewPath);
         $this->renderer->addGlobal('routePrefix', $this->routePrefix);
@@ -103,8 +80,9 @@ class CrudAction
      * Edite un élément
      * @param Request $request
      * @return ResponseInterface|string
+     * @throws NoRecordException
      */
-    public function edit(Request $request)
+    public function edit(Request $request): string|ResponseInterface
     {
         $id = (int)$request->getAttribute('id');
         $item = $this->table->find($id);
@@ -133,7 +111,7 @@ class CrudAction
      * @param Request $request
      * @return ResponseInterface|string
      */
-    public function create(Request $request)
+    public function create(Request $request): string|ResponseInterface
     {
         $item = $this->getNewEntity();
         $errors = null;
@@ -160,7 +138,7 @@ class CrudAction
      * @param Request $request
      * @return ResponseInterface
      */
-    public function delete(Request $request)
+    public function delete(Request $request): ResponseInterface
     {
         $this->table->delete($request->getAttribute('id'));
         return $this->redirect($this->routePrefix . '.index');
@@ -170,6 +148,7 @@ class CrudAction
      * Filtre les paramètres reçu par la requête
      *
      * @param Request $request
+     * @param $item
      * @return array
      */
     protected function prePersist(Request $request, $item): array
@@ -180,7 +159,7 @@ class CrudAction
     }
 
     /**
-     * Permet d'effectuer un traitement après la persistence
+     * Permet d’effectuer un traitement après la persistence
      * @param Request $request
      * @param $item
      */
@@ -194,15 +173,13 @@ class CrudAction
      * @param Request $request
      * @return Validator
      */
-    protected function getValidator(Request $request)
+    protected function getValidator(Request $request): Validator
     {
         return new Validator(array_merge($request->getParsedBody(), $request->getUploadedFiles()));
     }
 
     /**
-     * Génère une nouvelle entité pour l'action de création
-     *
-     * @return mixed
+     * Génère une nouvelle entité pour l’action de création
      */
     protected function getNewEntity()
     {
@@ -213,7 +190,7 @@ class CrudAction
     /**
      * Permet de traiter les paramètres à envoyer à la vue
      *
-     * @param $params
+     * @param array $params
      * @return array
      */
     protected function formParams(array $params): array

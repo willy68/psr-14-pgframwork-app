@@ -2,6 +2,7 @@
 
 namespace App\Admin\Actions\Blog;
 
+use DateTime;
 use Mezzio\Router\RouterInterface;
 use App\Blog\PostUpload;
 use PgFramework\Validator\Validator;
@@ -13,19 +14,20 @@ use App\Blog\Table\CategoryTable;
 use PgFramework\Actions\CrudAction;
 use PgFramework\Session\FlashService;
 use PgFramework\Renderer\RendererInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class PostCrudAction extends CrudAction
 {
-    protected $viewPath = '@admin/blog/posts';
+    protected string $viewPath = '@admin/blog/posts';
 
-    protected $routePrefix = 'admin.blog';
+    protected string $routePrefix = 'admin.blog';
 
-    protected $model = Posts::class;
+    protected string $model = Posts::class;
 
-    protected $categoryTable;
+    protected CategoryTable $categoryTable;
 
-    private $postUpload;
+    private PostUpload $postUpload;
 
     public function __construct(
         RendererInterface $renderer,
@@ -40,7 +42,7 @@ class PostCrudAction extends CrudAction
         $this->postUpload = $postUpload;
     }
 
-    public function delete(Request $request)
+    public function delete(Request $request): ResponseInterface
     {
         // $post = $this->table->find($request->getAttribute('id'));
         $post = $this->model::find($request->getAttribute('id'));
@@ -50,8 +52,6 @@ class PostCrudAction extends CrudAction
     }
 
     /**
-     * Undocumented function
-     *
      * @param array $params
      * @return array
      */
@@ -62,26 +62,19 @@ class PostCrudAction extends CrudAction
         return $params;
     }
 
-    /**
-     * Undocumented function
-     *
-     * @return Post
-     */
-    protected function getNewEntity()
+    protected function getNewEntity(): Post
     {
         $post = new Post();
-        $post->createdAt = new \DateTime();
+        $post->createdAt = new DateTime();
         return $post;
     }
 
     /**
-     * Undocumented function
-     *
      * @param Request $request
      * @param mixed|null $item
      * @return array
      */
-    protected function getParams(Request $request, $item = null): array
+    protected function getParams(Request $request, mixed $item = null): array
     {
         $params = array_merge($request->getParsedBody(), $request->getUploadedFiles());
         if (isset($params['delete']) && $params['delete'] == 1) {
@@ -97,18 +90,12 @@ class PostCrudAction extends CrudAction
             }
         }
 
-        $params = array_filter($params, function ($key) {
+        return array_filter($params, function ($key) {
             return in_array($key, ['name', 'slug', 'content', 'created_at', 'category_id', 'image', 'published']);
         }, ARRAY_FILTER_USE_KEY);
-        /*return array_merge($params, [
-            'updated_at' => date('Y-m-d H:i:s')
-        ]);*/
-        return $params;
     }
 
     /**
-     * Undocumented function
-     *
      * @param Request $request
      * @return Validator
      */

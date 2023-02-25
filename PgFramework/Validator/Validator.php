@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace PgFramework\Validator;
 
+use DateTime;
+use Exception;
 use PDO;
 use PgFramework\Database\Table;
+use Psr\Http\Message\UploadedFileInterface;
 
 class Validator
 {
@@ -17,23 +20,10 @@ class Validator
         'pdf' => 'application/pdf'
     ];
 
-    /**
-     * Undocumented variable
-     *
-     * @var array
-     */
-    private $params;
+    private array $params;
 
-    /**
-     * @var ValidationError[]
-     */
-    private $errors = [];
+    private array $errors = [];
 
-    /**
-     * Validator constructor.
-     *
-     * @param array $params
-     */
     public function __construct(array $params)
     {
         $this->params = $params;
@@ -42,7 +32,7 @@ class Validator
     /**
      * Vérifie que les champs sont présents dans le tableau
      *
-     * @param mixed[] ...$keys
+     * @param mixed ...$keys
      * @return Validator
      */
     public function required(...$keys): self
@@ -60,9 +50,9 @@ class Validator
     }
 
     /**
-     * Vérifie que le champs n'est pas vide
+     * Vérifie que le champ n’est pas vide
      *
-     * @param string[] ...$keys
+     * @param string ...$keys
      * @return Validator
      */
     public function notEmpty(string ...$keys): self
@@ -72,13 +62,21 @@ class Validator
         }
         foreach ($keys as $key) {
             $value = $this->getValue($key);
-            if (is_null($value) || empty($value)) {
+            if (empty($value)) {
                 $this->addError($key, 'empty');
             }
         }
         return $this;
     }
 
+    /**
+     * Vérifie si le champ n’est trop court ou/et trop long
+     *
+     * @param string $key
+     * @param int|null $min
+     * @param int|null $max
+     * @return $this
+     */
     public function length(string $key, ?int $min, ?int $max = null): self
     {
         $value = $this->getValue($key);
@@ -91,24 +89,18 @@ class Validator
             $this->addError($key, 'betweenLength', [$min, $max]);
             return $this;
         }
-        if (
-            !is_null($min) &&
-            $length < $min
-        ) {
+        if (!is_null($min) && $length < $min) {
             $this->addError($key, 'minLength', [$min]);
             return $this;
         }
-        if (
-            !is_null($max) &&
-            $length > $max
-        ) {
+        if (!is_null($max) && $length > $max) {
             $this->addError($key, 'maxLength', [$max]);
         }
         return $this;
     }
 
     /**
-     * Vérifie que l'élément est un slug
+     * Vérifie que l’élément est un slug
      *
      * @param string $key
      * @return Validator
@@ -124,7 +116,7 @@ class Validator
     }
 
     /**
-     * Vérifie que l'élément est numérique
+     * Vérifie que l’élément est numérique
      *
      * @param string $key
      * @return Validator
@@ -139,7 +131,7 @@ class Validator
     }
 
     /**
-     * Vérifie qu'une date correspond au format demandé
+     * Vérifie qu’une date correspond au format demandé
      *
      * @param string $key
      * @param string $format
@@ -148,8 +140,8 @@ class Validator
     public function dateTime(string $key, string $format = "Y-m-d H:i:s"): self
     {
         $value = $this->getValue($key);
-        $date = \DateTime::createFromFormat($format, $value);
-        $errors = \DateTime::getLastErrors();
+        $date = DateTime::createFromFormat($format, $value);
+        $errors = DateTime::getLastErrors();
         if ($errors['error_count'] > 0 || $errors['warning_count'] > 0 || $date === false) {
             $this->addError($key, 'datetime', [$format]);
         }
@@ -161,10 +153,10 @@ class Validator
      *
      * @param string $key
      * @param string $table
-     * @param \PDO $pdo
+     * @param PDO $pdo
      * @return Validator
      */
-    public function exists(string $key, string $table, \PDO $pdo): self
+    public function exists(string $key, string $table, PDO $pdo): self
     {
         $value = $this->getValue($key);
         $statement = $pdo->prepare("SELECT id FROM $table WHERE id = ?");
@@ -177,13 +169,14 @@ class Validator
 
     /**
      * Vérifie que la clef est unique dans la base de donnée
+     *
      * @param string $key
      * @param string|Table $table
-     * @param \PDO|null $pdo
+     * @param PDO|null $pdo
      * @param integer|null $exclude
      * @return self
      */
-    public function unique(string $key, $table, ?\PDO $pdo = null, ?int $exclude = null): self
+    public function unique(string $key, Table|string $table, ?PDO $pdo = null, ?int $exclude = null): self
     {
         if ($table instanceof Table) {
             $pdo = $table->getPdo();
@@ -205,7 +198,7 @@ class Validator
     }
 
     /**
-     * Vérifie si le fichier a bien été uploadé
+     * Vérifie si le fichier a bien été upload
      *
      * @param string $key
      * @return self
@@ -220,7 +213,8 @@ class Validator
     }
 
     /**
-     * Vérifie si l'email est valid
+     * Vérifie si le courriel est valid
+     *
      * @param string $key
      * @return Validator
      */
@@ -233,6 +227,12 @@ class Validator
         return $this;
     }
 
+    /**
+     * Confirme si le champ est égal au champ '$key_confirm'
+     *
+     * @param string $key
+     * @return $this
+     */
     public function confirm(string $key): self
     {
         $value = $this->getValue($key);
@@ -244,6 +244,8 @@ class Validator
     }
 
     /**
+     * Vérifie que l’extension du fichier est valide
+     *
      * @param string $key
      * @param array $extensions
      * @return $this
@@ -296,6 +298,7 @@ class Validator
      *
      * @param array $rules
      * @return self
+     * @throws Exception
      */
     public function addRules(array $rules): self
     {
@@ -328,7 +331,7 @@ class Validator
      * @param string $key
      * @return mixed|null
      */
-    private function getValue(string $key)
+    private function getValue(string $key): mixed
     {
         if (array_key_exists($key, $this->params)) {
             return $this->params[$key];
