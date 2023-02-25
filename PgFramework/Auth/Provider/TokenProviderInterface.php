@@ -9,23 +9,23 @@ use PgFramework\Auth\TokenInterface;
 interface TokenProviderInterface
 {
     /**
-     * get cookie token from database or what else
+     * Get cookie token from a database or what else
      *
-     * @param mixed $credential
-     * @return \PgFramework\Auth\TokenInterface|null
+     * @param $series
+     * @return TokenInterface|null
      */
     public function getTokenBySeries($series): ?TokenInterface;
 
     /**
-     * get cookie token from database or what else
+     * Get cookie token from a database or what else
      *
      * @param mixed $credential
-     * @return \PgFramework\Auth\TokenInterface|null
+     * @return TokenInterface|null
      */
-    public function getTokenByCredential($credential): ?TokenInterface;
+    public function getTokenByCredential(mixed $credential): ?TokenInterface;
 
     /**
-     * Sauvegarde le token (database, cookie, les deux ou autre)
+     * Save token (database, cookie, both or other)
      *
      * @param array $token
      * @return TokenInterface|null
@@ -33,19 +33,19 @@ interface TokenProviderInterface
     public function saveToken(array $token): ?TokenInterface;
 
     /**
-     * Mise à jour du token en database
+     * Update token on database
      *
      * @param array $token
      * @param mixed $id
      * @return TokenInterface|null
      */
-    public function updateToken(array $token, $id): ?TokenInterface;
+    public function updateToken(array $token, mixed $id): ?TokenInterface;
 
     /**
-     * Detruit le token inutile
+     * Destroy unused token
      *
      * @param int $id
      * @return void
      */
-    public function deleteToken(int $id);
+    public function deleteToken(int $id): void;
 }
