@@ -3,6 +3,7 @@
 namespace App\Admin\Actions\Blog;
 
 use DateTime;
+use Exception;
 use Mezzio\Router\RouterInterface;
 use App\Blog\PostUpload;
 use PgFramework\Validator\Validator;
@@ -98,6 +99,7 @@ class PostCrudAction extends CrudAction
     /**
      * @param Request $request
      * @return Validator
+     * @throws Exception
      */
     protected function getValidator(Request $request): Validator
     {
