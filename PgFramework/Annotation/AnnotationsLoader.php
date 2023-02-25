@@ -26,17 +26,18 @@ class AnnotationsLoader
      * Change Annotation class
      *
      * @param string $class
-     * @return void
+     * @return self
      */
-    public function setAnnotation(string $class)
+    public function setAnnotation(string $class): static
     {
         $this->annotationClass = $class;
+        return $this;
     }
 
     /**
-     * Recherche l'annotation de method pour une classe precise
+     * Recherche l’annotation de method pour une classe precise
      *
-     * @param \ReflectionMethod $method
+     * @param ReflectionMethod $method
      * @return MappingAttribute|null
      */
     public function getMethodAnnotation(ReflectionMethod $method): ?MappingAttribute
@@ -62,7 +63,7 @@ class AnnotationsLoader
     /**
      * Recherche les annotations de method
      *
-     * @param \ReflectionMethod $method
+     * @param ReflectionMethod $method
      * @return iterable|null
      */
     public function getMethodAnnotations(ReflectionMethod $method): ?iterable
@@ -95,7 +96,7 @@ class AnnotationsLoader
     /**
      * Recherche la première annotation de class
      *
-     * @param \ReflectionClass $class
+     * @param ReflectionClass $class
      * @return MappingAttribute|null
      */
     public function getClassAnnotation(ReflectionClass $class): ?MappingAttribute
@@ -126,7 +127,7 @@ class AnnotationsLoader
     /**
      * Recherche les annotations de class
      *
-     * @param \ReflectionClass $class
+     * @param ReflectionClass $class
      * @return iterable|null
      */
     public function getClassAnnotations(ReflectionClass $class): ?iterable
