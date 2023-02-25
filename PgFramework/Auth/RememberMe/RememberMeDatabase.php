@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PgFramework\Auth\RememberMe;
 
+use DateTime;
+use Exception;
 use PgFramework\Auth\UserInterface;
 use Dflydev\FigCookies\SetCookie;
 use Psr\Http\Message\ResponseInterface;
@@ -12,23 +14,14 @@ use Dflydev\FigCookies\FigResponseCookies;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Auth\Provider\UserProviderInterface;
 use PgFramework\Auth\Provider\TokenProviderInterface;
+use TypeError;
+
+use function count;
 
 class RememberMeDatabase extends AbstractRememberMe
 {
-    /**
-     * Token Repository
-     *
-     * @var TokenProviderInterface
-     */
-    private $tokenProvider;
+    private TokenProviderInterface $tokenProvider;
 
-    /**
-     * Constructeur: ajoute l'option pour le nom du cookie du mot de passe aléatoire
-     *
-     * @param \PgFramework\Auth\Provider\UserProviderInterface $userProvider
-     * @param \PgFramework\Auth\Provider\TokenProviderInterface $tokenProvider
-     * @param string $salt
-     */
     public function __construct(
         UserProviderInterface $userProvider,
         TokenProviderInterface $tokenProvider,
@@ -39,12 +32,13 @@ class RememberMeDatabase extends AbstractRememberMe
     }
 
     /**
-     * Crée un cookie d'authentification,
-     * un token en base données et un cookie avec un mot de passe aléatoire
+     * Crée un cookie d’authentification,
+     * un token en base donnée et un cookie avec un mot de passe aléatoire
      *
      * @param ResponseInterface $response
      * @param UserInterface $user
      * @return ResponseInterface
+     * @throws Exception
      */
     public function onLogin(ResponseInterface $response, UserInterface $user): ResponseInterface
     {
@@ -58,7 +52,7 @@ class RememberMeDatabase extends AbstractRememberMe
                 'series' => $series,
                 'credential' => $user->getUsername(),
                 'random_password' => $randomPassword,
-                'expiration_date' => (new \DateTime())
+                'expiration_date' => (new DateTime())
                     ->setTimestamp(time() +  $this->options['lifetime'])
             ]
         );
@@ -68,11 +62,12 @@ class RememberMeDatabase extends AbstractRememberMe
     }
 
     /**
-     * Connecte l'utilisateur automatiquement avec le cookie reçu de la requète et
-     * vérifie le token en base de données s'il est valide
+     * Connecte l’utilisateur automatiquement avec le cookie reçu de la request et
+     * vérifie le token en base de données s’il est valide
      *
      * @param ServerRequestInterface $request
      * @return ServerRequestInterface
+     * @throws Exception
      */
     public function autoLogin(ServerRequestInterface $request): ServerRequestInterface
     {
@@ -85,23 +80,17 @@ class RememberMeDatabase extends AbstractRememberMe
 
         try {
             $cookieParts = $this->decodeCookie($cookie->getValue());
-            if (3 !== \count($cookieParts)) {
-                throw new \Exception();
+            if (3 !== count($cookieParts)) {
+                throw new Exception();
             }
 
             [$series,, $randomPassword] = $cookieParts;
             $token = $this->tokenProvider->getTokenBySeries($series);
 
             if (!$token) {
-                $authenticate = false;
+                throw new Exception();
             }
-        } catch (\Exception $e) {
-            $authenticate = false;
-        } catch (\TypeError $e) {
-            $authenticate = false;
-        }
-
-        if (!$authenticate) {
+        } catch (Exception|TypeError $e) {
             return $request->withAttribute($this->options['attribute'], $this->cancelCookie());
         }
 
@@ -122,12 +111,12 @@ class RememberMeDatabase extends AbstractRememberMe
             }
 
             // Update cookie and database token
-            //["series', 'credential', 'random_password', 'expiration_date']
+            //['series', 'credential', 'random_password', 'expiration_date']
             $randomPassword = base64_encode(random_bytes(64));
             $this->tokenProvider->updateToken(
                 [
                     'random_password' => $randomPassword,
-                    'expiration_date' => (new \DateTime())
+                    'expiration_date' => (new DateTime())
                         ->setTimestamp(time() +  $this->options['lifetime'])
                 ],
                 $token->getId()
@@ -140,7 +129,7 @@ class RememberMeDatabase extends AbstractRememberMe
     }
 
     /**
-     * Déconnecte l'utilisateur et invalide le cookie dans la response et
+     * Déconnecte l’utilisateur et invalide le cookie dans la response et
      * marque le token en base de données expiré
      *
      * @param ServerRequestInterface $request
@@ -152,7 +141,7 @@ class RememberMeDatabase extends AbstractRememberMe
         $cookie = FigRequestCookies::get($request, $this->options['name']);
         if ($cookie->getValue()) {
             $cookieParts = $this->decodeCookie($cookie->getValue());
-            if (3 === \count($cookieParts)) {
+            if (3 === count($cookieParts)) {
                 [$series] = $cookieParts;
 
                 $token = $this->tokenProvider->getTokenBySeries($series);
@@ -169,7 +158,7 @@ class RememberMeDatabase extends AbstractRememberMe
     }
 
     /**
-     * Renouvelle la date d'expiration du cookie dans la response et le token en base de données
+     * Renouvelle la date d’expiration du cookie dans la response et le token en base de données
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response

@@ -14,9 +14,7 @@ interface RememberMeInterface
      * Crée un cookie d'authentification
      *
      * @param ResponseInterface $response
-     * @param string $username
-     * @param string $password
-     * @param string $secret
+     * @param UserInterface $user
      * @return ResponseInterface
      */
     public function onLogin(
@@ -25,28 +23,28 @@ interface RememberMeInterface
     ): ResponseInterface;
 
     /**
-     * Connecte l'utilisateur automatiquement avec le cookie reçu de la requète
+     * Connecte l’utilisateur automatiquement avec le cookie reçu de la request
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @return ServerRequestInterface with _user attribute or not
+     * @param ServerRequestInterface $request
+     * @return ServerRequestInterface With _user attribute or not
      */
     public function autoLogin(ServerRequestInterface $request): ServerRequestInterface;
 
     /**
-     * Déconnecte l'utilisateur et invalide le cookie dans la response
+     * Déconnecte l’utilisateur et invalide le cookie dans la response
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Message\ResponseInterface $response
-     * @return \Psr\Http\Message\ResponseInterface
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
      */
     public function onLogout(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface;
 
     /**
-     * Renouvelle la date d'expiration du cookie dans la response
+     * Renouvelle la date d’expiration du cookie dans la response
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Message\ResponseInterface $response
-     * @return \Psr\Http\Message\ResponseInterface
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
      */
     public function resume(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface;
 }

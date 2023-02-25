@@ -10,31 +10,13 @@ abstract class AbstractRememberMe implements RememberMeInterface
 {
     use RememberMeCookieAwareTraits;
 
-    /**
-     * Algo de hashage
-     *
-     * @var string
-     */
-    protected $algo = 'sha256';
+    protected string $algo = 'sha256';
 
-    /**
-     * Clef privée de hashage
-     *
-     * @var string
-     */
-    protected $salt;
+    protected string $salt;
 
-    /**
-     * @var UserProviderInterface
-     */
-    protected $userProvider;
+    protected UserProviderInterface $userProvider;
 
-    /**
-     * Cookie options
-     *
-     * @var array
-     */
-    protected $options = [
+    protected array $options = [
         'name' => 'auth_login',
         'attribute' => '_rememberme.cookie',
         'field' => 'username',
@@ -55,7 +37,7 @@ abstract class AbstractRememberMe implements RememberMeInterface
     }
 
     /**
-     * Modifie le tableau d'options du cookie
+     * Modifie le tableau d’options du cookie
      *
      * @param array $options
      * @return self
@@ -69,7 +51,7 @@ abstract class AbstractRememberMe implements RememberMeInterface
     }
 
     /**
-     * Initialise l'algorithme de cryptage si null vaut sha256 par défaut
+     * Initialise l’algorithme de cryptage si null vaut sha256 par défaut
      *
      * @param string|null $algo
      * @return self

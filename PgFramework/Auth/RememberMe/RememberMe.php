@@ -11,6 +11,8 @@ use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
 use Psr\Http\Message\ServerRequestInterface;
 
+use function count;
+
 class RememberMe extends AbstractRememberMe
 {
     /**
@@ -22,27 +24,12 @@ class RememberMe extends AbstractRememberMe
      */
     public function onLogin(ResponseInterface $response, UserInterface $user): ResponseInterface
     {
-
-        $cookieValue = $this->getCookieHash(
-            $user->getUsername(),
-            $user->getPassword(),
-            get_class($user),
-            time() + $this->options['lifetime'],
-            $this->salt
-        );
-
-        $cookie = SetCookie::create($this->options['name'])
-            ->withValue($cookieValue)
-            ->withExpires(time() + $this->options['lifetime'])
-            ->withPath($this->options['path'])
-            ->withDomain($this->options['domain'])
-            ->withSecure($this->options['secure'])
-            ->withHttpOnly($this->options['httpOnly']);
+        $cookie = $this->getCookie($user);
         return FigResponseCookies::set($response, $cookie);
     }
 
     /**
-     * Connecte l'utilisateur automatiquement avec le cookie reçu de la requète
+     * Connecte l’utilisateur automatiquement avec le cookie reçu de la request
      *
      * @param ServerRequestInterface $request
      * @return ServerRequestInterface
@@ -53,7 +40,7 @@ class RememberMe extends AbstractRememberMe
         if (($cookieValue = $cookie->getValue())) {
             $cookieParts = $this->decodeCookie($cookieValue);
 
-            if (4 !== \count($cookieParts)) {
+            if (4 !== count($cookieParts)) {
                 return $this->cancelCookie($request);
             }
 
@@ -66,21 +53,7 @@ class RememberMe extends AbstractRememberMe
             $user = $this->userProvider->getUser($this->options['field'], $username);
 
             if (true === $this->validateToken($user, $expires, $hash)) {
-                $cookieValue = $this->getCookieHash(
-                    $user->getUsername(),
-                    $user->getPassword(),
-                    get_class($user),
-                    time() + $this->options['lifetime'],
-                    $this->salt
-                );
-
-                $cookie = SetCookie::create($this->options['name'])
-                    ->withValue($cookieValue)
-                    ->withExpires(time() + $this->options['lifetime'])
-                    ->withPath($this->options['path'])
-                    ->withDomain($this->options['domain'])
-                    ->withSecure($this->options['secure'])
-                    ->withHttpOnly($this->options['httpOnly']);
+                $cookie = $this->getCookie($user);
 
                 return $request->withAttribute('_user', $user)
                     ->withAttribute($this->options['attribute'], $cookie);
@@ -90,7 +63,7 @@ class RememberMe extends AbstractRememberMe
     }
 
     /**
-     * Déconnecte l'utilisateur et invalide le cookie dans la response
+     * Déconnecte l’utilisateur et invalide le cookie dans la response
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
@@ -113,7 +86,7 @@ class RememberMe extends AbstractRememberMe
     }
 
     /**
-     * Renouvelle la date d'expiration du cookie dans la response
+     * Renouvelle la date d’expiration du cookie dans la response
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
@@ -144,6 +117,18 @@ class RememberMe extends AbstractRememberMe
         return $response;
     }
 
+    protected function validateToken($user, $expires, $hash): bool
+    {
+        return true === hash_equals(
+            hash_hmac(
+                $this->algo,
+                $user->getUsername() . $user->getPassword() . get_class($user) . $expires,
+                $this->salt
+            ),
+            $hash
+        );
+    }
+
     protected function getCookieHash(
         string $credential,
         string $password,
@@ -158,18 +143,6 @@ class RememberMe extends AbstractRememberMe
         ]);
     }
 
-    protected function validateToken($user, $expires, $hash): bool
-    {
-        return true === hash_equals(
-            hash_hmac(
-                $this->algo,
-                $user->getUsername() . $user->getPassword() . get_class($user) . $expires,
-                $this->salt
-            ),
-            $hash
-        );
-    }
-
     protected function cancelCookie(ServerRequestInterface $request): ServerRequestInterface
     {
         $cookie = SetCookie::create($this->options['name'])
@@ -180,5 +153,27 @@ class RememberMe extends AbstractRememberMe
             ->withSecure($this->options['secure'])
             ->withHttpOnly($this->options['httpOnly']);
         return $request->withAttribute($this->options['attribute'], $cookie);
+    }
+
+    /**
+     * @param UserInterface $user
+     * @return SetCookie
+     */
+    protected function getCookie(UserInterface $user): SetCookie
+    {
+        $cookieValue = $this->getCookieHash(
+            $user->getUsername(),
+            $user->getPassword(),
+            get_class($user),
+            time() + $this->options['lifetime']
+        );
+
+        return SetCookie::create($this->options['name'])
+            ->withValue($cookieValue)
+            ->withExpires(time() + $this->options['lifetime'])
+            ->withPath($this->options['path'])
+            ->withDomain($this->options['domain'])
+            ->withSecure($this->options['secure'])
+            ->withHttpOnly($this->options['httpOnly']);
     }
 }
