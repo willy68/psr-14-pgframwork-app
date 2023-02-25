@@ -16,15 +16,13 @@ use PgFramework\Auth\FailedAccessException;
 use PgFramework\Auth\UserInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use TypeError;
 
-class ForbidenMiddleware implements MiddlewareInterface
+class ForbiddenMiddleware implements MiddlewareInterface
 {
-    private $loginPath;
+    private string $loginPath;
 
-    /**
-     * @var SessionInterface
-     */
-    private $session;
+    private SessionInterface $session;
 
     public function __construct(string $loginPath, SessionInterface $session)
     {
@@ -46,7 +44,7 @@ class ForbidenMiddleware implements MiddlewareInterface
                 return new Response(403, [], $e->getMessage() . ' ' . $e->getCode());
             }
             return $this->redirectAdminHome($request);
-        } catch (\TypeError $error) {
+        } catch (TypeError $error) {
             if (strpos($error->getMessage(), UserInterface::class) !== false) {
                 if (RequestUtils::isJson($request)) {
                     return new Response(403, [], $error->getMessage() . ' ' . $error->getCode());
@@ -60,7 +58,7 @@ class ForbidenMiddleware implements MiddlewareInterface
     public function redirectLogin(ServerRequestInterface $request): ResponseInterface
     {
         $this->session->set('auth.redirect', $request->getUri()->getPath());
-        (new FlashService($this->session))->error('Vous devez posseder un compte pour accéder à cette page');
+        (new FlashService($this->session))->error('Vous devez posséder un compte pour accéder à cette page');
         return new ResponseRedirect($this->loginPath);
     }
 
@@ -68,12 +66,10 @@ class ForbidenMiddleware implements MiddlewareInterface
     {
         $uri = $this->loginPath;
         $server = $request->getServerParams();
-
         if (isset($server['HTTP_REFERER'])) {
             $uri = $server['HTTP_REFERER'];
         }
-
-        (new FlashService($this->session))->error('Vous n\'avez pas l\'authorisation pour executer cette action');
+        (new FlashService($this->session))->error('Vous n\'avez pas l\'authorisation pour exécuter cette action');
         return new ResponseRedirect($uri);
     }
 }

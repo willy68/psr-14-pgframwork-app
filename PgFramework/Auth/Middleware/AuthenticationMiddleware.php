@@ -17,19 +17,17 @@ use PgFramework\Security\Authentication\Exception\AuthenticationFailureException
 
 class AuthenticationMiddleware implements MiddlewareInterface
 {
+
     /**
      * @var AuthenticationInterface[]
      */
-    private $authenticators;
+    private array $authenticators;
 
-    private $rememberMe;
+    private RememberMeInterface $rememberMe;
 
-    /**
-     * @var EventDispatcher
-     */
-    private $dispatcher;
+    private EventDispatcherInterface|EventDispatcher $dispatcher;
 
-    private $map;
+    private RoutesMapInterface $map;
 
     public function __construct(
         array $authenticators,
@@ -54,12 +52,12 @@ class AuthenticationMiddleware implements MiddlewareInterface
                 try {
                     $result = $authenticator->authenticate($request);
 
-                    /** @var LoginSuccessEvent */
+                    /** @var LoginSuccessEvent $loginSuccessEvent*/
                     $loginSuccessEvent = $this->dispatcher->dispatch(new LoginSuccessEvent($result));
                     $result = $loginSuccessEvent->getResult();
                 } catch (AuthenticationFailureException $e) {
 
-                    /** @var LoginFailureEvent */
+                    /** @var LoginFailureEvent $loginFailureEvent*/
                     $loginFailureEvent = $this->dispatcher->dispatch(new LoginFailureEvent($e));
 
                     $response = $authenticator->onAuthenticateFailure(

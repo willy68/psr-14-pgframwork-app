@@ -11,7 +11,7 @@ use PgFramework\Auth\{
     RememberMe\RememberMeInterface,
     RememberMe\RememberMeDatabase,
     RememberMe\RememberMe,
-    Middleware\ForbidenMiddleware
+    Middleware\ForbiddenMiddleware
 };
 use PgFramework\Auth\Service\{
     UtilToken,
@@ -57,7 +57,7 @@ return [
     UtilTokenInterface::class => get(UtilToken::class),
     UserProviderInterface::class => get(UserProvider::class),
     TokenProviderInterface::class => get(UserTokenProvider::class),
-    ForbidenMiddleware::class => autowire()->constructorParameter('loginPath', get('auth.login')),
+    ForbiddenMiddleware::class => autowire()->constructorParameter('loginPath', get('auth.login')),
     ForbiddenListener::class => autowire()->constructorParameter('loginPath', get('auth.login')),
     FormAuthentication::class => autowire()->constructorParameter('options', [
         'identifier' => 'username',
