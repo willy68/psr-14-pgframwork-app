@@ -6,12 +6,14 @@ namespace PgFramework\Database\ActiveRecord;
 
 use ActiveRecord;
 use ActiveRecord\Connection;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Invoker\ParameterResolver\ResolverChain;
 use PgFramework\Annotation\AnnotationsLoader;
 use Invoker\ParameterResolver\ParameterResolver;
 use PgFramework\Invoker\ParameterResolver\ActiveRecordResolver;
 use PgFramework\Invoker\ParameterResolver\ActiveRecordAnnotationsResolver;
+use Psr\Container\NotFoundExceptionInterface;
 
 class ActiveRecordFactory
 {
@@ -20,6 +22,8 @@ class ActiveRecordFactory
      *
      * @param ContainerInterface $c
      * @return bool
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $c): bool
     {
@@ -35,7 +39,7 @@ class ActiveRecordFactory
             Connection::$datetime_format = 'Y-m-d H:i:s';
         });
 
-        /** @var  ResolverChain */
+        /** @var  ResolverChain $paramResolver*/
         $paramResolver = $c->get(ParameterResolver::class);
         $paramResolver->prependResolver(new ActiveRecordAnnotationsResolver($c->get(AnnotationsLoader::class)));
         $paramResolver->prependResolver(new ActiveRecordResolver());

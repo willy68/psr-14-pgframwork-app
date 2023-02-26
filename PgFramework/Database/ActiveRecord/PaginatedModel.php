@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace PgFramework\Database\ActiveRecord;
 
 use ActiveRecord;
+use ActiveRecord\Exceptions\RecordNotFound;
+use ActiveRecord\Model;
 use Pagerfanta\Pagerfanta;
 use PgFramework\Database\Query;
-use PgFramework\Database\ActiveRecord\PaginatedActiveRecord;
 
 class PaginatedModel extends ActiveRecord\Model
 {
-    public static $paginatedCondition = [];
+    public static array $paginatedCondition = [];
 
-    public static $query;
+    public static Query $query;
 
     /**
      * @param int $perPage
@@ -37,15 +38,16 @@ class PaginatedModel extends ActiveRecord\Model
         if (!empty(static::$paginatedCondition['conditions'])) {
             $options['conditions'] = static::$paginatedCondition['conditions'];
         }
-        return (int)static::count($options);
+        return static::count($options);
     }
 
     /**
      * @param int $offset
      * @param int $length
-     * @return mixed
+     * @return Model|array|mixed|null
+     * @throws RecordNotFound
      */
-    public static function paginatedQuery(int $offset, int $length)
+    public static function paginatedQuery(int $offset, int $length): mixed
     {
         static::$paginatedCondition['limit'] = $length;
         static::$paginatedCondition['offset'] = $offset;
@@ -55,7 +57,7 @@ class PaginatedModel extends ActiveRecord\Model
     /**
      * set paginated options conditions
      *
-     * @param \PgFramework\Database\Query $query
+     * @param Query $query
      * @return string static::class
      */
     public static function setPaginatedQuery(Query $query): string
@@ -82,6 +84,7 @@ class PaginatedModel extends ActiveRecord\Model
     /**
      * @param array $field
      * @return array
+     * @throws RecordNotFound
      */
     public static function findList(array $field): array
     {
@@ -91,7 +94,7 @@ class PaginatedModel extends ActiveRecord\Model
     /**
      * Init query
      *
-     * @return \PgFramework\Database\Query
+     * @return Query
      */
     public static function makeQuery(): Query
     {

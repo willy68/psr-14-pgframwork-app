@@ -6,30 +6,25 @@ namespace PgFramework\Database\ActiveRecord;
 
 class ActiveRecordQuery
 {
-    private $options = [];
+    private array $options = [];
 
-    private $whereValue = [];
+    private array $whereValue = [];
 
     private $select;
 
-    /**
-     * Undocumented variable
-     *
-     * @var array
-     */
-    private $from = [];
+    private array $from = [];
 
-    private $where = [];
+    private array $where = [];
 
     private $group;
 
-    private $order = [];
+    private array $order = [];
 
     private $limit;
 
-    private $joins = [];
+    private array $joins = [];
 
-    private $params = [];
+    private array $params = [];
 
     /**
      * ActiveRecordQuery constructor
@@ -39,8 +34,6 @@ class ActiveRecordQuery
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $table
      * @param string|null $alias
      * @return self
@@ -57,9 +50,7 @@ class ActiveRecordQuery
     }
 
     /**
-     * Undocumented function
-     *
-     * @param string[] ...$fields
+     * @param string ...$fields
      * @return self
      */
     public function select(string ...$fields): self
@@ -70,7 +61,7 @@ class ActiveRecordQuery
 
     /**
      *
-     * @param string[] ...$condition
+     * @param string ...$condition
      * @return self
      */
     public function where(string ...$condition): self
@@ -89,7 +80,7 @@ class ActiveRecordQuery
 
     /**
      *
-     * @param string[] ...$condition
+     * @param string ...$condition
      * @return self
      */
     public function orWhere(string ...$condition): self
@@ -107,8 +98,8 @@ class ActiveRecordQuery
     }
 
     /**
-     * - Ajoute les valeur au tableau conditions
-     * - A ne faire qu'après toutes les conditions
+     * - Ajoute les valeurs au tableau de conditions
+     * - A ne faire qu’après toutes les conditions
      *
      * @param array $whereValue
      * @return self
@@ -121,34 +112,28 @@ class ActiveRecordQuery
     }
 
     /**
-     * Undocumented function
-     *
-     * @param $length
+     * @param int $length
      * @param int $offset
      * @return self
      */
-    public function limit($length, $offset = 0): self
+    public function limit(int $length, int $offset = 0): self
     {
-        $this->options['limit'] = (int) $length;
-        $this->options['offset'] = (int) $offset;
+        $this->options['limit'] = $length;
+        $this->options['offset'] = $offset;
         return $this;
     }
 
     /**
-     * Undocumented function
-     *
      * @param int $offset
      * @return self
      */
-    public function offset($offset = 0): self
+    public function offset(int $offset = 0): self
     {
-        $this->options['offset'] = (int) $offset;
+        $this->options['offset'] = $offset;
         return $this;
     }
 
     /**
-     * Undocumented function
-     *
      * @param string $orders
      * @return self
      */
@@ -159,7 +144,6 @@ class ActiveRecordQuery
     }
 
     /**
-     *
      * @param string $group
      * @return self
      */
@@ -181,14 +165,12 @@ class ActiveRecordQuery
     }
 
     /**
-     * Undocumented function
-     *
-     * @param string|array $table
+     * @param array|string $table
      * @param string|null $condition
      * @param string $type
      * @return self
      */
-    public function join($table, ?string $condition = null, string $type = 'LEFT'): self
+    public function join(array|string $table, ?string $condition = null, string $type = 'LEFT'): self
     {
         if (is_array($table)) {
             $this->options['joins'] = $table;
@@ -200,8 +182,6 @@ class ActiveRecordQuery
     }
 
     /**
-     * Undocumented function
-     *
      * @param array $params
      * @return self
      */
@@ -212,8 +192,6 @@ class ActiveRecordQuery
     }
 
     /**
-     * Undocumented function
-     *
      * @return string
      */
     public function __toString()
@@ -249,7 +227,7 @@ class ActiveRecordQuery
     }
 
     /**
-     * get Where conditions
+     * Get Where conditions
      *
      * @return string
      */
@@ -262,7 +240,7 @@ class ActiveRecordQuery
     }
 
     /**
-     * get Order conditions
+     * Get Order conditions
      *
      * @return string
      */
@@ -275,7 +253,7 @@ class ActiveRecordQuery
     }
 
     /**
-     * get Limit conditions
+     * Get Limit conditions
      *
      * @return string
      */
@@ -305,7 +283,7 @@ class ActiveRecordQuery
         return join(', ', $from);
     }
 
-    private function buildJoins()
+    private function buildJoins(): string
     {
         $parts = [];
         foreach ($this->joins as $type => $joins) {
