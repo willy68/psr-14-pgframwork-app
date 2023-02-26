@@ -19,7 +19,7 @@ class PaginatedQueryBuilder extends QueryBuilder
     /**
      * @param int $perPage
      * @param int $currentPage
-     * @return \Pagerfanta\Pagerfanta
+     * @return Pagerfanta
      */
     public function paginate(int $perPage, int $currentPage = 1): Pagerfanta
     {

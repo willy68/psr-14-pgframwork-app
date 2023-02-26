@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Database\Doctrine;
 
+use DI\Container;
 use Doctrine\ORM\Proxy\Proxy;
 use Psr\Container\ContainerInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,10 +14,7 @@ use Doctrine\ORM\Exception\UnknownEntityNamespace;
 
 class OrmManagerRegistry extends AbstractManagerRegistry
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     /**
      *
@@ -50,14 +48,11 @@ class OrmManagerRegistry extends AbstractManagerRegistry
      */
     protected function resetService($name)
     {
-        if ($this->container instanceof \DI\Container) {
+        if ($this->container instanceof Container) {
             $this->container->set($name, null);
         }
     }
 
-    /**
-     * @inheritdoc
-     */
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
@@ -66,8 +61,6 @@ class OrmManagerRegistry extends AbstractManagerRegistry
 
     /**
      * From Doctrine bundle Registry.php
-     *
-     * @inheritdoc
      */
     public function getAliasNamespace($alias)
     {
