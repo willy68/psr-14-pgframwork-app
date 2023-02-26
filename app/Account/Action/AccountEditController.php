@@ -5,7 +5,7 @@ namespace App\Account\Action;
 use App\Auth\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use PgFramework\Auth\Auth;
-use PgFramework\Auth\LoggedInMiddleware;
+use PgFramework\Auth\Middleware\LoggedInMiddleware;
 use PgFramework\Renderer\RendererInterface;
 use PgFramework\Response\ResponseRedirect;
 use PgFramework\Router\Annotation\Route;

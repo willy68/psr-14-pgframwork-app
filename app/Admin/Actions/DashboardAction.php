@@ -2,9 +2,9 @@
 
 namespace App\Admin\Actions;
 
-use PgFramework\Auth\LoggedInMiddleware;
-use PgFramework\Router\Annotation\Route;
+use PgFramework\Auth\Middleware\LoggedInMiddleware;
 use PgFramework\Renderer\RendererInterface;
+use PgFramework\Router\Annotation\Route;
 
 /**
  * @Route("/admin", name="admin", methods={"GET"}, middlawares={LoggedInMiddleware::class})

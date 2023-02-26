@@ -7,13 +7,11 @@ namespace PgFramework\Auth;
 interface Auth
 {
     /**
-     *
      * @return UserInterface|null
      */
     public function getUser(): ?UserInterface;
 
     /**
-     *
      * @param UserInterface $user
      * @return Auth
      */

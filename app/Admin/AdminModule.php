@@ -2,15 +2,15 @@
 
 namespace App\Admin;
 
-use PgFramework\Module;
-use PgRouter\RouteCollector;
+use App\Admin\Actions\Blog\CategoryCrudController;
+use App\Admin\Actions\Blog\PostCrudController;
 use App\Admin\Actions\DashboardAction;
+use PgFramework\Auth\Middleware\LoggedInMiddleware;
+use PgFramework\Module;
+use PgFramework\Renderer\RendererInterface;
 use PgFramework\Renderer\TwigRenderer;
 use PgRouter\RouteCollectionInterface;
-use PgFramework\Auth\LoggedInMiddleware;
-use PgFramework\Renderer\RendererInterface;
-use App\Admin\Actions\Blog\PostCrudController;
-use App\Admin\Actions\Blog\CategoryCrudController;
+use PgRouter\RouteCollector;
 
 class AdminModule extends Module
 {

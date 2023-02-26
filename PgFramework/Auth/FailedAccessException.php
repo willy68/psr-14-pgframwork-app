@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PgFramework\Auth;
 
-class FailedAccessException extends \Exception
+use Exception;
+
+class FailedAccessException extends Exception
 {
 }

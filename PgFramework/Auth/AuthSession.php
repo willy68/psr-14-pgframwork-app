@@ -4,35 +4,22 @@ declare(strict_types=1);
 
 namespace PgFramework\Auth;
 
+use Exception;
 use Mezzio\Session\SessionInterface;
 use PgFramework\Auth\Provider\UserProviderInterface;
 
 class AuthSession implements Auth
 {
-    /**
-     * Cookie options
-     *
-     * @var array
-     */
-    private $options = [
+    private array $options = [
         'sessionName' => 'auth.user',
         'field' => 'username'
     ];
 
-    /**
-     * @var SessionInterface
-     */
-    private $session;
+    private SessionInterface $session;
 
-    /**
-     * @var UserInterface
-     */
-    private $user;
+    private ?UserInterface $user;
 
-    /**
-     * @var UserProviderInterface
-     */
-    protected $userProvider;
+    protected UserProviderInterface $userProvider;
 
     public function __construct(
         SessionInterface $session,
@@ -47,7 +34,6 @@ class AuthSession implements Auth
     }
 
     /**
-     *
      * @param string $identifier
      * @param string $password
      * @return UserInterface|null
@@ -78,13 +64,13 @@ class AuthSession implements Auth
         $userId = $this->session->get($this->options['sessionName']);
 
         if ($userId) {
-            if ($this->user && (int) $this->user->getId() === (int) $userId) {
+            if ($this->user && $this->user->getId() === (int) $userId) {
                 return $this->user;
             }
             try {
                 $this->user = $this->userProvider->getUser('id', $userId);
                 return $this->user;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->session->unset($this->options['sessionName']);
             }
         }

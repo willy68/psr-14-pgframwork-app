@@ -3,7 +3,7 @@
 namespace App\Account\Action;
 
 use PgFramework\Auth\Auth;
-use PgFramework\Auth\LoggedInMiddleware;
+use PgFramework\Auth\Middleware\LoggedInMiddleware;
 use PgFramework\Renderer\RendererInterface;
 use PgFramework\Router\Annotation\Route;
 use Psr\Http\Message\ServerRequestInterface;
