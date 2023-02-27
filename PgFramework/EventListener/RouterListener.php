@@ -9,6 +9,7 @@ use PgFramework\Event\Events;
 use Mezzio\Router\RouteResult;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Event\RequestEvent;
+use PgRouter\Route;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Router\Exception\PageNotFoundException;
@@ -102,11 +103,13 @@ class RouterListener implements EventSubscriberInterface
         ?ResponseInterface $response = null
     ): ?ResponseInterface {
         $scheme = $request->getUri()->getScheme();
-        if (! $result->getMatchedRoute()->allowsScheme($scheme)) {
+        /** @var Route $route */
+        $route = $result->getMatchedRoute();
+        if (! $route->allowsScheme($scheme)) {
             $uriClass = $request->getUri();
-            $newScheme = in_array('https', $result->getMatchedRoute()->getSchemes(), true)
+            $newScheme = in_array('https', $route->getSchemes(), true)
                 ? 'https'
-                : $result->getMatchedRoute()->getSchemes()[0];
+                : $route->getSchemes()[0];
             $path = $response ? $response->getHeaderLine('Location') : $uriClass->getPath();
             $uri = $uriClass
                 ->withScheme($newScheme)
