@@ -7,6 +7,7 @@ namespace PgFramework\Kernel;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 
 interface KernelInterface
 {
@@ -21,11 +22,11 @@ interface KernelInterface
     /**
      * Handle exception
      *
-     * @param \Throwable $e
+     * @param Throwable $e
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
-    public function handleException(\Throwable $e, ServerRequestInterface $request): ResponseInterface;
+    public function handleException(Throwable $e, ServerRequestInterface $request): ResponseInterface;
 
     /**
      * set Listeners or middlewares

@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace PgFramework\Kernel;
 
+use DI\Container;
 use Exception;
+use Invoker\Exception\NotCallableException;
+use PgFramework\EventDispatcher\EventDispatcher;
+use ReflectionException;
 use RuntimeException;
 use InvalidArgumentException;
 use Invoker\CallableResolver;
@@ -22,30 +26,19 @@ use PgFramework\Event\ControllerParamsEvent;
 use Psr\Http\Message\ServerRequestInterface;
 use Invoker\ParameterResolver\ParameterResolver;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Throwable;
 
 class KernelEvent implements KernelInterface
 {
-    protected $request;
+    protected ServerRequestInterface $request;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
+    protected EventDispatcherInterface $dispatcher;
 
-    /**
-     * @var CallableResolver
-     */
-    private $callableResolver;
+    private CallableResolver $callableResolver;
 
-    /**
-     * @var ParameterResolver
-     */
-    private $paramsResolver;
+    private ParameterResolver $paramsResolver;
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ?ContainerInterface $container;
 
 
     public function __construct(
@@ -62,6 +55,7 @@ class KernelEvent implements KernelInterface
 
     /**
      * @inheritDoc
+     * @throws Exception
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
@@ -82,7 +76,7 @@ class KernelEvent implements KernelInterface
         if (null === $controller = $this->getRequest()->getAttribute('_controller')) {
             throw new RuntimeException(
                 sprintf(
-                    "Aucun controller trouver pour cette requète, la route %s est peut-être mal configurée",
+                    "Aucun controller trouver pour cette request, la route %s est peut-être mal configurée",
                     $request->getUri()->getPath()
                 )
             );
@@ -97,7 +91,7 @@ class KernelEvent implements KernelInterface
         $params = $this->getRequest()->getAttribute('_params');
 
         // controller arguments
-        if ($container instanceof \DI\Container) {
+        if ($container instanceof Container) {
             $container->set(ServerRequestInterface::class, $this->getRequest());
         } else {
             // Limitation: $request must be named "$request"
@@ -139,7 +133,7 @@ class KernelEvent implements KernelInterface
     /**
      * Filters a response object.
      *
-     * @throws \RuntimeException if the passed object is not a Response instance
+     * @throws RuntimeException If the passed object is not a Response instance
      */
     private function filterResponse(ResponseInterface $response, ServerRequestInterface $request): ResponseInterface
     {
@@ -162,13 +156,13 @@ class KernelEvent implements KernelInterface
      */
     private function finishRequest(ServerRequestInterface $request)
     {
-        $event = $this->dispatcher->dispatch(new FinishRequestEvent($this, $request));
+        $this->dispatcher->dispatch(new FinishRequestEvent($this, $request));
     }
 
     /**
      * @inheritDoc
      */
-    public function handleException(\Throwable $e, ServerRequestInterface $request): ResponseInterface
+    public function handleException(Throwable $e, ServerRequestInterface $request): ResponseInterface
     {
         $event = new ExceptionEvent($this, $request, $e);
         $event = $this->dispatcher->dispatch($event);
@@ -186,7 +180,7 @@ class KernelEvent implements KernelInterface
 
         try {
             return $this->filterResponse($response, $this->getRequest());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $response;
         }
     }
@@ -195,6 +189,8 @@ class KernelEvent implements KernelInterface
      *
      * @param array $callbacks
      * @return self
+     * @throws NotCallableException
+     * @throws ReflectionException
      */
     public function setCallbacks(array $callbacks): self
     {
@@ -202,7 +198,7 @@ class KernelEvent implements KernelInterface
             throw new InvalidArgumentException("Une liste de listeners doit être passer à ce Kernel");
         }
 
-        /** @var mixed */
+        /** @var EventDispatcher $dispatcher */
         $dispatcher = $this->dispatcher;
         foreach ($callbacks as $callback) {
             $dispatcher->addSubscriber($callback);
@@ -210,9 +206,6 @@ class KernelEvent implements KernelInterface
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getDispatcher(): EventDispatcherInterface
     {
         return $this->dispatcher;
