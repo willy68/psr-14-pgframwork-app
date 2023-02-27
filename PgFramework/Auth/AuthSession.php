@@ -17,7 +17,7 @@ class AuthSession implements Auth
 
     private SessionInterface $session;
 
-    private ?UserInterface $user;
+    private ?UserInterface $user = null;
 
     protected UserProviderInterface $userProvider;
 
