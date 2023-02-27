@@ -8,24 +8,23 @@ declare(strict_types=1);
 
 namespace PgFramework\Middleware\Stack;
 
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Container\ContainerInterface;
 use PgFramework\Middleware\RoutePrefixMiddleware;
 
 trait MiddlewareAwareStackTrait
 {
-    /**
-     * @var array
-     */
-    protected $middlewares = [];
+    protected array $middlewares = [];
 
     /**
      * Add middleware
      *
-     * @param string|MiddlewareInterface|callable $middleware
+     * @param callable|string|MiddlewareInterface $middleware
      * @return self
      */
-    public function middleware($middleware): self
+    public function middleware(callable|MiddlewareInterface|string $middleware): static
     {
         $this->middlewares[] = $middleware;
         return $this;
@@ -37,7 +36,7 @@ trait MiddlewareAwareStackTrait
      * @param string[]|MiddlewareInterface[]|callable[] $middlewares
      * @return self
      */
-    public function middlewares(array $middlewares): self
+    public function middlewares(array $middlewares): static
     {
         foreach ($middlewares as $middleware) {
             $this->middleware($middleware);
@@ -48,10 +47,10 @@ trait MiddlewareAwareStackTrait
     /**
      * Add middleware in first
      *
-     * @param string|MiddlewareInterface|callable $middleware
+     * @param callable|string|MiddlewareInterface $middleware
      * @return self
      */
-    public function prependMiddleware($middleware): self
+    public function prependMiddleware(callable|MiddlewareInterface|string $middleware): static
     {
         array_unshift($this->middlewares, $middleware);
         return $this;
@@ -63,7 +62,7 @@ trait MiddlewareAwareStackTrait
      * @param ContainerInterface $c
      * @return self
      */
-    public function lazyPipe(ContainerInterface $c, string $routePrefix, ?string $middleware = null): self
+    public function lazyPipe(ContainerInterface $c, string $routePrefix, ?string $middleware = null): static
     {
         $middleware = $middleware ?
             new RoutePrefixMiddleware($c, $routePrefix, $middleware) :
@@ -76,9 +75,11 @@ trait MiddlewareAwareStackTrait
      * Get first middleware from stack
      *
      * @param ContainerInterface $c
-     * @return mixed|MiddlewareInterface|null
+     * @return MiddlewareInterface|null
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function shiftMiddleware(ContainerInterface $c)
+    public function shiftMiddleware(ContainerInterface $c): ?MiddlewareInterface
     {
         $middleware =  array_shift($this->middlewares);
         if ($middleware === null) {

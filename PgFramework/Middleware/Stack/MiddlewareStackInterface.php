@@ -19,16 +19,16 @@ interface MiddlewareStackInterface
      *
      * @return static
      */
-    public function middleware(MiddlewareInterface $middleware): self;
+    public function middleware(MiddlewareInterface $middleware): static;
 
     /**
-     * Add multiple middleware to the stack
+     * Add multiple middlewares to the stack
      *
      * @param MiddlewareInterface[] $middlewares
      *
      * @return static
      */
-    public function middlewares(array $middlewares): self;
+    public function middlewares(array $middlewares): static;
 
     /**
      * Prepend a middleware to the stack
@@ -37,14 +37,14 @@ interface MiddlewareStackInterface
      *
      * @return static
      */
-    public function prependMiddleware(MiddlewareInterface $middleware): self;
+    public function prependMiddleware(MiddlewareInterface $middleware): static;
 
     /**
      * Shift a middleware from beginning of stack
      *
      * @return MiddlewareInterface|null
      */
-    public function shiftMiddleware(): MiddlewareInterface;
+    public function shiftMiddleware(): ?MiddlewareInterface;
 
     /**
      * Get the stack of middleware
