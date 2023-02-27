@@ -9,19 +9,10 @@ use Psr\Http\Message\UploadedFileInterface;
 
 class Upload
 {
-    /**
-     * @var string
-     */
-    protected $path;
+    protected string $path;
 
-    /**
-     * @var array
-     */
-    protected $formats = [];
+    protected array $formats = [];
 
-    /**
-     * @param string|null $path
-     */
     public function __construct(?string $path = null)
     {
         if ($path) {
@@ -29,11 +20,6 @@ class Upload
         }
     }
 
-    /**
-     * @param UploadedFileInterface $file
-     * @param string|null $oldFile
-     * @return string|null
-     */
     public function upload(UploadedFileInterface $file, ?string $oldFile = null): ?string
     {
         if ($file->getError() === UPLOAD_ERR_OK) {
@@ -50,10 +36,6 @@ class Upload
         return null;
     }
 
-    /**
-     * @param string $targetPath
-     * @return string
-     */
     protected function addCopySuffix(string $targetPath): string
     {
         if (file_exists($targetPath)) {
@@ -67,10 +49,6 @@ class Upload
         return $targetPath;
     }
 
-    /**
-     * @param string|null $oldFile
-     * @return void
-     */
     public function delete(?string $oldFile = null): void
     {
         if ($oldFile) {
@@ -87,11 +65,6 @@ class Upload
         }
     }
 
-    /**
-     * @param string $path
-     * @param string $suffix
-     * @return string
-     */
     private function getPathWithSuffix(string $path, string $suffix): string
     {
         $info = pathinfo($path);
@@ -101,10 +74,7 @@ class Upload
         $info['extension'];
     }
 
-    /**
-     * @param $targetPath
-     */
-    private function generateFormats($targetPath)
+    private function generateFormats($targetPath): void
     {
         foreach ($this->formats as $format => $size) {
             $destination = $this->getPathWithSuffix($targetPath, $format);

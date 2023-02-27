@@ -6,9 +6,9 @@ use PgFramework\File\Upload;
 
 class PostUpload extends Upload
 {
-    protected $path = 'uploads/posts';
+    protected string $path = 'uploads/posts';
 
-    protected $formats = [
+    protected array $formats = [
         'thumb' => [120, 60]
     ];
 }
