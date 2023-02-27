@@ -12,7 +12,7 @@ class RendererAddGlobalListener implements EventSubscriberInterface
     /**
      * @var RendererInterface
      */
-    private $renderer;
+    private RendererInterface $renderer;
 
     public function __construct(RendererInterface $renderer)
     {

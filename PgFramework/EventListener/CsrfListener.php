@@ -10,24 +10,14 @@ use Grafikart\Csrf\InvalidCsrfException;
 use PgFramework\Event\Events;
 use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
+use function in_array;
 
 class CsrfListener implements EventSubscriberInterface
 {
-    /**
-     * @var string
-     */
-    private $formKey;
+    private string $formKey;
 
-    /**
-     *
-     * @var CsrfTokenManagerInterface
-     */
-    private $tokenManager;
+    private CsrfTokenManagerInterface $tokenManager;
 
-    /**
-     * @param CsrfTokenManagerInterface $tokenManager
-     * @param string $formKey
-     */
     public function __construct(
         CsrfTokenManagerInterface $tokenManager,
         string $formKey = '_csrf'
@@ -39,15 +29,16 @@ class CsrfListener implements EventSubscriberInterface
     /**
      *
      *
-     * @param object $event
+     * @param RequestEvent $event
      * @return void
+     * @throws InvalidCsrfException
      */
-    public function __invoke(RequestEvent $event)
+    public function __invoke(RequestEvent $event): void
     {
         $request = $event->getRequest();
         $method = $request->getMethod();
 
-        if (\in_array($method, ['DELETE', 'PATCH', 'POST', 'PUT'], true)) {
+        if (in_array($method, ['DELETE', 'PATCH', 'POST', 'PUT'], true)) {
             $params = $request->getParsedBody() ?: [];
             if (!array_key_exists($this->formKey, $params)) {
                 throw new InvalidCsrfException();
@@ -62,9 +53,6 @@ class CsrfListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @return string
-     */
     public function getFormKey(): string
     {
         return $this->formKey;

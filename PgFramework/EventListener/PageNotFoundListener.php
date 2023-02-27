@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PgFramework\EventListener;
 
-use DebugBar\DebugBar;
 use GuzzleHttp\Psr7\Response;
 use PgFramework\Event\Events;
 use PgFramework\Event\ExceptionEvent;
@@ -18,7 +17,7 @@ class PageNotFoundListener implements EventSubscriberInterface
      *
      * @var RendererInterface
      */
-    private $renderer;
+    private RendererInterface $renderer;
 
     public function __construct(RendererInterface $renderer)
     {

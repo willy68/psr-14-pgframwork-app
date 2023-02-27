@@ -21,7 +21,7 @@ class RecordNotFoundListener implements EventSubscriberInterface
      *
      * @var RendererInterface
      */
-    private $renderer;
+    private RendererInterface $renderer;
 
     /**
      *

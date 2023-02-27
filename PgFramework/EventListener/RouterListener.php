@@ -19,7 +19,7 @@ class RouterListener implements EventSubscriberInterface
     /**
      * @var RouterInterface
      */
-    private $router;
+    private RouterInterface $router;
 
     /**
      * RouterListener constructor.
@@ -30,6 +30,9 @@ class RouterListener implements EventSubscriberInterface
         $this->router = $router;
     }
 
+    /**
+     * @throws PageNotFoundException
+     */
     public function __invoke(RequestEvent $event): void
     {
         $request = $event->getRequest();

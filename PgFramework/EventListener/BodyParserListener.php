@@ -38,16 +38,16 @@ class BodyParserListener implements EventSubscriberInterface
     /**
      * Registered Parsers
      *
-     * @var \Closure[]
+     * @var Closure[]
      */
-    protected $parsers = [];
+    protected array $parsers = [];
 
     /**
      * The HTTP methods to parse data on.
      *
      * @var string[]
      */
-    protected $methods = ['PUT', 'POST', 'PATCH', 'DELETE'];
+    protected array $methods = ['PUT', 'POST', 'PATCH', 'DELETE'];
 
     /**
      * Constructor
@@ -81,7 +81,7 @@ class BodyParserListener implements EventSubscriberInterface
      * @param string[] $methods The methods to parse data on.
      * @return $this
      */
-    public function setMethods(array $methods)
+    public function setMethods(array $methods): static
     {
         $this->methods = $methods;
 
@@ -114,11 +114,11 @@ class BodyParserListener implements EventSubscriberInterface
      * ```
      *
      * @param string[] $types An array of content-type header values to match. eg. application/json
-     * @param \Closure $parser The parser function. Must return an array of data to be inserted
+     * @param Closure $parser The parser function. Must return an array of data to be inserted
      *   into the request.
      * @return $this
      */
-    public function addParser(array $types, Closure $parser)
+    public function addParser(array $types, Closure $parser): static
     {
         foreach ($types as $type) {
             $type = strtolower($type);
@@ -131,7 +131,7 @@ class BodyParserListener implements EventSubscriberInterface
     /**
      * Get the current parsers
      *
-     * @return \Closure[]
+     * @return Closure[]
      */
     public function getParsers(): array
     {
@@ -174,7 +174,7 @@ class BodyParserListener implements EventSubscriberInterface
      * @param string $body The request body to decode
      * @return array|null
      */
-    protected function decodeJson(string $body)
+    protected function decodeJson(string $body): ?array
     {
         if ($body === '') {
             return [];

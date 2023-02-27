@@ -16,7 +16,7 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class InvalidCsrfListener implements EventSubscriberInterface
 {
-    private $flashService;
+    private FlashService $flashService;
 
     public function __construct(FlashService $flashService)
     {
@@ -33,7 +33,7 @@ class InvalidCsrfListener implements EventSubscriberInterface
                 $event->setResponse(new Response(403, [], json_encode($e->getMessage() . ' ' . $e->getCode())));
                 return;
             }
-            $this->flashService->error('Vous n\'avez pas de token valid pour executer cette action');
+            $this->flashService->error('Vous n\'avez pas de token valid pour exécuter cette action');
             $event->setResponse(new ResponseRedirect('/'));
         }
     }

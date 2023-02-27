@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Utils;
+use Mezzio\Router\RouteResult;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Event\RequestEvent;
 use PgFramework\Event\ResponseEvent;
@@ -18,7 +19,7 @@ class MethodHeadListener implements EventSubscriberInterface
 {
     public const FORWARDED_HTTP_METHOD_ATTRIBUTE = 'forwarded_http_method';
 
-    private $router;
+    private RouterInterface $router;
 
     public function __construct(RouterInterface $router)
     {

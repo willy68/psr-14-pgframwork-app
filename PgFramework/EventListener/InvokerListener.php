@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace PgFramework\EventListener;
 
+use Invoker\Exception\InvocationException;
+use Invoker\Exception\NotCallableException;
+use Invoker\Exception\NotEnoughParametersException;
 use Invoker\Invoker;
 use League\Event\Listener;
 use Invoker\InvokerInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Invoker\ParameterResolver\{
     ResolverChain,
     DefaultValueResolver,
@@ -23,28 +28,33 @@ use PgFramework\Invoker\ParameterResolver\ActiveRecordAnnotationsResolver;
  */
 class InvokerListener implements Listener
 {
-    protected $callback;
+    protected mixed $callback;
 
-    protected $container;
+    protected ContainerInterface $container;
 
-    protected $invoker;
+    protected InvokerInterface $invoker;
 
     /**
      *
      * @param mixed $callback
      * @param ContainerInterface $container
      */
-    public function __construct($callback, ContainerInterface $container)
+    public function __construct(mixed $callback, ContainerInterface $container)
     {
         $this->callback = $callback;
         $this->container = $container;
     }
 
     /**
-     * call the callback with $event parameter
+     * Call the callback with $event parameter
      *
      * @param object $event
      * @return void
+     * @throws ContainerExceptionInterface
+     * @throws InvocationException
+     * @throws NotCallableException
+     * @throws NotEnoughParametersException
+     * @throws NotFoundExceptionInterface
      */
     public function __invoke(object $event): void
     {
@@ -52,10 +62,12 @@ class InvokerListener implements Listener
     }
 
     /**
-     * crée un Invoker
+     * Crée un Invoker
      *
      * @param ContainerInterface $container
      * @return InvokerInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     protected function getInvoker(ContainerInterface $container): InvokerInterface
     {
