@@ -5,28 +5,29 @@ declare(strict_types=1);
 namespace PgFramework\Jwt;
 
 use Firebase\JWT\JWT as JWT;
+use UnexpectedValueException;
 
 class JwtExt extends JWT
 {
     /**
      *
      * @param string $jwt
-     * @param string $key
+     * @param string|null $key
      * @param int $exp
      * @return string
      */
-    public static function refreshToken(string $jwt, string $key = null, $exp = 3600): string
+    public static function refreshToken(string $jwt, string $key = null, int $exp = 3600): string
     {
         $tks = explode('.', $jwt);
         if (count($tks) != 3) {
-            throw new \UnexpectedValueException('Wrong number of segments');
+            throw new UnexpectedValueException('Wrong number of segments');
         }
-        list($headb64, $bodyb64, $cryptob64) = $tks;
+        list($headb64, $bodyb64,) = $tks;
         if (null === ($header = JWT::jsonDecode(JWT::urlsafeB64Decode($headb64)))) {
-            throw new \UnexpectedValueException('Invalid segment encoding');
+            throw new UnexpectedValueException('Invalid segment encoding');
         }
         if (null === ($payload = JWT::jsonDecode(JWT::urlsafeB64Decode($bodyb64)))) {
-            throw new \UnexpectedValueException('Invalid segment encoding');
+            throw new UnexpectedValueException('Invalid segment encoding');
         }
 
         $algo = $header->alg;
