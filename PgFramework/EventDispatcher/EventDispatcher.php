@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace PgFramework\EventDispatcher;
 
 use Invoker\CallableResolver;
+use Invoker\Exception\NotCallableException;
 use League\Event\ListenerPriority;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use League\Event\EventDispatcher as LeagueEventDispatcher;
+use ReflectionException;
+use function is_int;
+use function is_string;
 
 class EventDispatcher extends LeagueEventDispatcher
 {
-    protected $callableResolver;
+    protected CallableResolver $callableResolver;
 
     public function __construct(
         CallableResolver $callableResolver,
@@ -38,22 +42,24 @@ class EventDispatcher extends LeagueEventDispatcher
      *  * ['eventName']
      *  * ['eventName' => ['methodName', $priority]]
      *
-     * @param EventSubscriberInterface|string $subscriber
+     * @param string|EventSubscriberInterface $subscriber
      * @return self
+     * @throws NotCallableException
+     * @throws ReflectionException
      */
-    public function addSubscriber($subscriber): self
+    public function addSubscriber(string|EventSubscriberInterface $subscriber): self
     {
         foreach ($subscriber::getSubscribedEvents() as $eventName => $params) {
             // eventName in $params default __invoke and priority
             if (is_int($eventName)) {
                 $this->subscribeTo($params, $this->callableResolver->resolve($subscriber));
-            } elseif (\is_string($params)) {
+            } elseif (is_string($params)) {
                 // default priority
                 $this->subscribeTo($eventName, $this->callableResolver->resolve([$subscriber, $params]));
-            } elseif (\is_int($params)) {
+            } elseif (is_int($params)) {
                 // default __invoke and priority in $params
                 $this->subscribeTo($eventName, $this->callableResolver->resolve($subscriber), $params);
-            } elseif (\is_string($params[0])) {
+            } elseif (is_string($params[0])) {
                 // Array of method and priority (or default to 0)
                 $this->subscribeTo(
                     $eventName,
@@ -79,8 +85,10 @@ class EventDispatcher extends LeagueEventDispatcher
      *
      * @param array $listeners
      * @return void
+     * @throws NotCallableException
+     * @throws ReflectionException
      */
-    public function addListeners(array $listeners)
+    public function addListeners(array $listeners): void
     {
         foreach ($listeners as $listener => $eventName) {
             $priority = ListenerPriority::NORMAL;
