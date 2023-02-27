@@ -6,14 +6,15 @@ namespace PgFramework\Event;
 
 use PgFramework\Kernel\KernelInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 
 class ExceptionEvent extends RequestEvent
 {
     public const NAME = Events::EXCEPTION;
 
-    private $exception;
+    private Throwable $exception;
 
-    public function __construct(KernelInterface $kernel, ServerRequestInterface $request, \Throwable $e)
+    public function __construct(KernelInterface $kernel, ServerRequestInterface $request, Throwable $e)
     {
         parent::__construct($kernel, $request);
         $this->exception = $e;
@@ -22,7 +23,7 @@ class ExceptionEvent extends RequestEvent
     /**
      * Get the value of exception
      */
-    public function getException(): \Throwable
+    public function getException(): Throwable
     {
         return $this->exception;
     }
@@ -32,7 +33,7 @@ class ExceptionEvent extends RequestEvent
      *
      * @return  self
      */
-    public function setException(\Throwable $exception)
+    public function setException(Throwable $exception): static
     {
         $this->exception = $exception;
         return $this;

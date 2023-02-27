@@ -11,9 +11,9 @@ class ViewEvent extends RequestEvent
 {
     public const NAME = Events::VIEW;
 
-    private $result;
+    private mixed $result;
 
-    public function __construct(KernelInterface $kernel, ServerRequestInterface $request, $result)
+    public function __construct(KernelInterface $kernel, ServerRequestInterface $request, mixed $result)
     {
         parent::__construct($kernel, $request);
         $this->result = $result;

@@ -12,9 +12,9 @@ class ResponseEvent extends AppEvent
 {
     public const NAME = Events::RESPONSE;
 
-    private $request;
+    private ServerRequestInterface $request;
 
-    private $response;
+    private ResponseInterface $response;
 
     public function __construct(KernelInterface $kernel, ServerRequestInterface $request, ResponseInterface $response)
     {

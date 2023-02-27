@@ -8,10 +8,10 @@ use Psr\EventDispatcher\StoppableEventInterface;
 
 class StoppableEvent extends Event implements StoppableEventInterface
 {
-    protected $propagationStopped = false;
+    protected bool $propagationStopped = false;
 
     /**
-     * Stops the propagation of the event to further event listeners.
+     * Stops propagation of the event to further event listeners.
      *
      * If multiple event listeners are connected to the same event, no
      * further event listener will be triggered once any trigger calls

@@ -10,9 +10,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class RequestEvent extends AppEvent
 {
-    private $request;
+    private ServerRequestInterface $request;
 
-    protected $response;
+    protected ?ResponseInterface $response;
 
     public function __construct(KernelInterface $kernel, ServerRequestInterface $request)
     {

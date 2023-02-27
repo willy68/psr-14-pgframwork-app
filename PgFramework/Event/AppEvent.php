@@ -10,14 +10,14 @@ class AppEvent extends StoppableEvent
 {
     public const NAME = Events::REQUEST;
 
-    private $kernel;
+    private KernelInterface $kernel;
 
     public function __construct(KernelInterface $kernel)
     {
         $this->kernel = $kernel;
     }
 
-    public function getKernel()
+    public function getKernel(): KernelInterface
     {
         return $this->kernel;
     }
