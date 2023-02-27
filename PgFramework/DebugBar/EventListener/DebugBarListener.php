@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace PgFramework\DebugBar\EventListener;
 
-use DebugBar\{DebugBar, DataCollector\ExceptionsCollector, DebugBarException};
+use DebugBar\{DataCollector\ExceptionsCollector, DebugBar, DebugBarException};
+use PgFramework\DebugBar\PgDebugBar;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Mezzio\{Router\RouteResult, Router\RouterInterface, Session\SessionInterface};
 use PgFramework\DebugBar\DataCollector\AuthCollector;
 use PgFramework\DebugBar\DataCollector\RequestCollector;
 use PgFramework\DebugBar\DataCollector\RouteCollector;
-use PgFramework\DebugBar\PgDebugBar;
 use PgFramework\Environnement\Environnement;
 use PgFramework\Event\Events;
 use PgFramework\Event\ExceptionEvent;
@@ -21,15 +21,9 @@ use PgFramework\HttpUtils\RequestUtils;
 
 class DebugBarListener implements EventSubscriberInterface
 {
-    /**
-     * @var PgDebugBar
-     */
-    protected $debugBar;
+    protected PgDebugBar|DebugBar $debugBar;
 
-    /**
-     * @var SessionInterface
-     */
-    protected $session;
+    protected SessionInterface $session;
 
     public function __construct(DebugBar $debugBar, SessionInterface $session)
     {

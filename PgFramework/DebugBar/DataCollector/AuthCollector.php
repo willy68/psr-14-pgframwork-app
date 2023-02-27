@@ -11,7 +11,7 @@ use DebugBar\DataCollector\DataCollector;
 
 class AuthCollector extends DataCollector implements Renderable, AssetProvider
 {
-    protected $auth;
+    protected Auth $auth;
 
     public function __construct(Auth $auth)
     {
@@ -31,9 +31,7 @@ class AuthCollector extends DataCollector implements Renderable, AssetProvider
                 'data' => ['user' => 'Unknown']
             ];
             $text =  'Unknown';
-        }
-
-        if ($user) {
+        } else {
             $data['data'] = [
                 'Username' => $user->getUsername(),
                 'Email' => $user->getEmail(),

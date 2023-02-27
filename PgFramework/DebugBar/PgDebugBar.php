@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PgFramework\DebugBar;
 
 use DebugBar\DebugBar;
+use DebugBar\DebugBarException;
 use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Message\ResponseInterface;
 use DebugBar\DataCollector\MemoryCollector;
@@ -18,6 +19,9 @@ use DebugBar\DataCollector\ExceptionsCollector;
  */
 class PgDebugBar extends DebugBar
 {
+    /**
+     * @throws DebugBarException
+     */
     public function __construct()
     {
         $this->addCollector(new PhpInfoCollector())

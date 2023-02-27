@@ -13,9 +13,9 @@ use PgRouter\Route;
 
 class RouteCollector extends DataCollector implements Renderable, AssetProvider
 {
-    protected $routeResult;
+    protected ?RouteResult $routeResult;
 
-    protected $router;
+    protected RouterInterface $router;
 
     public function __construct(RouterInterface $router, ?RouteResult $routeResult = null)
     {

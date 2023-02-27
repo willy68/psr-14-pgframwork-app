@@ -23,18 +23,15 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class RequestCollector extends DataCollector implements Renderable, AssetProvider
 {
-    /** @var ServerRequestInterface $request */
-    protected $request;
+    protected ServerRequestInterface $request;
 
-    /** @var  ResponseInterface $response */
-    protected $response;
+    protected ResponseInterface $response;
 
-    /** @var  SessionInterface $session */
-    protected $session;
+    protected ?SessionInterface $session;
 
     // The HTML var dumper requires debug bar users to support the new inline assets, which not all
-    // may support yet - so return false by default for now.
-    protected $useHtmlVarDumper = false;
+    // may support yet — so return false by default for now.
+    protected bool $useHtmlVarDumper = false;
 
     /**
      * Create a new SymfonyRequestCollector
