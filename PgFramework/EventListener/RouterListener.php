@@ -60,6 +60,8 @@ class RouterListener implements EventSubscriberInterface
             throw new PageNotFoundException();
         }
 
+        /** @var Route $route */
+        $route = $result->getMatchedRoute();
         $params = $result->getMatchedParams();
         $request = array_reduce(
             array_keys($params),
@@ -69,7 +71,7 @@ class RouterListener implements EventSubscriberInterface
             $request
         );
         $event->setRequest($request->withAttribute(get_class($result), $result)
-                            ->withAttribute('_controller', $result->getMatchedRoute()->getCallback())
+                            ->withAttribute('_controller', $route->getCallback())
                             ->withAttribute('_params', $result->getMatchedParams()));
     }
 
@@ -97,10 +99,16 @@ class RouterListener implements EventSubscriberInterface
         return $request;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @param RouteResult $result
+     * @param ResponseInterface|null $response
+     * @return ResponseInterface|null
+     */
     private function redirectHttps(
         ServerRequestInterface $request,
         RouteResult $result,
-        ?ResponseInterface $response = null
+        ?ResponseInterface $response
     ): ?ResponseInterface {
         $scheme = $request->getUri()->getScheme();
         /** @var Route $route */
