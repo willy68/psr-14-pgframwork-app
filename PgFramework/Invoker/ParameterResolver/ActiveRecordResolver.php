@@ -4,35 +4,32 @@ declare(strict_types=1);
 
 namespace PgFramework\Invoker\ParameterResolver;
 
+use ActiveRecord\Model;
 use ReflectionNamedType;
-use ReflectionParameter;
 use ReflectionFunctionAbstract;
 use Invoker\ParameterResolver\ParameterResolver;
 
 /**
- * Subtitue un paramètre $id d'une route
+ * Subtitue un paramètre $id d’une route
  * par le model ActiveRecord attendu par la fonction
  */
 class ActiveRecordResolver implements ParameterResolver
 {
     /**
-     * nom du champ id par défaut id
-     *
-     * @var string
+     * Nom du champ id par défaut id
      */
-    private $id = 'id';
+    private string $id = 'id';
 
     /**
      * Alias pour le champ $id par défaut null
      *
-     * @var string|null Si non null sera utilsé à la place de $id
+     * @var string|null Si non null sera utilisé à la place de $id
      */
-    private $alias;
+    private ?string $alias;
 
     /**
      * Constructor
      *
-     * @param string $key
      * @param string|null $alias
      */
     public function __construct(?string $alias = null)
@@ -45,7 +42,6 @@ class ActiveRecordResolver implements ParameterResolver
         array $providedParameters,
         array $resolvedParameters
     ): array {
-        /** @var \ReflectionParameter[] $reflectionParameters */
         $reflectionParameters = $reflection->getParameters();
         // Skip parameters already resolved
         if (!empty($resolvedParameters)) {
@@ -61,7 +57,6 @@ class ActiveRecordResolver implements ParameterResolver
 
             if ($key === $id) {
                 foreach ($reflectionParameters as $index => $reflectionParameter) {
-                    /** @var ReflectionParameter $reflectionParameter */
                     $parameterType = $reflectionParameter->getType();
 
                     if (!$parameterType) {
@@ -80,7 +75,7 @@ class ActiveRecordResolver implements ParameterResolver
 
                     $class = $parameterType->getName();
 
-                    if (class_exists($class) && in_array(\ActiveRecord\Model::class, class_parents($class))) {
+                    if (class_exists($class) && in_array(Model::class, class_parents($class))) {
                         $obj = $class::find($parameter);
                         $resolvedParameters[$index] = $obj;
                     }

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace PgFramework\Invoker\ParameterResolver;
 
+use ActiveRecord\Model;
 use ReflectionNamedType;
-use ReflectionParameter;
 use ReflectionFunctionAbstract;
 use ActiveRecord\Exceptions\RecordNotFound;
 use Invoker\ParameterResolver\ParameterResolver;
@@ -14,17 +14,13 @@ class ActiveRecordAnnotationConverter implements ParameterResolver
 {
     /**
      * Nom du paramètre de la methode à injecter
-     *
-     * @var string
      */
-    private $methodParam;
+    private string $methodParam;
 
     /**
      * Other field to find Record
-     *
-     * @var array
      */
-    private $findBy;
+    private array $findBy;
 
     public function __construct(string $methodParam, array $findBy)
     {
@@ -32,6 +28,9 @@ class ActiveRecordAnnotationConverter implements ParameterResolver
         $this->findBy = $findBy;
     }
 
+    /**
+     * @throws RecordNotFound
+     */
     public function getParameters(
         ReflectionFunctionAbstract $reflection,
         array $providedParameters,
@@ -42,7 +41,6 @@ class ActiveRecordAnnotationConverter implements ParameterResolver
             return $resolvedParameters;
         }
 
-        /** @var \ReflectionParameter[] $reflectionParameters */
         $reflectionParameters = $reflection->getParameters();
         // Skip parameters already resolved
         if (!empty($resolvedParameters)) {
@@ -59,7 +57,6 @@ class ActiveRecordAnnotationConverter implements ParameterResolver
             }
 
             if ($key === $this->findBy[$findByKey]) {
-                /** @var ReflectionParameter[] $reflectionParameters */
                 foreach ($reflectionParameters as $index => $reflectionParameter) {
                     $name = $reflectionParameter->getName();
 
@@ -72,17 +69,17 @@ class ActiveRecordAnnotationConverter implements ParameterResolver
                         }
                         /** @var ReflectionNamedType $parameterType */
                         if ($parameterType->isBuiltin()) {
-                            // Primitive types are not supported
+                            // Primitive types not supported
                             continue;
                         }
                         if (!$parameterType instanceof ReflectionNamedType) {
-                            // Union types are not supported
+                            // Union types not supported
                             continue;
                         }
 
                         $class = $parameterType->getName();
 
-                        if (class_exists($class) && in_array(\ActiveRecord\Model::class, class_parents($class))) {
+                        if (class_exists($class) && in_array(Model::class, class_parents($class))) {
                             if ($findByKey === 'id') {
                                 if (null === $include) {
                                     $obj = $class::find((int) $parameter);

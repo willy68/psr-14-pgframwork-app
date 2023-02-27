@@ -6,6 +6,7 @@ namespace PgFramework\Invoker;
 
 use PgFramework\App;
 use DI\Proxy\ProxyFactory;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use DI\Invoker\DefinitionParameterResolver;
 use PgFramework\Annotation\AnnotationsLoader;
@@ -18,9 +19,14 @@ use Invoker\ParameterResolver\AssociativeArrayResolver;
 use PgFramework\Invoker\ParameterResolver\DoctrineEntityResolver;
 use Invoker\ParameterResolver\Container\TypeHintContainerResolver;
 use PgFramework\Invoker\ParameterResolver\DoctrineParamConverterAnnotations;
+use Psr\Container\NotFoundExceptionInterface;
 
 class ResolverChainFactory
 {
+    /**
+     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     */
     public function __invoke(ContainerInterface $container): ParameterResolver
     {
         $writeProxiesToFile = ($container->get('env') === 'production');

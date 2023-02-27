@@ -19,8 +19,8 @@ class InvokerFactory
     /**
      * Create Invoker
      *
-     * @param \Psr\Container\ContainerInterface $c
-     * @return \Invoker\InvokerInterface
+     * @param ContainerInterface $container
+     * @return InvokerInterface
      */
     public function __invoke(ContainerInterface $container): InvokerInterface
     {

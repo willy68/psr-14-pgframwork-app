@@ -9,7 +9,6 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use PgFramework\Database\Doctrine\Bridge\DebugMiddleware;
 use PgFramework\Database\Doctrine\Bridge\DebugStack;
 use PgFramework\Database\Doctrine\Bridge\DebugStackInterface;
 use PgFramework\Database\Doctrine\ConnectionConfigFactory;
