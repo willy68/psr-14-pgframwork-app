@@ -3,11 +3,16 @@
 declare(strict_types=1);
 
 use DebugBar\DebugBar;
+use Doctrine\DBAL\Configuration as DbalConfiguration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use PgFramework\Database\Doctrine\Bridge\DebugMiddleware;
+use PgFramework\Database\Doctrine\Bridge\DebugStack;
+use PgFramework\Database\Doctrine\Bridge\DebugStackInterface;
+use PgFramework\Database\Doctrine\ConnectionConfigFactory;
 use PgFramework\Jwt\JwtMiddlewareFactory;
 use Psr\Container\ContainerInterface;
 use Grafikart\Csrf\CsrfMiddleware;
@@ -243,8 +248,12 @@ return [
     'doctrine.connection.default' => function (ContainerInterface $c): Connection {
         return $c->get(Connection::class);
     },
+    DbalConfiguration::class => factory(ConnectionConfigFactory::class),
     Connection::class => function (ContainerInterface $c): Connection {
-        return DriverManager::getConnection($c->get('doctrine.connection.default.url'));
+        return DriverManager::getConnection(
+            $c->get('doctrine.connection.default.url'),
+            $c->get(DbalConfiguration::class)
+        );
     },
     'doctrine.manager.default' => function (ContainerInterface $c): EntityManagerInterface {
         return $c->get(EntityManagerInterface::class);
@@ -255,5 +264,6 @@ return [
         'default' => 'doctrine.manager.default',
     ]),
     ManagerRegistry::class => factory(OrmManagerFactory::class),
+    DebugStackInterface::class => get(DebugStack::class),
     DebugBar::class => factory(DebugBarFactory::class)
 ];

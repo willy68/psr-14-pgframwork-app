@@ -8,49 +8,49 @@ use Mezzio\Session\SessionInterface;
 
 class ArraySession implements SessionInterface
 {
-    private $session = [];
+    private array $session = [];
 
-    private $changed = false;
+    private bool $changed = false;
 
-    private $regenerated = false;
+    private bool $regenerated = false;
 
     /**
-     * @param string $key
+     * @param string $name
      * @param mixed $default
      * @return mixed
      */
-    public function get(string $key, $default = null)
+    public function get(string $name, $default = null): mixed
     {
-        if (array_key_exists($key, $this->session)) {
-            return $this->session[$key];
+        if (array_key_exists($name, $this->session)) {
+            return $this->session[$name];
         }
         return $default;
     }
 
     /**
-     * @param string $key
+     * @param string $name
      * @param mixed $value
      * @return void
      */
-    public function set(string $key, $value): void
+    public function set(string $name, $value): void
     {
-        $this->session[$key] = $value;
+        $this->session[$name] = $value;
         $this->changed = true;
     }
 
     /**
-     * @param string $key
+     * @param string $name
      * @return void
      */
-    public function unset(string $key): void
+    public function unset(string $name): void
     {
-        unset($this->session[$key]);
+        unset($this->session[$name]);
         $this->changed = true;
     }
 
-    public function has(string $key): bool
+    public function has(string $name): bool
     {
-        return array_key_exists($key, $this->session);
+        return array_key_exists($name, $this->session);
     }
 
     public function clear(): void

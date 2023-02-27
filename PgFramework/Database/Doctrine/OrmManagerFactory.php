@@ -6,9 +6,10 @@ namespace PgFramework\Database\Doctrine;
 
 use DebugBar\DebugBar;
 use DebugBar\DebugBarException;
+use PgFramework\Database\Doctrine\Bridge\DebugStack;
+use PgFramework\DebugBar\DataCollector\DoctrineCollector;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use DebugBar\Bridge\DoctrineCollector;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -33,8 +34,7 @@ class OrmManagerFactory
         if ($debug && $c->has(DebugBar::class)) {
             /** @var DebugBar $debugBar*/
             $debugBar = $c->get(DebugBar::class);
-            $debugStack = $om->getConnection()->getConfiguration()->getSQLLogger();
-            $debugBar->addCollector(new DoctrineCollector($debugStack));
+            $debugBar->addCollector(new DoctrineCollector($c->get(DebugStack::class)));
         }
 
         return $om;
