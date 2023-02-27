@@ -9,7 +9,7 @@ use PgFramework\Database\Table;
 
 class UserTable extends Table
 {
-    protected $table = "users";
+    protected string $table = "users";
 
     public function __construct(PDO $pdo, string $entity = User::class)
     {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Database\ActiveRecord;
 
+use ActiveRecord\Exceptions\RecordNotFound;
 use Pagerfanta\Adapter\AdapterInterface;
 
 class PaginatedActiveRecord implements AdapterInterface
@@ -27,6 +28,7 @@ class PaginatedActiveRecord implements AdapterInterface
      * @param int $offset
      * @param int $length
      * @return PaginatedModel[]
+     * @throws RecordNotFound
      */
     public function getSlice($offset, $length): array
     {

@@ -4,24 +4,19 @@ declare(strict_types=1);
 
 namespace PgFramework\Database;
 
-class QueryResult implements \ArrayAccess, \Iterator
+use ArrayAccess;
+use Exception;
+use Iterator;
+
+class QueryResult implements ArrayAccess, Iterator
 {
-    /**
-     * @var array
-     */
-    private $records;
+    private array $records;
 
-    /**
-     * @var mixed
-     */
-    private $entity;
+    private mixed $entity;
 
-    /**
-     * @var int
-     */
-    private $index = 0;
+    private int $index = 0;
 
-    private $hydratedRecords = [];
+    private array $hydratedRecords = [];
 
     /**
      * @param array $records
@@ -37,7 +32,7 @@ class QueryResult implements \ArrayAccess, \Iterator
      * @param int $index
      * @return mixed
      */
-    public function get(int $index)
+    public function get(int $index): mixed
     {
         if ($this->entity) {
             if (!isset($this->hydratedRecords[$index])) {
@@ -52,7 +47,7 @@ class QueryResult implements \ArrayAccess, \Iterator
      * @inheritDoc
      */
     #[\ReturnTypeWillChange]
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->records[$offset]);
     }
@@ -72,7 +67,7 @@ class QueryResult implements \ArrayAccess, \Iterator
     #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
-        throw new \Exception('Can\'t alter records');
+        throw new Exception('Can\'t alter records');
     }
 
     /**
@@ -81,7 +76,7 @@ class QueryResult implements \ArrayAccess, \Iterator
     #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
-        throw new \Exception('Can\'t alter records');
+        throw new Exception('Can\'t alter records');
     }
 
     /**

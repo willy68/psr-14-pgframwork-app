@@ -5,40 +5,24 @@ declare(strict_types=1);
 namespace PgFramework\Database;
 
 use PDO;
+use stdClass;
 
 /**
  *
  */
 class Table
 {
-    /**
-     * @var PDO
-     */
-    protected $pdo;
+    protected PDO $pdo;
 
-    /**
-     * @var string
-     */
-    protected $table;
+    protected string $table;
 
-    /**
-     * @var string|null
-     */
-    protected $entity = \stdClass::class;
+    protected ?string $entity = stdClass::class;
 
-    /**
-     * @param PDO $pdo
-     */
     public function __construct(PDO $pdo)
     {
-        if ($pdo) {
-            $this->pdo = $pdo;
-        }
+        $this->pdo = $pdo;
     }
 
-    /**
-     * @return Query
-     */
     public function makeQuery(): Query
     {
         return (new Query($this->pdo))
@@ -46,13 +30,10 @@ class Table
             ->into($this->entity);
     }
 
-    /**
-     * @return array
-     */
     public function findList(): array
     {
         $list = [];
-        $results = $this->pdo->query("SELECT id, name FROM {$this->table}")
+        $results = $this->pdo->query("SELECT id, name FROM $this->table")
             ->fetchAll(PDO::FETCH_NUM);
         foreach ($results as $result) {
             $list[$result[0]] = $result[1];
@@ -60,9 +41,6 @@ class Table
         return $list;
     }
 
-    /**
-     * @return Query
-     */
     public function findAll(): Query
     {
         return $this->makeQuery();
@@ -71,20 +49,20 @@ class Table
     /**
      * @param string $field
      * @param string $value
-     * @return mixed
+     * @return Query
      * @throws NoRecordException
      */
-    public function findBy(string $field, string $value)
+    public function findBy(string $field, string $value): Query
     {
         return $this->makeQuery()->where("$field = :field")->params(["field" => $value])->fetchOrFail();
     }
 
     /**
      * @param integer $id
-     * @return mixed
+     * @return Query
      * @throws NoRecordException
      */
-    public function find(int $id)
+    public function find(int $id): Query
     {
         return $this->makeQuery()->where("id = $id")->fetchOrFail();
     }
@@ -98,7 +76,7 @@ class Table
     {
         $fieldsQuery = $this->buildFieldQuery($params);
         $params['id'] = $id;
-        $statement = $this->pdo->prepare("UPDATE {$this->table} SET $fieldsQuery WHERE id=:id");
+        $statement = $this->pdo->prepare("UPDATE $this->table SET $fieldsQuery WHERE id=:id");
         return $statement->execute($params);
     }
 
@@ -112,7 +90,7 @@ class Table
         $values = join(',', array_map(function ($field) {
             return ':' . $field;
         }, $fields));
-        $query = "INSERT INTO {$this->table} ("
+        $query = "INSERT INTO $this->table ("
             .  join(',', $fields)
             . ") VALUES ("
             . $values
@@ -127,25 +105,22 @@ class Table
      */
     public function delete(int $id): bool
     {
-        $statement = $this->pdo->prepare("DELETE FROM {$this->table} WHERE id=?");
+        $statement = $this->pdo->prepare("DELETE FROM $this->table WHERE id=?");
         return $statement->execute([$id]);
     }
 
     /**
-     * @param mixed $id
+     * @param int $id
      * @return bool
      */
-    public function exists($id): bool
+    public function exists(int $id): bool
     {
-        $statement = $this->pdo->prepare("SELECT id FROM {$this->table} WHERE id=?");
+        $statement = $this->pdo->prepare("SELECT id FROM $this->table WHERE id=?");
         $statement->execute([$id]);
         return $statement->fetchColumn() !== false;
     }
 
-    /**
-     * @return mixed
-     */
-    public function count()
+    public function count(): mixed
     {
         return $this->makeQuery()->count();
     }
@@ -180,7 +155,7 @@ class Table
     /**
      * @return  PDO
      */
-    public function getPdo()
+    public function getPdo(): PDO
     {
         return $this->pdo;
     }
@@ -191,7 +166,7 @@ class Table
      * @return mixed
      * @throws NoRecordException
      */
-    protected function fetchOrFail(string $query, array $params = [])
+    protected function fetchOrFail(string $query, array $params = []): mixed
     {
         $query = $this->pdo->prepare($query);
         $query->execute($params);
@@ -210,7 +185,7 @@ class Table
      * @param array $params
      * @return mixed
      */
-    protected function fetchColumn(string $query, array $params = [])
+    protected function fetchColumn(string $query, array $params = []): mixed
     {
         $query = $this->pdo->prepare($query);
         $query->execute($params);

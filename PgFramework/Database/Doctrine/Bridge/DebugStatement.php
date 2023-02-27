@@ -13,6 +13,7 @@ use Doctrine\Deprecations\Deprecation;
 use function array_slice;
 use function func_get_args;
 use function func_num_args;
+
 class DebugStatement extends AbstractStatementMiddleware
 {
     private DebugStackInterface $debugStack;

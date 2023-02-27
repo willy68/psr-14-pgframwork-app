@@ -16,14 +16,14 @@ class PostTable extends Table
      *
      * @var string
      */
-    protected $entity = Post::class;
+    protected ?string $entity = Post::class;
 
     /**
      * Undocumented variable
      *
      * @var string
      */
-    protected $table = 'posts';
+    protected string $table = 'posts';
 
     /**
      * Undocumented function

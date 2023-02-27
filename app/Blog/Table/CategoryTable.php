@@ -14,5 +14,5 @@ class CategoryTable extends Table
      *
      * @var string
      */
-    protected $table = 'categories';
+    protected string $table = 'categories';
 }
