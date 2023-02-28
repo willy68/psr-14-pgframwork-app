@@ -2,36 +2,39 @@
 
 namespace App\Auth;
 
+use DateTime;
+use Exception;
 use PgFramework\Auth\UserInterface;
 
 class User implements UserInterface
 {
-    public $id;
+    public int $id;
 
-    public $username;
+    public string $username;
 
-    public $email;
+    public string $email;
 
-    public $password;
+    public string $password;
 
-    public $roles;
+    public array $roles;
 
-    public $passwordReset;
+    public ?string $passwordReset = null;
 
-    public $passwordResetAt;
+    public ?DateTime $passwordResetAt = null;
 
     /**
      * @return int
      */
     public function getId(): int
     {
-        return (int)$this->id;
+        return $this->id;
     }
 
     /**
+     * @param int $id
      * @return  self
      */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = $id;
 
@@ -51,9 +54,6 @@ class User implements UserInterface
      */
     public function getRoles(): array
     {
-        if (is_string($this->roles)) {
-            return json_decode($this->roles);
-        }
         return $this->roles;
     }
 
@@ -75,42 +75,46 @@ class User implements UserInterface
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
-    public function getPasswordReset()
+    public function getPasswordReset(): ?string
     {
         return $this->passwordReset;
     }
 
     /**
-     * @param mixed $passwordReset
+     * @param string $passwordReset
      */
-    public function setPasswordReset($passwordReset)
+    public function setPasswordReset(string $passwordReset)
     {
         $this->passwordReset = $passwordReset;
     }
 
+    /**
+     * @throws Exception
+     */
     public function setPasswordResetAt($date)
     {
         if (is_string($date)) {
-            $this->passwordResetAt = new \DateTime($date);
+            $this->passwordResetAt = new DateTime($date);
         } else {
             $this->passwordResetAt = $date;
         }
     }
 
     /**
-     * @return mixed
+     * @return DateTime|null
      */
-    public function getPasswordResetAt(): ?\DateTime
+    public function getPasswordResetAt(): ?DateTime
     {
         return $this->passwordResetAt;
     }
 
     /**
+     * @param string $email
      * @return  self
      */
-    public function setEmail($email)
+    public function setEmail(string $email): static
     {
         $this->email = $email;
 
@@ -118,9 +122,10 @@ class User implements UserInterface
     }
 
     /**
+     * @param string $username
      * @return  self
      */
-    public function setUsername($username)
+    public function setUsername(string $username): static
     {
         $this->username = $username;
 
@@ -128,9 +133,10 @@ class User implements UserInterface
     }
 
     /**
+     * @param string $password
      * @return  self
      */
-    public function setPassword($password)
+    public function setPassword(string $password): static
     {
         $this->password = $password;
 
@@ -138,9 +144,10 @@ class User implements UserInterface
     }
 
     /**
+     * @param mixed $roles
      * @return  self
      */
-    public function setRoles($roles)
+    public function setRoles(mixed $roles): static
     {
         $this->roles = $roles;
 

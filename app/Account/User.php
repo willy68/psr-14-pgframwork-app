@@ -8,7 +8,7 @@ class User extends \App\Auth\User
 
     public string $lastname;
 
-    public $roles = [];
+    public array $roles = [];
 
     public function getFirstname(): string
     {
@@ -35,9 +35,10 @@ class User extends \App\Auth\User
         return $this->roles;
     }
 
-    public function setRoles($roles)
+    public function setRoles(mixed $roles): static
     {
         $roles = json_decode($roles);
         $this->roles = $roles;
+        return $this;
     }
 }

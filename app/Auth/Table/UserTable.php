@@ -2,7 +2,7 @@
 
 namespace App\Auth\Table;
 
-use App\Auth\User;
+use App\Auth\Entity\User;
 use PgFramework\Database\Table;
 
 class UserTable extends Table

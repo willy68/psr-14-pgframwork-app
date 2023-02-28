@@ -12,11 +12,12 @@ use PgFramework\Router\Annotation\Route;
 use PgFramework\Session\FlashService;
 use PgFramework\Validator\Validator;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 /**
  * @Route("/password", name="auth.password")
  */
-#[Route('/password', name:'auth.password')]
+#[Route('/password', name: 'auth.password')]
 class PasswordForgetController
 {
     private RendererInterface $renderer;
@@ -39,6 +40,9 @@ class PasswordForgetController
         $this->flashService = $flashService;
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     */
     public function __invoke(ServerRequestInterface $request): ResponseRedirect|string
     {
         if ($request->getMethod() === 'GET') {
@@ -49,18 +53,18 @@ class PasswordForgetController
             ->notEmpty('email')
             ->email('email');
         if ($validator->isValid()) {
-                /** @var User $user */
-                if (($user = $this->userProvider->getUser('email', $params['email']))) {
-                    $token = $this->userProvider->resetPassword($user);
-                    $this->mailer->send($user->getEmail(), [
-                        'id' => $user->getId(),
-                        'token' => $token
-                    ]);
-                    $this->flashService->success('Un email vous a été envoyé');
-                    return new ResponseRedirect($this->router->generateUri('blog.index'));
-                } else {
-                    $errors = ['email' => 'Aucun utilisateur ne correspond à cet email'];
-                }
+            /** @var User $user */
+            if (($user = $this->userProvider->getUser('email', $params['email']))) {
+                $token = $this->userProvider->resetPassword($user);
+                $this->mailer->send($user->getEmail(), [
+                    'id' => $user->getId(),
+                    'token' => $token
+                ]);
+                $this->flashService->success('Un email vous a été envoyé');
+                return new ResponseRedirect($this->router->generateUri('blog.index'));
+            } else {
+                $errors = ['email' => 'Aucun utilisateur ne correspond à cet email'];
+            }
         } else {
             $errors = $validator->getErrors();
         }

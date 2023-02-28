@@ -2,27 +2,18 @@
 
 namespace App\Auth;
 
-use PgFramework\Auth\Auth;
-use PgFramework\Auth\User;
-use PgFramework\Auth\UserInterface;
 use Mezzio\Session\SessionInterface;
+use PgFramework\Auth\Auth;
+use PgFramework\Auth\UserInterface;
 use PgFramework\Database\NoRecordException;
 
 class DatabaseAuth implements Auth
 {
-    /**
-     * @var UserTable
-     */
-    private $userTable;
-    /**
-     * @var SessionInterface
-     */
-    private $session;
+    private UserTable $userTable;
 
-    /**
-     * @var \App\Auth\User
-     */
-    private $user;
+    private SessionInterface $session;
+
+    private ?UserInterface $user = null;
 
     public function __construct(UserTable $userTable, SessionInterface $session)
     {
@@ -30,15 +21,21 @@ class DatabaseAuth implements Auth
         $this->session = $session;
     }
 
+    /**
+     * @param string $username
+     * @param string $password
+     * @return UserInterface|null
+     * @throws NoRecordException
+     */
     public function login(string $username, string $password): ?UserInterface
     {
         if (empty($username) || empty($password)) {
             return null;
         }
 
-        /** @var \App\Auth\User $user */
+        /** @var UserInterface $user */
         $user = $this->userTable->findBy('username', $username);
-        if ($user && password_verify($password, $user->password)) {
+        if ($user && password_verify($password, $user->getPassword())) {
             $this->setUser($user);
             return $user;
         }
@@ -52,7 +49,7 @@ class DatabaseAuth implements Auth
     }
 
     /**
-     * @return User|null
+     * @return UserInterface|null
      */
     public function getUser(): ?UserInterface
     {
@@ -74,7 +71,7 @@ class DatabaseAuth implements Auth
 
     public function setUser(UserInterface $user): Auth
     {
-        $this->session->set('auth.user', $user->id);
+        $this->session->set('auth.user', $user->getId());
         $this->user = $user;
         return $this;
     }

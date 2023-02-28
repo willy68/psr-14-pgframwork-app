@@ -4,8 +4,8 @@ namespace App\Auth;
 
 use App\Auth\Entity\User;
 use PDO;
-use Ramsey\Uuid\Uuid;
 use PgFramework\Database\Table;
+use Ramsey\Uuid\Uuid;
 
 class UserTable extends Table
 {

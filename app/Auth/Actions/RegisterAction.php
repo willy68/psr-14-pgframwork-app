@@ -4,56 +4,38 @@ namespace App\Auth\Actions;
 
 use App\Auth\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use PgFramework\Auth\AuthSession;
 use Mezzio\Router\RouterInterface;
-use PgFramework\Validator\Validator;
-use PgFramework\Session\FlashService;
-use PgFramework\Router\Annotation\Route;
 use Mezzio\Session\SessionInterface;
 use PgFramework\Actions\RouterAwareAction;
-use PgFramework\Response\ResponseRedirect;
+use PgFramework\Auth\AuthSession;
 use PgFramework\Renderer\RendererInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use PgFramework\Response\ResponseRedirect;
+use PgFramework\Router\Annotation\Route;
 use PgFramework\Security\Hasher\PasswordHasherInterface;
+use PgFramework\Session\FlashService;
+use PgFramework\Validator\Validator;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class RegisterAction
 {
     use RouterAwareAction;
 
-    /**
-     * @var RendererInterface
-     */
-    private $renderer;
+    private RendererInterface $renderer;
 
-    /**
-     * @var AuthSession
-     */
-    private $auth;
+    private AuthSession $auth;
 
-    /**
-     * @var SessionInterface
-     */
-    private $session;
+    private SessionInterface $session;
 
-    /**
-     * @var RouterInterface
-     */
-    private $router;
+    private RouterInterface $router;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
+    private EntityManagerInterface $em;
 
-    /**
-     * @var PasswordHasherInterface
-     */
-    private $hasher;
+    private PasswordHasherInterface $hasher;
 
-    /**
-     * @var array
-     */
-    protected $messages = [
+    protected array $messages = [
         'create' => "Votre compte à bien été créé"
     ];
 
@@ -79,11 +61,11 @@ class RegisterAction
      */
     #[Route(path: "/register", name: "auth.register", methods: ['GET'])]
     #[Route(path: "/register", methods: ['POST'])]
-    public function __invoke(ServerRequestInterface $request)
+    public function __invoke(ServerRequestInterface $request): ResponseInterface|string
     {
         $user = new User();
         $errors = false;
-        $submited = false;
+        $submitted = false;
 
         if ($request->getMethod() === 'POST') {
             $params = $request->getParsedBody();
@@ -104,36 +86,37 @@ class RegisterAction
                     $path = $this->router->generateUri('account');
                     $response = new ResponseRedirect($path);
                     if ($params['connect']) {
-                        $user = $this->auth->setUser($user);
+                        $this->auth->setUser($user);
                     }
                     return $response;
                 }
                 (new FlashService($this->session))->error('Un problème est survenu, réessayer de vous enregistrer');
             } else {
-                $submited = true;
+                $submitted = true;
                 $errors = $validator->getErrors();
             }
         }
         return $this->renderer->render(
             '@auth/register',
-            compact('user', 'errors', 'submited')
+            compact('user', 'errors', 'submitted')
         );
     }
 
     /**
-     * @param Request $request
+     * @param ServerRequestInterface $request
      * @return Validator
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     protected function getValidator(ServerRequestInterface $request): Validator
     {
-        $validator = (new Validator($request->getParsedBody()))
+        return (new Validator($request->getParsedBody()))
             ->required('username', 'email', 'password')
             ->addRules([
                 'username' => 'min:2|unique:App\Auth\Entity\User,username,,Cet utilisateur existe déjà',
-                'email'    => 'email|unique:App\Auth\Entity\User,email,,Cet Email existe déjà',
-                'password'      => 'min:4',
+                'email' => 'email|unique:App\Auth\Entity\User,email,,Cet Email existe déjà',
+                'password' => 'min:4',
                 'password_confirm' => 'password|confirm:password',
             ]);
-        return $validator;
     }
 }

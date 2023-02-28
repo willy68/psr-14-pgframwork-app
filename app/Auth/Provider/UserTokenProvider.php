@@ -4,9 +4,9 @@ namespace App\Auth\Provider;
 
 use App\Auth\Entity\UserToken;
 use Doctrine\ORM\EntityManagerInterface;
-use PgFramework\Database\Hydrator;
-use PgFramework\Auth\TokenInterface;
 use PgFramework\Auth\Provider\TokenProviderInterface;
+use PgFramework\Auth\TokenInterface;
+use PgFramework\Database\Hydrator;
 
 class UserTokenProvider implements TokenProviderInterface
 {
@@ -61,6 +61,20 @@ class UserTokenProvider implements TokenProviderInterface
         return $newToken;
     }
 
+    /**
+     * Filter params with:
+     * ['series', 'credential', 'random_password', 'expiration_date']
+     *
+     * @param array $params
+     * @return array
+     */
+    protected function getParams(array $params): array
+    {
+        return array_filter($params, function ($key) {
+            return in_array($key, ['series', 'credential', 'random_password', 'expiration_date']);
+        }, ARRAY_FILTER_USE_KEY);
+    }
+
     public function updateToken(array $token, mixed $id): ?TokenInterface
     {
         $userToken = $this->em->find($this->entity, $id);
@@ -82,19 +96,5 @@ class UserTokenProvider implements TokenProviderInterface
 
         $this->em->remove($userToken);
         $this->em->flush();
-    }
-
-    /**
-     * Filter params with:
-     * ['series', 'credential', 'random_password', 'expiration_date']
-     *
-     * @param array $params
-     * @return array
-     */
-    protected function getParams(array $params): array
-    {
-        return array_filter($params, function ($key) {
-            return in_array($key, ['series', 'credential', 'random_password', 'expiration_date']);
-        }, ARRAY_FILTER_USE_KEY);
     }
 }

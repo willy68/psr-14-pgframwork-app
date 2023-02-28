@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace App\Auth\Actions;
 
-use PgFramework\Auth\AuthSession;
 use Mezzio\Router\RouterInterface;
-use PgFramework\Session\FlashService;
-use PgFramework\Router\Annotation\Route;
 use Mezzio\Session\SessionInterface;
 use PgFramework\Actions\RouterAwareAction;
+use PgFramework\Auth\AuthSession;
 use PgFramework\Auth\Middleware\AuthenticationMiddleware;
-use PgFramework\Response\ResponseRedirect;
-use PgFramework\Renderer\RendererInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Auth\RememberMe\RememberMeInterface;
+use PgFramework\Renderer\RendererInterface;
+use PgFramework\Response\ResponseRedirect;
+use PgFramework\Router\Annotation\Route;
+use PgFramework\Session\FlashService;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @Route("/login", methods={"POST"}, name="auth.login.post", middlewares={AuthenticationMiddleware::class})
@@ -29,30 +30,15 @@ class LoginAttemptAction
 {
     use RouterAwareAction;
 
-    /**
-     * @var RendererInterface
-     */
-    private $renderer;
+    private RendererInterface $renderer;
 
-    /**
-     * @var AuthSession
-     */
-    private $auth;
+    private AuthSession $auth;
 
-    /**
-     * @var RememberMeInterface
-     */
-    private $cookie;
+    private RememberMeInterface $cookie;
 
-    /**
-     * @var SessionInterface
-     */
-    private $session;
+    private SessionInterface $session;
 
-    /**
-     * @var RouterInterface
-     */
-    private $router;
+    private RouterInterface $router;
 
     public function __construct(
         RendererInterface $renderer,
@@ -68,12 +54,12 @@ class LoginAttemptAction
         $this->router = $router;
     }
 
-    public function __invoke(ServerRequestInterface $request)
+    public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
         $params = $request->getParsedBody();
         $user = $this->auth->login($params['username'], $params['password']);
         if ($user) {
-            $path = $this->session->get('auth.redirect')  ?: $this->router->generateUri('account');
+            $path = $this->session->get('auth.redirect') ?: $this->router->generateUri('account');
             $this->session->unset('auth.redirect');
             $response = new ResponseRedirect($path);
             if ($params['rememberMe']) {

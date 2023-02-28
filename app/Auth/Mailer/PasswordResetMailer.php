@@ -9,9 +9,9 @@ use Symfony\Component\Mailer\MailerInterface;
 
 class PasswordResetMailer
 {
-    private $mailer;
-    private $renderer;
-    private $from;
+    private MailerInterface $mailer;
+    private RendererInterface $renderer;
+    private string $from;
 
     public function __construct(MailerInterface $mailer, RendererInterface $renderer, string $from)
     {

@@ -2,16 +2,16 @@
 
 namespace App\Auth\Actions;
 
-use PgFramework\Router\Annotation\Route;
 use PgFramework\Renderer\RendererInterface;
+use PgFramework\Router\Annotation\Route;
 
 /**
  * @Route("/login", name="auth.login", methods={"GET"})
  */
-#[Route('/login', name:'auth.login', methods:['GET'])]
+#[Route('/login', name: 'auth.login', methods: ['GET'])]
 class LoginAction
 {
-    private $renderer;
+    private RendererInterface $renderer;
 
     public function __construct(RendererInterface $renderer)
     {

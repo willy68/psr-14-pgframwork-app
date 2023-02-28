@@ -3,13 +3,13 @@
 namespace App\Auth\Entity;
 
 use DateTime;
-use Doctrine\ORM\Mapping\Id;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use PgFramework\Auth\UserInterface;
 use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Table;
+use PgFramework\Auth\UserInterface;
 
 /**
  * @ORM\Entity
@@ -28,67 +28,67 @@ class User implements UserInterface
     #[Id]
     #[GeneratedValue]
     #[Column(type: Types::INTEGER)]
-    public $id;
+    public int $id;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
     #[Column(type: TYPES::STRING)]
-    public $username;
+    public string $username;
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @var string
+     * @var string|null
      */
     #[Column(type: Types::STRING, nullable: true)]
-    private $firstname;
+    private ?string $firstname = null;
 
 
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @var string
+     * @var string|null
      */
     #[Column(type: Types::STRING, nullable: true)]
-    private $lastname;
+    private ?string $lastname = null;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
     #[Column(type: TYPES::STRING)]
-    public $email;
+    public string $email;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
     #[Column(type: TYPES::STRING)]
-    public $password;
+    public string $password;
 
     /**
      * @ORM\Column(type="json")
      * @var string[]
      */
     #[Column(type: TYPES::JSON)]
-    public $roles = [];
+    public array $roles = [];
 
     /**
      * @ORM\Column(name="password_reset" ,type="string", nullable=true)
-     * @var string
+     * @var string|null
      */
     #[Column(name: 'password_reset', type: TYPES::STRING, nullable: true)]
-    protected $passwordReset;
+    protected ?string $passwordReset = null;
 
     /**
      * @ORM\Column(name="password_reset_at" ,type="datetime", nullable=true)
-     * @var DateTime
+     * @var DateTime|null
      */
     #[Column(name: 'password_reset_at', type: TYPES::DATETIME_MUTABLE, nullable: true)]
-    protected $passwordResetAt;
+    protected ?DateTime $passwordResetAt = null;
 
     /**
-     * Get the value of id
+     * Get the value of ID
      *
      * @return int
      */
@@ -98,7 +98,7 @@ class User implements UserInterface
     }
 
     /**
-     * Set the value of id
+     * Set the value of ID
      *
      * @param $id
      * @return  self
@@ -270,7 +270,7 @@ class User implements UserInterface
     public function setPasswordResetAt($date): static
     {
         if (is_string($date)) {
-            $this->passwordResetAt = \DateTime::createFromFormat('Y-m-d H:i:s', $date);
+            $this->passwordResetAt = DateTime::createFromFormat('Y-m-d H:i:s', $date);
         } else {
             $this->passwordResetAt = $date;
         }

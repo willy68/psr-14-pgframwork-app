@@ -4,29 +4,20 @@ namespace App\Auth\Actions;
 
 use PgFramework\Auth\AuthSession;
 use PgFramework\Auth\Middleware\CookieLogoutMiddleware;
-use PgFramework\Session\FlashService;
-use PgFramework\Router\Annotation\Route;
 use PgFramework\Response\ResponseRedirect;
+use PgFramework\Router\Annotation\Route;
+use PgFramework\Session\FlashService;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * @Route("/logout", name="auth.logout", methods={"POST"}, middlewares={CookieLogoutMiddleware::class})
  */
-#[Route('/logout', name:'auth.logout', methods:['POST'], middlewares:[CookieLogoutMiddleware::class])]
+#[Route('/logout', name: 'auth.logout', methods: ['POST'], middlewares: [CookieLogoutMiddleware::class])]
 class LogoutAction
 {
-    /**
-     * Undocumented variable
-     *
-     * @var AuthSession
-     */
-    private $auth;
+    private AuthSession $auth;
 
-    /**
-     * Undocumented variable
-     *
-     * @var FlashService
-     */
-    private $flashService;
+    private FlashService $flashService;
 
     public function __construct(
         AuthSession $auth,
@@ -36,7 +27,7 @@ class LogoutAction
         $this->flashService = $flashService;
     }
 
-    public function __invoke()
+    public function __invoke(): ResponseInterface
     {
         $this->auth->logout();
         $this->flashService->success('Vous êtes maintenant déconnecté');

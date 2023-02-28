@@ -49,20 +49,20 @@ class Table
     /**
      * @param string $field
      * @param string $value
-     * @return Query
+     * @return mixed
      * @throws NoRecordException
      */
-    public function findBy(string $field, string $value): Query
+    public function findBy(string $field, string $value): mixed
     {
         return $this->makeQuery()->where("$field = :field")->params(["field" => $value])->fetchOrFail();
     }
 
     /**
      * @param integer $id
-     * @return Query
+     * @return mixed
      * @throws NoRecordException
      */
-    public function find(int $id): Query
+    public function find(int $id): mixed
     {
         return $this->makeQuery()->where("id = $id")->fetchOrFail();
     }
@@ -91,7 +91,7 @@ class Table
             return ':' . $field;
         }, $fields));
         $query = "INSERT INTO $this->table ("
-            .  join(',', $fields)
+            . join(',', $fields)
             . ") VALUES ("
             . $values
             . ")";

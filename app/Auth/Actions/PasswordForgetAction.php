@@ -3,29 +3,29 @@
 namespace App\Auth\Actions;
 
 use App\Auth\Entity\User;
-use App\Auth\UserTable;
-use PgFramework\Validator\Validator;
-use PgFramework\Session\FlashService;
 use App\Auth\Mailer\PasswordResetMailer;
+use App\Auth\UserTable;
 use Mezzio\Router\RouterInterface;
-use PgFramework\Router\Annotation\Route;
-use PgFramework\Response\ResponseRedirect;
 use PgFramework\Database\NoRecordException;
 use PgFramework\Renderer\RendererInterface;
+use PgFramework\Response\ResponseRedirect;
+use PgFramework\Router\Annotation\Route;
+use PgFramework\Session\FlashService;
+use PgFramework\Validator\Validator;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 /**
  * @Route("/password", name="auth.password")
  */
-#[Route('/password', name:'auth.password')]
+#[Route('/password', name: 'auth.password')]
 class PasswordForgetAction
 {
-    private $renderer;
-    private $userTable;
-    private $router;
-    private $mailer;
-    private $flashService;
+    private RendererInterface $renderer;
+    private UserTable $userTable;
+    private RouterInterface $router;
+    private PasswordResetMailer $mailer;
+    private FlashService $flashService;
 
     public function __construct(
         RendererInterface $renderer,

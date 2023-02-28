@@ -19,9 +19,13 @@ use Psr\Http\Message\ServerRequestInterface;
 class PasswordResetController
 {
     private RendererInterface $renderer;
+
     private UserProviderInterface $userProvider;
+
     private FlashService $flashService;
+
     private RouterInterface $router;
+
 
     public function __construct(
         RendererInterface $renderer,
@@ -29,28 +33,26 @@ class PasswordResetController
         FlashService $flashService,
         RouterInterface $router
     ) {
-        $this->renderer = $renderer;
+        $this->renderer     = $renderer;
         $this->userProvider = $userProvider;
         $this->flashService = $flashService;
-        $this->router = $router;
+        $this->router       = $router;
     }
 
-    public function  __invoke(ServerRequestInterface $request): ResponseRedirect|string
+    public function __invoke(ServerRequestInterface $request): ResponseRedirect|string
     {
         /** @var User $user */
         $user = $this->userProvider->getUser('id', $request->getAttribute('id'));
         if (
-            $user->getPasswordReset() !== null &&
-            $user->getPasswordReset() === $request->getAttribute('token') &&
-            time() - $user->getPasswordResetAt()->getTimestamp() < 600
+            $user->getPasswordReset() !== null
+            && $user->getPasswordReset() === $request->getAttribute('token')
+            && (time() - $user->getPasswordResetAt()->getTimestamp()) < 600
         ) {
             if ($request->getMethod() === 'GET') {
                 return $this->renderer->render('@auth/reset');
             } else {
-                $params = $request->getParsedBody();
-                $validator = (new Validator($params))
-                    ->length('password', 4)
-                    ->confirm('password');
+                $params    = $request->getParsedBody();
+                $validator = (new Validator($params))->length('password', 4)->confirm('password');
                 if ($validator->isValid()) {
                     $this->userProvider->updatePassword($user, $params['password']);
                     $this->flashService->success('Votre mot de passe a bien été changé');
