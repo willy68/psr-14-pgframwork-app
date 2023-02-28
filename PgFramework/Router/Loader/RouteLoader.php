@@ -11,9 +11,9 @@ use PgFramework\Router\Annotation\Route as AnnotRoute;
 
 class RouteLoader
 {
-    protected $collector;
+    protected RouteCollectionInterface $collector;
 
-    protected $annotationsLoader;
+    protected AnnotationsLoader $annotationsLoader;
 
     public function __construct(
         RouteCollectionInterface $collector,
@@ -23,11 +23,12 @@ class RouteLoader
         $this->annotationsLoader = $annotationsLoader;
         $this->annotationsLoader->setAnnotation(AnnotRoute::class);
     }
+
     /**
-     * Parse annotations @Route and add routes to the router
+     * Parse annotations @Route, add routes to the router
      *
-     * @param string $file
-     * @return Route[]|null
+     * @param string $className
+     * @return Route|null
      */
     public function load(string $className): ?array
     {
@@ -40,12 +41,12 @@ class RouteLoader
             return null;
         }
 
-        /** @var \PgFramework\Router\Annotation\Route */
+        /** @var AnnotRoute $classAnnotation*/
         $classAnnotation = $this->annotationsLoader->getClassAnnotation($reflectionClass);
 
         $routes = [];
         foreach ($reflectionClass->getMethods() as $method) {
-            /** @var \PgFramework\Router\Annotation\Route */
+            /** @var AnnotRoute $methodAnnotation*/
             foreach ($this->annotationsLoader->getMethodAnnotations($method) as $methodAnnotation) {
                 $routes[] = $this->addRoute($methodAnnotation, $method, $classAnnotation);
             }
@@ -78,7 +79,7 @@ class RouteLoader
      * Add route to router
      *
      * @param AnnotRoute $methodAnnotation
-     * @param \ReflectionMethod $method
+     * @param ReflectionMethod $method
      * @param AnnotRoute|null $classAnnotation
      * @return Route
      */

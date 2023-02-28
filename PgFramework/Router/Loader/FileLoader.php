@@ -10,7 +10,7 @@ use PgFramework\Parser\PhpTokenParser;
 class FileLoader extends RouteLoader
 {
     /**
-     * Parse annotations @Route and add routes to the router
+     * Parse annotations @Route And add routes to the router
      *
      * @param string $file
      * @return Route[]|null

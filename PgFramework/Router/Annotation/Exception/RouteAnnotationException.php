@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PgFramework\Router\Annotation\Exception;
 
-class RouteAnnotationException extends \Exception
+use Exception;
+
+class RouteAnnotationException extends Exception
 {
 }

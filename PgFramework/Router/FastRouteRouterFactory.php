@@ -11,7 +11,9 @@ declare(strict_types=1);
 namespace PgFramework\Router;
 
 use Mezzio\Router\FastRouteRouter;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * Create and return an instance of FastRouteRouter.
@@ -29,6 +31,10 @@ use Psr\Container\ContainerInterface;
  */
 class FastRouteRouterFactory
 {
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function __invoke(ContainerInterface $container): FastRouteRouter
     {
         $cache = null;

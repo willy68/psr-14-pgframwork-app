@@ -8,25 +8,18 @@ use Mezzio\Router\RouterInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
+use function str_contains;
+
 class RouterTwigExtension extends AbstractExtension
 {
-  /**
-   * @var RouterInterface
-   */
-    private $router;
+    private RouterInterface $router;
 
-    /**
-     * @param RouterInterface $router
-     */
     public function __construct(RouterInterface $router)
     {
         $this->router = $router;
     }
 
-    /**
-     * @return array
-     */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('path', [$this, 'pathFor']),
@@ -35,7 +28,7 @@ class RouterTwigExtension extends AbstractExtension
     }
 
     /**
-     * Genère un lien html
+     * Génère un lien html
      *
      * @param string $path
      * @param array $params
@@ -56,6 +49,6 @@ class RouterTwigExtension extends AbstractExtension
     {
         $uri = $_SERVER['REQUEST_URI'] ?? '/';
         $expected = $this->router->generateUri($path);
-        return strpos($uri, $expected) !== false;
+        return str_contains($uri, $expected);
     }
 }

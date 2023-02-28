@@ -10,7 +10,7 @@ use PgFramework\File\FileUtils;
 class DirectoryLoader extends FileLoader
 {
     /**
-     * Find all php files with @Route annotations
+     * Find all PHP files with @Route annotations
      *
      * @param string $dir
      * @return Route[]|null

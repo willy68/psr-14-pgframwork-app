@@ -8,7 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class RoutesMap implements RoutesMapInterface
 {
-    private $map = [];
+    private array $map = [];
 
     public function add(RequestMatcherInterface $requestMatcher = null, array $listeners = [])
     {
@@ -18,7 +18,7 @@ class RoutesMap implements RoutesMapInterface
     /**
      * {@inheritdoc}
      */
-    public function getListeners(ServerRequestInterface $request)
+    public function getListeners(ServerRequestInterface $request): array
     {
         foreach ($this->map as $elements) {
             if (null === $elements[0] || $elements[0]->match($request)) {
