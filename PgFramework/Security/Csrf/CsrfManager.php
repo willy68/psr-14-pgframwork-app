@@ -7,10 +7,10 @@ use PgFramework\Security\Csrf\TokenStorage\CsrfStorageInterface;
 
 class CsrfManager implements CsrfManagerInterface
 {
-    private $storage;
-    private $generator;
-    private $sessionKey;
-    private $formKey;
+    private CsrfStorageInterface $storage;
+    private CsrfGeneratorInterface $generator;
+    private string $sessionKey;
+    private string $formKey;
 
     public function __construct(
         CsrfStorageInterface $storage,
@@ -29,9 +29,6 @@ class CsrfManager implements CsrfManagerInterface
         return $this->generateToken();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeToken(string $token): string
     {
         return $this->storage->removeToken($token);
@@ -44,14 +41,12 @@ class CsrfManager implements CsrfManagerInterface
         return $token;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isTokenValid(string $token): bool
     {
         if (!$this->storage->hasToken($token)) {
             return false;
         }
+        return true;
     }
 
     /**

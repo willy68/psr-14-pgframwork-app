@@ -10,10 +10,10 @@ use PgFramework\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
 class CsrfTokenManager implements CsrfTokenManagerInterface
 {
-    private $storage;
-    private $generator;
-    private $sessionKey;
-    private $formKey;
+    private TokenStorageInterface $storage;
+    private TokenGeneratorInterface $generator;
+    private string $sessionKey;
+    private string $formKey;
 
     public function __construct(
         TokenStorageInterface $storage,
@@ -33,7 +33,7 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
             if ($this->storage->hasToken($tokenId)) {
                 return $this->storage->getToken($tokenId);
             }
-            // Create new one for this id
+            // Create new one for this ID
             return $this->refreshToken($tokenId);
         }
 
