@@ -11,6 +11,7 @@ use PgFramework\Router\Annotation\Route;
 use PgFramework\Actions\RouterAwareAction;
 use PgFramework\Renderer\RendererInterface;
 use PgFramework\Invoker\Annotation\ParameterConverter;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * @Route("/blog")
@@ -20,23 +21,10 @@ class PostShowAction
 {
     use RouterAwareAction;
 
-    /**
-     *
-     * @var RendererInterface
-     */
-    private $renderer;
+    private RendererInterface $renderer;
 
-    /**
-     *
-     * @var RouterInterface
-     */
-    private $router;
+    private RouterInterface $router;
 
-    /**
-     * Constructeur
-     *
-     * @param RendererInterface $renderer
-     */
     public function __construct(
         RendererInterface $renderer,
         RouterInterface $router
@@ -52,10 +40,10 @@ class PostShowAction
      *
      * @param string $slug
      * @param Post $post
-     * @return mixed
+     * @return string|ResponseInterface
      */
     #[Route('/{slug:[a-z\-0-9]+}-{id:[0-9]+}', name:'blog.show', methods:['GET'])]
-    public function __invoke(string $slug, Post $post)
+    public function __invoke(string $slug, Post $post): string|ResponseInterface
     {
         if ($post->getSlug() !== $slug) {
             return $this->redirect('blog.show', [
@@ -63,7 +51,6 @@ class PostShowAction
                 'id' => $post->getId()
             ]);
         }
-
         return $this->renderer->render('@blog/show', [
             'post' => $post
         ]);

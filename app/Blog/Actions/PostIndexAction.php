@@ -2,6 +2,7 @@
 
 namespace App\Blog\Actions;
 
+use ActiveRecord\Exceptions\RecordNotFound;
 use App\Entity\Post;
 use App\Blog\Models\Posts;
 use App\Blog\Models\Categories;
@@ -16,14 +17,8 @@ use Psr\Http\Message\ServerRequestInterface as Request;
  */
 class PostIndexAction
 {
-    /**
-     * @var RendererInterface
-     */
-    private $renderer;
+    private RendererInterface $renderer;
 
-    /**
-     * @param RendererInterface $renderer
-     */
     public function __construct(RendererInterface $renderer)
     {
         $this->renderer = $renderer;
@@ -36,6 +31,7 @@ class PostIndexAction
      *
      * @param Request $request
      * @return string
+     * @throws RecordNotFound
      */
     #[Route('/dblog', name:'blog.indexAR', methods:['GET'])]
     public function __invoke(Request $request): string

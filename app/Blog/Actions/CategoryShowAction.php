@@ -2,29 +2,23 @@
 
 namespace App\Blog\Actions;
 
+use ActiveRecord\Exceptions\RecordNotFound;
+use App\Blog\Models\Categories;
 use App\Blog\Models\Posts;
 use GuzzleHttp\Psr7\Response;
-use App\Blog\Models\Categories;
-use PgFramework\Router\Annotation\Route;
 use PgFramework\Renderer\RendererInterface;
+use PgFramework\Router\Annotation\Route;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 /**
  * @Route("/blog/dcategory/{slug:[a-z\-0-9]+}", name="blog.dcategory")
  */
-#[Route('/blog/dcategory/{slug:[a-z\-0-9]+}', name:'blog.dcategory', methods:['GET'])]
+#[Route('/blog/dcategory/{slug:[a-z\-0-9]+}', name: 'blog.dcategory', methods: ['GET'])]
 class CategoryShowAction
 {
-    /**
-     *
-     * @var RendererInterface
-     */
-    private $renderer;
+    private RendererInterface $renderer;
 
-    /**
-     *
-     * @param RendererInterface $renderer
-     */
     public function __construct(RendererInterface $renderer)
     {
         $this->renderer = $renderer;
@@ -33,9 +27,10 @@ class CategoryShowAction
     /**
      *
      * @param Request $request
-     * @return string|Response
+     * @return string|ResponseInterface
+     * @throws RecordNotFound
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): string|ResponseInterface
     {
         $category = Categories::find_by_slug($request->getAttribute('slug'));
         if ($category) {
@@ -50,7 +45,7 @@ class CategoryShowAction
         } else {
             return new Response(404, [], $this->renderer->render(
                 'error404',
-                ['message' => 'Impossible de trouver cette categorie: ' . $request->getAttribute('slug')]
+                ['message' => 'Impossible de trouver cette catégorie: ' . $request->getAttribute('slug')]
             ));
         }
     }

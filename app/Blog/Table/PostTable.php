@@ -3,33 +3,15 @@
 namespace App\Blog\Table;
 
 use App\Blog\Entity\Post;
-use PgFramework\Database\Table;
 use PgFramework\Database\Query;
+use PgFramework\Database\Table;
 
-/**
- *
- */
 class PostTable extends Table
 {
-    /**
-     * Undocumented variable
-     *
-     * @var string
-     */
     protected ?string $entity = Post::class;
 
-    /**
-     * Undocumented variable
-     *
-     * @var string
-     */
     protected string $table = 'posts';
 
-    /**
-     * Undocumented function
-     *
-     * @return Query
-     */
     public function findAll(): Query
     {
         $category = new CategoryTable($this->pdo);
@@ -39,11 +21,6 @@ class PostTable extends Table
             ->order('p.created_at DESC');
     }
 
-    /**
-     * Undocumented function
-     *
-     * @return Query
-     */
     public function findPublic(): Query
     {
         return $this->findAll()
@@ -52,8 +29,6 @@ class PostTable extends Table
     }
 
     /**
-     * Undocumented function
-     *
      * @param int $category_id
      * @return Query
      */
@@ -63,8 +38,6 @@ class PostTable extends Table
     }
 
     /**
-     * Undocumented function
-     *
      * @param int $id
      * @return Post
      */
