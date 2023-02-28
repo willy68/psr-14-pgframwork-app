@@ -1,8 +1,11 @@
 <?php
 
+use App\Contact\ContactAction;
+
 use function DI\autowire;
+use function DI\get;
 
 return [
-    'contact.to' => \DI\get('mail.to'),
-    \App\Contact\ContactAction::class => autowire()->constructorParameter('to', \DI\get('contact.to'))
+    'contact.to' => get('mail.to'),
+    ContactAction::class => autowire()->constructorParameter('to', get('contact.to'))
 ];

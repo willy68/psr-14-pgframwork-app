@@ -3,40 +3,28 @@
 namespace App\Contact;
 
 use Mezzio\Router\RouterInterface;
-use PgFramework\Validator\Validator;
-use PgFramework\Session\FlashService;
-use PgFramework\Router\Annotation\Route;
-use PgFramework\Response\ResponseRedirect;
 use PgFramework\Renderer\RendererInterface;
+use PgFramework\Response\ResponseRedirect;
+use PgFramework\Router\Annotation\Route;
+use PgFramework\Session\FlashService;
+use PgFramework\Validator\Validator;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 
 class ContactAction
 {
-    /**
-     * @var RendererInterface
-     */
-    private $renderer;
-    /**
-     * @var string
-     */
-    private $to;
+    private RendererInterface $renderer;
 
-    /**
-     * @var FlashService
-     */
-    private $flashService;
+    private string $to;
 
-    /**
-     * @var MailerInterface
-     */
-    private $mailer;
+    private FlashService $flashService;
 
-    /**
-     * @var RouterInterface
-     */
-    private $router;
+    private MailerInterface $mailer;
+
+    private RouterInterface $router;
 
     public function __construct(
         string $to,
@@ -57,11 +45,12 @@ class ContactAction
      * @Route("/contact", methods={"POST"})
      *
      * @param ServerRequestInterface $request
-     * @return RedirectResponse|string
+     * @return ResponseInterface|string
+     * @throws TransportExceptionInterface
      */
-    #[Route(path: "/contact", name: "contact", methods:['GET'])]
-    #[Route(path: "/contact", methods:['POST'])]
-    public function __invoke(ServerRequestInterface $request)
+    #[Route(path: "/contact", name: "contact", methods: ['GET'])]
+    #[Route(path: "/contact", methods: ['POST'])]
+    public function __invoke(ServerRequestInterface $request): ResponseInterface|string
     {
         if ($request->getMethod() === 'GET') {
             return $this->renderer->render('@contact/contact');
@@ -81,8 +70,8 @@ class ContactAction
                 ->text($this->renderer->render('@contact/email/contact.text', $params))
                 ->html($this->renderer->render('@contact/email/contact.html', $params));
             $this->mailer->send($email);
-            $patn = $this->router->generateUri('blog.index');
-            return new ResponseRedirect($patn);
+            $path = $this->router->generateUri('blog.index');
+            return new ResponseRedirect($path);
         } else {
             $this->flashService->error('Merci de corriger vos erreurs');
             $errors = $validator->getErrors();
