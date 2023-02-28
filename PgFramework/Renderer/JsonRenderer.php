@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PgFramework\Renderer;
 
+use ActiveRecord\Model;
+
 class JsonRenderer implements RendererInterface
 {
     /**
@@ -22,12 +24,12 @@ class JsonRenderer implements RendererInterface
      *
      *
      * @param mixed $view
-     * @param array|int|null $options
+     * @param int|array|null $options
      * @return string
      */
-    public function toJson($view, $options): string
+    public function toJson(mixed $view, int|array|null $options): string
     {
-        if ($view instanceof \ActiveRecord\Model) {
+        if ($view instanceof Model) {
             if (!is_array($options)) {
                 $options = [$options];
             }
@@ -41,7 +43,7 @@ class JsonRenderer implements RendererInterface
 
     public function jsonArray(array $view, $options): string
     {
-        if (!empty($view) && $view[0] instanceof \ActiveRecord\Model) {
+        if (!empty($view) && $view[0] instanceof Model) {
             if (!is_array($options)) {
                 $options = [$options];
             }
@@ -62,7 +64,7 @@ class JsonRenderer implements RendererInterface
     public function jsonRecordArray(array $records, array $include = []): string
     {
         $json = join(',', array_map(function ($record) use ($include) {
-            /** @var  \ActiveRecord\Model $record */
+            /** @var  Model $record */
             return $record->to_json($include);
         }, $records));
         return '[' . $json . ']';
@@ -72,21 +74,19 @@ class JsonRenderer implements RendererInterface
      * Unused function
      *
      * @param string $namespace
-     * @param string $path
+     * @param string|null $path
      * @return void
      */
-    public function addPath(string $namespace, string $path = null)
+    public function addPath(string $namespace, string $path = null): void
     {
     }
 
     /**
-     * Unused function
-     *
      * @param string $key
      * @param mixed $value
      * @return void
      */
-    public function addGlobal(string $key, $value)
+    public function addGlobal(string $key, mixed $value): void
     {
     }
 }

@@ -8,10 +8,10 @@ interface RendererInterface
 {
     /**
      * @param string $namespace
-     * @param string $path
+     * @param string|null $path
      * @return void
      */
-    public function addPath(string $namespace, string $path = null);
+    public function addPath(string $namespace, string $path = null): void;
 
     /**
      * @param string $view
@@ -25,5 +25,5 @@ interface RendererInterface
      * @param mixed $value
      * @return void
      */
-    public function addGlobal(string $key, $value);
+    public function addGlobal(string $key, mixed $value): void;
 }
