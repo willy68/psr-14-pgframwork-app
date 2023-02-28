@@ -47,6 +47,9 @@ class CrudAction
         $this->flash = $flash;
     }
 
+    /**
+     * @throws NoRecordException
+     */
     public function __invoke(Request $request): string|ResponseInterface
     {
         $this->renderer->addGlobal('viewPath', $this->viewPath);
@@ -54,7 +57,7 @@ class CrudAction
         if ($request->getMethod() === 'DELETE') {
             return $this->delete($request);
         }
-        if (substr((string)$request->getUri(), -3) === 'new') {
+        if (str_ends_with((string)$request->getUri(), 'new')) {
             return $this->create($request);
         }
         if ($request->getAttribute('id')) {
