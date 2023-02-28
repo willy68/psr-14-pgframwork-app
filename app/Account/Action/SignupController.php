@@ -12,6 +12,8 @@ use PgFramework\Router\Annotation\Route;
 use PgFramework\Security\Hasher\PasswordHasherInterface;
 use PgFramework\Session\FlashService;
 use PgFramework\Validator\Validator;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -20,10 +22,15 @@ use Psr\Http\Message\ServerRequestInterface;
 class SignupController
 {
     private RendererInterface $renderer;
+
     private RouterInterface $router;
+
     private EntityManagerInterface $em;
+
     private Auth $auth;
+
     private FlashService $flashService;
+
     private PasswordHasherInterface $passwordHasher;
 
     public function __construct(
@@ -42,6 +49,10 @@ class SignupController
         $this->passwordHasher = $passwordHasher;
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function __invoke(ServerRequestInterface $request): ResponseInterface|string
     {
         if ($request->getMethod() === 'GET') {
@@ -79,6 +90,8 @@ class SignupController
     /**
      * @param array $params
      * @return Validator
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     protected function getValidator(array $params): Validator
     {
@@ -87,7 +100,7 @@ class SignupController
             ->addRules([
                 'username' => 'min:2|unique:' . User::class . ',username,,Cet utilisateur existe déjà',
                 'email'    => 'email|unique:' . User::class . ',email,,Cet Email existe déjà',
-                'password'      => 'min:4',
+                'password' => 'min:4',
                 'password_confirm' => 'confirm:password',
             ]);
     }

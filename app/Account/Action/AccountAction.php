@@ -11,19 +11,12 @@ use Psr\Http\Message\ServerRequestInterface;
 #[Route('/mon-profil', name:'account', methods:['GET'], middlewares:[LoggedInMiddleware::class])]
 class AccountAction
 {
-    /**
-     * @var RendererInterface
-     */
-    private $renderer;
-    /**
-     * @var Auth
-     */
-    private $auth;
+    private RendererInterface $renderer;
 
-    public function __construct(
-        RendererInterface $renderer,
-        Auth $auth
-    ) {
+    private Auth $auth;
+
+    public function __construct(RendererInterface $renderer, Auth $auth)
+    {
         $this->renderer = $renderer;
         $this->auth = $auth;
     }
