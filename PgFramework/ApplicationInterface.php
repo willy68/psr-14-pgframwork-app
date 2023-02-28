@@ -12,7 +12,6 @@ use Psr\Http\Message\ServerRequestInterface;
 interface ApplicationInterface
 {
     /**
-     *
      * @param  ServerRequestInterface|null $request
      * @return ResponseInterface
      */
@@ -24,7 +23,6 @@ interface ApplicationInterface
     public function getContainer(): ContainerInterface;
 
     /**
-     *
      * @return KernelInterface|null
      */
     public function getKernel(): ?KernelInterface;
