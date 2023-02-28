@@ -16,22 +16,14 @@ use Psr\Http\Message\ServerRequestInterface;
 #[Route('/mon-profil', methods:['POST'], middlewares:[LoggedInMiddleware::class])]
 class AccountEditAction
 {
-    /**
-     * @var RendererInterface
-     */
-    private $renderer;
-    /**
-     * @var Auth
-     */
-    private $auth;
-    /**
-     * @var FlashService
-     */
-    private $flashService;
-    /**
-     * @var UserTable
-     */
-    private $userTable;
+    private RendererInterface $renderer;
+
+    private Auth $auth;
+
+    private FlashService $flashService;
+
+    private UserTable $userTable;
+
     private PasswordHasherInterface $hasher;
 
     public function __construct(

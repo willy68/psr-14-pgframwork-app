@@ -19,26 +19,16 @@ use Psr\Http\Message\ServerRequestInterface;
 #[Route('/inscription', methods:['POST'])]
 class SignupAction
 {
-    /**
-     * @var RendererInterface
-     */
-    private $renderer;
-    /**
-     * @var UserTable
-     */
-    private $userTable;
-    /**
-     * @var RouterInterface
-     */
-    private $router;
-    /**
-     * @var DatabaseAuth
-     */
-    private $auth;
-    /**
-     * @var FlashService
-     */
-    private $flashService;
+    private RendererInterface $renderer;
+
+    private UserTable $userTable;
+
+    private RouterInterface $router;
+
+    private DatabaseAuth $auth;
+
+    private FlashService $flashService;
+
     private PasswordHasherInterface $hasher;
 
     public function __construct(
