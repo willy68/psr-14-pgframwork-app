@@ -2,44 +2,42 @@
 
 declare(strict_types=1);
 
-use App\Api\ApiModule;
+use App\Account\AccountModule;
+use App\Admin\AdminModule;
 use App\Auth\AuthModule;
 use App\Blog\BlogModule;
-use App\Demo\DemoModule;
-use App\Admin\AdminModule;
-use App\Api\ApiClientModule;
-use App\Account\AccountModule;
 use App\Contact\ContactModule;
+use App\Demo\DemoModule;
 use Application\Console\ConsoleModule;
 use PgFramework\Auth\Middleware\CookieLoginMiddleware;
-use PgFramework\Security\Firewall\Firewall;
-use PgFramework\Middleware\MethodMiddleware;
-use PgFramework\Middleware\RouterMiddleware;
+use PgFramework\DebugBar\EventListener\DebugBarListener;
+use PgFramework\DebugBar\Middleware\DebugBarMiddleware;
+use PgFramework\EventListener\ActiveRecordListener;
+use PgFramework\EventListener\CsrfCookieListener;
+use PgFramework\EventListener\MethodHeadListener;
+use PgFramework\EventListener\MethodNotAllowedListener;
+use PgFramework\EventListener\MethodOptionsListener;
+use PgFramework\EventListener\PageNotFoundListener;
+use PgFramework\EventListener\RecordNotFoundListener;
+use PgFramework\EventListener\RendererAddGlobalListener;
 use PgFramework\EventListener\RouterListener;
+use PgFramework\EventListener\StringResponseListener;
 use PgFramework\Middleware\ApiHeadMiddleware;
 use PgFramework\Middleware\ApiOptionsMiddleware;
 use PgFramework\Middleware\DispatcherMiddleware;
-use PgFramework\EventListener\CsrfCookieListener;
-use PgFramework\EventListener\MethodHeadListener;
-use PgFramework\Session\Listener\SessionListener;
-use PgFramework\Middleware\PageNotFoundMiddleware;
-use PgFramework\EventListener\ActiveRecordListener;
-use PgFramework\EventListener\PageNotFoundListener;
-use PgFramework\Middleware\TrailingSlashMiddleware;
-use PgFramework\EventListener\MethodOptionsListener;
-use PgFramework\EventListener\RecordNotFoundListener;
-use PgFramework\EventListener\StringResponseListener;
-use PgFramework\Session\Middleware\SessionMiddleware;
+use PgFramework\Middleware\MethodMiddleware;
 use PgFramework\Middleware\MethodNotAllowedMiddleware;
-use PgFramework\DebugBar\Middleware\DebugBarMiddleware;
-use PgFramework\EventListener\MethodNotAllowedListener;
-use PgFramework\DebugBar\EventListener\DebugBarListener;
-use PgFramework\EventListener\RendererAddGlobalListener;
+use PgFramework\Middleware\PageNotFoundMiddleware;
 use PgFramework\Middleware\RendererRequestMiddleware;
+use PgFramework\Middleware\RouterMiddleware;
+use PgFramework\Middleware\TrailingSlashMiddleware;
 use PgFramework\Security\Firewall\EventListener\RememberMeLoginListener;
+use PgFramework\Security\Firewall\Firewall;
+use PgFramework\Session\Listener\SessionListener;
+use PgFramework\Session\Middleware\SessionMiddleware;
 
 return [
-    /* Application modules. Place your own on the list */
+    /* Application modules. Place your own on the list. */
     'modules' => [
         ConsoleModule::class,
         DemoModule::class,
