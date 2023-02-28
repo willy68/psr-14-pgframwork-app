@@ -2,29 +2,20 @@
 
 namespace App\Middleware;
 
+use ActiveRecord\Exceptions\RecordNotFound;
 use Exception;
 use GuzzleHttp\Psr7\Response;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Server\MiddlewareInterface;
-use PgFramework\Renderer\RendererInterface;
-use ActiveRecord\Exceptions\RecordNotFound;
 use PgFramework\Database\NoRecordException;
+use PgFramework\Renderer\RendererInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 class RecordNotFoundMiddleware implements MiddlewareInterface
 {
-    /**
-     * Renderer de vue
-     *
-     * @var RendererInterface
-     */
-    private $renderer;
+    private RendererInterface $renderer;
 
-    /**
-     *
-     * @param RendererInterface $renderer
-     */
     public function __construct(RendererInterface $renderer)
     {
         $this->renderer = $renderer;

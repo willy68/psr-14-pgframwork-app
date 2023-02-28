@@ -70,7 +70,7 @@ class PostRepository extends PaginatedEntityRepository
      * @param int $id
      * @return mixed
      */
-    public function findWithCategory(int $id)
+    public function findWithCategory(int $id): mixed
     {
         $builder = $this->buildFindPublic()->andWhere("p.id = $id");
         $query = $builder->getQuery();

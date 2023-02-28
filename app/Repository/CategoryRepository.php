@@ -2,11 +2,11 @@
 
 namespace App\Repository;
 
-use Pagerfanta\Pagerfanta;
 use Doctrine\ORM\QueryBuilder;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
-use PgFramework\Database\Doctrine\PaginatedQueryBuilder;
+use Pagerfanta\Pagerfanta;
 use PgFramework\Database\Doctrine\PaginatedEntityRepository;
+use PgFramework\Database\Doctrine\PaginatedQueryBuilder;
 
 class CategoryRepository extends PaginatedEntityRepository
 {
@@ -27,10 +27,10 @@ class CategoryRepository extends PaginatedEntityRepository
     /**
      * paginate Category
      *
-     * @param \Doctrine\ORM\QueryBuilder $query
+     * @param QueryBuilder $query
      * @param int $perPage
      * @param int $currentPage
-     * @return \Pagerfanta\Pagerfanta
+     * @return Pagerfanta
      */
     public function paginate(QueryBuilder $query, int $perPage, int $currentPage = 1): Pagerfanta
     {
