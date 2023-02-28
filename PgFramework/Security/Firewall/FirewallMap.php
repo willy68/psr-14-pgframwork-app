@@ -25,7 +25,7 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class FirewallMap implements FirewallMapInterface
 {
-    private $map = [];
+    private array $map = [];
 
     public function add(RequestMatcherInterface $requestMatcher = null, array $listeners = [], $mainListener = [])
     {
@@ -35,14 +35,13 @@ class FirewallMap implements FirewallMapInterface
     /**
      * {@inheritdoc}
      */
-    public function getListeners(ServerRequestInterface $request)
+    public function getListeners(ServerRequestInterface $request): array
     {
         foreach ($this->map as $elements) {
             if (null === $elements[0] || $elements[0]->match($request)) {
                 return [$elements[1], $elements[2]];
             }
         }
-
         return [[], []];
     }
 }
