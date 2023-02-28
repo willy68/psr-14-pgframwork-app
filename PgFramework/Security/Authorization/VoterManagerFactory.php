@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace PgFramework\Security\Authorization;
 
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use PgFramework\Security\Authorization\VoterManagerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class VoterManagerFactory
 {
-    public function __invoke(ContainerInterface $c)
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function __invoke(ContainerInterface $c): VoterManager
     {
         $voters = [];
         $strategy = VoterManagerInterface::STRATEGY_AFFIRMATIVE;

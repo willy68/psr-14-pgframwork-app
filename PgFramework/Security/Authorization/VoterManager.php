@@ -18,13 +18,14 @@ namespace PgFramework\Security\Authorization;
 use PgFramework\Auth\Auth;
 use InvalidArgumentException;
 use PgFramework\Security\Authorization\Voter\VoterInterface;
+use function is_callable;
 
 class VoterManager implements VoterManagerInterface
 {
-    private $voters;
-    private $strategy;
-    private $allowIfAllAbstainDecisions;
-    private $allowIfEqualGrantedDeniedDecisions;
+    private iterable $voters;
+    private string $strategy;
+    private bool $allowIfAllAbstainDecisions;
+    private bool $allowIfEqualGrantedDeniedDecisions;
 
     /**
      * @param iterable|VoterInterface[] $voters An array or an iterator of VoterInterface instances
@@ -32,7 +33,7 @@ class VoterManager implements VoterManagerInterface
      * @param bool $allowIfAllAbstainDecisions Whether to grant access if all voters abstained or not
      * @param bool $allowIfEqualGrantedDeniedDecisions Whether to grant access if result are equals
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(
         iterable $voters = [],
@@ -41,7 +42,7 @@ class VoterManager implements VoterManagerInterface
         bool $allowIfEqualGrantedDeniedDecisions = true
     ) {
         $strategyMethod = 'decide' . ucfirst($strategy);
-        if ('' === $strategy || !\is_callable([$this, $strategyMethod])) {
+        if ('' === $strategy || !is_callable([$this, $strategyMethod])) {
             throw new InvalidArgumentException(sprintf('The strategy "%s" is not supported.', $strategy));
         }
 
@@ -55,7 +56,7 @@ class VoterManager implements VoterManagerInterface
      *
      * {@inheritdoc}
      */
-    public function decide(Auth $auth, array $attributes, $subject = null)
+    public function decide(Auth $auth, array $attributes, $subject = null): bool
     {
         return $this->{$this->strategy}($auth, $attributes, $subject);
     }
@@ -199,7 +200,7 @@ class VoterManager implements VoterManagerInterface
      * If all voters abstained from voting, the decision will be based on the
      * allowIfAllAbstainDecisions property value (defaults to false).
      */
-    private function decidePriority(Auth $auth, array $attributes, $subject = null)
+    private function decidePriority(Auth $auth, array $attributes, $subject = null): bool
     {
         foreach ($this->voters as $voter) {
             $result = $voter->vote($auth, $attributes, $subject);

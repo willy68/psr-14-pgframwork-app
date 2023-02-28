@@ -2,6 +2,7 @@
 
 namespace PgFramework\Security\Csrf\Listener;
 
+use ArrayAccess;
 use GuzzleHttp\Psr7\Response;
 use PgFramework\Event\Events;
 use Dflydev\FigCookies\SetCookie;
@@ -18,9 +19,12 @@ use PgFramework\Response\ResponseRedirect;
 use PgFramework\Security\Csrf\CsrfManagerInterface;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
+use function in_array;
+use function is_array;
+
 class CsrfCookieListener implements EventSubscriberInterface
 {
-    protected $config = [
+    protected array $config = [
         'cookieName' => 'XSRF-TOKEN',
         'header' => 'X-CSRF-TOKEN',
         'field' => '_csrf',
@@ -29,8 +33,8 @@ class CsrfCookieListener implements EventSubscriberInterface
         'httponly' => true,
         'samesite' => null,
     ];
-    private $flashService;
-    private $csrfManager;
+    private FlashService $flashService;
+    private CsrfManagerInterface $csrfManager;
 
     public function __construct(CsrfManagerInterface $csrfManager, FlashService $flashService, array $config = [])
     {
@@ -39,6 +43,9 @@ class CsrfCookieListener implements EventSubscriberInterface
         $this->config = array_merge($this->config, $config);
     }
 
+    /**
+     * @throws InvalidCsrfException
+     */
     public function onRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
@@ -46,15 +53,15 @@ class CsrfCookieListener implements EventSubscriberInterface
 
         $cookie = FigRequestCookies::get($request, $this->config['cookieName'])->getValue();
 
-        if (\in_array($method, ['GET', 'HEAD'], true) && null === $cookie) {
+        if (in_array($method, ['GET', 'HEAD'], true) && null === $cookie) {
             $token = $this->csrfManager->getToken();
             $request = $request->withAttribute($this->config['field'], $token);
         }
 
-        if (\in_array($method, ['DELETE', 'PATCH', 'POST', 'PUT'], true)) {
+        if (in_array($method, ['DELETE', 'PATCH', 'POST', 'PUT'], true)) {
             $body = $request->getParsedBody() ?: [];
 
-            if ((\is_array($body) || $body instanceof \ArrayAccess) && !empty($body)) {
+            if ((is_array($body) || $body instanceof ArrayAccess) && !empty($body)) {
                 $token = $body[$this->config['field']] ?? null;
                 $this->validateToken($token, $cookie);
             } elseif (!$request->hasHeader($this->config['header'])) {
@@ -82,7 +89,7 @@ class CsrfCookieListener implements EventSubscriberInterface
                 ->withValue($token)
                 ->withExpires($this->config['expiry'])
                 ->withPath('/')
-                ->withDomain(null)
+                ->withDomain()
                 ->withSecure($this->config['secure'])
                 ->withHttpOnly($this->config['httponly']);
             $response = FigResponseCookies::set($response, $setCookie);
@@ -103,7 +110,7 @@ class CsrfCookieListener implements EventSubscriberInterface
             if (RequestUtils::isJson($request)) {
                 $response = new Response(403, [], json_encode($e->getMessage()));
             } else {
-                $this->flashService->error('Vous n\'avez pas de token valid pour executer cette action');
+                $this->flashService->error('Vous n\'avez pas de token valid pour exécuter cette action');
                 $response = new ResponseRedirect('/');
             }
 
@@ -111,7 +118,7 @@ class CsrfCookieListener implements EventSubscriberInterface
                 ->withValue('')
                 ->withExpires(time() - 3600)
                 ->withPath('/')
-                ->withDomain(null)
+                ->withDomain()
                 ->withSecure($this->config['secure'])
                 ->withHttpOnly($this->config['httponly']);
             $response = FigResponseCookies::set($response, $setCookie);
@@ -125,6 +132,9 @@ class CsrfCookieListener implements EventSubscriberInterface
         return $this->config['field'];
     }
 
+    /**
+     * @throws InvalidCsrfException
+     */
     protected function validateToken(?string $token = null, ?string $cookie = null)
     {
         if (!$token) {

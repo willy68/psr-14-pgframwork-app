@@ -19,22 +19,23 @@ use PgFramework\Security\Hasher\PasswordHasherInterface;
 use PgFramework\Security\Authentication\Exception\AuthenticationFailureException;
 use PgFramework\Security\Authentication\Result\AuthenticateResult;
 use PgFramework\Security\Authentication\Result\AuthenticateResultInterface;
+use function is_string;
 
 class FormAuthentication implements AuthenticationInterface
 {
     use RouterAwareAction;
 
-    protected $auth;
+    protected Auth $auth;
 
-    protected $userProvider;
+    protected UserProviderInterface $userProvider;
 
-    protected $session;
+    protected SessionInterface $session;
 
-    protected $router;
+    protected RouterInterface $router;
 
-    protected $hasher;
+    protected PasswordHasherInterface $hasher;
 
-    protected $options = [
+    protected array $options = [
         'identifier' => 'username',
         'password' => 'password',
         'rememberMe' => 'rememberMe',
@@ -79,7 +80,7 @@ class FormAuthentication implements AuthenticationInterface
 
         $user = $this->getUser($credentials);
 
-        if (!$user || !$user instanceof UserInterface) {
+        if (!$user instanceof UserInterface) {
             throw new AuthenticationFailureException('User not found');
         }
 
@@ -90,7 +91,11 @@ class FormAuthentication implements AuthenticationInterface
         return new AuthenticateResult($credentials, $user);
     }
 
-    public function getCredentials(ServerRequestInterface $request)
+    /**
+     * @param ServerRequestInterface $request
+     * @return array|null
+     */
+    public function getCredentials(ServerRequestInterface $request): ?array
     {
         $params = $request->getParsedBody();
 
@@ -101,22 +106,28 @@ class FormAuthentication implements AuthenticationInterface
             $credentials['rememberMe'] = true;
         }
 
-        if (!\is_string($credentials['identifier'])) {
+        if (!is_string($credentials['identifier'])) {
             return null;
         }
 
         return $credentials;
     }
 
-    public function getUser($credentials)
+    /**
+     * @param mixed $credentials
+     * @return UserInterface|null
+     */
+    public function getUser(mixed $credentials): ?UserInterface
     {
         return $this->userProvider->getUser($this->options['identifier'], $credentials['identifier']);
     }
 
     /**
-     * @param UserInterface $user
+     * @param ServerRequestInterface $request
+     * @param mixed $user
+     * @return ResponseInterface|null
      */
-    public function onAuthenticateSuccess(ServerRequestInterface $request, $user): ?ResponseInterface
+    public function onAuthenticateSuccess(ServerRequestInterface $request, mixed $user): ?ResponseInterface
     {
         $this->auth->setUser($user);
 

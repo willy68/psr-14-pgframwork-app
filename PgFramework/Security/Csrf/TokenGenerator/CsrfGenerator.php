@@ -2,12 +2,14 @@
 
 namespace PgFramework\Security\Csrf\TokenGenerator;
 
+use Exception;
+
 class CsrfGenerator implements CsrfGeneratorInterface
 {
     /**
      * Generate and store a random token.
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @return string
      */

@@ -12,9 +12,9 @@ interface AuthorizationCheckerInterface
      * string and instance of Expression are supported by the core)
      *
      * @param mixed $attribute
-     * @param mixed $subject
+     * @param mixed|null $subject
      *
      * @return bool
      */
-    public function isGranted($attribute, $subject = null);
+    public function isGranted(mixed $attribute, mixed $subject = null): bool;
 }

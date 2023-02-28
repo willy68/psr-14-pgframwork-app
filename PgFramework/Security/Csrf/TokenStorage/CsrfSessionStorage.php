@@ -2,21 +2,27 @@
 
 namespace PgFramework\Security\Csrf\TokenStorage;
 
+use ArrayAccess;
 use Mezzio\Session\SessionInterface;
+use TypeError;
+
+use function array_shift;
+use function count;
+use function in_array;
+use function is_array;
 
 class CsrfSessionStorage implements CsrfStorageInterface
 {
-    private $session;
-    private $sessionKey;
-    private $limit;
+    private SessionInterface $session;
+    private string $sessionKey;
+    private int $limit;
 
     /**
      * CsrfMiddleware constructor.
      *
-     * @param SessionInterface   $session
-     * @param int                $limit      Limit the number of token to store in the session
-     * @param string             $sessionKey
-     * @param string             $formKey
+     * @param SessionInterface $session
+     * @param int $limit Limit the number of token to store in the session
+     * @param string $sessionKey
      */
     public function __construct(
         SessionInterface $session,
@@ -31,7 +37,7 @@ class CsrfSessionStorage implements CsrfStorageInterface
 
     public function hasToken(string $token): bool
     {
-        return \in_array($token, $this->session->toArray()[$this->sessionKey] ?? []);
+        return in_array($token, $this->session->toArray()[$this->sessionKey] ?? []);
     }
 
     public function setToken(string $token): void
@@ -67,12 +73,12 @@ class CsrfSessionStorage implements CsrfStorageInterface
      *
      * @param $session
      *
-     * @throws \TypeError
+     * @throws TypeError
      */
     private function testSession($session): void
     {
-        if (!\is_array($session->toArray()) && !$session->toArray() instanceof \ArrayAccess) {
-            throw new \TypeError('session is not an array');
+        if (!is_array($session->toArray()) && !$session->toArray() instanceof ArrayAccess) {
+            throw new TypeError('session is not an array');
         }
     }
 
@@ -85,7 +91,7 @@ class CsrfSessionStorage implements CsrfStorageInterface
      */
     private function limitTokens(array $tokens): array
     {
-        if (\count($tokens) > $this->limit) {
+        if (count($tokens) > $this->limit) {
             array_shift($tokens);
         }
 

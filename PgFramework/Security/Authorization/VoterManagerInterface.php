@@ -37,5 +37,5 @@ interface VoterManagerInterface
      *
      * @return bool true if the access is granted, false otherwise
      */
-    public function decide(Auth $auth, array $attributes, $subject = null);
+    public function decide(Auth $auth, array $attributes, $subject = null): bool;
 }

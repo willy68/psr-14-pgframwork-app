@@ -4,34 +4,30 @@ declare(strict_types=1);
 
 namespace PgFramework\Security\Csrf\TokenStorage;
 
+use ArrayAccess;
 use Mezzio\Session\SessionInterface;
+use TypeError;
+
+use function array_shift;
+use function count;
+use function is_array;
 
 class TokenSessionStorage implements TokenStorageInterface
 {
-    /**
-     * @var SessionInterface
-     */
-    private $session;
+    private SessionInterface $session;
 
-    /**
-     * @var string
-     */
-    private $sessionKey;
+    private string $sessionKey;
 
-    /**
-     * @var int
-     */
-    private $limit;
+    private int $limit;
 
-    private $lastIdField = 'csrf.lastid';
+    private string $lastIdField = 'csrf.lastid';
 
     /**
      * CsrfMiddleware constructor.
      *
-     * @param SessionInterface   $session
-     * @param int                $limit      Limit the number of token to store in the session
-     * @param string             $sessionKey
-     * @param string             $formKey
+     * @param SessionInterface $session
+     * @param int $limit Limit the number of token to store in the session
+     * @param string $sessionKey
      */
     public function __construct(
         SessionInterface $session,
@@ -98,12 +94,12 @@ class TokenSessionStorage implements TokenStorageInterface
      *
      * @param $session
      *
-     * @throws \TypeError
+     * @throws TypeError
      */
     private function testSession($session): void
     {
-        if (!\is_array($session->toArray()) && !$session->toArray() instanceof \ArrayAccess) {
-            throw new \TypeError('session is not an array');
+        if (!is_array($session->toArray()) && !$session->toArray() instanceof ArrayAccess) {
+            throw new TypeError('session is not an array');
         }
     }
 
@@ -124,7 +120,7 @@ class TokenSessionStorage implements TokenStorageInterface
      */
     private function limitTokens(array $tokens): array
     {
-        if (\count($tokens) > $this->limit) {
+        if (count($tokens) > $this->limit) {
             array_shift($tokens);
         }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Security\Csrf\TokenGenerator;
 
+use Exception;
 use PgFramework\Security\Security;
 
 class TokenGenerator implements TokenGeneratorInterface
@@ -11,7 +12,7 @@ class TokenGenerator implements TokenGeneratorInterface
     /**
      * Generate and store a random token.
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @return string
      */

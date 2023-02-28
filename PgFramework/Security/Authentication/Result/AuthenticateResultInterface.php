@@ -13,7 +13,7 @@ interface AuthenticateResultInterface
      *
      * @return mixed
      */
-    public function getCredentials();
+    public function getCredentials(): mixed;
 
     /**
      * Set the credentials
@@ -21,7 +21,7 @@ interface AuthenticateResultInterface
      * @param mixed $credentials
      * @return self
      */
-    public function setCredentials($credentials);
+    public function setCredentials(mixed $credentials): static;
 
     /**
      * Get authenticate user
@@ -31,10 +31,10 @@ interface AuthenticateResultInterface
     public function getUser(): UserInterface;
 
     /**
-     * set the user
+     * Set the user
      *
      * @param UserInterface $user
      * @return self
      */
-    public function setUser(UserInterface $user);
+    public function setUser(UserInterface $user): static;
 }

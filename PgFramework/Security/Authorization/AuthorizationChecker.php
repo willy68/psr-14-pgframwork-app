@@ -9,9 +9,9 @@ use PgFramework\Auth\ForbiddenException;
 
 class AuthorizationChecker implements AuthorizationCheckerInterface
 {
-    private $auth;
-    private $voterManager;
-    private $exceptionOnNoUser;
+    private Auth $auth;
+    private VoterManagerInterface $voterManager;
+    private bool $exceptionOnNoUser;
 
     public function __construct(Auth $auth, VoterManagerInterface $voterManager, bool $exceptionOnNoUser = false)
     {
@@ -20,7 +20,10 @@ class AuthorizationChecker implements AuthorizationCheckerInterface
         $this->exceptionOnNoUser = $exceptionOnNoUser;
     }
 
-    public function isGranted($attribute, $subject = null): bool
+    /**
+     * @throws ForbiddenException
+     */
+    public function isGranted(mixed $attribute, mixed $subject = null): bool
     {
         if (null === $this->auth->getUser()) {
             if ($this->exceptionOnNoUser) {
