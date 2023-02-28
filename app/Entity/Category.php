@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -47,10 +48,10 @@ class Category
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Post", mappedBy="category")
-     * @var ArrayCollection<Post> An ArrayCollection of Post objects.
+     * @var Collection<int, Post> An ArrayCollection of Post objects.
      */
     #[OneToMany(mappedBy: 'category', targetEntity: Post::class)]
-    public $posts;
+    public Collection $posts;
 
     public function __construct()
     {
