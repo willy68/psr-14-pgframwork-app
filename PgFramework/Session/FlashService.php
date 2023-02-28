@@ -12,7 +12,7 @@ class FlashService
 
     private string $sessionKey = 'flash';
 
-    private string $messages;
+    private ?array $messages = null;
 
     /**
      * @param SessionInterface $session

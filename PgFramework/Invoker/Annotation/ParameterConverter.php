@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PgFramework\Invoker\Annotation;
 
-use Attribute;
 use Doctrine\ORM\Mapping\MappingAttribute;
 use PgFramework\Invoker\Exception\InvalidAnnotation;
 use function is_string;
@@ -26,14 +25,14 @@ use function is_string;
  * @Target({"METHOD"})
  *
  */
-#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_FUNCTION | Attribute::IS_REPEATABLE)]
+#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION | \Attribute::IS_REPEATABLE)]
 final class ParameterConverter implements MappingAttribute
 {
     /**
      * Parameters indexed by the parameter number (index) or name.
      * Used if the annotation is set on a method.
      */
-    private array $parameters;
+    private mixed $parameters;
 
     private ?string $name;
 
@@ -42,7 +41,7 @@ final class ParameterConverter implements MappingAttribute
     /**
      * @throws InvalidAnnotation
      */
-    public function __construct(array $parameters = [], string $name = null, array $options = [])
+    public function __construct(mixed $parameters = [], string $name = null, array $options = [])
     {
         $this->parameters = $parameters;
         $this->name = $parameters['value'] ?? (is_string($parameters) ? $parameters : $name);
