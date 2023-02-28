@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace PgFramework\Twig;
 
+use DateTime;
 use Twig\TwigFunction;
 use Twig\Extension\AbstractExtension;
-
-use function DI\value;
 
 class FormExtension extends AbstractExtension
 {
@@ -32,7 +31,7 @@ class FormExtension extends AbstractExtension
      * @param array $options
      * @return string
      */
-    public function field(array $context, string $key, $value, ?string $label = null, array $options = []): string
+    public function field(array $context, string $key, mixed $value, ?string $label = null, array $options = []): string
     {
         $type = $options['type'] ?? 'text';
         $error = $this->getErrorHTML($context, $key);
@@ -66,9 +65,9 @@ class FormExtension extends AbstractExtension
         }
         return "
             <div class=\"form-group\">
-              <label for=\"{$key}\">{$label}</label>
-              {$input}
-              {$error}
+              <label for=\"$key\">$label</label>
+              $input
+              $error
             </div>";
     }
 
@@ -78,7 +77,7 @@ class FormExtension extends AbstractExtension
      */
     private function convertValue($value): string
     {
-        if ($value instanceof \DateTime) {
+        if ($value instanceof DateTime) {
             return $value->format('Y-m-d H:i:s');
         }
         return (string)$value;
@@ -93,7 +92,7 @@ class FormExtension extends AbstractExtension
     {
         $error = $context['errors'][$key] ?? false;
         if ($error) {
-            return "<div class=\"invalid-feedback\">{$error}</div>";
+            return "<div class=\"invalid-feedback\">$error</div>";
         }
         return "";
     }
@@ -107,7 +106,7 @@ class FormExtension extends AbstractExtension
     {
         return "<textarea " .
             $this->getHtmlFromArray($attributes) .
-            ">{$value}</textarea>";
+            ">$value</textarea>";
     }
 
     /**
@@ -123,13 +122,13 @@ class FormExtension extends AbstractExtension
             function (string $html, string $key) use ($options, $value) {
                 $params = ['value' => $key, 'selected' => $key === $value];
                 return $html .
-                "<option " . $this->getHtmlFromArray($params) . ">{$options[$key]}</option>";
+                "<option " . $this->getHtmlFromArray($params) . ">$options[$key]</option>";
             },
             ""
         );
         return "<select " .
         $this->getHtmlFromArray($attributes) .
-        ">{$htmlOptions}</select>";
+        ">$htmlOptions</select>";
     }
 
     /**
@@ -139,7 +138,7 @@ class FormExtension extends AbstractExtension
      */
     private function input(?string $value, array $attributes): string
     {
-        return "<input " . $this->getHtmlFromArray($attributes) . " value=\"{$value}\"/>";
+        return "<input " . $this->getHtmlFromArray($attributes) . " value=\"$value\"/>";
     }
 
     /**
@@ -163,9 +162,9 @@ class FormExtension extends AbstractExtension
 
     /**
      * @param array $attributes
-     * @return void
+     * @return string
      */
-    public function file(array $attributes)
+    public function file(array $attributes): string
     {
         return "<input type=\"file\"" .
             $this->getHtmlFromArray($attributes) .

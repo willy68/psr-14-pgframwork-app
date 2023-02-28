@@ -5,22 +5,20 @@ declare(strict_types=1);
 namespace PgFramework\Twig;
 
 use PgFramework\Session\FlashService;
+use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-class FlashExtension extends \Twig\Extension\AbstractExtension
+class FlashExtension extends AbstractExtension
 {
-  /**
-   * @var FlashService
-   */
-    private $flashservice;
+    private FlashService $flashService;
 
     /**
      * FlashExtension constructor.
-     * @param FlashService $flashservice
+     * @param FlashService $falshService
      */
-    public function __construct(FlashService $flashservice)
+    public function __construct(FlashService $falshService)
     {
-        $this->flashservice = $flashservice;
+        $this->flashService = $falshService;
     }
 
     /**
@@ -39,6 +37,6 @@ class FlashExtension extends \Twig\Extension\AbstractExtension
    */
     public function getFlash(string $type): ?string
     {
-        return $this->flashservice->get($type);
+        return $this->flashService->get($type);
     }
 }

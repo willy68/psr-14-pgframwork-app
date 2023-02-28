@@ -11,10 +11,8 @@ class WebpackExtension extends AbstractExtension
 {
     /**
      * Path du fichier entrypoints.json
-     *
-     * @var string
      */
-    private $entryPoints;
+    private string $entryPoints;
 
     public function __construct(string $entryPoints)
     {
@@ -39,21 +37,21 @@ class WebpackExtension extends AbstractExtension
         if (!empty($entryPoints) && array_key_exists('js', $entryPoints)) {
             foreach ($entryPoints['js'] as $tag) {
                 $tags .= <<<HTML
-        <script src="{$tag}" defer></script>\n
+        <script src="$tag" defer></script>\n
 HTML;
             }
         }
         return $tags;
     }
 
-    public function linkTag(string $entryName)
+    public function linkTag(string $entryName): string
     {
         $entryPoints = $this->readJsonFile($this->entryPoints, $entryName);
         $tags = '';
         if (!empty($entryPoints) && array_key_exists('css', $entryPoints)) {
             foreach ($entryPoints['css'] as $tag) {
                 $tags .= <<<HTML
-        <link href="{$tag}" rel="stylesheet">\n
+        <link href="$tag" rel="stylesheet">\n
 HTML;
             }
         }
