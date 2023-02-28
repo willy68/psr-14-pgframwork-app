@@ -7,11 +7,13 @@ use PgFramework\Auth\Middleware\ForbiddenMiddleware;
 use PgFramework\Middleware\CsrfCookieMiddleware;
 use PgFramework\Auth\Middleware\AuthorizationMiddleware;
 
+use function DI\add;
+
 return [
     /**
      * Add your own router middlewares
      */
-    'router.middlewares' => \DI\add([
+    'router.middlewares' => add([
         ForbiddenMiddleware::class,
         InvalidCsrfMiddleware::class,
         CsrfCookieMiddleware::class,

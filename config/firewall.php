@@ -8,6 +8,7 @@ use PgFramework\Security\Firewall\EventListener\AuthenticationListener;
 use PgFramework\Security\Firewall\EventListener\LoggedInListener;
 use PgFramework\Security\Firewall\EventListener\RehashPasswordListener;
 use PgFramework\Security\Firewall\EventListener\RememberMeLogoutListener;
+
 use function DI\add;
 use function DI\get;
 
