@@ -50,7 +50,7 @@ class Category
      * @var ArrayCollection<Post> An ArrayCollection of Post objects.
      */
     #[OneToMany(mappedBy: 'category', targetEntity: Post::class)]
-    public ArrayCollection $posts;
+    public $posts;
 
     public function __construct()
     {

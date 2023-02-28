@@ -5,6 +5,7 @@ namespace App\Admin\Actions\Blog;
 use App\Entity\Post;
 use App\Blog\PostUpload;
 use App\Entity\Category;
+use DateTime;
 use DateTimeImmutable;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Validator\Validator;
@@ -121,7 +122,7 @@ class PostCrudController extends CrudController
             unset($params['category_id']);
         }
         return array_merge($params, [
-            'updated_at' => new DateTimeImmutable('now')
+            'updated_at' => new DateTime('now')
         ]);
     }
 
