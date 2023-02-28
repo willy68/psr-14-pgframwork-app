@@ -4,14 +4,20 @@ declare(strict_types=1);
 
 namespace PgFramework\Session;
 
-class PHPSession implements SessionInterface, \ArrayAccess, \Iterator, \Countable
+use ArrayAccess;
+use Countable;
+use Iterator;
+
+use function count;
+
+class PHPSession implements SessionInterface, ArrayAccess, Iterator, Countable
 {
     /**
      * @param string $key
-     * @param mixed $default
+     * @param mixed|null $default
      * @return mixed
      */
-    public function get(string $key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         $this->ensureStarted();
         if (array_key_exists($key, $_SESSION)) {
@@ -25,7 +31,7 @@ class PHPSession implements SessionInterface, \ArrayAccess, \Iterator, \Countabl
      * @param mixed $value
      * @return void
      */
-    public function set(string $key, $value): void
+    public function set(string $key, mixed $value): void
     {
         $this->ensureStarted();
         $_SESSION[$key] = $value;
@@ -59,7 +65,7 @@ class PHPSession implements SessionInterface, \ArrayAccess, \Iterator, \Countabl
      * @return bool
      */
     #[\ReturnTypeWillChange]
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset)
     {
         $this->ensureStarted();
         return array_key_exists($offset, $_SESSION);
@@ -70,7 +76,7 @@ class PHPSession implements SessionInterface, \ArrayAccess, \Iterator, \Countabl
      * @return mixed
      */
     #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset)
     {
         return $this->get($offset);
     }
@@ -80,7 +86,7 @@ class PHPSession implements SessionInterface, \ArrayAccess, \Iterator, \Countabl
      * @param mixed $value
      */
     #[\ReturnTypeWillChange]
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value)
     {
         $this->set($offset, $value);
     }
@@ -89,7 +95,7 @@ class PHPSession implements SessionInterface, \ArrayAccess, \Iterator, \Countabl
      * @param mixed $offset
      */
     #[\ReturnTypeWillChange]
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset)
     {
         $this->unset($offset);
     }

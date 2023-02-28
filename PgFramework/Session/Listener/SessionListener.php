@@ -15,9 +15,9 @@ class SessionListener implements EventSubscriberInterface
 {
     public const SESSION_ATTRIBUTE = '_session';
 
-    private $persistence;
+    private SessionPersistenceInterface $persistence;
 
-    private $session;
+    private SessionInterface $session;
 
     public function __construct(SessionPersistenceInterface $persistence, SessionInterface $session)
     {

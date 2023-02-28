@@ -8,20 +8,11 @@ use Mezzio\Session\SessionInterface;
 
 class FlashService
 {
-    /**
-     * @var SessionInterface
-     */
-    private $session;
+    private SessionInterface $session;
 
-    /**
-     * @var string
-     */
-    private $sessionKey = 'flash';
+    private string $sessionKey = 'flash';
 
-    /**
-     * @var string
-     */
-    private $messages;
+    private string $messages;
 
     /**
      * @param SessionInterface $session
@@ -35,7 +26,7 @@ class FlashService
      * @param string $message
      * @return void
      */
-    public function success(string $message)
+    public function success(string $message): void
     {
         $flash = $this->session->get($this->sessionKey, []);
         $flash['success'] = $message;
@@ -46,7 +37,7 @@ class FlashService
      * @param string $message
      * @return void
      */
-    public function error(string $message)
+    public function error(string $message): void
     {
         $flash = $this->session->get($this->sessionKey, []);
         $flash['error'] = $message;
