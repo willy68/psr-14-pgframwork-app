@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PgFramework\Validator;
 
 use PgFramework\Validator\Filter\TrimFilter;
+use PgFramework\Validator\Rules\ConfirmValidation;
 use PgFramework\Validator\Rules\MaxValidation;
 use PgFramework\Validator\Rules\MinValidation;
 use PgFramework\Validator\Rules\SlugValidation;
@@ -18,7 +19,6 @@ use PgFramework\Validator\Rules\RequiredValidation;
 use PgFramework\Validator\Rules\UploadedValidation;
 use PgFramework\Validator\Rules\ExtensionValidation;
 use PgFramework\Validator\Rules\DateFormatValidation;
-use PgFramework\Validator\Rules\EmailConfirmValidation;
 
 class ValidationsRules
 {
@@ -28,7 +28,7 @@ class ValidationsRules
         'max' => MaxValidation::class,
         'date' => DateFormatValidation::class,
         'email' => EmailValidation::class,
-        'emailConfirm' => EmailConfirmValidation::class,
+        'confirm' => ConfirmValidation::class,
         'notEmpty' => NotEmptyValidation::class,
         'range' => RangeValidation::class,
         'filetype' => ExtensionValidation::class,
@@ -38,17 +38,17 @@ class ValidationsRules
         'unique' => UniqueValidation::class
     ];
 
-    public static $filters = [
+    public static array $filters = [
         'trim' => TrimFilter::class,
         'striptags' => StriptagsFilter::class
     ];
 
-    public static function getValidations()
+    public static function getValidations(): array
     {
         return static::$validations;
     }
 
-    public static function getFilters()
+    public static function getFilters(): array
     {
         return static::$filters;
     }

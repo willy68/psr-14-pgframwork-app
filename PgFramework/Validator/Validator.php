@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace PgFramework\Validator;
 
 use DateTime;
-use Exception;
 use PDO;
 use PgFramework\Database\Table;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
 class Validator
@@ -298,7 +299,8 @@ class Validator
      *
      * @param array $rules
      * @return self
-     * @throws Exception
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function addRules(array $rules): self
     {
