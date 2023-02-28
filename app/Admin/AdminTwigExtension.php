@@ -7,7 +7,7 @@ use Twig\TwigFunction;
 
 class AdminTwigExtension extends AbstractExtension
 {
-    private $widgets;
+    private array $widgets;
 
     public function __construct(array $widgets)
     {

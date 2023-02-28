@@ -3,7 +3,6 @@
 namespace App\Admin\Actions\Blog;
 
 use DateTime;
-use Exception;
 use Mezzio\Router\RouterInterface;
 use App\Blog\PostUpload;
 use PgFramework\Validator\Validator;
@@ -15,6 +14,8 @@ use App\Blog\Table\CategoryTable;
 use PgFramework\Actions\CrudAction;
 use PgFramework\Session\FlashService;
 use PgFramework\Renderer\RendererInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -99,7 +100,8 @@ class PostCrudAction extends CrudAction
     /**
      * @param Request $request
      * @return Validator
-     * @throws Exception
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     protected function getValidator(Request $request): Validator
     {

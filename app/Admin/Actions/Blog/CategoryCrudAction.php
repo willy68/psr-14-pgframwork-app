@@ -9,6 +9,8 @@ use PgFramework\Validator\Validator;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Session\FlashService;
 use PgFramework\Renderer\RendererInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class CategoryCrudAction extends CrudAction
@@ -17,12 +19,7 @@ class CategoryCrudAction extends CrudAction
 
     protected string $routePrefix = 'admin.blog.category';
 
-    /**
-     * Class model
-     *
-     * @var Categories
-     */
-    protected $model = Categories::class;
+    protected string $model = Categories::class;
 
     public function __construct(
         RendererInterface $renderer,
@@ -34,11 +31,11 @@ class CategoryCrudAction extends CrudAction
     }
 
     /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param Request $request
      * @param mixed|null $item
      * @return array
      */
-    protected function getParams(Request $request, $item = null): array
+    protected function getParams(Request $request, mixed $item = null): array
     {
         return array_filter($request->getParsedBody(), function ($key) {
             return in_array($key, ['name', 'slug']);
@@ -48,6 +45,8 @@ class CategoryCrudAction extends CrudAction
     /**
      * @param Request $request
      * @return Validator
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     protected function getValidator(Request $request): Validator
     {

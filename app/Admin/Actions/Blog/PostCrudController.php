@@ -12,6 +12,8 @@ use PgFramework\Session\FlashService;
 use Doctrine\Persistence\ManagerRegistry;
 use PgFramework\Controller\CrudController;
 use PgFramework\Renderer\RendererInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -23,7 +25,7 @@ class PostCrudController extends CrudController
 
     protected string $entity = Post::class;
 
-    protected $postUpload;
+    protected PostUpload $postUpload;
 
     /**
      * @param RendererInterface $renderer
@@ -126,10 +128,12 @@ class PostCrudController extends CrudController
     /**
      * @param ServerRequestInterface $request
      * @return Validator
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     protected function getValidator(ServerRequestInterface $request): Validator
     {
-        $validator = parent::getValidator($request)
+        return parent::getValidator($request)
             ->required('name', 'slug', 'content', 'created_at', 'category_id')
             ->addRules([
                 'content' => 'min:2',
@@ -142,6 +146,6 @@ class PostCrudController extends CrudController
         //if (is_null($request->getAttribute('id'))) {
         //    $validator->uploaded('image');
         //}
-        return $validator;
+        //return $validator;
     }
 }

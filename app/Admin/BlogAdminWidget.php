@@ -9,15 +9,9 @@ use PgFramework\Renderer\RendererInterface;
 
 class BlogAdminWidget implements AdminWidgetInterface
 {
-    /**
-     * @var RendererInterface
-     */
-    private $renderer;
+    private RendererInterface $renderer;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
+    private EntityManagerInterface $em;
 
     public function __construct(RendererInterface $renderer, EntityManagerInterface $em)
     {

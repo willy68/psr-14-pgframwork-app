@@ -12,10 +12,7 @@ use PgFramework\Router\Annotation\Route;
 #[Route('/admin', name:'admin', methods:['GET'], middlewares:[LoggedInMiddleware::class])]
 class DashboardAction
 {
-    /**
-     * @var RendererInterface
-     */
-    private $renderer;
+    private RendererInterface $renderer;
 
     public function __construct(RendererInterface $renderer)
     {

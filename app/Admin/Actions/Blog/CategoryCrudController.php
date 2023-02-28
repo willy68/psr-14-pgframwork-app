@@ -9,6 +9,8 @@ use PgFramework\Session\FlashService;
 use Doctrine\Persistence\ManagerRegistry;
 use PgFramework\Controller\CrudController;
 use PgFramework\Renderer\RendererInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class CategoryCrudController extends CrudController
@@ -47,10 +49,10 @@ class CategoryCrudController extends CrudController
     }
 
     /**
-     * Undocumented function
-     *
      * @param ServerRequestInterface $request
      * @return Validator
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     protected function getValidator(ServerRequestInterface $request): Validator
     {
