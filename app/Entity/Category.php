@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -28,30 +27,30 @@ class Category
      * @var int
      */
     #[Id]
-    #[GeneratedValue()]
+    #[GeneratedValue]
     #[Column(type: Types::INTEGER)]
-    public $id;
+    public int $id;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
     #[Column(type: TYPES::STRING)]
-    public $name;
+    public string $name;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
     #[Column(type: TYPES::STRING)]
-    public $slug;
+    public string $slug;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Post", mappedBy="category")
      * @var ArrayCollection<Post> An ArrayCollection of Post objects.
      */
     #[OneToMany(mappedBy: 'category', targetEntity: Post::class)]
-    public $posts;
+    public ArrayCollection $posts;
 
     public function __construct()
     {
@@ -60,23 +59,22 @@ class Category
 
 
     /**
-     * Get the value of id
+     * Get the value of ID
      *
      * @return  int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
-     * Set the value of id
+     * Set the value of ID
      *
-     * @param  int  $id
-     *
+     * @param int $id
      * @return  self
      */
-    public function setId(int $id)
+    public function setId(int $id): static
     {
         $this->id = $id;
 
@@ -88,7 +86,7 @@ class Category
      *
      * @return  string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -96,11 +94,10 @@ class Category
     /**
      * Set the value of name
      *
-     * @param  string  $name
-     *
+     * @param string $name
      * @return  self
      */
-    public function setName(string $name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -112,7 +109,7 @@ class Category
      *
      * @return  string
      */
-    public function getSlug()
+    public function getSlug(): string
     {
         return $this->slug;
     }
@@ -120,18 +117,17 @@ class Category
     /**
      * Set the value of slug
      *
-     * @param  string  $slug
-     *
+     * @param string $slug
      * @return  self
      */
-    public function setSlug(string $slug)
+    public function setSlug(string $slug): static
     {
         $this->slug = $slug;
 
         return $this;
     }
 
-    public function addPost(Post $post)
+    public function addPost(Post $post): void
     {
         $this->posts[] = $post;
     }

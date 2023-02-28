@@ -2,17 +2,16 @@
 
 namespace App\Entity;
 
+use App\Repository\PostRepository;
 use DateTime;
 use DateTimeImmutable;
-use Doctrine\ORM\Mapping\Id;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping\Table;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use App\Repository\PostRepository;
-use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\Table;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PostRepository")
@@ -29,83 +28,82 @@ class Post
      * @var int
      */
     #[Id]
-    #[GeneratedValue()]
+    #[GeneratedValue]
     #[Column(type: Types::INTEGER)]
-    protected $id;
+    protected int $id;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
     #[Column(type: TYPES::STRING)]
-    protected $name;
+    protected string $name;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
     #[Column(type: TYPES::STRING)]
-    protected $slug;
+    protected string $slug;
 
     /**
      * @ORM\Column(type="text")
      * @var string
      */
     #[Column(type: TYPES::TEXT)]
-    protected $content;
+    protected string $content;
 
     /**
      * @ORM\Column(type="datetime_immutable")
      * @var DateTimeImmutable
      */
     #[Column(name: 'created_at', type: TYPES::DATETIME_IMMUTABLE)]
-    protected $createdAt;
+    protected DateTimeImmutable $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
      * @var DateTime
      */
     #[Column(name: 'updated_at', type: TYPES::DATETIME_MUTABLE)]
-    protected $updatedAt;
+    protected DateTime $updatedAt;
 
     /**
      * @ORM\Column(type="string")
-     * @var string
+     * @var string|null
      */
     #[Column(type: TYPES::STRING, nullable: true)]
-    protected $image;
+    protected ?string $image = null;
 
     /**
      * @ORM\Column(type="boolean")
      * @var bool
      */
     #[Column(type: TYPES::BOOLEAN)]
-    protected $published;
+    protected bool $published;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="addPost")
      */
     #[ManyToOne(targetEntity: Category::class, inversedBy: "addPost")]
-    protected $category;
+    protected ?Category $category = null;
 
     /**
-     * Get the value of id
+     * Get the value of ID
      *
      * @return  int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
-     * Set the value of id
+     * Set the value of ID
      *
-     * @param  int  $id
-     *
+     * @param int $id
      * @return  self
      */
-    public function setId(int $id)
+    public function setId(int $id): static
     {
         $this->id = $id;
 
@@ -118,7 +116,7 @@ class Post
      *
      * @return  string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -126,11 +124,10 @@ class Post
     /**
      * Set the value of name
      *
-     * @param  string  $name
-     *
+     * @param string $name
      * @return  self
      */
-    public function setName(string $name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -142,7 +139,7 @@ class Post
      *
      * @return  string
      */
-    public function getSlug()
+    public function getSlug(): string
     {
         return $this->slug;
     }
@@ -150,11 +147,10 @@ class Post
     /**
      * Set the value of slug
      *
-     * @param  string  $slug
-     *
+     * @param string $slug
      * @return  self
      */
-    public function setSlug(string $slug)
+    public function setSlug(string $slug): static
     {
         $this->slug = $slug;
 
@@ -166,7 +162,7 @@ class Post
      *
      * @return  string
      */
-    public function getContent()
+    public function getContent(): string
     {
         return $this->content;
     }
@@ -174,11 +170,10 @@ class Post
     /**
      * Set the value of content
      *
-     * @param  string  $content
-     *
+     * @param string $content
      * @return  self
      */
-    public function setContent(string $content)
+    public function setContent(string $content): static
     {
         $this->content = $content;
 
@@ -190,7 +185,7 @@ class Post
      *
      * @return  DateTimeImmutable
      */
-    public function getCreatedAt()
+    public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }
@@ -199,10 +194,9 @@ class Post
      * Set the value of createdAt
      *
      * @param DateTimeImmutable|string $createdAt
-     *
      * @return  self
      */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt(DateTimeImmutable|string $createdAt): static
     {
         if (is_string($createdAt)) {
             $createdAt = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $createdAt);
@@ -217,7 +211,7 @@ class Post
      *
      * @return  DateTime
      */
-    public function getUpdatedAt()
+    public function getUpdatedAt(): DateTime
     {
         return $this->updatedAt;
     }
@@ -229,7 +223,7 @@ class Post
      *
      * @return  self
      */
-    public function setUpdatedAt($updatedAt)
+    public function setUpdatedAt(DateTime|string $updatedAt): static
     {
         if (is_string($updatedAt)) {
             $updatedAt = DateTime::createFromFormat('Y-m-d H:i:s', $updatedAt);
@@ -242,9 +236,9 @@ class Post
     /**
      * Get the value of image
      *
-     * @return  string
+     * @return string|null
      */
-    public function getImage()
+    public function getImage(): ?string
     {
         return $this->image;
     }
@@ -252,11 +246,10 @@ class Post
     /**
      * Set the value of image
      *
-     * @param  string  $image
-     *
+     * @param string $image
      * @return  self
      */
-    public function setImage(string $image)
+    public function setImage(string $image): static
     {
         $this->image = $image;
 
@@ -264,20 +257,18 @@ class Post
     }
 
     /**
-     *
      * @return string
      */
-    public function getThumb()
+    public function getThumb(): string
     {
         ['filename' => $filename, 'extension' => $extension] = pathinfo($this->image);
         return '/uploads/posts/' . $filename . '_thumb.' . $extension;
     }
 
     /**
-     *
      * @return string
      */
-    public function getImageUrl()
+    public function getImageUrl(): string
     {
         return '/uploads/posts/' . $this->image;
     }
@@ -293,9 +284,10 @@ class Post
     /**
      * Set the value of category
      *
+     * @param Category $category
      * @return  self
      */
-    public function setCategory(Category $category)
+    public function setCategory(Category $category): static
     {
         $category->addPost($this);
         $this->category = $category;
@@ -308,7 +300,7 @@ class Post
      *
      * @return  bool
      */
-    public function getPublished()
+    public function getPublished(): bool
     {
         return $this->published;
     }
@@ -317,10 +309,9 @@ class Post
      * Set the value of published
      *
      * @param $published
-     *
      * @return self
      */
-    public function setPublished($published)
+    public function setPublished($published): static
     {
         $this->published = (bool)$published;
 
