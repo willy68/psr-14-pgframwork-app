@@ -10,9 +10,9 @@ interface PasswordHasherInterface
      * Generate password hash
      *
      * @param string $plainPassword
-     * @return mixed
+     * @return string
      */
-    public function hash(string $plainPassword);
+    public function hash(string $plainPassword): string;
 
     /**
      * Verify password with hashed user password
