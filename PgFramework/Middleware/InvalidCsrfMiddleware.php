@@ -19,10 +19,11 @@ use Psr\Http\Server\{
     RequestHandlerInterface,
     MiddlewareInterface
 };
+use function array_merge;
 
 class InvalidCsrfMiddleware implements MiddlewareInterface
 {
-    protected $config = [
+    protected array $config = [
         'cookieName' => 'XSRF-TOKEN',
         'header' => 'X-CSRF-TOKEN',
         'field' => '_csrf',
@@ -32,19 +33,17 @@ class InvalidCsrfMiddleware implements MiddlewareInterface
         'samesite' => null,
     ];
 
-    /**
-     * @var FlashService
-     */
-    private $flashService;
+    private FlashService $flashService;
 
     /**
      * InvalidCsrfMiddleware constructor.
      * @param FlashService $flashService
+     * @param array $config
      */
     public function __construct(FlashService $flashService, array $config = [])
     {
         $this->flashService = $flashService;
-        $this->config = \array_merge($this->config, $config);
+        $this->config = array_merge($this->config, $config);
     }
 
     /**
@@ -61,21 +60,20 @@ class InvalidCsrfMiddleware implements MiddlewareInterface
                 return new Response(403, [], $e->getMessage() . ' ' . $e->getCode());
             }
 
-            $this->flashService->error('Vous n\'avez pas de token valid pour executer cette action');
-            $setCookie = $this->createCookie('', time() - 3600);
+            $this->flashService->error('Vous n\'avez pas de token valid pour exécuter cette action');
+            $setCookie = $this->deleteCookie(time() - 3600);
             $response = new ResponseRedirect('/');
-            $response = FigResponseCookies::set($response, $setCookie);
-            return $response;
+            return FigResponseCookies::set($response, $setCookie);
         }
     }
 
-    private function createCookie(string $token, ?int $expiry = null): SetCookie
+    private function deleteCookie(?int $expiry = null): SetCookie
     {
         return SetCookie::create($this->config['cookieName'])
-            ->withValue($token)
+            ->withValue('')
             ->withExpires(($expiry === null) ? $this->config['expiry'] : $expiry)
             ->withPath('/')
-            ->withDomain(null)
+            ->withDomain()
             ->withSecure($this->config['secure'])
             ->withHttpOnly($this->config['httponly']);
     }

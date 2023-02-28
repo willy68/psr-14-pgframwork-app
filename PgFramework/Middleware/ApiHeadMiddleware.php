@@ -49,14 +49,8 @@ class ApiHeadMiddleware implements MiddlewareInterface
 {
     public const FORWARDED_HTTP_METHOD_ATTRIBUTE = 'forwarded_http_method';
 
-    /**
-     * @var RouterInterface
-     */
-    private $router;
+    private RouterInterface $router;
 
-    /**
-     * @param Router $router
-     */
     public function __construct(RouterInterface $router)
     {
         $this->router = $router;

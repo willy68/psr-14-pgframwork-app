@@ -2,16 +2,22 @@
 
 namespace PgFramework\Middleware;
 
+use DI\Container;
+use Exception;
 use GuzzleHttp\Psr7\Response;
 use Invoker\CallableResolver;
+use Invoker\Exception\NotCallableException;
 use Mezzio\Router\RouteResult;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Invoker\Reflection\CallableReflection;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Invoker\ParameterResolver\ParameterResolver;
+use ReflectionException;
 
 /**
  * Toute la magie est là
@@ -20,19 +26,9 @@ use Invoker\ParameterResolver\ParameterResolver;
  */
 class RouteCallerMiddleware implements MiddlewareInterface
 {
-    /**
-     * Route result
-     *
-     * @var RouteResult
-     */
-    protected $result;
+    protected RouteResult $result;
 
-    /**
-     * ContainerInterface
-     *
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     /**
      *  constructor.
@@ -48,25 +44,30 @@ class RouteCallerMiddleware implements MiddlewareInterface
     /**
      * Psr15 middleware process method
      * @param ServerRequestInterface $request
-     * @param RequestHandlerInterface $requestHandler
+     * @param RequestHandlerInterface $handler
      * @return ResponseInterface
+     * @throws NotCallableException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws ReflectionException
+     * @throws Exception
      */
     public function process(
         ServerRequestInterface $request,
-        RequestHandlerInterface $requestHandler
+        RequestHandlerInterface $handler
     ): ResponseInterface {
 
         $callback = $this->result->getMatchedRoute()->getCallback();
         $params = $this->result->getMatchedParams();
 
-        if ($this->container instanceof \DI\Container) {
+        if ($this->container instanceof Container) {
             $this->container->set(ServerRequestInterface::class, $request);
         } else {
-            // Limitation: $request must be named "$request"
+            // Limitation $request must be named "$request"
             $params = array_merge(["request" => $request], $params);
         }
 
-        /** @var CallableResolver */
+        /** @var CallableResolver $callableResolver*/
         $callableResolver = $this->container->get(CallableResolver::class);
         $callback = $callableResolver->resolve($callback);
 
@@ -82,8 +83,7 @@ class RouteCallerMiddleware implements MiddlewareInterface
         } elseif ($response instanceof ResponseInterface) {
             return $response;
         } else {
-            throw new \Exception('The response is not a string or a ResponseInterface');
+            throw new Exception('The response is not a string or a ResponseInterface');
         }
-        return $requestHandler->handle($request);
     }
 }

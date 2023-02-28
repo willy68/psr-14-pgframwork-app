@@ -13,10 +13,10 @@ class MethodMiddleware implements MiddlewareInterface
 {
     /**
      * @param ServerRequestInterface $request
-     * @param RequestHandlerInterface $next
+     * @param RequestHandlerInterface $handler
      * @return ResponseInterface
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $parseBody = $request->getParsedBody();
         if (
@@ -25,6 +25,6 @@ class MethodMiddleware implements MiddlewareInterface
         ) {
             $request = $request->withMethod($parseBody['_method']);
         }
-        return $next->handle($request);
+        return $handler->handle($request);
     }
 }

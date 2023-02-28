@@ -12,15 +12,11 @@ use Psr\Http\Server\MiddlewareInterface;
 use Dflydev\FigCookies\FigResponseCookies;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use function in_array;
 
 class CsrfSetCookieMiddleware implements MiddlewareInterface
 {
-    /**
-     * Undocumented variable
-     *
-     * @var CsrfMiddleware
-     */
-    private $csrfMiddleware;
+    private CsrfMiddleware $csrfMiddleware;
 
     /**
      * CsrfSetCookieMiddleware constructor.
@@ -39,14 +35,14 @@ class CsrfSetCookieMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (\in_array($request->getMethod(), ['GET', 'HEAD'], true)) {
+        if (in_array($request->getMethod(), ['GET', 'HEAD'], true)) {
             $response = $handler->handle($request);
             if (!FigResponseCookies::get($response, 'XSRF-TOKEN')->getValue()) {
                 $setCookie = SetCookie::create('XSRF-TOKEN')
                     ->withValue($this->csrfMiddleware->generateToken())
                     // ->withExpires(time() + 3600)
                     ->withPath('/')
-                    ->withDomain(null)
+                    ->withDomain()
                     ->withSecure(false)
                     ->withHttpOnly(false);
                 $response = FigResponseCookies::set($response, $setCookie);

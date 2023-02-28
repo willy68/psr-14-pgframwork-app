@@ -10,10 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class RendererRequestMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var RendererInterface
-     */
-    private $renderer;
+    private RendererInterface $renderer;
 
     public function __construct(RendererInterface $renderer)
     {

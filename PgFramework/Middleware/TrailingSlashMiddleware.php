@@ -14,10 +14,10 @@ class TrailingSlashMiddleware implements MiddlewareInterface
 {
     /**
      * @param ServerRequestInterface $request
-     * @param RequestHandlerInterface $next
+     * @param RequestHandlerInterface $handler
      * @return ResponseInterface
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $uri = $request->getUri()->getPath();
         if (!empty($uri) && $uri !== '/' && $uri[strlen($uri) - 1] === '/') {
@@ -25,6 +25,6 @@ class TrailingSlashMiddleware implements MiddlewareInterface
             ->withStatus(301)
             ->withHeader('Location', substr($uri, 0, -1));
         }
-        return $next->handle($request);
+        return $handler->handle($request);
     }
 }

@@ -19,10 +19,6 @@ class CorsAllowOriginMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $response = $handler->handle($request);
-        if ($response instanceof ResponseInterface) {
-            return $response->withAddedHeader('Access-Control-Allow-Origin', '*');
-        }
-
-        return $handler->handle($request);
+        return $response->withAddedHeader('Access-Control-Allow-Origin', '*');
     }
 }
