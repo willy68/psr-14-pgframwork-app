@@ -4,18 +4,13 @@ declare(strict_types=1);
 
 namespace PgFramework\Validator\Rules;
 
+use DateTime;
 use PgFramework\Validator\ValidationInterface;
 
 class DateFormatValidation implements ValidationInterface
 {
-    /**
-     * @var string
-     */
     protected string $format;
 
-    /**
-     * @var string
-     */
     protected string $error = "Le champ %s doit être une date valide %s";
 
     /**
@@ -23,7 +18,7 @@ class DateFormatValidation implements ValidationInterface
      * @param string $format
      * @param string|null $error
      */
-    public function __construct($format = 'Y-m-d H:i:s', string $error = null)
+    public function __construct(string $format = 'Y-m-d H:i:s', string $error = null)
     {
         $this->setFormat($format);
         if (!is_null($error)) {
@@ -35,7 +30,7 @@ class DateFormatValidation implements ValidationInterface
      * @param mixed $var
      * @return bool
      */
-    public function isValid($var): bool
+    public function isValid(mixed $var): bool
     {
         return $this->checkDate($var);
     }
@@ -46,31 +41,21 @@ class DateFormatValidation implements ValidationInterface
      */
     public function parseParams(string $param): self
     {
-        if (is_string($param)) {
-            list($format, $message) = array_pad(explode(',', $param), 2, '');
-            if (!empty($message)) {
-                $this->error = $message;
-            }
-            if (!empty($format)) {
-                $this->setFormat($format);
-            }
+        list($format, $message) = array_pad(explode(',', $param), 2, '');
+        if (!empty($message)) {
+            $this->error = $message;
+        }
+        if (!empty($format)) {
+            $this->setFormat($format);
         }
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getParams(): array
     {
         return [$this->format];
     }
 
-    /**
-     *
-     *
-     * @return string
-     */
     public function getError(): string
     {
         return $this->error;
@@ -94,8 +79,8 @@ class DateFormatValidation implements ValidationInterface
      */
     protected function checkDate($var): bool
     {
-        $datetime = \DateTime::createFromFormat($this->format, $var);
-        $errors = \DateTime::getLastErrors();
+        $datetime = DateTime::createFromFormat($this->format, $var);
+        $errors = DateTime::getLastErrors();
         if (
             $errors['error_count'] > 0 ||
             $errors['warning_count'] > 0 ||

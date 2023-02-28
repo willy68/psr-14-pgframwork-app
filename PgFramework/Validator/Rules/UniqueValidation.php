@@ -4,65 +4,51 @@ declare(strict_types=1);
 
 namespace PgFramework\Validator\Rules;
 
+use ActiveRecord\Model;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use InvalidArgumentException;
+use PDO;
 use PgFramework\Validator\ValidationInterface;
 
 class UniqueValidation implements ValidationInterface
 {
-    protected $error = "Le champ %s doit être unique";
+    protected string $error = "Le champ %s doit être unique";
 
     /**
      * Table name
-     *
-     * @var string
      */
-    protected $table;
+    protected ?string $table;
 
-    /**
-     * PDO object
-     *
-     * @var \PDO
-     */
-    protected $pdo;
+    protected PDO $pdo;
 
-    /**
-     *
-     * @var string
-     */
-    protected $column;
+    protected string $column;
 
     /**
      * Column value
-     *
-     * @var string
      */
-    protected $value;
+    protected string $value;
 
-    /**
-     * @var int
-     */
-    protected $exclude;
+    protected ?int $exclude;
 
-    /**
-     * @var ManagerRegistry
-     */
-    protected $mr;
+    protected ManagerRegistry $mr;
 
     /**
      *
+     * @param PDO $pdo
+     * @param ManagerRegistry $mr
      * @param string|null $table
-     * @param \PDO $pdo
      * @param int|null $exclude
      * @param string|null $error
      */
     public function __construct(
-        \PDO $pdo,
+        PDO             $pdo,
         ManagerRegistry $mr,
-        ?string $table = null,
-        ?int $exclude = null,
-        ?string $error = null
-    ) {
+        ?string         $table = null,
+        ?int            $exclude = null,
+        ?string         $error = null
+    )
+    {
         $this->pdo = $pdo;
         $this->mr = $mr;
         $this->table = $table;
@@ -76,7 +62,7 @@ class UniqueValidation implements ValidationInterface
      * @param mixed $var
      * @return bool
      */
-    public function isValid($var): bool
+    public function isValid(mixed $var): bool
     {
         $query = "SELECT id FROM $this->table WHERE $this->column=?";
         $params = [$var];
@@ -103,34 +89,32 @@ class UniqueValidation implements ValidationInterface
      * @param string $param
      * @return $this
      */
-    public function parseParams($param): self
+    public function parseParams(string $param): self
     {
-        if (is_string($param)) {
-            list($tableOrModel, $column, $exclude, $message) = array_pad(explode(',', $param), 4, '');
-            if (!empty($message)) {
-                $this->error = $message;
-            }
-            if (!empty($exclude)) {
-                $this->exclude = (int)$exclude;
-            }
-            if (empty($column)) {
-                throw new \InvalidArgumentException("Column name must be specified");
-            }
-            $this->column = $column;
-            if (class_exists($tableOrModel)) {
-                /** @var EntityManagerInterface $em */
-                if (null !== ($em = $this->mr->getManagerForClass($tableOrModel))) {
-                    $this->table = $em->getClassMetadata($tableOrModel)->getTableName();
-                    $this->pdo = $em->getConnection()->getNativeConnection();
-                } else {
-                    /** @var \ActiveRecord\Model $tableOrModel */
-                    $this->table = $tableOrModel::table_name();
-                    /** @var \PDO $pdo */
-                    $this->pdo = $tableOrModel::connection()->connection;
-                }
+        list($tableOrModel, $column, $exclude, $message) = array_pad(explode(',', $param), 4, '');
+        if (!empty($message)) {
+            $this->error = $message;
+        }
+        if (!empty($exclude)) {
+            $this->exclude = (int)$exclude;
+        }
+        if (empty($column)) {
+            throw new InvalidArgumentException("Column name must be specified");
+        }
+        $this->column = $column;
+        if (class_exists($tableOrModel)) {
+            /** @var EntityManagerInterface $em */
+            if (null !== ($em = $this->mr->getManagerForClass($tableOrModel))) {
+                $this->table = $em->getClassMetadata($tableOrModel)->getTableName();
+                $this->pdo = $em->getConnection()->getNativeConnection();
             } else {
-                $this->table = $tableOrModel;
+                /** @var Model $tableOrModel */
+                $this->table = $tableOrModel::table_name();
+                /** @var PDO $pdo */
+                $this->pdo = $tableOrModel::connection()->connection;
             }
+        } else {
+            $this->table = $tableOrModel;
         }
         return $this;
     }

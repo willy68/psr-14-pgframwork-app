@@ -21,7 +21,7 @@ class MaxValidation implements ValidationInterface
         }
     }
 
-    public function isValid($var): bool
+    public function isValid(mixed $var): bool
     {
         //if (empty($var)) return false;
         if (is_numeric($var)) {
@@ -63,7 +63,7 @@ class MaxValidation implements ValidationInterface
         return $this->error;
     }
 
-    protected function checkString($var)
+    protected function checkString($var): bool
     {
         $len = strlen($var);
         if ($len > $this->max) {
@@ -73,7 +73,7 @@ class MaxValidation implements ValidationInterface
         return true;
     }
 
-    protected function checkInt($var)
+    protected function checkInt($var): bool
     {
         if ($var > $this->max) {
             return false;
@@ -82,7 +82,7 @@ class MaxValidation implements ValidationInterface
         return true;
     }
 
-    protected function checkFloat($var)
+    protected function checkFloat($var): bool
     {
         if ($var > $this->max) {
             return false;
@@ -91,7 +91,7 @@ class MaxValidation implements ValidationInterface
         return true;
     }
 
-    protected function checkNumeric($var)
+    protected function checkNumeric($var): bool
     {
         if (($val = $this->getNumeric($var)) !== null) {
             if ($val > $this->max) {
@@ -101,7 +101,7 @@ class MaxValidation implements ValidationInterface
         return true;
     }
 
-    public function setMax($max = 255)
+    public function setMax($max = 255): static
     {
         $this->max = $this->getNumeric($max);
         //lancer une exception si max === null;
@@ -113,7 +113,7 @@ class MaxValidation implements ValidationInterface
         return $this;
     }
 
-    protected function getNumeric($val)
+    protected function getNumeric($val): float|int|string|null
     {
         if (is_numeric($val)) {
             return $val + 0;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Validator\Rules;
 
+use InvalidArgumentException;
 use PgFramework\Validator\ValidationInterface;
 
 class MinValidation implements ValidationInterface
@@ -33,14 +34,12 @@ class MinValidation implements ValidationInterface
      */
     public function parseParams(string $param): self
     {
-        if (is_string($param)) {
-            list($min, $message) = array_pad(explode(',', $param), 2, '');
-            if (!empty($message)) {
-                $this->error = $message;
-            }
-            if (!empty($min)) {
-                $this->setMin($min);
-            }
+        list($min, $message) = array_pad(explode(',', $param), 2, '');
+        if (!empty($message)) {
+            $this->error = $message;
+        }
+        if (!empty($min)) {
+            $this->setMin($min);
         }
         return $this;
     }
@@ -71,7 +70,7 @@ class MinValidation implements ValidationInterface
      * @param mixed $var
      * @return bool
      */
-    public function isValid($var): bool
+    public function isValid(mixed $var): bool
     {
         if (is_numeric($var)) {
             return $this->checkNumeric($var);
@@ -91,12 +90,12 @@ class MinValidation implements ValidationInterface
      * @param mixed $min
      * @return self
      */
-    public function setMin($min): self
+    public function setMin(mixed $min): self
     {
         $this->min = $this->getNumeric($min);
         //lancer une exception si min === null;
         if ($this->min === null || $this->min < 0) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Argument invalide, $min doit être de type numeric plus grand ou égal a 0 ex: 2 ou \'2\''
             );
         }
@@ -157,7 +156,7 @@ class MinValidation implements ValidationInterface
      * @param mixed $var
      * @return bool
      */
-    protected function checkNumeric($var): bool
+    protected function checkNumeric(mixed $var): bool
     {
         $check = true;
 
@@ -173,9 +172,9 @@ class MinValidation implements ValidationInterface
      *
      *
      * @param mixed $val
-     * @return mixed
+     * @return float|int|string|null
      */
-    protected function getNumeric($val)
+    protected function getNumeric(mixed $val): float|int|string|null
     {
         if (is_numeric($val)) {
             return $val + 0;

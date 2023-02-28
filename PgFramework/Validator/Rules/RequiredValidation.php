@@ -17,7 +17,7 @@ class RequiredValidation implements ValidationInterface
         }
     }
 
-    public function isValid($var): bool
+    public function isValid(mixed $var): bool
     {
         return $this->isSet($var);
     }
@@ -48,12 +48,11 @@ class RequiredValidation implements ValidationInterface
      *
      * @access protected
      *
-     * @param string $var The POST variable to check
+     * @param mixed $var The POST variable to check
      * @return bool
      */
-    protected function isSet($var): bool
+    protected function isSet(mixed $var): bool
     {
-        $check = true;
         if (!isset($var)) {
             $check = false;
         } elseif (is_array($var)) {

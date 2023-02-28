@@ -18,6 +18,6 @@ abstract class AbstractFilter
      */
     protected function isSet(string $var): bool
     {
-        return (bool)(isset($var) && strlen($var));
+        return (isset($var) && strlen($var));
     }
 }

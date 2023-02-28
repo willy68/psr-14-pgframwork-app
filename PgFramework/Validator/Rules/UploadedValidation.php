@@ -18,50 +18,26 @@ class UploadedValidation implements ValidationInterface
         }
     }
 
-    /**
-     *
-     *
-     * @param string $param
-     * @return self
-     */
     public function parseParams(string $param): self
     {
-        if (is_string($param)) {
-            $this->error = $param;
-        }
+        $this->error = $param;
         return $this;
     }
 
-    /**
-     *
-     *
-     * @return array
-     */
     public function getParams(): array
     {
         return [];
     }
 
-    /**
-     *
-     *
-     * @return string
-     */
     public function getError(): string
     {
         return $this->error;
     }
 
-    /**
-     *
-     *
-     * @param mixed $file
-     * @return bool
-     */
-    public function isValid($file): bool
+    public function isValid(mixed $var): bool
     {
-        /** @var UploadedFileInterface $file */
-        if ($file === null || $file->getError() !== UPLOAD_ERR_OK) {
+        /** @var UploadedFileInterface $var */
+        if ($var === null || $var->getError() !== UPLOAD_ERR_OK) {
             return false;
         }
         return true;

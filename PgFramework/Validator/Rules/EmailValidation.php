@@ -6,6 +6,12 @@ namespace PgFramework\Validator\Rules;
 
 use PgFramework\Validator\ValidationInterface;
 
+use function filter_var;
+use function is_null;
+use function is_string;
+
+use const FILTER_VALIDATE_EMAIL;
+
 class EmailValidation implements ValidationInterface
 {
     protected string $error = 'Le champ %s doit être une adresse E-mail valide';
@@ -17,7 +23,7 @@ class EmailValidation implements ValidationInterface
         }
     }
 
-    public function isValid($var): bool
+    public function isValid(mixed $var): bool
     {
         if (is_string($var)) {
             return filter_var($var, FILTER_VALIDATE_EMAIL) !== false;
