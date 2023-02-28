@@ -13,18 +13,9 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class RememberMeLogoutListener implements EventSubscriberInterface
 {
-    /**
-     *
-     * @var Auth
-     */
-    private $auth;
+    private Auth $auth;
 
-    /**
-     *
-     *
-     * @var RememberMeInterface
-     */
-    private $cookie;
+    private RememberMeInterface $cookie;
 
     public function __construct(Auth $auth, RememberMeInterface $cookie)
     {

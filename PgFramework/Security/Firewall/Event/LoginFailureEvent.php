@@ -12,7 +12,7 @@ class LoginFailureEvent extends Event
 {
     public const NAME = FirewallEvents::LOGIN_FAILED;
 
-    protected $exception;
+    protected AuthenticationFailureException $exception;
 
     public function __construct(AuthenticationFailureException $e)
     {
@@ -22,7 +22,7 @@ class LoginFailureEvent extends Event
     /**
      * Get the value of exception
      */
-    public function getException()
+    public function getException(): AuthenticationFailureException
     {
         return $this->exception;
     }
@@ -30,9 +30,10 @@ class LoginFailureEvent extends Event
     /**
      * Set the value of exception
      *
+     * @param AuthenticationFailureException $exception
      * @return  self
      */
-    public function setException(AuthenticationFailureException $exception)
+    public function setException(AuthenticationFailureException $exception): static
     {
         $this->exception = $exception;
 

@@ -20,13 +20,9 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class ForbiddenListener implements EventSubscriberInterface
 {
-    private $loginPath;
+    private string $loginPath;
 
-    /**
-     *
-     * @var SessionInterface
-     */
-    private $session;
+    private SessionInterface $session;
 
     public function __construct(string $loginPath, SessionInterface $session)
     {
@@ -54,14 +50,13 @@ class ForbiddenListener implements EventSubscriberInterface
                 return;
             }
             $event->setResponse($this->redirectAdminHome($request));
-            return;
         }
     }
 
     protected function redirectLogin(ServerRequestInterface $request): ResponseInterface
     {
         $this->session->set('auth.redirect', $request->getUri()->getPath());
-        (new FlashService($this->session))->error('Vous devez posseder un compte pour accéder à cette page');
+        (new FlashService($this->session))->error('Vous devez posséder un compte pour accéder à cette page');
         return new ResponseRedirect($this->loginPath);
     }
 
@@ -74,7 +69,7 @@ class ForbiddenListener implements EventSubscriberInterface
             $uri = $server['HTTP_REFERER'];
         }
 
-        (new FlashService($this->session))->error('Vous n\'avez pas l\'authorisation pour executer cette action');
+        (new FlashService($this->session))->error('Vous n\'avez pas l\'authorisation pour exécuter cette action');
         return new ResponseRedirect($uri);
     }
 

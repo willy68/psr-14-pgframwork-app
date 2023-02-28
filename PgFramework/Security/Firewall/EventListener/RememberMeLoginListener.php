@@ -14,9 +14,9 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class RememberMeLoginListener implements EventSubscriberInterface
 {
-    private $auth;
+    private Auth $auth;
 
-    private $rememberMe;
+    private RememberMeInterface $rememberMe;
 
     public function __construct(Auth $auth, RememberMeInterface $rememberMe)
     {

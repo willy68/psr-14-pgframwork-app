@@ -13,7 +13,7 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class LoggedInListener implements EventSubscriberInterface
 {
-    private $auth;
+    private Auth $auth;
 
     /**
      * LoggedInMiddleware constructor.

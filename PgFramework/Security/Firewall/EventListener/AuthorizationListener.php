@@ -16,9 +16,9 @@ use PgFramework\Security\Authorization\VoterManagerInterface;
 
 class AuthorizationListener implements EventSubscriberInterface
 {
-    protected $auth;
-    protected $voterManager;
-    protected $map;
+    protected Auth $auth;
+    protected VoterManagerInterface $voterManager;
+    protected AccessMapInterface $map;
 
     public function __construct(
         Auth $auth,
@@ -30,6 +30,10 @@ class AuthorizationListener implements EventSubscriberInterface
         $this->map = $map;
     }
 
+    /**
+     * @throws ForbiddenException
+     * @throws FailedAccessException
+     */
     public function __invoke(RequestEvent $event)
     {
         $request = $event->getRequest();
@@ -45,7 +49,7 @@ class AuthorizationListener implements EventSubscriberInterface
         }
 
         if (!$this->voterManager->decide($this->auth, $attributes, $request)) {
-            throw new FailedAccessException('Vous n\'avez pas l\'authorisation pour executer cette action');
+            throw new FailedAccessException('Vous n\'avez pas l\'authorisation pour exécuter cette action');
         }
         $event->setRequest($request->withAttribute('_user', $this->auth->getUser()));
     }

@@ -23,11 +23,11 @@ class AuthenticationListener implements EventSubscriberInterface
      *
      * @var AuthenticationInterface[]
      */
-    private $authenticators;
+    private array $authenticators;
 
-    private $rememberMe;
+    private RememberMeInterface $rememberMe;
 
-    private $dispatcher;
+    private EventDispatcherInterface $dispatcher;
 
     public function __construct(
         array $authenticators,
@@ -48,12 +48,12 @@ class AuthenticationListener implements EventSubscriberInterface
                 try {
                     $result = $authenticator->authenticate($request);
 
-                    /** @var LoginSuccessEvent */
+                    /** @var LoginSuccessEvent $loginSuccessEvent*/
                     $loginSuccessEvent = $this->dispatcher->dispatch(new LoginSuccessEvent($result));
                     $result = $loginSuccessEvent->getResult();
                 } catch (AuthenticationFailureException $e) {
 
-                    /** @var LoginFailureEvent */
+                    /** @var LoginFailureEvent $loginFailureEvent*/
                     $loginFailureEvent = $this->dispatcher->dispatch(new LoginFailureEvent($e));
 
                     $response = $authenticator->onAuthenticateFailure(

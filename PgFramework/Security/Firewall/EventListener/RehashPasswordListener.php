@@ -12,9 +12,9 @@ use PgFramework\Security\Firewall\Event\LoginSuccessEvent;
 
 class RehashPasswordListener implements EventSubscriberInterface
 {
-    protected $hasher;
+    protected PasswordHasherInterface $hasher;
 
-    protected $em;
+    protected EntityManagerInterface $em;
 
     public function __construct(PasswordHasherInterface $hasher, EntityManagerInterface $em)
     {
