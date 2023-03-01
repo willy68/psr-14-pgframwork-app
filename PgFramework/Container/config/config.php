@@ -78,7 +78,6 @@ use PgFramework\Database\Doctrine\OrmManagerFactory;
 use PgFramework\DebugBar\DebugBarFactory;
 use PgFramework\EventDispatcher\EventDispatcher;
 use PgFramework\EventListener\CsrfListener;
-use PgFramework\EventListener\CsrfListenerInterface;
 use PgFramework\Kernel\KernelEvent;
 use PgFramework\Mailer\MailerFactory;
 use PgFramework\Router\RouterFactory;
@@ -241,19 +240,16 @@ return [
                 $c->get('database.name') . "?charset=utf8",
         ];
     },
-    'doctrine.connections' => \DI\add([
+    'doctrine.connections' => add([
         'default' => 'doctrine.connection.default',
     ]),
     'doctrine.connection.default' => function (ContainerInterface $c): Connection {
-        return $c->get(Connection::class);
-    },
-    DbalConfiguration::class => factory(ConnectionConfigFactory::class),
-    Connection::class => function (ContainerInterface $c): Connection {
         return DriverManager::getConnection(
             $c->get('doctrine.connection.default.url'),
             $c->get(DbalConfiguration::class)
         );
     },
+    DbalConfiguration::class => factory(ConnectionConfigFactory::class),
     'doctrine.manager.default' => function (ContainerInterface $c): EntityManagerInterface {
         return $c->get(EntityManagerInterface::class);
     },
