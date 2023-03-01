@@ -77,7 +77,6 @@ use PgFramework\Database\Doctrine\EntityManagerFactory;
 use PgFramework\Database\Doctrine\OrmManagerFactory;
 use PgFramework\DebugBar\DebugBarFactory;
 use PgFramework\EventDispatcher\EventDispatcher;
-use PgFramework\EventListener\CsrfListener;
 use PgFramework\Kernel\KernelEvent;
 use PgFramework\Mailer\MailerFactory;
 use PgFramework\Router\RouterFactory;
@@ -106,13 +105,12 @@ return [
     //'env' => env('ENV', 'production'),
     'app' => Environnement::getEnv('APP', 'web'),
     'jwt.secret' => Environnement::getEnv('APP_KEY', 'abcdefghijklmnop123456789'),
-    CsrfListenerInterface::class => get(CsrfListener::class),
     'twig.entrypoints' => '',
-    WebpackExtension::class => \DI\autowire()
+    WebpackExtension::class => autowire()
         ->constructorParameter('entryPoints', get('twig.entrypoints')),
     //CsrfExtension::class => create()
     //    ->constructor(get(CsrfListenerInterface::class)),
-    'twig.extensions' => \DI\add([
+    'twig.extensions' => add([
         get(RouterTwigExtension::class),
         get(PagerFantaExtension::class),
         get(TextExtension::class),
@@ -122,7 +120,7 @@ return [
         get(CsrfExtension::class),
         get(WebpackExtension::class),
     ]),
-    'form.validations' => \DI\add([
+    'form.validations' => add([
         'required' => RequiredValidation::class,
         'min' => MinValidation::class,
         'max' => MaxValidation::class,
@@ -137,13 +135,13 @@ return [
         'exists' => ExistsValidation::class,
         'unique' => UniqueValidation::class
     ]),
-    'form.filters' => \DI\add([
+    'form.filters' => add([
         'trim' => TrimFilter::class,
         'striptags' => StriptagsFilter::class
     ]),
     FirewallMapInterface::class => factory(FirewallMapFactory::class),
-    'security.firewall.rules' => \DI\add([]),
-    'security.voters' => \DI\add([]),
+    'security.firewall.rules' => add([]),
+    'security.voters' => add([]),
     AccessMapInterface::class => factory(AccessMapFactory::class),
     'security.voters.strategy' => VoterManagerInterface::STRATEGY_AFFIRMATIVE,
     VoterManagerInterface::class => factory(VoterManagerFactory::class),
@@ -168,9 +166,9 @@ return [
     PasswordHasherInterface::class =>
     autowire(DefaultPasswordHasher::class)
         ->constructorParameter('config', get('password.hasher.config')),
-    AuthenticationListener::class => \DI\autowire()
+    AuthenticationListener::class => autowire()
         ->constructorParameter('authenticators', get('security.authenticators')),
-    AuthenticationMiddleware::class => \DI\autowire()
+    AuthenticationMiddleware::class => autowire()
         ->constructorParameter('authenticators', get('security.authenticators')),
     JwtAuthentication::class => factory(JwtMiddlewareFactory::class),
     Invoker::class => factory(InvokerFactory::class),
@@ -187,13 +185,13 @@ return [
             $c
         );
     },
-    'routes.listeners' => \DI\add([]),
+    'routes.listeners' => add([]),
     RoutesMapInterface::class => factory(RoutesMapFactory::class),
     RouterInterface::class => factory(RouterFactory::class),
     Router::class => factory(RouterFactory::class),
     'duplicate.route' => true,
-    RouteCollector::class => \DI\autowire()
-        ->constructorParameter("detectDuplicates", \DI\get('duplicate.route')),
+    RouteCollector::class => autowire()
+        ->constructorParameter("detectDuplicates", get('duplicate.route')),
     RouteCollectionInterface::class => get(RouteCollector::class),
     RendererInterface::class => factory(TwigRendererFactory::class),
     'database.sgdb' => Environnement::getEnv('DATABASE_SGDB', 'mysql'),
@@ -229,8 +227,8 @@ return [
     Configuration::class => factory(DoctrineConfigFactory::class),
     'doctrine.proxies.dir' => __DIR__ . '/app/Proxies',
     'doctrine.proxies.namespace' => 'App\Proxies',
-    'doctrine.entity.path' => \DI\add([]),
-    'doctrine.entity.namespace' => \DI\add([]),
+    'doctrine.entity.path' => add([]),
+    'doctrine.entity.namespace' => add([]),
     'doctrine.connection.default.url' => function (ContainerInterface $c): array {
         return [
             'url' => $c->get('database.sgdb') . "://" .
@@ -252,7 +250,7 @@ return [
     },
     EntityManagerInterface::class => factory(EntityManagerFactory::class)
         ->parameter('connectionEntry', 'doctrine.connection.default'),
-    'doctrine.managers' => \DI\add([
+    'doctrine.managers' => add([
         'default' => 'doctrine.manager.default',
     ]),
     ManagerRegistry::class => factory(OrmManagerFactory::class),
