@@ -42,13 +42,12 @@ class UniqueValidation implements ValidationInterface
      * @param string|null $error
      */
     public function __construct(
-        PDO             $pdo,
+        PDO $pdo,
         ManagerRegistry $mr,
-        ?string         $table = null,
-        ?int            $exclude = null,
-        ?string         $error = null
-    )
-    {
+        ?string $table = null,
+        ?int $exclude = null,
+        ?string $error = null
+    ) {
         $this->pdo = $pdo;
         $this->mr = $mr;
         $this->table = $table;

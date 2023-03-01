@@ -6,6 +6,7 @@ namespace PgFramework\Invoker\Annotation;
 
 use Doctrine\ORM\Mapping\MappingAttribute;
 use PgFramework\Invoker\Exception\InvalidAnnotation;
+
 use function is_string;
 
 /**

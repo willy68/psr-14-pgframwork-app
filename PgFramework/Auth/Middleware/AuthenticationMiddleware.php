@@ -17,7 +17,6 @@ use PgFramework\Security\Authentication\Exception\AuthenticationFailureException
 
 class AuthenticationMiddleware implements MiddlewareInterface
 {
-
     /**
      * @var AuthenticationInterface[]
      */

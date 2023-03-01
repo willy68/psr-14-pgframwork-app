@@ -6,6 +6,7 @@ namespace PgFramework\Security;
 
 use Exception;
 use PgFramework\Environnement\Environnement;
+
 use function base64_encode;
 use function chr;
 use function ord;

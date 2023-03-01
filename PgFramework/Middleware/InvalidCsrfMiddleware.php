@@ -19,6 +19,7 @@ use Psr\Http\Server\{
     RequestHandlerInterface,
     MiddlewareInterface
 };
+
 use function array_merge;
 
 class InvalidCsrfMiddleware implements MiddlewareInterface

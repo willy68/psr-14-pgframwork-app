@@ -84,5 +84,4 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
             'js' => 'widgets/sqlqueries/widget.js'
         );
     }
-
 }

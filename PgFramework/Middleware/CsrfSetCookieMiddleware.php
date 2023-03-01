@@ -12,6 +12,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Dflydev\FigCookies\FigResponseCookies;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+
 use function in_array;
 
 class CsrfSetCookieMiddleware implements MiddlewareInterface

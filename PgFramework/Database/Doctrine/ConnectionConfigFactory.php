@@ -22,5 +22,4 @@ class ConnectionConfigFactory
         }
         return $config;
     }
-
 }

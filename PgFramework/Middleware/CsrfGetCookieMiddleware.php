@@ -14,6 +14,7 @@ use Grafikart\Csrf\InvalidCsrfException;
 use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+
 use function in_array;
 use function is_array;
 

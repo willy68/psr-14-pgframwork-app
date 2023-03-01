@@ -22,8 +22,7 @@ class DebugDriver extends AbstractDriverMiddleware
      */
     public function connect(
         array $params
-    ): DebugConnection|DriverInterface\Connection
-    {
+    ): DebugConnection|DriverInterface\Connection {
         return new DebugConnection(
             parent::connect($params),
             $this->debugStack,

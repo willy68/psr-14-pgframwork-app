@@ -18,6 +18,7 @@ namespace PgFramework\Security\Authorization;
 use PgFramework\Auth\Auth;
 use InvalidArgumentException;
 use PgFramework\Security\Authorization\Voter\VoterInterface;
+
 use function is_callable;
 
 class VoterManager implements VoterManagerInterface

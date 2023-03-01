@@ -6,5 +6,4 @@ interface DebugStackInterface
 {
     public function startQuery($sql, ?array $params = null, ?array $types = null): void;
     public function stopQuery(): void;
-
 }

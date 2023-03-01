@@ -10,6 +10,7 @@ use Grafikart\Csrf\InvalidCsrfException;
 use PgFramework\Event\Events;
 use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
+
 use function in_array;
 
 class CsrfListener implements EventSubscriberInterface

@@ -105,7 +105,7 @@ class AbstractApiController extends AbstractController
     public function update(ServerRequestInterface $request): ResponseInterface
     {
         try {
-        $id = (int) $request->getAttribute('id', 0);
+            $id = (int) $request->getAttribute('id', 0);
             $model = $this->model::find($id);
         } catch (RecordNotFound $e) {
             return new Response(404);

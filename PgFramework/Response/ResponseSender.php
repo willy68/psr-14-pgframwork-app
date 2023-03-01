@@ -3,6 +3,7 @@
 namespace PgFramework\Response;
 
 use Psr\Http\Message\ResponseInterface;
+
 use function function_exists;
 
 class ResponseSender

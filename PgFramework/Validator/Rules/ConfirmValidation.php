@@ -23,8 +23,7 @@ class ConfirmValidation implements ValidationInterface, ValidationExtraParamsInt
     public function __construct(
         ?string $fieldName = null,
         ?string $error = null
-    )
-    {
+    ) {
         if ($error !== null) {
             $this->error = $error;
         }

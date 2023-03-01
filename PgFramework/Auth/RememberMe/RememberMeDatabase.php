@@ -90,7 +90,7 @@ class RememberMeDatabase extends AbstractRememberMe
             if (!$token) {
                 throw new Exception();
             }
-        } catch (Exception|TypeError $e) {
+        } catch (Exception | TypeError $e) {
             return $request->withAttribute($this->options['attribute'], $this->cancelCookie());
         }
 

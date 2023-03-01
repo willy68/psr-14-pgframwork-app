@@ -10,6 +10,7 @@ use League\Event\ListenerPriority;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use League\Event\EventDispatcher as LeagueEventDispatcher;
 use ReflectionException;
+
 use function is_int;
 use function is_string;
 

@@ -9,7 +9,7 @@ use Doctrine\DBAL\Driver\Middleware\AbstractConnectionMiddleware;
 use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Driver\Statement as DriverStatement;
 
-class DebugConnection extends  AbstractConnectionMiddleware
+class DebugConnection extends AbstractConnectionMiddleware
 {
     private DebugStack $debugStack;
 
@@ -89,5 +89,4 @@ class DebugConnection extends  AbstractConnectionMiddleware
     {
         return parent::rollBack();
     }
-
 }

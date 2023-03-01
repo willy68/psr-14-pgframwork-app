@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PgFramework\Router;
 
 use Psr\Http\Message\ServerRequestInterface;
+
 use function in_array;
 
 class RequestMatcher implements RequestMatcherInterface
