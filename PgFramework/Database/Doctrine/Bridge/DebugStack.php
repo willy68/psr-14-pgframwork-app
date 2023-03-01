@@ -28,15 +28,16 @@ class DebugStack implements DebugStackInterface
     /** @var int */
     public int $currentQuery = 0;
 
-    public function startQuery($sql, ?array $params = null, ?array $types = null): void
+    public function startQuery(string $connectionName, $sql, ?array $params = null, ?array $types = null): void
     {
-        if (! $this->enabled) {
+        if (!$this->enabled) {
             return;
         }
 
         $this->start = microtime(true);
 
         $this->queries[++$this->currentQuery] = [
+            'connection' => $connectionName,
             'sql' => $sql,
             'params' => $params,
             'types' => $types,
@@ -46,7 +47,7 @@ class DebugStack implements DebugStackInterface
 
     public function stopQuery(): void
     {
-        if (! $this->enabled) {
+        if (!$this->enabled) {
             return;
         }
 

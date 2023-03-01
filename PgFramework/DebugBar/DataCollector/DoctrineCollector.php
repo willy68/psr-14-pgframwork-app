@@ -31,6 +31,7 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
         $totalExecTime = 0;
         foreach ($this->debugStack->queries as $q) {
             $queries[] = array(
+                'connection' => $q['connection'],
                 'sql' => $q['sql'],
                 'params' => (object) $q['params'],
                 'duration' => $q['executionMS'],

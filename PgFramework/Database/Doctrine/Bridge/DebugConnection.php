@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PgFramework\Database\Doctrine\Bridge;
 
 use Doctrine\DBAL\Driver\Connection as ConnectionInterface;
-use Doctrine\DBAL\Driver\Exception;
 use Doctrine\DBAL\Driver\Middleware\AbstractConnectionMiddleware;
 use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Driver\Statement as DriverStatement;
@@ -14,20 +13,25 @@ class DebugConnection extends AbstractConnectionMiddleware
 {
     private int $level = 0;
     private DebugStack $debugStack;
+    private string $connectionName;
 
     /** @internal This connection can be only instantiated by its driver. */
-    public function __construct(ConnectionInterface $connection, DebugStackInterface $debugStack)
-    {
+    public function __construct(
+        ConnectionInterface $connection,
+        DebugStackInterface $debugStack,
+        string $connectionName
+    ) {
         parent::__construct($connection);
 
         $this->debugStack = $debugStack;
+        $this->connectionName = $connectionName;
     }
-/*
-    public function __destruct()
-    {
-        $this->logger->info('Disconnecting');
-    }
-*/
+    /*
+        public function __destruct()
+        {
+            $this->logger->info('Disconnecting');
+        }
+    */
     /**
      * {@inheritDoc}
      */
@@ -37,6 +41,7 @@ class DebugConnection extends AbstractConnectionMiddleware
             parent::prepare($sql),
             $this->debugStack,
             $sql,
+            $this->connectionName
         );
     }
 
@@ -45,7 +50,7 @@ class DebugConnection extends AbstractConnectionMiddleware
      */
     public function query(string $sql): Result
     {
-        $this->debugStack->startQuery($sql);
+        $this->debugStack->startQuery($this->connectionName, $sql);
 
         $result = parent::query($sql);
 
@@ -59,7 +64,7 @@ class DebugConnection extends AbstractConnectionMiddleware
      */
     public function exec(string $sql): int
     {
-        $this->debugStack->startQuery($sql);
+        $this->debugStack->startQuery($this->connectionName, $sql);
 
         $result = parent::exec($sql);
 
@@ -74,7 +79,7 @@ class DebugConnection extends AbstractConnectionMiddleware
     public function beginTransaction(): bool
     {
         if (1 === ++$this->level) {
-            $this->debugStack->startQuery('START TRANSACTION');
+            $this->debugStack->startQuery($this->connectionName, 'START TRANSACTION');
         }
 
         try {
@@ -91,7 +96,7 @@ class DebugConnection extends AbstractConnectionMiddleware
     public function commit(): bool
     {
         if (1 === $this->level--) {
-            $this->debugStack->startQuery('COMMIT');
+            $this->debugStack->startQuery($this->connectionName, 'COMMIT');
         }
 
         try {
@@ -108,7 +113,7 @@ class DebugConnection extends AbstractConnectionMiddleware
     public function rollBack(): bool
     {
         if (1 === $this->level--) {
-            $this->debugStack->startQuery('ROLLBACK');
+            $this->debugStack->startQuery($this->connectionName, 'ROLLBACK');
         }
 
         try {

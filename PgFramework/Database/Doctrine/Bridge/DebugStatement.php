@@ -24,14 +24,20 @@ class DebugStatement extends AbstractStatementMiddleware
 
     /** @var array<int,int>|array<string,int> */
     private array $types = [];
+    private string $connectionName;
 
     /** @internal This statement can be only instantiated by its connection. */
-    public function __construct(StatementInterface $statement, DebugStackInterface $debugStack, string $sql)
-    {
+    public function __construct(
+        StatementInterface $statement,
+        DebugStackInterface $debugStack,
+        string $sql,
+        string $connectionName
+    ) {
         parent::__construct($statement);
 
         $this->debugStack = $debugStack;
-        $this->sql    = $sql;
+        $this->sql = $sql;
+        $this->connectionName = $connectionName;
     }
 
     /**
@@ -58,7 +64,7 @@ class DebugStatement extends AbstractStatementMiddleware
         }
 
         $this->params[$param] = &$variable;
-        $this->types[$param]  = $type;
+        $this->types[$param] = $type;
 
         return parent::bindParam($param, $variable, $type, ...array_slice(func_get_args(), 3));
     }
@@ -78,7 +84,7 @@ class DebugStatement extends AbstractStatementMiddleware
         }
 
         $this->params[$param] = $value;
-        $this->types[$param]  = $type;
+        $this->types[$param] = $type;
 
         return parent::bindValue($param, $value, $type);
     }
@@ -88,7 +94,7 @@ class DebugStatement extends AbstractStatementMiddleware
      */
     public function execute($params = null): ResultInterface
     {
-        $this->debugStack->startQuery($this->sql, $params ?? $this->params, $this->types);
+        $this->debugStack->startQuery($this->connectionName, $this->sql, $params ?? $this->params, $this->types);
 
         $result = parent::execute($params);
 

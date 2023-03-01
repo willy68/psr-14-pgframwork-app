@@ -10,11 +10,13 @@ use Doctrine\DBAL\Driver\Middleware\AbstractDriverMiddleware;
 class DebugDriver extends AbstractDriverMiddleware
 {
     private DebugStack $debugStack;
+    private string $connectionName;
 
-    public function __construct(DriverInterface $wrappedDriver, DebugStackInterface $debugStack)
+    public function __construct(DriverInterface $wrappedDriver, DebugStackInterface $debugStack, string $connectionName)
     {
         parent::__construct($wrappedDriver);
         $this->debugStack = $debugStack;
+        $this->connectionName = $connectionName;
     }
 
     /**
@@ -26,6 +28,7 @@ class DebugDriver extends AbstractDriverMiddleware
         return new DebugConnection(
             parent::connect($params),
             $this->debugStack,
+            $this->connectionName
         );
     }
 

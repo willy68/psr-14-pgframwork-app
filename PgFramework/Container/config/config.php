@@ -5,13 +5,13 @@ declare(strict_types=1);
 use DebugBar\DebugBar;
 use Doctrine\DBAL\Configuration as DbalConfiguration;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use PgFramework\Database\Doctrine\Bridge\DebugStack;
 use PgFramework\Database\Doctrine\Bridge\DebugStackInterface;
 use PgFramework\Database\Doctrine\ConnectionConfigFactory;
+use PgFramework\Database\Doctrine\DbalConnectionFactory;
 use PgFramework\Jwt\JwtMiddlewareFactory;
 use Psr\Container\ContainerInterface;
 use Grafikart\Csrf\CsrfMiddleware;
@@ -244,10 +244,7 @@ return [
         'default' => 'doctrine.connection.default',
     ]),
     'doctrine.connection.default' => function (ContainerInterface $c): Connection {
-        return DriverManager::getConnection(
-            $c->get('doctrine.connection.default.url'),
-            $c->get(DbalConfiguration::class)
-        );
+        return (new DbalConnectionFactory())($c, $c->get('doctrine.connection.default.url'), 'default');
     },
     DbalConfiguration::class => factory(ConnectionConfigFactory::class),
     'doctrine.manager.default' => function (ContainerInterface $c): EntityManagerInterface {

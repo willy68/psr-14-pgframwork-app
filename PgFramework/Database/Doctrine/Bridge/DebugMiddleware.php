@@ -8,14 +8,16 @@ use Doctrine\DBAL\Driver\Middleware;
 class DebugMiddleware implements Middleware
 {
     private DebugStack $debugStack;
+    private string $connectionName;
 
-    public function __construct(DebugStackInterface $debugStack)
+    public function __construct(DebugStackInterface $debugStack, string $connectionName = 'default')
     {
         $this->debugStack = $debugStack;
+        $this->connectionName = $connectionName;
     }
 
     public function wrap(DriverInterface $driver): DriverInterface
     {
-        return  new DebugDriver($driver, $this->debugStack);
+        return  new DebugDriver($driver, $this->debugStack, $this->connectionName);
     }
 }
