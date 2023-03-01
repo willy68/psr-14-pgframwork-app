@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace PgFramework\Database\Doctrine\Bridge;
 
 use Doctrine\DBAL\Driver\Connection as ConnectionInterface;
+use Doctrine\DBAL\Driver\Exception;
 use Doctrine\DBAL\Driver\Middleware\AbstractConnectionMiddleware;
 use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Driver\Statement as DriverStatement;
 
 class DebugConnection extends AbstractConnectionMiddleware
 {
+    private int $level = 0;
     private DebugStack $debugStack;
 
     /** @internal This connection can be only instantiated by its driver. */
@@ -71,7 +73,16 @@ class DebugConnection extends AbstractConnectionMiddleware
      */
     public function beginTransaction(): bool
     {
-        return parent::beginTransaction();
+        if (1 === ++$this->level) {
+            $this->debugStack->startQuery('START TRANSACTION');
+        }
+
+        try {
+            $ret = parent::beginTransaction();
+        } finally {
+            $this->debugStack->stopQuery();
+        }
+        return $ret;
     }
 
     /**
@@ -79,7 +90,16 @@ class DebugConnection extends AbstractConnectionMiddleware
      */
     public function commit(): bool
     {
-        return parent::commit();
+        if (1 === $this->level--) {
+            $this->debugStack->startQuery('COMMIT');
+        }
+
+        try {
+            $ret = parent::commit();
+        } finally {
+            $this->debugStack->stopQuery();
+        }
+        return $ret;
     }
 
     /**
@@ -87,6 +107,15 @@ class DebugConnection extends AbstractConnectionMiddleware
      */
     public function rollBack(): bool
     {
-        return parent::rollBack();
+        if (1 === $this->level--) {
+            $this->debugStack->startQuery('ROLLBACK');
+        }
+
+        try {
+            $ret = parent::rollBack();
+        } finally {
+            $this->debugStack->stopQuery();
+        }
+        return $ret;
     }
 }
