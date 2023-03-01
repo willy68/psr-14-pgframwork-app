@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Middleware;
+namespace PgFramework\Middleware;
 
 use ActiveRecord\Exceptions\RecordNotFound;
 use Exception;

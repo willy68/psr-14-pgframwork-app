@@ -1,11 +1,11 @@
 <?php
 
-use App\Middleware\RecordNotFoundMiddleware;
-use PgFramework\Middleware\InvalidCsrfMiddleware;
-use PgFramework\Middleware\ActiveRecordMiddleware;
-use PgFramework\Auth\Middleware\ForbiddenMiddleware;
-use PgFramework\Middleware\CsrfCookieMiddleware;
 use PgFramework\Auth\Middleware\AuthorizationMiddleware;
+use PgFramework\Auth\Middleware\ForbiddenMiddleware;
+use PgFramework\Middleware\ActiveRecordMiddleware;
+use PgFramework\Middleware\CsrfCookieMiddleware;
+use PgFramework\Middleware\InvalidCsrfMiddleware;
+use PgFramework\Middleware\RecordNotFoundMiddleware;
 
 use function DI\add;
 
