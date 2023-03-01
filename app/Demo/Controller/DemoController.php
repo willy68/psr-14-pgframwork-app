@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Demo\Controller;
 
+use App\Entity\Ville;
 use DateTime;
 use App\Entity\Post;
 use App\Models\Client;
 use App\Auth\Models\User;
-use App\Repository\PostRepository;
 use PDO;
 use PgFramework\Router\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
@@ -42,10 +42,9 @@ class DemoController
         ManagerRegistry $managerRegistry
     ): string {
         $conn = $managerRegistry->getManager();
-
-        /** @var PostRepository $rp*/
-        $rp = $conn->getRepository(Post::class);
-        $rp->findWithCategory(122);
+        $post = $conn->getRepository(Post::class)->find(1);
+        $communes = $managerRegistry->getManager('communes')->getRepository(Ville::class);
+        $villes = $communes->findOneBy(['ville' => 'Meyrals']);
 
         $query = new ActiveRecordQuery();
         $query
@@ -57,7 +56,13 @@ class DemoController
         $user_array = $user->to_array();
 
         $mysql_ver = $pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
-        $params = array_merge($request->getServerParams(), $user_array, [$mysql_ver], [$query]);
+        $params = array_merge(
+            $request->getServerParams(),
+            $user_array,
+            [$mysql_ver],
+            [$query],
+            [serialize($villes)]
+        );
         return $renderer->render('@demo/index', compact('params'));
     }
 
