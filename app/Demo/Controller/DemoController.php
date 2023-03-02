@@ -61,7 +61,8 @@ class DemoController
             $user_array,
             [$mysql_ver],
             [$query],
-            [serialize($villes)]
+            [serialize($post)],
+            [json_encode($villes)]
         );
         return $renderer->render('@demo/index', compact('params'));
     }
