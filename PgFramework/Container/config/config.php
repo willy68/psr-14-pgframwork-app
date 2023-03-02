@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use DebugBar\DebugBar;
 use Doctrine\DBAL\Configuration as DbalConfiguration;
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -241,9 +240,9 @@ return [
     'doctrine.connections' => add([
         'default' => 'doctrine.connection.default',
     ]),
-    'doctrine.connection.default' => function (ContainerInterface $c): Connection {
-        return (new DbalConnectionFactory())($c, $c->get('doctrine.connection.default.url'), 'default');
-    },
+    'doctrine.connection.default' => factory(DbalConnectionFactory::class)
+        ->parameter('url', 'doctrine.connection.default.url')
+        ->parameter('connectionName', 'default'),
     DbalConfiguration::class => factory(ConnectionConfigFactory::class),
     'doctrine.manager.default' => function (ContainerInterface $c): EntityManagerInterface {
         return $c->get(EntityManagerInterface::class);

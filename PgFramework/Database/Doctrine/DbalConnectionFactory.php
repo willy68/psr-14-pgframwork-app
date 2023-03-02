@@ -20,7 +20,7 @@ class DbalConnectionFactory
      * @throws ContainerExceptionInterface
      * @throws Exception
      */
-    public function __invoke(ContainerInterface $c, array $url, string $connectionName)
+    public function __invoke(ContainerInterface $c, string $url, string $connectionName)
     {
         $config = new Configuration();
         if ($c->get('env') !== 'prod') {
@@ -29,6 +29,6 @@ class DbalConnectionFactory
             $config->setMiddlewares([new DebugMiddleware($debugStack, $connectionName)]);
         }
 
-        return DriverManager::getConnection($url, $config);
+        return DriverManager::getConnection($c->get($url), $config);
     }
 }
