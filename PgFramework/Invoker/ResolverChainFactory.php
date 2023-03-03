@@ -6,6 +6,7 @@ namespace PgFramework\Invoker;
 
 use PgFramework\App;
 use DI\Proxy\ProxyFactory;
+use PgFramework\ApplicationInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use DI\Invoker\DefinitionParameterResolver;
@@ -29,14 +30,14 @@ class ResolverChainFactory
      */
     public function __invoke(ContainerInterface $container): ParameterResolver
     {
-        $writeProxiesToFile = ($container->get('env') === 'production');
+        $proxyDir = null;
+        if ($container->get('env') === 'prod') {
+            $projectDir = $container->get(ApplicationInterface::class)->getProjectDir();
+            $projectDir = realpath($projectDir) ?: $projectDir;
+            $proxyDir = $projectDir . App::PROXY_DIRECTORY;
+        }
 
-        $proxyFactory = new ProxyFactory(
-            $writeProxiesToFile,
-            App::PROXY_DIRECTORY
-        );
-
-        $definitionResolver = new ResolverDispatcher($container, $proxyFactory);
+        $definitionResolver = new ResolverDispatcher($container, new ProxyFactory($proxyDir));
 
         return new ControllerParamsResolver([
             new DoctrineParamConverterAnnotations(
