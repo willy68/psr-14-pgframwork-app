@@ -14,14 +14,15 @@ use Psr\Container\ContainerInterface;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
+use Symfony\Component\Cache\Exception\CacheException;
 
 class DoctrineConfigFactory
 {
     /**
      * @throws ContainerExceptionInterface
      * @throws AnnotationException
-     * @throws NotFoundExceptionInterface
+     * @throws NotFoundExceptionInterface|CacheException
      */
     public function __invoke(ContainerInterface $c): Configuration
     {
@@ -36,10 +37,10 @@ class DoctrineConfigFactory
             $resultCache = new ArrayAdapter();
             $config->setAutoGenerateProxyClasses(true);
         } else {
-            $queryCache = new FilesystemAdapter('doctrine_queries', 0, $c->get('app.cache.dir') . '/orm');
-            $metadataCache = new FilesystemAdapter('doctrine_metadata', 0, $c->get('app.cache.dir') . '/orm');
-            $hydrateCache = new FilesystemAdapter('doctrine.hydrate', 0, $c->get('app.cache.dir') . '/orm');
-            $resultCache = new FilesystemAdapter('doctrine.result', 0, $c->get('app.cache.dir') . '/orm');
+            $queryCache = new PhpFilesAdapter('doctrine_queries', 0, $c->get('app.cache.dir') . '/orm');
+            $metadataCache = new PhpFilesAdapter('doctrine_metadata', 0, $c->get('app.cache.dir') . '/orm');
+            $hydrateCache = new PhpFilesAdapter('doctrine.hydrate', 0, $c->get('app.cache.dir') . '/orm');
+            $resultCache = new PhpFilesAdapter('doctrine.result', 0, $c->get('app.cache.dir') . '/orm');
             $config->setAutoGenerateProxyClasses(false);
         }
 
