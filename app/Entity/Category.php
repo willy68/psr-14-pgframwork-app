@@ -12,6 +12,8 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
@@ -27,6 +29,7 @@ class Category
      * @ORM\GeneratedValue
      * @var int
      */
+    #[Groups(['group1'])]
     #[Id]
     #[GeneratedValue]
     #[Column(type: Types::INTEGER)]
@@ -36,6 +39,7 @@ class Category
      * @ORM\Column(type="string")
      * @var string
      */
+    #[Groups(['group1'])]
     #[Column(type: TYPES::STRING)]
     public string $name;
 
@@ -43,6 +47,7 @@ class Category
      * @ORM\Column(type="string")
      * @var string
      */
+    #[Groups(['group1'])]
     #[Column(type: TYPES::STRING)]
     public string $slug;
 
@@ -50,6 +55,8 @@ class Category
      * @ORM\OneToMany(targetEntity="App\Entity\Post", mappedBy="category")
      * @var Collection<int, Post> An ArrayCollection of Post objects.
      */
+    #[Groups(['group2'])]
+    #[MaxDepth(1)]
     #[OneToMany(mappedBy: 'category', targetEntity: Post::class)]
     public Collection $posts;
 

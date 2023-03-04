@@ -6,6 +6,7 @@ namespace PgFramework\DebugBar\EventListener;
 
 use DebugBar\{DataCollector\ExceptionsCollector, DebugBar, DebugBarException};
 use PgFramework\DebugBar\PgDebugBar;
+use PgFramework\Response\JsonResponse;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Mezzio\{Router\RouteResult, Router\RouterInterface, Session\SessionInterface};
@@ -18,6 +19,7 @@ use PgFramework\Event\ExceptionEvent;
 use PgFramework\Event\ResponseEvent;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 use PgFramework\HttpUtils\RequestUtils;
+use function in_array;
 
 class DebugBarListener implements EventSubscriberInterface
 {
@@ -48,6 +50,14 @@ class DebugBarListener implements EventSubscriberInterface
         $request = $event->getRequest();
 
         if (RequestUtils::isAjax($request)) {
+            return;
+        }
+
+        if ($response instanceof JsonResponse) {
+            return;
+        }
+
+        if (1 === preg_match('{^application/(?:\w+\++)*json}i', $response->getHeaderLine('content-type'))) {
             return;
         }
 

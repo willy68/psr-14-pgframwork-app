@@ -76,4 +76,18 @@ class PostRepository extends PaginatedEntityRepository
         $query = $builder->getQuery();
         return $query->getResult();
     }
+
+    /**
+     * Get all posts order by ID ASC for API
+     * @return PaginatedQueryBuilder
+     */
+    public function findAllForApi(): PaginatedQueryBuilder
+    {
+        $builder = $this->createQueryBuilder();
+        $builder->select('p')
+            ->from($this->getEntityName(), 'p')
+            ->leftJoin('p.category', 'c','c = p.category');
+            //->orderBy('p.id,', 'ASC');
+        return $builder;
+    }
 }

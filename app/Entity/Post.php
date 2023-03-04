@@ -12,6 +12,8 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PostRepository")
@@ -27,6 +29,7 @@ class Post
      * @ORM\GeneratedValue
      * @var int
      */
+    #[Groups(['group1'])]
     #[Id]
     #[GeneratedValue]
     #[Column(type: Types::INTEGER)]
@@ -36,6 +39,7 @@ class Post
      * @ORM\Column(type="string")
      * @var string
      */
+    #[Groups(['group1'])]
     #[Column(type: TYPES::STRING)]
     protected string $name;
 
@@ -43,6 +47,7 @@ class Post
      * @ORM\Column(type="string")
      * @var string
      */
+    #[Groups(['group1'])]
     #[Column(type: TYPES::STRING)]
     protected string $slug;
 
@@ -50,6 +55,7 @@ class Post
      * @ORM\Column(type="text")
      * @var string
      */
+    #[Groups(['group1'])]
     #[Column(type: TYPES::TEXT)]
     protected string $content;
 
@@ -57,6 +63,7 @@ class Post
      * @ORM\Column(type="datetime_immutable")
      * @var DateTimeImmutable
      */
+    #[Groups(['group1'])]
     #[Column(name: 'created_at', type: TYPES::DATETIME_IMMUTABLE)]
     protected DateTimeImmutable $createdAt;
 
@@ -64,6 +71,7 @@ class Post
      * @ORM\Column(type="datetime")
      * @var DateTime
      */
+    #[Groups(['group1'])]
     #[Column(name: 'updated_at', type: TYPES::DATETIME_MUTABLE)]
     protected DateTime $updatedAt;
 
@@ -71,6 +79,7 @@ class Post
      * @ORM\Column(type="string")
      * @var string|null
      */
+    #[Groups(['group1'])]
     #[Column(type: TYPES::STRING, nullable: true)]
     protected ?string $image = null;
 
@@ -78,12 +87,15 @@ class Post
      * @ORM\Column(type="boolean")
      * @var bool
      */
+    #[Groups(['group1'])]
     #[Column(type: TYPES::BOOLEAN)]
     protected bool $published;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="addPost")
      */
+    #[Groups(['group2'])]
+    #[MaxDepth(1)]
     #[ManyToOne(targetEntity: Category::class, inversedBy: "addPost")]
     protected ?Category $category = null;
 
@@ -257,12 +269,15 @@ class Post
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getThumb(): string
+    public function getThumb(): string|null
     {
-        ['filename' => $filename, 'extension' => $extension] = pathinfo($this->image);
-        return '/uploads/posts/' . $filename . '_thumb.' . $extension;
+        if ($this->image) {
+            ['filename' => $filename, 'extension' => $extension] = pathinfo($this->image);
+            return '/uploads/posts/' . $filename . '_thumb.' . $extension;
+        }
+        return null;
     }
 
     /**
@@ -293,6 +308,17 @@ class Post
         $this->category = $category;
 
         return $this;
+    }
+
+    /**
+     * Get Category ID
+     *
+     * @return int|null
+     */
+    #[Groups(['group3'])]
+    public function getCategoryId(): int|null
+    {
+        return $this?->category->getId();
     }
 
     /**

@@ -40,7 +40,9 @@
         "mezzio/mezzio-session": "^1.6",
         "mezzio/mezzio-session-ext": "^1.12",
         "symfony/mailer": "^6.0",
-        "ramsey/uuid": "^4.3"
+        "ramsey/uuid": "^4.3",
+        "symfony/serializer": "^6.2",
+        "symfony/property-access": "^6.2"
     },
     "autoload": {
         "psr-4": {
