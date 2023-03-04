@@ -6,11 +6,6 @@ namespace App\Api\Controller;
 
 use App\Entity\Post;
 use App\Repository\PostRepository;
-use DateTime;
-use DateTimeImmutable;
-use DateTimeInterface;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\ORM\Mapping\Driver\AttributeReader;
 use Doctrine\Persistence\ManagerRegistry;
 use PgFramework\Response\JsonResponse;
 use PgFramework\Router\Annotation\Route;
@@ -20,8 +15,6 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -68,7 +61,7 @@ class PostApiController
         $params = $request->getQueryParams();
         /** @var PostRepository $repo */
         $repo = $this->om->getManager()->getRepository(Post::class);
-        $posts = $repo->buildFindPublicForCategory();
+        $posts = $repo->buildFindPublicForCategory($request->getAttribute('category_id'));
 
     }
 

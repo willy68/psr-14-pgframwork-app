@@ -19,7 +19,6 @@ use PgFramework\Event\ExceptionEvent;
 use PgFramework\Event\ResponseEvent;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 use PgFramework\HttpUtils\RequestUtils;
-use function in_array;
 
 class DebugBarListener implements EventSubscriberInterface
 {
