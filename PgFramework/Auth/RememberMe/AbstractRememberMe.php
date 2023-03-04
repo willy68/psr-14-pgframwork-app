@@ -17,7 +17,7 @@ abstract class AbstractRememberMe implements RememberMeInterface
     protected UserProviderInterface $userProvider;
 
     protected array $options = [
-        'name' => 'auth_login',
+        'name' => 'AUTH-LOGIN',
         'attribute' => '_rememberme.cookie',
         'field' => 'username',
         'lifetime' => 3600 * 24 * 3,
