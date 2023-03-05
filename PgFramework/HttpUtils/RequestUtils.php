@@ -71,4 +71,14 @@ class RequestUtils
         }
         return $format;
     }
+
+    public static function getDomain(ServerRequestInterface $request): string
+    {
+        return sprintf(
+            '%s://%s%s',
+            $request->getUri()->getScheme(),
+            $request->getUri()->getHost(),
+            $request->getUri()->getPort() ? ':' . $request->getUri()->getPort() : ''
+        );
+    }
 }

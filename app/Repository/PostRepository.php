@@ -90,4 +90,15 @@ class PostRepository extends PaginatedEntityRepository
             //->orderBy('p.id,', 'ASC');
         return $builder;
     }
+
+    /**
+     * Get all records for one Category (API function usage)
+     *
+     * @param int $category_id
+     * @return PaginatedQueryBuilder
+     */
+    public function findAllForCategory(int $category_id): PaginatedQueryBuilder
+    {
+        return $this->findAllForApi()->andWhere("p.category = $category_id");
+    }
 }
