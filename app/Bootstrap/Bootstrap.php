@@ -29,10 +29,10 @@ return (static function (): App {
         //->addMiddlewares($bootstrap['middlewares']);
         ->addListeners($bootstrap['listeners']);
 
-    if (Environnement::getEnv('APP_ENV', 'prod') === 'dev') {
+    /*if (Environnement::getEnv('APP_ENV', 'prod') === 'dev') {
         $whoops = new Run();
         $whoops->pushHandler(new PrettyPageHandler());
         $whoops->register();
-    }
+    }*/
     return $app;
 })();

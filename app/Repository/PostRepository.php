@@ -85,8 +85,7 @@ class PostRepository extends PaginatedEntityRepository
     {
         $builder = $this->createQueryBuilder();
         $builder->select('p')
-            ->from($this->getEntityName(), 'p')
-            ->leftJoin('p.category', 'c','c = p.category');
+            ->from($this->getEntityName(), 'p');
             //->orderBy('p.id,', 'ASC');
         return $builder;
     }
@@ -99,6 +98,8 @@ class PostRepository extends PaginatedEntityRepository
      */
     public function findAllForCategory(int $category_id): PaginatedQueryBuilder
     {
-        return $this->findAllForApi()->andWhere("p.category = $category_id");
+        return $this->findAllForApi()
+            ->join('p.category', 'c','c = p.category')
+            ->andWhere("p.category = $category_id");
     }
 }

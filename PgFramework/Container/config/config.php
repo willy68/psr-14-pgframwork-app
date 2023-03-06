@@ -12,6 +12,8 @@ use PgFramework\Database\Doctrine\Bridge\DebugStackInterface;
 use PgFramework\Database\Doctrine\ConnectionConfigFactory;
 use PgFramework\Database\Doctrine\DbalConnectionFactory;
 use PgFramework\Jwt\JwtMiddlewareFactory;
+use PgFramework\Serializer\NormalizerFactory;
+use PgFramework\Serializer\SerializerFactory;
 use Psr\Container\ContainerInterface;
 use Grafikart\Csrf\CsrfMiddleware;
 use PgFramework\Twig\{
@@ -89,6 +91,7 @@ use PgFramework\Session\SessionPersistenceFactory;
 use PgRouter\RouteCollectionInterface;
 use PgRouter\RouteCollector;
 use PgRouter\Router;
+use Symfony\Component\Serializer\SerializerInterface;
 use Tuupola\Middleware\JwtAuthentication;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -254,5 +257,7 @@ return [
     ]),
     ManagerRegistry::class => factory(OrmManagerFactory::class),
     DebugStackInterface::class => get(DebugStack::class),
-    DebugBar::class => factory(DebugBarFactory::class)
+    DebugBar::class => factory(DebugBarFactory::class),
+    'serializer.normalizers' => factory(NormalizerFactory::class),
+    SerializerInterface::class => factory(SerializerFactory::class),
 ];
