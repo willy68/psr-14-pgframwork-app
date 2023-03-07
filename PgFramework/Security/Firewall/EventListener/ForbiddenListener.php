@@ -8,6 +8,7 @@ use GuzzleHttp\Psr7\Response;
 use PgFramework\Event\Events;
 use League\Event\ListenerPriority;
 use PgFramework\Event\ExceptionEvent;
+use PgFramework\Response\JsonResponse;
 use PgFramework\Session\FlashService;
 use PgFramework\HttpUtils\RequestUtils;
 use Psr\Http\Message\ResponseInterface;
@@ -37,7 +38,7 @@ class ForbiddenListener implements EventSubscriberInterface
 
         if ($e instanceof ForbiddenException) {
             if (RequestUtils::isJson($request)) {
-                $event->setResponse(new Response(403, [], json_encode($e->getMessage() . ' ' . $e->getCode())));
+                $event->setResponse(new JsonResponse(403, [], json_encode($e->getMessage() . ' ' . $e->getCode())));
                 return;
             }
             $event->setResponse($this->redirectLogin($request));
@@ -46,7 +47,7 @@ class ForbiddenListener implements EventSubscriberInterface
 
         if ($e instanceof FailedAccessException) {
             if (RequestUtils::isJson($request)) {
-                $event->setResponse(new Response(403, [], json_encode($e->getMessage() . ' ' . $e->getCode())));
+                $event->setResponse(new JsonResponse(403, [], json_encode($e->getMessage() . ' ' . $e->getCode())));
                 return;
             }
             $event->setResponse($this->redirectAdminHome($request));

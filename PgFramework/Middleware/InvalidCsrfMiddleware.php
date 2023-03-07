@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PgFramework\Middleware;
 
 use PgFramework\HttpUtils\RequestUtils;
+use PgFramework\Response\JsonResponse;
 use PgFramework\Response\ResponseRedirect;
 use PgFramework\Session\FlashService;
 use Grafikart\Csrf\InvalidCsrfException;
@@ -58,7 +59,7 @@ class InvalidCsrfMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         } catch (InvalidCsrfException $e) {
             if (RequestUtils::isJson($request)) {
-                return new Response(403, [], $e->getMessage() . ' ' . $e->getCode());
+                return new JsonResponse(403, [], json_encode($e->getMessage() . ' ' . $e->getCode()));
             }
 
             $this->flashService->error('Vous n\'avez pas de token valid pour exécuter cette action');

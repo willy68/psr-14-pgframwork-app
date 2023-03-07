@@ -26,7 +26,7 @@ class RequestUtils
     }
 
     /**
-     * Is json request?
+     * Is json request
      *
      * @param ServerRequestInterface $request
      * @return bool
@@ -65,7 +65,7 @@ class RequestUtils
         $accepts = explode(',', $request->getHeaderLine('Accept'));
         $format = 'html';
         foreach ($accepts as $accept) {
-            if (1 === preg_match('{^application/(?:\w+\++)*json$}i', $accept)) {
+            if (1 === preg_match('{^application/(?:\w+\++)*json}i', $accept)) {
                 $format = 'json';
             }
         }

@@ -6,6 +6,7 @@ namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Response;
 use PgFramework\Event\ExceptionEvent;
+use PgFramework\Response\JsonResponse;
 use PgFramework\Session\FlashService;
 use PgFramework\HttpUtils\RequestUtils;
 use PgFramework\Response\ResponseRedirect;
@@ -30,7 +31,7 @@ class InvalidCsrfListener implements EventSubscriberInterface
 
         if ($e instanceof InvalidCsrfException) {
             if (RequestUtils::isJson($request)) {
-                $event->setResponse(new Response(403, [], json_encode($e->getMessage() . ' ' . $e->getCode())));
+                $event->setResponse(new JsonResponse(403, [], json_encode($e->getMessage() . ' ' . $e->getCode())));
                 return;
             }
             $this->flashService->error('Vous n\'avez pas de token valid pour exécuter cette action');

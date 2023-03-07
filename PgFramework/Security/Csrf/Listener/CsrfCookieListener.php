@@ -10,6 +10,7 @@ use League\Event\ListenerPriority;
 use PgFramework\Event\RequestEvent;
 use PgFramework\Event\ResponseEvent;
 use PgFramework\Event\ExceptionEvent;
+use PgFramework\Response\JsonResponse;
 use PgFramework\Session\FlashService;
 use PgFramework\HttpUtils\RequestUtils;
 use Grafikart\Csrf\InvalidCsrfException;
@@ -108,7 +109,7 @@ class CsrfCookieListener implements EventSubscriberInterface
             }
 
             if (RequestUtils::isJson($request)) {
-                $response = new Response(403, [], json_encode($e->getMessage()));
+                $response = new JsonResponse(403, [], json_encode($e->getMessage()));
             } else {
                 $this->flashService->error('Vous n\'avez pas de token valid pour exécuter cette action');
                 $response = new ResponseRedirect('/');

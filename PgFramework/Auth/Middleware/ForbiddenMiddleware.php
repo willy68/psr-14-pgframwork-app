@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PgFramework\Auth\Middleware;
 
 use GuzzleHttp\Psr7\Response;
+use PgFramework\Response\JsonResponse;
 use PgFramework\Session\FlashService;
 use PgFramework\HttpUtils\RequestUtils;
 use Psr\Http\Message\ResponseInterface;
@@ -36,18 +37,18 @@ class ForbiddenMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         } catch (ForbiddenException $e) {
             if (RequestUtils::isJson($request)) {
-                return new Response(403, [], $e->getMessage() . ' ' . $e->getCode());
+                return new JsonResponse(403, [],  json_encode($e->getMessage() . ' ' . $e->getCode()));
             }
             return $this->redirectLogin($request);
         } catch (FailedAccessException $e) {
             if (RequestUtils::isJson($request)) {
-                return new Response(403, [], $e->getMessage() . ' ' . $e->getCode());
+                return new JsonResponse(403, [], json_encode($e->getMessage() . ' ' . $e->getCode()));
             }
             return $this->redirectAdminHome($request);
         } catch (TypeError $error) {
-            if (strpos($error->getMessage(), UserInterface::class) !== false) {
+            if (str_contains($error->getMessage(), UserInterface::class)) {
                 if (RequestUtils::isJson($request)) {
-                    return new Response(403, [], $error->getMessage() . ' ' . $error->getCode());
+                    return new JsonResponse(403, [], json_encode($error->getMessage() . ' ' . $error->getCode()));
                 }
                 return $this->redirectLogin($request);
             }
