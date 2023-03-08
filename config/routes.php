@@ -22,6 +22,7 @@ return [
             'methods' => ['POST'],
             // Add main LoginSuccessEvent
             'listeners' => [
+                BodyParserListener::class,
                 // Priority 100
                 RehashPasswordListener::class
             ]

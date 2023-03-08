@@ -188,7 +188,7 @@ class PostApiController
             if ($lastOffset < $offset + $limit) {
                 $lastOffset = $offset + $limit;
             }
-            $lastOffset = max($lastOffset, $next['offset'] ?? 0 + $next['limit'] ?? 0);
+            $lastOffset = max($lastOffset, ($next['offset'] ?? 0) + ($next['limit'] ?? 0));
             if ($lastOffset + $lastLimit > $countTotal) {
                 $lastLimit = $countTotal - $lastOffset;
             }

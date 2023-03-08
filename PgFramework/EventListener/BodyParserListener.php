@@ -190,7 +190,7 @@ class BodyParserListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            Events::REQUEST => ListenerPriority::LOW
+            Events::REQUEST => 400
         ];
     }
 }
