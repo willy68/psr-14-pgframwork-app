@@ -33,12 +33,12 @@ abstract class AbstractVoter implements VoterInterface
             } catch (TypeError $e) {
                 if (PHP_VERSION_ID < 80000) {
                     if (
-                        0 === strpos($e->getMessage(), 'Argument 1 passed to')
-                        && false !== strpos($e->getMessage(), '::canVote() must be of the type string')
+                        str_starts_with($e->getMessage(), 'Argument 1 passed to')
+                        && str_contains($e->getMessage(), '::canVote() must be of the type string')
                     ) {
                         continue;
                     }
-                } elseif (str_contains($e->getMessage(), 'canVote(): Argument #1')) {
+                } elseif (false !== strpos($e->getMessage(), 'canVote(): Argument #1')) {
                     continue;
                 }
 
