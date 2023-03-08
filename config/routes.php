@@ -1,6 +1,7 @@
 <?php
 
 use PgFramework\EventListener\BodyParserListener;
+use PgFramework\Security\Firewall\EventListener\ForbiddenListener;
 use PgFramework\Security\Firewall\EventListener\RehashPasswordListener;
 
 use function DI\add;
@@ -12,6 +13,7 @@ return [
             'path' => '^/api',
             'listeners' => [
                 BodyParserListener::class,
+                ForbiddenListener::class,
                 //ContentTypeJsonListener::class,
             ]
         ],

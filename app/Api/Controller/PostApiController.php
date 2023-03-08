@@ -16,6 +16,7 @@ use PgFramework\HttpUtils\RequestUtils;
 use PgFramework\Middleware\BodyParserMiddleware;
 use PgFramework\Response\JsonResponse;
 use PgFramework\Router\Annotation\Route;
+use PgFramework\Security\Authorization\AuthorizationCheckerInterface;
 use PgFramework\Validator\Validator;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -26,8 +27,11 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route('/api/v1')]
 class PostApiController
 {
-    public function __construct(private ManagerRegistry $om, private SerializerInterface $serializer)
-    {
+    public function __construct(
+        private ManagerRegistry $om,
+        private SerializerInterface $serializer,
+        private AuthorizationCheckerInterface $authChecker
+    ) {
     }
 
     #[Route('/posts', name: 'api-posts-getList', methods: ['GET'])]
@@ -96,6 +100,7 @@ class PostApiController
     #[Route('/posts', name: 'api.post.create', methods: ['POST'], middlewares: [BodyParserMiddleware::class])]
     public function create(ServerRequestInterface $request): ResponseInterface
     {
+        $checker = $this->authChecker->isGranted('ROLE_ADMIN');
         $post = new Post();
 
         /** @var PostRepository $repo */

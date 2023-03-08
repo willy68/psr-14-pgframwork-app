@@ -7,11 +7,14 @@ use Doctrine\DBAL\Configuration as DbalConfiguration;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use PgFramework\Auth\Auth;
 use PgFramework\Database\Doctrine\Bridge\DebugStack;
 use PgFramework\Database\Doctrine\Bridge\DebugStackInterface;
 use PgFramework\Database\Doctrine\ConnectionConfigFactory;
 use PgFramework\Database\Doctrine\DbalConnectionFactory;
 use PgFramework\Jwt\JwtMiddlewareFactory;
+use PgFramework\Security\Authorization\AuthorizationChecker;
+use PgFramework\Security\Authorization\AuthorizationCheckerInterface;
 use PgFramework\Serializer\NormalizerFactory;
 use PgFramework\Serializer\SerializerFactory;
 use Psr\Container\ContainerInterface;
@@ -172,6 +175,8 @@ return [
         ->constructorParameter('authenticators', get('security.authenticators')),
     AuthenticationMiddleware::class => autowire()
         ->constructorParameter('authenticators', get('security.authenticators')),
+    AuthorizationCheckerInterface::class => create(AuthorizationChecker::class)
+        ->constructor(get(Auth::class), get(VoterManagerInterface::class), true),
     JwtAuthentication::class => factory(JwtMiddlewareFactory::class),
     Invoker::class => factory(InvokerFactory::class),
     ParameterResolver::class => factory(ResolverChainFactory::class),
