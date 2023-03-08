@@ -130,9 +130,9 @@ class CsrfCookieListener implements EventSubscriberInterface
             }
 
             if (RequestUtils::isJson($request)) {
-                $response = new JsonResponse(403, [], json_encode($e->getMessage()));
+                $response = new JsonResponse(403, json_encode($e->getMessage()));
             } else {
-                $this->flashService->error('Vous n\'avez pas de token valid pour executer cette action');
+                $this->flashService->error('Vous n\'avez pas de token valid pour exécuter cette action');
                 $response = new ResponseRedirect('/');
             }
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PgFramework\EventListener;
 
-use GuzzleHttp\Psr7\Response;
 use PgFramework\Event\ExceptionEvent;
 use PgFramework\Response\JsonResponse;
 use PgFramework\Session\FlashService;

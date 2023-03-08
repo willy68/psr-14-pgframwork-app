@@ -4,13 +4,21 @@ declare(strict_types=1);
 
 namespace App\Api\Controller;
 
+use App\Entity\Category;
 use App\Entity\Post;
 use App\Repository\PostRepository;
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use GuzzleHttp\Psr7\Utils;
+use PgFramework\Database\Hydrator;
 use PgFramework\HttpUtils\RequestUtils;
+use PgFramework\Middleware\BodyParserMiddleware;
 use PgFramework\Response\JsonResponse;
 use PgFramework\Router\Annotation\Route;
+use PgFramework\Validator\Validator;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -81,14 +89,38 @@ class PostApiController
         return $response->withStatus(404)->withBody(Utils::streamFor("error: user with id $id not found"));
     }
 
-    private function getResponseForList(
-                               $posts,
-        ServerRequestInterface $request,
-        int                    $offset,
-        int                    $limit,
-        int                    $countTotal
-    ): ResponseInterface
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    #[Route('/posts', name: 'api.post.create', methods: ['POST'], middlewares: [BodyParserMiddleware::class])]
+    public function create(ServerRequestInterface $request): ResponseInterface
     {
+        $post = new Post();
+
+        /** @var PostRepository $repo */
+        $em = $this->om->getManager();
+        $params = $request->getParsedBody();
+        $validator = $this->getValidator($params);
+        if ($validator->isValid()) {
+            Hydrator::hydrate($this->getParams($params, $post), $post);
+            $post->setCreatedAt(new DateTimeImmutable());
+            $em->persist($post);
+            $em->flush();
+            $json = $this->serializer->serialize($post, 'json', ['groups' => ['group1', 'group3']]);
+            return new JsonResponse(201, $json);
+        }
+        $errors = $validator->getErrors();
+        return new JsonResponse(400, json_encode($errors));
+    }
+
+    private function getResponseForList(
+        $posts,
+        ServerRequestInterface $request,
+        int $offset,
+        int $limit,
+        int $countTotal
+    ): ResponseInterface {
         $count = count($posts);
 
         $json = $this->serializer->serialize($posts, 'json', ['groups' => ['group1', 'group3']]);
@@ -97,16 +129,16 @@ class PostApiController
             $path = RequestUtils::getDomain($request) . $request->getUri()->getPath();
             $linkData = $this->getLinkData($countTotal, $offset, $limit);
             $first = (!empty($linkData['first'])) ?
-                "<$path?offset=" . $linkData['first']['offset'] ."&limit=" . $linkData['first']['limit'] . ">; rel=\"first\", " :
+                "$path?offset=" . $linkData['first']['offset'] . "&limit=" . $linkData['first']['limit'] . "; rel=\"first\", " :
                 '';
             $prev = (!empty($linkData['prev'])) ?
-                "<$path?offset=" . $linkData['prev']['offset'] . "&limit=" . $linkData['prev']['limit']  .">; rel=\"prev\", " :
+                "$path?offset=" . $linkData['prev']['offset'] . "&limit=" . $linkData['prev']['limit'] . "; rel=\"prev\", " :
                 '';
             $next = (!empty($linkData['next'])) ?
-                "<$path?offset=" . $linkData['next']['offset'] . "&limit=" . $linkData['next']['limit']  .">; rel=\"next\", " :
+                "$path?offset=" . $linkData['next']['offset'] . "&limit=" . $linkData['next']['limit'] . "; rel=\"next\", " :
                 '';
             $last = (!empty($linkData['last'])) ?
-                "<$path?offset=" . $linkData['last']['offset'] . "&limit=" . $linkData['next']['limit'] . ">; rel=\"last\"" :
+                "$path?offset=" . $linkData['last']['offset'] . "&limit=" . $linkData['last']['limit'] . "; rel=\"last\"" :
                 '';
             $response = $response
                 ->withStatus(206)
@@ -121,12 +153,9 @@ class PostApiController
     private function getLinkData(int $countTotal, int $offset, int $limit): array
     {
         $first = [];
-        $firstOffset = 0;
-        $firstLimit = $limit;
-        if ($firstOffset + $limit >= $offset) {
-            $firstLimit = $offset;
-        }
         if ($offset > 0) {
+            $firstOffset = 0;
+            $firstLimit = min($limit, $offset);
             $first['offset'] = $firstOffset;
             $first['limit'] = $firstLimit;
         }
@@ -134,11 +163,7 @@ class PostApiController
         $prev = [];
         $prevOffset = $offset - $limit;
         $prevLimit = $limit;
-        if ($prevOffset < 0) {
-            $prevOffset = 0;
-            $prevLimit = $offset;
-        }
-        if ($offset > 0) {
+        if ($prevOffset > 0) {
             $prev['offset'] = $prevOffset;
             $prev['limit'] = $prevLimit;
         }
@@ -146,10 +171,7 @@ class PostApiController
         $next = [];
         $nextOffset = $offset + $limit;
         $nextLimit = $limit;
-        if ($nextOffset < $countTotal) {
-            if ($nextOffset + $nextLimit > $countTotal) {
-                $nextLimit =  $countTotal - $nextOffset;
-            }
+        if ($nextOffset + $nextLimit < $countTotal) {
             $next['offset'] = $nextOffset;
             $next['limit'] = $nextLimit;
         }
@@ -157,13 +179,14 @@ class PostApiController
         $last = [];
         $lastOffset = $countTotal - $limit;
         $lastLimit = $limit;
-        if ($lastOffset + $lastLimit > $countTotal) {
-            $lastLimit = $countTotal - $lastOffset + $lastLimit;
-        }
-        if ($lastOffset < $offset + $limit) {
-            $lastOffset = $offset + $limit;
-        }
         if ($offset + $limit < $countTotal) {
+            if ($lastOffset < $offset + $limit) {
+                $lastOffset = $offset + $limit;
+            }
+            $lastOffset = max($lastOffset, $next['offset'] ?? 0 + $next['limit'] ?? 0);
+            if ($lastOffset + $lastLimit > $countTotal) {
+                $lastLimit = $countTotal - $lastOffset;
+            }
             $last['offset'] = $lastOffset;
             $last['limit'] = $lastLimit;
         }
@@ -176,4 +199,43 @@ class PostApiController
         ];
     }
 
+    protected function getParams(array $params, ?Post $post = null): array
+    {
+        $params = array_filter($params, function ($key) {
+            return in_array($key, ['name', 'slug', 'content', 'created_at', 'category_id', 'image', 'published']);
+        }, ARRAY_FILTER_USE_KEY);
+
+        if ($post && $params['category_id'] !== ($post->getCategory()?->getId())) {
+            $category = $this->om
+                ->getManagerForClass(Category::class)
+                ->find(Category::class, $params['category_id']);
+            $params['category'] = $category;
+            unset($params['category_id']);
+        }
+        return array_merge($params, [
+            'updated_at' => new DateTime('now')
+        ]);
+    }
+
+    /**
+     * @param array $params
+     * @return Validator
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    protected function getValidator(array $params): Validator
+    {
+        return (new Validator($params))
+            ->required('name', 'slug', 'content', 'category_id')
+            ->addRules([
+                'content' => 'min:2',
+                'name' => 'range:2,250',
+                'slug' => 'slug|range:2,100',
+                'category_id' => 'exists:' . Category::class
+            ]);
+        //if (is_null($request->getAttribute('id'))) {
+        //    $validator->uploaded('image');
+        //}
+        //return $validator;
+    }
 }
