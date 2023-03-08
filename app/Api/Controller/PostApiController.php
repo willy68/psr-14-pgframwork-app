@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Api\Controller;
 
+use App\Blog\PostUpload;
 use App\Entity\Category;
 use App\Entity\Post;
 use App\Repository\PostRepository;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use GuzzleHttp\Psr7\Utils;
 use PgFramework\Database\Hydrator;
 use PgFramework\HttpUtils\RequestUtils;
@@ -27,15 +29,19 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route('/api/v1')]
 class PostApiController
 {
+    private ObjectManager $em;
+
     public function __construct(
-        private ManagerRegistry $om,
-        private SerializerInterface $serializer,
-        private AuthorizationCheckerInterface $authChecker
+        private ManagerRegistry               $om,
+        private SerializerInterface           $serializer,
+        private AuthorizationCheckerInterface $authChecker,
+        private PostUpload                    $postUpload
     ) {
+        $this->em = $om->getManager();
     }
 
-    #[Route('/posts', name: 'api-posts-getList', methods: ['GET'])]
-    public function getPosts(ServerRequestInterface $request): ResponseInterface
+    #[Route('/posts', name: 'api.posts.index', methods: ['GET'])]
+    public function index(ServerRequestInterface $request): ResponseInterface
     {
         $params = $request->getQueryParams();
         /** @var PostRepository $repo */
@@ -54,8 +60,8 @@ class PostApiController
         return $this->getResponseForList($posts, $request, $offset, $limit, $countTotal);
     }
 
-    #[Route('/category/{category_id:\d+}/posts', name: 'api-posts-getList-forCategory', methods: ['GET'])]
-    public function getPostsForCategory(ServerRequestInterface $request): ResponseInterface
+    #[Route('/category/{category_id:\d+}/posts', name: 'api.posts.index.for.category', methods: ['GET'])]
+    public function indexForCategory(ServerRequestInterface $request): ResponseInterface
     {
         $params = $request->getQueryParams();
         $category_id = (int)$request->getAttribute('category_id');
@@ -75,8 +81,8 @@ class PostApiController
         return $this->getResponseForList($posts, $request, $offset, $limit, $countTotal);
     }
 
-    #[Route('/posts/{id:\d+}', name: 'api-post-getPost', methods: ['GET'])]
-    public function getPost(ServerRequestInterface $request): ResponseInterface
+    #[Route('/posts/{id:\d+}', name: 'api.post.show', methods: ['GET'])]
+    public function show(ServerRequestInterface $request): ResponseInterface
     {
         $id = $request->getAttribute('id');
         /** @var PostRepository $repo */
@@ -100,7 +106,7 @@ class PostApiController
     #[Route('/posts', name: 'api.post.create', methods: ['POST'], middlewares: [BodyParserMiddleware::class])]
     public function create(ServerRequestInterface $request): ResponseInterface
     {
-        $checker = $this->authChecker->setExceptionOnNoUser(false)->isGranted('ROLE_ADMIN');
+        $this->authChecker->isGranted('ROLE_ADMIN');
         $post = new Post();
 
         /** @var PostRepository $repo */
@@ -115,8 +121,66 @@ class PostApiController
             $json = $this->serializer->serialize($post, 'json', ['groups' => ['group1', 'group3']]);
             return new JsonResponse(201, $json);
         }
+        Hydrator::hydrate($params, $post);
+        $json = $this->serializer->serialize($post, 'json', ['groups' => ['group1', 'group3']]);
         $errors = $validator->getErrors();
-        return new JsonResponse(400, json_encode($errors));
+        return new JsonResponse(400, json_encode($errors) . "\n" . $json);
+    }
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    #[Route('/posts/{id:\d+}', name: 'api.post.edit', methods: ['PATCH'], middlewares: [BodyParserMiddleware::class])]
+    public function edit(ServerRequestInterface $request): ResponseInterface
+    {
+        $this->authChecker->isGranted('ROLE_ADMIN');
+        $repo = $this->em->getRepository(Post::class);
+        $post = $repo->find($request->getAttribute('id'));
+        $params = $this->getParams($request->getParsedBody());
+
+        $validator = $this->getValidator($params);
+        if ($validator->isValid()) {
+            Hydrator::hydrate($this->getParams($params, $post), $post);
+            $this->em->persist($post);
+            $this->em->flush();
+            $json = $this->serializer->serialize($post, 'json', ['groups' => ['group1', 'group3']]);
+            return new JsonResponse(200, $json);
+        }
+        Hydrator::hydrate($params, $post);
+        $json = $this->serializer->serialize($post, 'json', ['groups' => ['group1', 'group3']]);
+        $errors = $validator->getErrors();
+        return new JsonResponse(400, json_encode($errors) . "\n" . $json);
+    }
+
+    #[Route('/posts/{id:\d+}', name: 'api.post.delete', methods: ['DELETE'], middlewares: [BodyParserMiddleware::class])]
+    public function delete(ServerRequestInterface $request): ResponseInterface
+    {
+        $this->authChecker->isGranted('ROLE_ADMIN');
+        /** @var Post $post */
+        $post = $this->em->find(Post::class, $request->getAttribute('id'));
+        $this->postUpload->delete($post->getImage());
+        $this->em->remove($post);
+        $this->em->flush();
+        return new JsonResponse(200);
+    }
+
+    protected function getParams(array $params, ?Post $post = null): array
+    {
+        $params = array_filter($params, function ($key) {
+            return in_array($key, ['name', 'slug', 'content', 'created_at', 'category_id', 'image', 'published']);
+        }, ARRAY_FILTER_USE_KEY);
+
+        if ($post && $params['category_id'] !== ($post->getCategory()?->getId())) {
+            $category = $this->om
+                ->getManagerForClass(Category::class)
+                ->find(Category::class, $params['category_id']);
+            $params['category'] = $category;
+            unset($params['category_id']);
+        }
+        return array_merge($params, [
+            'updated_at' => new DateTime('now')
+        ]);
     }
 
     private function getResponseForList(
@@ -204,24 +268,6 @@ class PostApiController
         ];
     }
 
-    protected function getParams(array $params, ?Post $post = null): array
-    {
-        $params = array_filter($params, function ($key) {
-            return in_array($key, ['name', 'slug', 'content', 'created_at', 'category_id', 'image', 'published']);
-        }, ARRAY_FILTER_USE_KEY);
-
-        if ($post && $params['category_id'] !== ($post->getCategory()?->getId())) {
-            $category = $this->om
-                ->getManagerForClass(Category::class)
-                ->find(Category::class, $params['category_id']);
-            $params['category'] = $category;
-            unset($params['category_id']);
-        }
-        return array_merge($params, [
-            'updated_at' => new DateTime('now')
-        ]);
-    }
-
     /**
      * @param array $params
      * @return Validator
@@ -231,7 +277,7 @@ class PostApiController
     protected function getValidator(array $params): Validator
     {
         return (new Validator($params))
-            ->required('name', 'slug', 'content', 'category_id')
+            ->required('name', 'slug', 'content', 'category_id', 'published')
             ->addRules([
                 'content' => 'min:2',
                 'name' => 'range:2,250',
