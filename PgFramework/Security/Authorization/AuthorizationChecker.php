@@ -34,4 +34,11 @@ class AuthorizationChecker implements AuthorizationCheckerInterface
 
         return $this->voterManager->decide($this->auth, [$attribute], $subject);
     }
+
+    public function setExceptionOnNoUser(bool $exceptionOnNoUser): static
+    {
+        $this->exceptionOnNoUser = $exceptionOnNoUser;
+        return $this;
+    }
+
 }

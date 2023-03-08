@@ -100,7 +100,7 @@ class PostApiController
     #[Route('/posts', name: 'api.post.create', methods: ['POST'], middlewares: [BodyParserMiddleware::class])]
     public function create(ServerRequestInterface $request): ResponseInterface
     {
-        $checker = $this->authChecker->isGranted('ROLE_ADMIN');
+        $checker = $this->authChecker->setExceptionOnNoUser(false)->isGranted('ROLE_ADMIN');
         $post = new Post();
 
         /** @var PostRepository $repo */

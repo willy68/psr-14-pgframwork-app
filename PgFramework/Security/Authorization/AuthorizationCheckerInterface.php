@@ -17,4 +17,12 @@ interface AuthorizationCheckerInterface
      * @return bool
      */
     public function isGranted(mixed $attribute, mixed $subject = null): bool;
+
+    /**
+     * Change throw Exception on no User.
+     *
+     * @param bool $exceptionOnNoUser
+     * @return $this
+     */
+    public function setExceptionOnNoUser(bool $exceptionOnNoUser): static;
 }
