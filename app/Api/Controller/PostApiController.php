@@ -111,10 +111,10 @@ class PostApiController
 
         /** @var PostRepository $repo */
         $em = $this->om->getManager();
-        $params = $request->getParsedBody();
-        $validator = $this->getValidator($params);
+        $params = $this->getParams($request);
+        $validator = $this->getValidator($request);
         if ($validator->isValid()) {
-            Hydrator::hydrate($this->getParams($params, $post), $post);
+            Hydrator::hydrate($this->getParams($request, $post), $post);
             $post->setCreatedAt(new DateTimeImmutable());
             $em->persist($post);
             $em->flush();
@@ -137,20 +137,19 @@ class PostApiController
         $this->authChecker->isGranted('ROLE_ADMIN');
         $repo = $this->em->getRepository(Post::class);
         $post = $repo->find($request->getAttribute('id'));
-        $params = $this->getParams($request->getParsedBody());
 
-        $validator = $this->getValidator($params);
+        $validator = $this->getValidator($request);
         if ($validator->isValid()) {
-            Hydrator::hydrate($this->getParams($params, $post), $post);
+            Hydrator::hydrate($this->getParams($request, $post), $post);
             $this->em->persist($post);
             $this->em->flush();
             $json = $this->serializer->serialize($post, 'json', ['groups' => ['group1', 'group3']]);
             return new JsonResponse(200, $json);
         }
-        Hydrator::hydrate($params, $post);
+        Hydrator::hydrate($this->getParams($request), $post);
         $json = $this->serializer->serialize($post, 'json', ['groups' => ['group1', 'group3']]);
         $errors = $validator->getErrors();
-        return new JsonResponse(400, json_encode($errors) . "\n" . $json);
+        return new JsonResponse(400, json_encode($errors) . "\n" . $json . json_encode($this->getParams($request)));
     }
 
     #[Route('/posts/{id:\d+}', name: 'api.post.delete', methods: ['DELETE'], middlewares: [BodyParserMiddleware::class])]
@@ -165,8 +164,25 @@ class PostApiController
         return new JsonResponse(200);
     }
 
-    protected function getParams(array $params, ?Post $post = null): array
+    protected function getParams(ServerRequestInterface $request, ?Post $post = null): array
     {
+        $params = array_merge($request->getParsedBody(), $request->getUploadedFiles());
+
+        if (isset($params['delete']) && $params['delete'] == 1) {
+            $this->postUpload->delete($post->getImage());
+            $params['image'] = "";
+        } elseif ($post) {
+            if (isset($params['image'])) {
+                // Upload du fichier
+                $image = $this->postUpload->upload($params['image'], $post->getImage());
+                if ($image) {
+                    $params['image'] = $image;
+                } else {
+                    unset($params['image']);
+                }
+            }
+        }
+
         $params = array_filter($params, function ($key) {
             return in_array($key, ['name', 'slug', 'content', 'created_at', 'category_id', 'image', 'published']);
         }, ARRAY_FILTER_USE_KEY);
@@ -269,19 +285,20 @@ class PostApiController
     }
 
     /**
-     * @param array $params
+     * @param ServerRequestInterface $request
      * @return Validator
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    protected function getValidator(array $params): Validator
+    protected function getValidator(ServerRequestInterface $request): Validator
     {
-        return (new Validator($params))
+        return (new Validator(array_merge($request->getParsedBody(), $request->getUploadedFiles())))
             ->required('name', 'slug', 'content', 'category_id', 'published')
             ->addRules([
                 'content' => 'min:2',
                 'name' => 'range:2,250',
                 'slug' => 'slug|range:2,100',
+                'image' => 'filetype:[jpg,png]',
                 'category_id' => 'exists:' . Category::class
             ]);
         //if (is_null($request->getAttribute('id'))) {

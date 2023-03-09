@@ -10,7 +10,7 @@ use PgFramework\Event\ResponseEvent;
 use PgFramework\HttpUtils\RequestUtils;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
-class ContentTypeJsonListener implements EventSubscriberInterface
+class EnableCorsListener implements EventSubscriberInterface
 {
     public function __invoke(ResponseEvent $event)
     {

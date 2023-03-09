@@ -20,7 +20,6 @@ namespace PgFramework\EventListener;
 
 use Closure;
 use InvalidArgumentException;
-use League\Event\ListenerPriority;
 use PgFramework\Event\Events;
 use PgFramework\Event\RequestEvent;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
