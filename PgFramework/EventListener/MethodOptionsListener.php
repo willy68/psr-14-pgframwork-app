@@ -21,14 +21,12 @@ class MethodOptionsListener implements EventSubscriberInterface
             return;
         }
 
-        /** @var RouteResult $result */
         $result = $request->getAttribute(RouteResult::class);
-
-        if (!$result) {
+        if (! $result instanceof RouteResult) {
             return;
         }
 
-        if (!$result->isMethodFailure()) {
+        if ($result->isFailure() && ! $result->isMethodFailure()) {
             return;
         }
 
@@ -36,9 +34,12 @@ class MethodOptionsListener implements EventSubscriberInterface
             return;
         }
 
+        $allowedMethods = $result->getAllowedMethods();
+        assert(is_array($allowedMethods));
+
         $origin = $request->getHeaderLine('origin');
         if (empty($origin)) {
-            $origin = $request->getUri()->getHost() .
+            $origin = $request->getUri()->getScheme() .'://' .$request->getUri()->getHost() .
                 ($request->getUri()->getPort() ? ':' . $request->getUri()->getPort() : '');
         }
         $event->setResponse(new Response(200, [

@@ -21,22 +21,32 @@ class ApiOptionsMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+
         if ($request->getMethod() !== RequestMethod::METHOD_OPTIONS) {
             return $handler->handle($request);
         }
 
-        /** @var RouteResult $result */
         $result = $request->getAttribute(RouteResult::class);
-        if (!$result) {
+        if (! $result instanceof RouteResult) {
             return $handler->handle($request);
         }
-        if (!$result->isMethodFailure()) {
+
+        if ($result->isFailure() && ! $result->isMethodFailure()) {
             return $handler->handle($request);
         }
+
         if ($result->getMatchedRoute()) {
             return $handler->handle($request);
         }
 
+        $allowedMethods = $result->getAllowedMethods();
+        assert(is_array($allowedMethods));
+
+        $origin = $request->getHeaderLine('origin');
+        if (empty($origin)) {
+            $origin = $request->getUri()->getScheme() .'://' .$request->getUri()->getHost() .
+                ($request->getUri()->getPort() ? ':' . $request->getUri()->getPort() : '');
+        }
         return new Response(200, [
             'Access-Control-Allow-Headers' =>
                 'X-CSRF-TOKEN,' .
@@ -47,8 +57,8 @@ class ApiOptionsMiddleware implements MiddlewareInterface
                 'Accept,' .
                 'Client-Security-Token,' .
                 'User-Agent',
-            'Access-Control-Allow-Methods' => $result->getAllowedMethods(),
-            'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Methods' => $allowedMethods,
+            'Access-Control-Allow-Origin' => $origin,
             'Access-Control-Allow-Credentials' => 'true',
             'Content-Type' => 'application/json,application/*+json;charset=UTF-8'
         ]);

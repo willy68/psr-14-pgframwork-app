@@ -167,12 +167,11 @@ class PostApiController
     protected function getParams(ServerRequestInterface $request, ?Post $post = null): array
     {
         $params = array_merge($request->getParsedBody(), $request->getUploadedFiles());
-
-        if (isset($params['delete']) && $params['delete'] == 1) {
-            $this->postUpload->delete($post->getImage());
-            $params['image'] = "";
-        } elseif ($post) {
-            if (isset($params['image'])) {
+        if ($post) {
+            if (isset($params['delete']) && $params['delete'] == 1) {
+                $this->postUpload->delete($post->getImage());
+                $params['image'] = "";
+            } elseif (isset($params['image'])) {
                 // Upload du fichier
                 $image = $this->postUpload->upload($params['image'], $post->getImage());
                 if ($image) {
