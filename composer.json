@@ -21,7 +21,7 @@
         "symfony/dotenv": "^6.0",
         "doctrine/orm": "^2.8",
         "doctrine/annotations": "^1.13 || ^2",
-        "guzzlehttp/psr7": "^1.6",
+        "guzzlehttp/psr7": "^2.4",
         "php-di/php-di": "^7.0",
         "php-di/invoker": "^2.2",
         "twig/twig": "^3.0",
