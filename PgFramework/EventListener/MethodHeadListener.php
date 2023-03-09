@@ -35,7 +35,7 @@ class MethodHeadListener implements EventSubscriberInterface
         }
 
         $result = $request->getAttribute(RouteResult::class);
-        if (!$result) {
+        if (!$result instanceof RouteResult) {
             return;
         }
 
@@ -71,8 +71,7 @@ class MethodHeadListener implements EventSubscriberInterface
         if ($request->getAttribute(self::FORWARDED_HTTP_METHOD_ATTRIBUTE)) {
             $response = $event->getResponse();
 
-            /** @var StreamInterface $body */
-            $body = Utils::streamFor(null);
+            $body = Utils::streamFor('');
             $event->setResponse($response->withBody($body));
         }
     }

@@ -73,7 +73,7 @@ class ApiHeadMiddleware implements MiddlewareInterface
         }
 
         $result = $request->getAttribute(RouteResult::class);
-        if (! $result) {
+        if (!$result instanceof RouteResult) {
             return $handler->handle($request);
         }
 
@@ -98,8 +98,7 @@ class ApiHeadMiddleware implements MiddlewareInterface
                 ->withAttribute(self::FORWARDED_HTTP_METHOD_ATTRIBUTE, RequestMethod::METHOD_HEAD)
         );
 
-        /** @var StreamInterface $body */
-        $body = Utils::streamFor(null);
+        $body = Utils::streamFor('');
         return $response->withBody($body);
     }
 }
