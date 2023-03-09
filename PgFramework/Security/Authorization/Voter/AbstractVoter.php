@@ -16,8 +16,6 @@ namespace PgFramework\Security\Authorization\Voter;
 use PgFramework\Auth\Auth;
 use TypeError;
 
-use const PHP_VERSION_ID;
-
 abstract class AbstractVoter implements VoterInterface
 {
     public function vote(Auth $auth, array $attributes, $subject = null): int
@@ -31,17 +29,12 @@ abstract class AbstractVoter implements VoterInterface
                     continue;
                 }
             } catch (TypeError $e) {
-                if (PHP_VERSION_ID < 80000) {
-                    if (
-                        str_starts_with($e->getMessage(), 'Argument 1 passed to')
-                        && str_contains($e->getMessage(), '::canVote() must be of the type string')
-                    ) {
-                        continue;
-                    }
-                } elseif (false !== strpos($e->getMessage(), 'canVote(): Argument #1')) {
+                if (
+                    str_starts_with($e->getMessage(), 'Argument 1 passed to')
+                    && str_contains($e->getMessage(), '::canVote() must be of the type string')
+                ) {
                     continue;
                 }
-
                 throw $e;
             }
 
