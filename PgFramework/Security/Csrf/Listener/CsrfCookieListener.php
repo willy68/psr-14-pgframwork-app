@@ -108,7 +108,7 @@ class CsrfCookieListener implements EventSubscriberInterface
                 $this->csrfManager->removeToken($token);
             }
 
-            if (RequestUtils::isJson($request)) {
+            if (RequestUtils::isJson($request) || RequestUtils::wantJson($request)) {
                 $response = new JsonResponse(403, json_encode($e->getMessage()));
             } else {
                 $this->flashService->error('Vous n\'avez pas de token valid pour exécuter cette action');

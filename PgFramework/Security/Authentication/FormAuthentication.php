@@ -8,6 +8,8 @@ use Mezzio\Router\RouteResult;
 use PgFramework\Auth\Auth;
 use PgFramework\Auth\UserInterface;
 use Mezzio\Router\RouterInterface;
+use PgFramework\HttpUtils\RequestUtils;
+use PgFramework\Response\JsonResponse;
 use PgFramework\Session\FlashService;
 use Psr\Http\Message\ResponseInterface;
 use Mezzio\Session\SessionInterface;
@@ -20,6 +22,7 @@ use PgFramework\Security\Authentication\Exception\AuthenticationFailureException
 use PgFramework\Security\Authentication\Result\AuthenticateResult;
 use PgFramework\Security\Authentication\Result\AuthenticateResultInterface;
 
+use Symfony\Component\Serializer\SerializerInterface;
 use function is_string;
 
 class FormAuthentication implements AuthenticationInterface
@@ -36,6 +39,8 @@ class FormAuthentication implements AuthenticationInterface
 
     protected PasswordHasherInterface $hasher;
 
+    protected SerializerInterface $serializer;
+
     protected array $options = [
         'identifier' => 'username',
         'password' => 'password',
@@ -51,6 +56,7 @@ class FormAuthentication implements AuthenticationInterface
         SessionInterface $session,
         RouterInterface $router,
         PasswordHasherInterface $hasher,
+        SerializerInterface $serializer,
         array $options = []
     ) {
         $this->auth = $auth;
@@ -62,6 +68,7 @@ class FormAuthentication implements AuthenticationInterface
         if (!empty($options)) {
             $this->options = array_merge($this->options, $options);
         }
+        $this->serializer = $serializer;
     }
 
     public function supports(ServerRequestInterface $request): bool
@@ -131,6 +138,9 @@ class FormAuthentication implements AuthenticationInterface
     public function onAuthenticateSuccess(ServerRequestInterface $request, mixed $user): ?ResponseInterface
     {
         $this->auth->setUser($user);
+        if (RequestUtils::isJson($request) || RequestUtils::wantJson($request)) {
+            return new JsonResponse(200, json_encode($this->serializer->serialize($user, 'json')));
+        }
 
         $path = $this->session->get('auth.redirect') ?: $this->router->generateUri($this->options['redirect.success']);
         $this->session->unset('auth.redirect');
@@ -141,6 +151,10 @@ class FormAuthentication implements AuthenticationInterface
         ServerRequestInterface $request,
         AuthenticationFailureException $e
     ): ?ResponseInterface {
+        if (RequestUtils::isJson($request) || RequestUtils::wantJson($request)) {
+            return new JsonResponse(403, json_encode($e->getMessage() . ' ' . $e->getCode()));
+        }
+
         (new FlashService($this->session))->error('Identifiant ou mot de passe incorrect');
         return $this->redirect($this->options['auth.login']);
     }

@@ -55,8 +55,6 @@ class RequestUtils
     }
 
     /**
-     *
-     *
      * @param ServerRequestInterface $request
      * @return string
      */
@@ -70,6 +68,17 @@ class RequestUtils
             }
         }
         return $format;
+    }
+
+    public static function wantJson(ServerRequestInterface $request): bool
+    {
+        $accepts = explode(',', $request->getHeaderLine('Accept'));
+        foreach ($accepts as $accept) {
+            if (1 === preg_match('{^application/(?:\w+\++)*json}i', $accept)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static function getDomain(ServerRequestInterface $request): string

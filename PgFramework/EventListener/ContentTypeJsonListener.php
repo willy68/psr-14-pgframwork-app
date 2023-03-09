@@ -15,7 +15,7 @@ class ContentTypeJsonListener implements EventSubscriberInterface
     public function __invoke(ResponseEvent $event)
     {
         $request = $event->getRequest();
-        if (RequestUtils::isJson($request)) {
+        if (RequestUtils::isJson($request) || RequestUtils::wantJson($request)) {
             $origin = $request->getHeaderLine('origin');
             if (empty($origin)) {
                 $origin = $request->getUri()->getHost() .

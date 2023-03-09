@@ -58,7 +58,7 @@ class InvalidCsrfMiddleware implements MiddlewareInterface
         try {
             return $handler->handle($request);
         } catch (InvalidCsrfException $e) {
-            if (RequestUtils::isJson($request)) {
+            if (RequestUtils::isJson($request) || RequestUtils::wantJson($request)) {
                 return new JsonResponse(403, json_encode($e->getMessage() . ' ' . $e->getCode()));
             }
 

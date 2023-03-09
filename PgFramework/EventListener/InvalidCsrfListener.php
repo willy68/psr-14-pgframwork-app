@@ -29,7 +29,7 @@ class InvalidCsrfListener implements EventSubscriberInterface
         $request = $event->getRequest();
 
         if ($e instanceof InvalidCsrfException) {
-            if (RequestUtils::isJson($request)) {
+            if (RequestUtils::isJson($request) || RequestUtils::wantJson($request)) {
                 $event->setResponse(new JsonResponse(403, json_encode($e->getMessage() . ' ' . $e->getCode())));
                 return;
             }

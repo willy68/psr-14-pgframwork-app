@@ -37,7 +37,7 @@ class RecordNotFoundListener implements EventSubscriberInterface
     {
         $e = $event->getException();
         if ($e instanceof RecordNotFound || $e instanceof NoRecordException) {
-            if (RequestUtils::isJson($event->getRequest())) {
+            if (RequestUtils::isJson($event->getRequest()) || RequestUtils::wantJson($event->getRequest())) {
                 $event->setResponse(new JsonResponse(404, json_encode($e->getMessage())));
                 return;
             }
