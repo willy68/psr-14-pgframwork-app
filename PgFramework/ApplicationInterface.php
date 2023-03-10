@@ -12,10 +12,15 @@ use Psr\Http\Message\ServerRequestInterface;
 interface ApplicationInterface
 {
     /**
-     * @param  ServerRequestInterface|null $request
+     * @param ServerRequestInterface|null $request
+     * @return $this
+     */
+    public function init(?ServerRequestInterface $request = null): static;
+
+    /**
      * @return ResponseInterface
      */
-    public function run(?ServerRequestInterface $request = null): ResponseInterface;
+    public function run(): ResponseInterface;
 
     /**
      * @return ContainerInterface

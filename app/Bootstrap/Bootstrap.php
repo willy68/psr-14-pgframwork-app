@@ -34,5 +34,6 @@ return (static function (): App {
         $whoops->pushHandler(new PrettyPageHandler());
         $whoops->register();
     }*/
+    $app->init();
     return $app;
 })();

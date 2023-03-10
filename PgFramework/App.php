@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PgFramework;
 
 use Exception;
+use Invoker\Exception\NotCallableException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -130,14 +131,12 @@ class App extends AbstractApplication
     }
 
     /**
-     *
-     * @param ServerRequestInterface|null $request
-     * @return ResponseInterface
-     * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws Throwable
+     * @throws ContainerExceptionInterface
+     * @throws NotCallableException
+     * @throws \ReflectionException
      */
-    public function run(?ServerRequestInterface $request = null): ResponseInterface
+    public function init(?ServerRequestInterface $request = null): static
     {
         if ($request === null) {
             $request = ServerRequest::fromGlobals();
@@ -184,7 +183,15 @@ class App extends AbstractApplication
             }
             $this->kernel->setCallbacks($this->middlewares);
         }
+        return $this;
+    }
 
+    /**
+     *
+     * @return ResponseInterface
+     */
+    public function run(): ResponseInterface
+    {
         try {
             return $this->kernel->handle($this->request);
         } catch (Exception $e) {

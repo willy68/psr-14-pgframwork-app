@@ -7,38 +7,43 @@ use Doctrine\DBAL\Configuration as DbalConfiguration;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Grafikart\Csrf\CsrfMiddleware;
+use Invoker\CallableResolver;
+use Invoker\Invoker;
+use Invoker\ParameterResolver\ParameterResolver;
+use Mezzio\Router\RouterInterface;
+use Mezzio\Session\SessionInterface;
+use Mezzio\Session\SessionPersistenceInterface;
 use PgFramework\Auth\Auth;
+use PgFramework\Auth\Middleware\AuthenticationMiddleware;
+use PgFramework\Database\ActiveRecord\ActiveRecordFactory;
 use PgFramework\Database\Doctrine\Bridge\DebugStack;
 use PgFramework\Database\Doctrine\Bridge\DebugStackInterface;
 use PgFramework\Database\Doctrine\ConnectionConfigFactory;
 use PgFramework\Database\Doctrine\DbalConnectionFactory;
-use PgFramework\Jwt\JwtMiddlewareFactory;
-use PgFramework\Security\Authorization\AuthorizationChecker;
-use PgFramework\Security\Authorization\AuthorizationCheckerInterface;
-use PgFramework\Serializer\NormalizerFactory;
-use PgFramework\Serializer\SerializerFactory;
-use Psr\Container\ContainerInterface;
-use Grafikart\Csrf\CsrfMiddleware;
-use PgFramework\Twig\{
-    CsrfExtension,
-    FormExtension,
-    TextExtension,
-    TimeExtension,
-    FlashExtension,
-    PagerFantaExtension,
-    WebpackExtension
-};
-use PgFramework\Router\RouterTwigExtension;
-use PgFramework\Session\PHPSession;
-use PgFramework\Session\SessionInterface as PgSessionInterface;
-use PgFramework\Renderer\RendererInterface;
-use PgFramework\Renderer\TwigRendererFactory;
+use PgFramework\Database\Doctrine\DoctrineConfigFactory;
+use PgFramework\Database\Doctrine\EntityManagerFactory;
+use PgFramework\Database\Doctrine\OrmManagerFactory;
+use PgFramework\DebugBar\DebugBarFactory;
 use PgFramework\Environnement\Environnement;
+use PgFramework\EventDispatcher\EventDispatcher;
 use PgFramework\Invoker\CallableResolverFactory;
 use PgFramework\Invoker\InvokerFactory;
 use PgFramework\Invoker\ResolverChainFactory;
+use PgFramework\Jwt\JwtMiddlewareFactory;
+use PgFramework\Kernel\KernelEvent;
+use PgFramework\Mailer\MailerFactory;
+use PgFramework\Renderer\RendererInterface;
+use PgFramework\Renderer\TwigRendererFactory;
+use PgFramework\Router\Command\RouteListCommand;
 use PgFramework\Router\RequestMatcher;
 use PgFramework\Router\RequestMatcherInterface;
+use PgFramework\Router\RouterFactory;
+use PgFramework\Router\RouterTwigExtension;
+use PgFramework\Router\RoutesMapFactory;
+use PgFramework\Router\RoutesMapInterface;
+use PgFramework\Security\Authorization\AuthorizationChecker;
+use PgFramework\Security\Authorization\AuthorizationCheckerInterface;
 use PgFramework\Security\Authorization\VoterManagerFactory;
 use PgFramework\Security\Authorization\VoterManagerInterface;
 use PgFramework\Security\Csrf\CsrfTokenManager;
@@ -49,61 +54,54 @@ use PgFramework\Security\Csrf\TokenStorage\TokenSessionStorage;
 use PgFramework\Security\Csrf\TokenStorage\TokenStorageInterface;
 use PgFramework\Security\Firewall\AccessMapFactory;
 use PgFramework\Security\Firewall\AccessMapInterface;
+use PgFramework\Security\Firewall\EventListener\AuthenticationListener;
 use PgFramework\Security\Firewall\FirewallMapFactory;
 use PgFramework\Security\Firewall\FirewallMapInterface;
+use PgFramework\Security\Hasher\DefaultPasswordHasher;
+use PgFramework\Security\Hasher\PasswordHasherInterface;
+use PgFramework\Serializer\NormalizerFactory;
+use PgFramework\Serializer\SerializerFactory;
+use PgFramework\Session\PHPSession;
+use PgFramework\Session\SessionFactory;
+use PgFramework\Session\SessionInterface as PgSessionInterface;
+use PgFramework\Session\SessionPersistenceFactory;
+use PgFramework\Twig\{CsrfExtension,
+    FlashExtension,
+    FormExtension,
+    PagerFantaExtension,
+    TextExtension,
+    TimeExtension,
+    WebpackExtension
+};
 use PgFramework\Validator\Filter\StriptagsFilter;
 use PgFramework\Validator\Filter\TrimFilter;
-use PgFramework\Validator\Rules\{
+use PgFramework\Validator\Rules\{ConfirmValidation,
     DateFormatValidation,
-    ConfirmValidation,
     EmailValidation,
     ExistsValidation,
     ExtensionValidation,
     MaxValidation,
     MinValidation,
+    NotEmptyValidation,
     RangeValidation,
     RequiredValidation,
     SlugValidation,
     UniqueValidation,
-    UploadedValidation,
-    NotEmptyValidation
+    UploadedValidation
 };
-use Invoker\CallableResolver;
-use Invoker\Invoker;
-use Invoker\ParameterResolver\ParameterResolver;
-use Mezzio\Router\RouterInterface;
-use Mezzio\Session\SessionInterface;
-use Mezzio\Session\SessionPersistenceInterface;
-use PgFramework\Auth\Middleware\AuthenticationMiddleware;
-use PgFramework\Database\ActiveRecord\ActiveRecordFactory;
-use PgFramework\Database\Doctrine\DoctrineConfigFactory;
-use PgFramework\Database\Doctrine\EntityManagerFactory;
-use PgFramework\Database\Doctrine\OrmManagerFactory;
-use PgFramework\DebugBar\DebugBarFactory;
-use PgFramework\EventDispatcher\EventDispatcher;
-use PgFramework\Kernel\KernelEvent;
-use PgFramework\Mailer\MailerFactory;
-use PgFramework\Router\RouterFactory;
-use PgFramework\Router\RoutesMapFactory;
-use PgFramework\Router\RoutesMapInterface;
-use PgFramework\Security\Firewall\EventListener\AuthenticationListener;
-use PgFramework\Security\Hasher\DefaultPasswordHasher;
-use PgFramework\Security\Hasher\PasswordHasherInterface;
-use PgFramework\Session\SessionFactory;
-use PgFramework\Session\SessionPersistenceFactory;
 use PgRouter\RouteCollectionInterface;
 use PgRouter\RouteCollector;
 use PgRouter\Router;
-use Symfony\Component\Serializer\SerializerInterface;
-use Tuupola\Middleware\JwtAuthentication;
+use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mailer\MailerInterface;
-
+use Symfony\Component\Serializer\SerializerInterface;
+use Tuupola\Middleware\JwtAuthentication;
 use function DI\add;
 use function DI\autowire;
 use function DI\create;
-use function DI\get;
 use function DI\factory;
+use function DI\get;
 
 return [
     'env' => Environnement::getEnv('APP_ENV', 'dev'),
@@ -159,18 +157,18 @@ return [
     PgSessionInterface::class => create(PHPSession::class),
     RequestMatcherInterface::class => create(RequestMatcher::class),
     CsrfMiddleware::class =>
-    create()->constructor(get(SessionInterface::class)),
+        create()->constructor(get(SessionInterface::class)),
     TokenStorageInterface::class =>
-    create(TokenSessionStorage::class)->constructor(get(SessionInterface::class)),
+        create(TokenSessionStorage::class)->constructor(get(SessionInterface::class)),
     TokenGeneratorInterface::class => create(TokenGenerator::class),
     CsrfTokenManagerInterface::class =>
-    create(CsrfTokenManager::class)->constructor(
-        get(TokenStorageInterface::class),
-        get(TokenGeneratorInterface::class)
-    ),
+        create(CsrfTokenManager::class)->constructor(
+            get(TokenStorageInterface::class),
+            get(TokenGeneratorInterface::class)
+        ),
     PasswordHasherInterface::class =>
-    autowire(DefaultPasswordHasher::class)
-        ->constructorParameter('config', get('password.hasher.config')),
+        autowire(DefaultPasswordHasher::class)
+            ->constructorParameter('config', get('password.hasher.config')),
     AuthenticationListener::class => autowire()
         ->constructorParameter('authenticators', get('security.authenticators')),
     AuthenticationMiddleware::class => autowire()
@@ -265,4 +263,9 @@ return [
     DebugBar::class => factory(DebugBarFactory::class),
     'serializer.normalizers' => factory(NormalizerFactory::class),
     SerializerInterface::class => factory(SerializerFactory::class),
+    'console.commands' => add(
+        [
+            'route:list' => RouteListCommand::class,
+        ]
+    ),
 ];
