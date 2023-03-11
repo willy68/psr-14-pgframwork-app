@@ -9,6 +9,7 @@ use Invoker\Exception\NotCallableException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use ReflectionException;
 use RuntimeException;
 use DI\ContainerBuilder;
 use PgRouter\RouteCollector;
@@ -24,8 +25,8 @@ use PgFramework\Environnement\Environnement;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Annotation\AnnotationsLoader;
 use PgFramework\Router\Loader\DirectoryLoader;
-use Throwable;
 
+use Throwable;
 use function dirname;
 
 /**
@@ -134,7 +135,8 @@ class App extends AbstractApplication
      * @throws NotFoundExceptionInterface
      * @throws ContainerExceptionInterface
      * @throws NotCallableException
-     * @throws \ReflectionException
+     * @throws ReflectionException
+     * @throws Exception
      */
     public function init(?ServerRequestInterface $request = null): static
     {
@@ -194,7 +196,7 @@ class App extends AbstractApplication
     {
         try {
             return $this->kernel->handle($this->request);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return $this->kernel->handleException($e, $this->kernel->getRequest());
         }
     }
