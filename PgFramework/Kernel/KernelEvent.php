@@ -180,7 +180,7 @@ class KernelEvent implements KernelInterface
 
         try {
             return $this->filterResponse($response, $this->getRequest());
-        } catch (Exception $e) {
+        } catch (Throwable) {
             return $response;
         }
     }
