@@ -94,8 +94,8 @@ class KernelEvent implements KernelInterface
         if ($container instanceof Container) {
             $container->set(ServerRequestInterface::class, $this->getRequest());
         } else {
-            // Limitation: $request must be named "$request"
-            $params = array_merge(["request" => $event->getRequest()], $params);
+            // Limitation $request must be named "$request"
+            $params = array_merge(["request" => $this->getRequest()], $params);
         }
 
         $callableReflection = CallableReflection::create($controller);
