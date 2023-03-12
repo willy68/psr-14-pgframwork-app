@@ -7,7 +7,9 @@ use Exception;
 use GuzzleHttp\Psr7\Response;
 use Invoker\CallableResolver;
 use Invoker\Exception\NotCallableException;
+use Invoker\ParameterResolver\ResolverChain;
 use Mezzio\Router\RouteResult;
+use PgFramework\Invoker\ParameterResolver\RequestParamResolver;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -53,28 +55,23 @@ class RouteCallerMiddleware implements MiddlewareInterface
      * @throws Exception
      */
     public function process(
-        ServerRequestInterface $request,
+        ServerRequestInterface  $request,
         RequestHandlerInterface $handler
     ): ResponseInterface {
 
         $callback = $this->result->getMatchedRoute()->getCallback();
         $params = $this->result->getMatchedParams();
 
-        if ($this->container instanceof Container) {
-            $this->container->set(ServerRequestInterface::class, $request);
-        } else {
-            // Limitation $request must be named "$request"
-            $params = array_merge(["request" => $request], $params);
-        }
-
-        /** @var CallableResolver $callableResolver*/
+        /** @var CallableResolver $callableResolver */
         $callableResolver = $this->container->get(CallableResolver::class);
         $callback = $callableResolver->resolve($callback);
 
-        /** @var ParameterResolver $paramResolver */
-        $paramResolver = $this->container->get(ParameterResolver::class);
+        $paramsResolver = $this->container->get(ParameterResolver::class);
         $callableReflection = CallableReflection::create($callback);
-        $params = $paramResolver->getParameters($callableReflection, $params, []);
+        assert($paramsResolver instanceof ResolverChain);
+        // Add request param resolver if needed (hint ServerRequestInterface)
+        $paramsResolver->appendResolver(new RequestParamResolver($request));
+        $params = $paramsResolver->getParameters($callableReflection, $params, []);
 
         $response = $callback(...$params);
 

@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace PgFramework\Kernel;
 
-use DI\Container;
 use Exception;
 use Invoker\Exception\NotCallableException;
+use Invoker\ParameterResolver\ResolverChain;
 use PgFramework\EventDispatcher\EventDispatcher;
+use PgFramework\Invoker\ParameterResolver\RequestParamResolver;
 use ReflectionException;
 use RuntimeException;
 use InvalidArgumentException;
@@ -90,15 +91,10 @@ class KernelEvent implements KernelInterface
 
         $params = $this->getRequest()->getAttribute('_params');
 
-        // controller arguments
-        if ($container instanceof Container) {
-            $container->set(ServerRequestInterface::class, $this->getRequest());
-        } else {
-            // Limitation $request must be named "$request"
-            $params = array_merge(["request" => $this->getRequest()], $params);
-        }
-
         $callableReflection = CallableReflection::create($controller);
+        assert($this->paramsResolver instanceof ResolverChain);
+        // Add request param resolver if needed (hint ServerRequestInterface)
+        $this->paramsResolver->appendResolver(new RequestParamResolver($this->getRequest()));
         $params = $this->paramsResolver->getParameters($callableReflection, $params, []);
 
         $event = new ControllerParamsEvent($this, $controller, $params, $this->getRequest());
