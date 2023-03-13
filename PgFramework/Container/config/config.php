@@ -173,8 +173,8 @@ return [
         ->constructorParameter('authenticators', get('security.authenticators')),
     AuthenticationMiddleware::class => autowire()
         ->constructorParameter('authenticators', get('security.authenticators')),
-    AuthorizationCheckerInterface::class => create(AuthorizationChecker::class)
-        ->constructor(get(Auth::class), get(VoterManagerInterface::class), true),
+    AuthorizationCheckerInterface::class => autowire(AuthorizationChecker::class)
+        ->constructorParameter('exceptionOnNoUser', true),
     JwtAuthentication::class => factory(JwtMiddlewareFactory::class),
     Invoker::class => factory(InvokerFactory::class),
     ParameterResolver::class => factory(ResolverChainFactory::class),
