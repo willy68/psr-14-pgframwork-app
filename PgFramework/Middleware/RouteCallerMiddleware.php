@@ -2,7 +2,6 @@
 
 namespace PgFramework\Middleware;
 
-use DI\Container;
 use Exception;
 use GuzzleHttp\Psr7\Response;
 use Invoker\CallableResolver;
