@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PgFramework\EventListener;
 
 use ArrayAccess;
-use GuzzleHttp\Psr7\Response;
 use PgFramework\Event\Events;
 use Dflydev\FigCookies\SetCookie;
 use League\Event\ListenerPriority;
@@ -152,19 +151,19 @@ class CsrfCookieListener implements EventSubscriberInterface
     protected function validateToken(?string $token = null, ?string $cookie = null): void
     {
         if (!$token) {
-            throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
+            throw new InvalidCsrfException('Le token Csrf n\'existe pas');
         }
 
         if (!$cookie) {
-            throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
+            throw new InvalidCsrfException('Le cookie Csrf n\'existe pas');
         }
 
         if (!$this->tokenManager->isTokenValid($token)) {
-            throw new InvalidCsrfException('Le Csrf est incorrect');
+            throw new InvalidCsrfException('Le token Csrf est incorrect');
         }
 
         if (!hash_equals($token, $cookie)) {
-            throw new InvalidCsrfException('Le cookie Csrf est incorrect');
+            throw new InvalidCsrfException('Le cookie et le token Csrf ne correspondent pas');
         }
     }
 

@@ -95,19 +95,19 @@ class CsrfCookieMiddleware implements MiddlewareInterface
     protected function validateToken(?string $token = null, ?string $cookie = null)
     {
         if (!$token) {
-            throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
+            throw new InvalidCsrfException('Le token Csrf n\'existe pas');
         }
 
         if (!$cookie) {
-            throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');
+            throw new InvalidCsrfException('Le cookie Csrf n\'existe pas');
         }
 
         if (!$this->tokenManager->isTokenValid($token)) {
-            throw new InvalidCsrfException('Le Csrf est incorrect');
+            throw new InvalidCsrfException('Le token Csrf est incorrect');
         }
 
         if (!hash_equals($token, $cookie)) {
-            throw new InvalidCsrfException('Le cookie Csrf est incorrect');
+            throw new InvalidCsrfException('Le cookie et le token Csrf ne correspondent pas');
         }
     }
 
@@ -122,19 +122,19 @@ class CsrfCookieMiddleware implements MiddlewareInterface
             ->withValue($token)
             ->withExpires($this->config['expiry'])
             ->withPath('/')
-            ->withDomain(null)
+            ->withDomain()
             ->withSecure($this->config['secure'])
             ->withHttpOnly($this->config['httponly']);
         return FigResponseCookies::set($response, $setCookie);
     }
 
-    private function createCookie(string $token, ?int $expiry): SetCookie
+    private function createCookie(string $token, ?int $expiry = null): SetCookie
     {
         return SetCookie::create($this->config['cookieName'])
             ->withValue($token)
             ->withExpires(($expiry === null) ? $this->config['expiry'] : $expiry)
             ->withPath('/')
-            ->withDomain(null)
+            ->withDomain()
             ->withSecure($this->config['secure'])
             ->withHttpOnly($this->config['httponly']);
     }

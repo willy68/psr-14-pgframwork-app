@@ -7,11 +7,11 @@ namespace PgFramework\Middleware;
 use PgFramework\HttpUtils\RequestUtils;
 use PgFramework\Response\JsonResponse;
 use PgFramework\Response\ResponseRedirect;
+use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
 use PgFramework\Session\FlashService;
 use Grafikart\Csrf\InvalidCsrfException;
 use Dflydev\FigCookies\SetCookie;
 use Dflydev\FigCookies\FigResponseCookies;
-use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\{
     ResponseInterface,
     ServerRequestInterface
@@ -36,14 +36,16 @@ class InvalidCsrfMiddleware implements MiddlewareInterface
     ];
 
     private FlashService $flashService;
+    private CsrfTokenManagerInterface $tokenManager;
 
     /**
      * InvalidCsrfMiddleware constructor.
      * @param FlashService $flashService
      * @param array $config
      */
-    public function __construct(FlashService $flashService, array $config = [])
+    public function __construct(CsrfTokenManagerInterface $tokenManager, FlashService $flashService, array $config = [])
     {
+        $this->tokenManager = $tokenManager;
         $this->flashService = $flashService;
         $this->config = array_merge($this->config, $config);
     }
@@ -58,13 +60,24 @@ class InvalidCsrfMiddleware implements MiddlewareInterface
         try {
             return $handler->handle($request);
         } catch (InvalidCsrfException $e) {
-            if (RequestUtils::isJson($request) || RequestUtils::wantJson($request)) {
-                return new JsonResponse(403, json_encode($e->getMessage() . ' ' . $e->getCode()));
+            $token = $request->getAttribute($this->config['field']);
+            $tokenId = null;
+
+            if ($token) {
+                [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $token->getValue());
+            }
+            if ($tokenId) {
+                $this->tokenManager->removeToken($tokenId);
             }
 
-            $this->flashService->error('Vous n\'avez pas de token valid pour exécuter cette action');
+            if (RequestUtils::isJson($request) || RequestUtils::wantJson($request)) {
+                $response = new JsonResponse(403, json_encode($e->getMessage()));
+            } else {
+                $this->flashService->error('Vous n\'avez pas de token valid pour exécuter cette action');
+                $response = new ResponseRedirect('/');
+            }
+
             $setCookie = $this->deleteCookie(time() - 3600);
-            $response = new ResponseRedirect('/');
             return FigResponseCookies::set($response, $setCookie);
         }
     }
