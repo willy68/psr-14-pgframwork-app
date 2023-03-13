@@ -14,6 +14,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use GuzzleHttp\Psr7\Utils;
 use PgFramework\Database\Hydrator;
+use PgFramework\Database\NoRecordException;
 use PgFramework\HttpUtils\RequestUtils;
 use PgFramework\Middleware\BodyParserMiddleware;
 use PgFramework\Response\JsonResponse;
@@ -94,6 +95,7 @@ class PostApiController
         $response = new JsonResponse(200);
         if ($post) {
             $json = $this->serializer->serialize($post, 'json', ['groups' => ['group1', 'group3']]);
+            /** @var $response ResponseInterface */
             return $response->withBody(Utils::streamFor($json));
         }
         return $response->withStatus(404)->withBody(Utils::streamFor("error: user with id $id not found"));
@@ -130,13 +132,18 @@ class PostApiController
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
+     * @throws NoRecordException
      */
     #[Route('/posts/{id:\d+}', name: 'api.post.edit', methods: ['PATCH'], middlewares: [BodyParserMiddleware::class])]
     public function edit(ServerRequestInterface $request): ResponseInterface
     {
         $this->authChecker->isGranted('ROLE_ADMIN');
+        $id = $request->getAttribute('id');
         $repo = $this->em->getRepository(Post::class);
-        $post = $repo->find($request->getAttribute('id'));
+        $post = $repo->find($id);
+        if(!$post) {
+            throw new NoRecordException("error: user with id $id not found");
+        }
 
         $validator = $this->getValidator($request);
         if ($validator->isValid()) {
