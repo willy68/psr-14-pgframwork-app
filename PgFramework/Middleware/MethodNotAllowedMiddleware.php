@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace PgFramework\Middleware;
 
+use PgFramework\HttpUtils\RequestUtils;
+use PgFramework\Response\JsonResponse;
 use Psr\Http\Server\MiddlewareInterface;
 use GuzzleHttp\Psr7\Response;
 use Mezzio\Router\RouteResult;
@@ -43,6 +45,16 @@ class MethodNotAllowedMiddleware implements MiddlewareInterface
         $routeResult = $request->getAttribute(RouteResult::class);
         if (!$routeResult || !$routeResult->isMethodFailure()) {
             return $handler->handle($request);
+        }
+
+        if (RequestUtils::isJson($request) || RequestUtils::wantJson($request)) {
+            return new JsonResponse(
+                statusCode::STATUS_METHOD_NOT_ALLOWED,
+                json_encode(
+                    "Method not Allowed. Allowed methods: " .
+                    implode(',', $routeResult->getAllowedMethods())
+                )
+            );
         }
 
         return (new Response())

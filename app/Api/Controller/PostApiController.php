@@ -58,7 +58,7 @@ class PostApiController
         if (!$posts) {
             return new JsonResponse(400, 'Request out of range');
         }
-        return $this->getResponseForList($posts, $request, $offset, $limit, $countTotal);
+        return $this->getResponseForList($posts, $request, (int)$offset, (int)$limit, $countTotal);
     }
 
     #[Route('/category/{category_id:\d+}/posts', name: 'api.posts.index.for.category', methods: ['GET'])]
@@ -79,7 +79,7 @@ class PostApiController
         if (!$posts) {
             return new JsonResponse(400, 'Request out of range');
         }
-        return $this->getResponseForList($posts, $request, $offset, $limit, $countTotal);
+        return $this->getResponseForList($posts, $request, (int)$offset, (int)$limit, $countTotal);
     }
 
     #[Route('/posts/{id:\d+}', name: 'api.post.show', methods: ['GET'])]
