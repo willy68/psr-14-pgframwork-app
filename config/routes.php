@@ -14,13 +14,11 @@ return [
             'listeners' => [
                 BodyParserListener::class,
                 ForbiddenListener::class,
-                //ContentTypeJsonListener::class,
             ]
         ],
-        [   // Use no default listeners
+        [
             'path' => '^/login',
             'methods' => ['POST'],
-            // Add main LoginSuccessEvent
             'listeners' => [
                 BodyParserListener::class,
                 // Priority 100

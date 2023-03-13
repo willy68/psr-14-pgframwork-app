@@ -13,6 +13,7 @@ use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use GuzzleHttp\Psr7\Utils;
+use PgFramework\Auth\FailedAccessException;
 use PgFramework\Database\Hydrator;
 use PgFramework\Database\NoRecordException;
 use PgFramework\HttpUtils\RequestUtils;
@@ -104,11 +105,14 @@ class PostApiController
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
+     * @throws FailedAccessException
      */
     #[Route('/posts', name: 'api.post.create', methods: ['POST'], middlewares: [BodyParserMiddleware::class])]
     public function create(ServerRequestInterface $request): ResponseInterface
     {
-        $this->authChecker->isGranted('ROLE_ADMIN');
+        if (!$this->authChecker->isGranted('ROLE_ADMIN', $request)) {
+            throw new FailedAccessException('Vous n\'avez pas l\'authorisation pour exécuter cette action');
+        }
         $post = new Post();
 
         /** @var PostRepository $repo */
@@ -133,11 +137,14 @@ class PostApiController
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws NoRecordException
+     * @throws FailedAccessException
      */
     #[Route('/posts/{id:\d+}', name: 'api.post.edit', methods: ['PATCH'], middlewares: [BodyParserMiddleware::class])]
     public function edit(ServerRequestInterface $request): ResponseInterface
     {
-        $this->authChecker->isGranted('ROLE_ADMIN');
+        if (!$this->authChecker->isGranted('ROLE_USER', $request)) {
+            throw new FailedAccessException('Vous n\'avez pas l\'authorisation pour exécuter cette action');
+        }
         $id = $request->getAttribute('id');
         $repo = $this->em->getRepository(Post::class);
         $post = $repo->find($id);
@@ -159,10 +166,15 @@ class PostApiController
         return new JsonResponse(400, json_encode($errors) . "\n" . $json . json_encode($this->getParams($request)));
     }
 
+    /**
+     * @throws FailedAccessException
+     */
     #[Route('/posts/{id:\d+}', name: 'api.post.delete', methods: ['DELETE'], middlewares: [BodyParserMiddleware::class])]
     public function delete(ServerRequestInterface $request): ResponseInterface
     {
-        $this->authChecker->isGranted('ROLE_ADMIN');
+        if (!$this->authChecker->isGranted('ROLE_ADMIN', $request)) {
+            throw new FailedAccessException('Vous n\'avez pas l\'authorisation pour exécuter cette action');
+        }
         /** @var Post $post */
         $post = $this->em->find(Post::class, $request->getAttribute('id'));
         $this->postUpload->delete($post->getImage());

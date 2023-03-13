@@ -11,7 +11,7 @@ use function is_string;
 
 class VoterRoles implements VoterInterface
 {
-    private $prefix;
+    private string $prefix;
 
     public function __construct(string $prefix = 'ROLE_')
     {
