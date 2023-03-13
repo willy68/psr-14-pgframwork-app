@@ -48,11 +48,11 @@ class PostApiController
         /** @var PostRepository $repo */
         $repo = $this->om->getManager()->getRepository(Post::class);
         $countTotal = $repo->count([]);
-        $offset = (int)$params['offset'] ?? 0;
-        $limit = (int)$params['limit'] ?? $countTotal;
+        $offset = $params['offset'] ?? 0;
+        $limit = $params['limit'] ?? $countTotal;
         $posts = $repo->findAllForApi()
-            ->setFirstResult($offset)
-            ->setMaxResults($limit)
+            ->setFirstResult((int)$offset)
+            ->setMaxResults((int)$limit)
             ->getQuery()
             ->getResult();
         if (!$posts) {
@@ -69,11 +69,11 @@ class PostApiController
         /** @var PostRepository $repo */
         $repo = $this->om->getManager()->getRepository(Post::class);
         $countTotal = $repo->count(['category' => $category_id]);
-        $offset = (int)$params['offset'] ?? 0;
-        $limit = (int)$params['limit'] ?? $countTotal;
+        $offset = $params['offset'] ?? 0;
+        $limit = $params['limit'] ?? $countTotal;
         $posts = $repo->findAllForCategory($category_id)
-            ->setFirstResult($offset)
-            ->setMaxResults($limit)
+            ->setFirstResult((int)$offset)
+            ->setMaxResults((int)$limit)
             ->getQuery()
             ->getResult();
         if (!$posts) {
