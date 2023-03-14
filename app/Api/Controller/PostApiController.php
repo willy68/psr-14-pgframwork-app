@@ -99,7 +99,7 @@ class PostApiController
             /** @var $response ResponseInterface */
             return $response->withBody(Utils::streamFor($json));
         }
-        return $response->withStatus(404)->withBody(Utils::streamFor("error: user with id $id not found"));
+        return $response->withStatus(404)->withBody(Utils::streamFor("error: post with id $id not found"));
     }
 
     /**
@@ -149,7 +149,7 @@ class PostApiController
         $repo = $this->em->getRepository(Post::class);
         $post = $repo->find($id);
         if(!$post) {
-            throw new NoRecordException("error: user with id $id not found");
+            throw new NoRecordException("error: post with id $id not found");
         }
 
         $validator = $this->getValidator($request);
@@ -168,6 +168,7 @@ class PostApiController
 
     /**
      * @throws FailedAccessException
+     * @throws NoRecordException
      */
     #[Route('/posts/{id:\d+}', name: 'api.post.delete', methods: ['DELETE'], middlewares: [BodyParserMiddleware::class])]
     public function delete(ServerRequestInterface $request): ResponseInterface
@@ -175,8 +176,12 @@ class PostApiController
         if (!$this->authChecker->isGranted('ROLE_ADMIN', $request)) {
             throw new FailedAccessException('Vous n\'avez pas l\'authorisation pour exécuter cette action');
         }
+        $id = $request->getAttribute('id');
         /** @var Post $post */
-        $post = $this->em->find(Post::class, $request->getAttribute('id'));
+        $post = $this->em->find(Post::class, $id);
+        if(!$post) {
+            throw new NoRecordException("error: post with id $id not found");
+        }
         $this->postUpload->delete($post->getImage());
         $this->em->remove($post);
         $this->em->flush();
