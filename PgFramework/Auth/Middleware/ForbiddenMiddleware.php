@@ -37,7 +37,7 @@ class ForbiddenMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         } catch (ForbiddenException $e) {
             if (RequestUtils::isJson($request) || RequestUtils::wantJson($request)) {
-                return new JsonResponse(403, json_encode($e->getMessage() . ' ' . $e->getCode()));
+                return new JsonResponse(401, json_encode($e->getMessage() . ' ' . $e->getCode()));
             }
             return $this->redirectLogin($request);
         } catch (FailedAccessException $e) {

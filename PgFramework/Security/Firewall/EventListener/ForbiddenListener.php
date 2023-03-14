@@ -38,7 +38,7 @@ class ForbiddenListener implements EventSubscriberInterface
 
         if ($e instanceof ForbiddenException) {
             if (RequestUtils::isJson($request) || RequestUtils::wantJson($request)) {
-                $event->setResponse(new JsonResponse(403, json_encode($e->getMessage() . ' ' . $e->getCode())));
+                $event->setResponse(new JsonResponse(401, json_encode($e->getMessage() . ' ' . $e->getCode())));
                 return;
             }
             $event->setResponse($this->redirectLogin($request));

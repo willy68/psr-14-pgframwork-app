@@ -4,10 +4,13 @@ namespace App\Auth\Actions;
 
 use PgFramework\Auth\AuthSession;
 use PgFramework\Auth\Middleware\CookieLogoutMiddleware;
+use PgFramework\HttpUtils\RequestUtils;
+use PgFramework\Response\JsonResponse;
 use PgFramework\Response\ResponseRedirect;
 use PgFramework\Router\Annotation\Route;
 use PgFramework\Session\FlashService;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @Route("/logout", name="auth.logout", methods={"POST"}, middlewares={CookieLogoutMiddleware::class})
@@ -27,10 +30,13 @@ class LogoutAction
         $this->flashService = $flashService;
     }
 
-    public function __invoke(): ResponseInterface
+    public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
         $this->auth->logout();
-        $this->flashService->success('Vous êtes maintenant déconnecté');
+        if (RequestUtils::isJson($request) || RequestUtils::wantJson($request)) {
+            return new JsonResponse(200, json_encode('Vous êtes maintenant déconnecté.'));
+        }
+        $this->flashService->success('Vous êtes maintenant déconnecté.');
         return new ResponseRedirect('/blog');
     }
 }

@@ -142,7 +142,7 @@ class PostApiController
     #[Route('/posts/{id:\d+}', name: 'api.post.edit', methods: ['PATCH'], middlewares: [BodyParserMiddleware::class])]
     public function edit(ServerRequestInterface $request): ResponseInterface
     {
-        if (!$this->authChecker->isGranted('ROLE_USER', $request)) {
+        if (!$this->authChecker->isGranted('ROLE_ADMIN', $request)) {
             throw new FailedAccessException('Vous n\'avez pas l\'authorisation pour exécuter cette action');
         }
         $id = $request->getAttribute('id');
