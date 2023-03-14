@@ -11,7 +11,6 @@ use Grafikart\Csrf\InvalidCsrfException;
 use Psr\Http\Server\MiddlewareInterface;
 use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
-use PgFramework\Response\ResponseRedirect;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
@@ -64,8 +63,6 @@ class CsrfCookieMiddleware implements MiddlewareInterface
                 $response = $handler->handle($request);
 
                 return $this->setCookie($token, $response);
-            } else {
-                $request = $request->withAttribute($this->config['field'], $this->createCookie($cookie));
             }
         }
 

@@ -66,8 +66,6 @@ class CsrfCookieListener implements EventSubscriberInterface
             if (null === $cookie || !$this->tokenManager->isTokenValid($cookie)) {
                 $token = $this->tokenManager->getToken();
                 $request = $request->withAttribute($this->config['field'], $this->createCookie($token));
-            } else {
-                $request = $request->withAttribute($this->config['field'], $this->createCookie($cookie));
             }
         }
 

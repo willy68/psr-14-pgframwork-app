@@ -3,7 +3,6 @@
 namespace PgFramework\Security\Csrf\Listener;
 
 use ArrayAccess;
-use GuzzleHttp\Psr7\Response;
 use PgFramework\Event\Events;
 use Dflydev\FigCookies\SetCookie;
 use League\Event\ListenerPriority;
@@ -54,9 +53,11 @@ class CsrfCookieListener implements EventSubscriberInterface
 
         $cookie = FigRequestCookies::get($request, $this->config['cookieName'])->getValue();
 
-        if (in_array($method, ['GET', 'HEAD'], true) && null === $cookie) {
-            $token = $this->csrfManager->getToken();
-            $request = $request->withAttribute($this->config['field'], $token);
+        if (in_array($method, ['GET', 'HEAD'], true)) {
+            if (null === $cookie || !$this->csrfManager->isTokenValid($cookie)) {
+                $token = $this->csrfManager->getToken();
+                $request = $request->withAttribute($this->config['field'], $this->createCookie($token));
+            }
         }
 
         if (in_array($method, ['DELETE', 'PATCH', 'POST', 'PUT'], true)) {
@@ -153,6 +154,17 @@ class CsrfCookieListener implements EventSubscriberInterface
         if ($token !== $cookie) {
             throw new InvalidCsrfException('Le cookie Csrf est incorrect');
         }
+    }
+
+    private function createCookie(string $token, ?int $expiry = null): SetCookie
+    {
+        return SetCookie::create($this->config['cookieName'])
+            ->withValue($token)
+            ->withExpires(($expiry === null) ? $this->config['expiry'] : $expiry)
+            ->withPath('/')
+            ->withDomain()
+            ->withSecure($this->config['secure'])
+            ->withHttpOnly($this->config['httponly']);
     }
 
     public static function getSubscribedEvents(): array
