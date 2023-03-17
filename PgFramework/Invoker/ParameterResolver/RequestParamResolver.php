@@ -17,8 +17,8 @@ class RequestParamResolver implements ParameterResolver
 
     public function getParameters(
         ReflectionFunctionAbstract $reflection,
-        array                      $providedParameters,
-        array                      $resolvedParameters
+        array $providedParameters,
+        array $resolvedParameters
     ): array {
         $reflectionParameters = $reflection->getParameters();
         // Skip parameters already resolved

@@ -44,7 +44,7 @@ class ApiOptionsMiddleware implements MiddlewareInterface
 
         $origin = $request->getHeaderLine('origin');
         if (empty($origin)) {
-            $origin = $request->getUri()->getScheme() .'://' .$request->getUri()->getHost() .
+            $origin = $request->getUri()->getScheme() . '://' . $request->getUri()->getHost() .
                 ($request->getUri()->getPort() ? ':' . $request->getUri()->getPort() : '');
         }
         return new Response(200, [

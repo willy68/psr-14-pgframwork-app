@@ -22,5 +22,4 @@ class SerializerFactory
         $encoders = [new JsonEncoder()];
         return new Serializer($c->get('serializer.normalizers'), $encoders);
     }
-
 }

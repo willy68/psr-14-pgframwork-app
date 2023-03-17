@@ -97,6 +97,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Tuupola\Middleware\JwtAuthentication;
+
 use function DI\add;
 use function DI\autowire;
 use function DI\create;
@@ -166,22 +167,22 @@ return [
             get(TokenStorageInterface::class),
             get(TokenGeneratorInterface::class)
         ),
-    PasswordHasherInterface::class =>
+        PasswordHasherInterface::class =>
         autowire(DefaultPasswordHasher::class)
             ->constructorParameter('config', get('password.hasher.config')),
-    AuthenticationListener::class => autowire()
+        AuthenticationListener::class => autowire()
         ->constructorParameter('authenticators', get('security.authenticators')),
-    AuthenticationMiddleware::class => autowire()
+        AuthenticationMiddleware::class => autowire()
         ->constructorParameter('authenticators', get('security.authenticators')),
-    AuthorizationCheckerInterface::class => autowire(AuthorizationChecker::class)
+        AuthorizationCheckerInterface::class => autowire(AuthorizationChecker::class)
         ->constructorParameter('exceptionOnNoUser', true),
-    JwtAuthentication::class => factory(JwtMiddlewareFactory::class),
-    Invoker::class => factory(InvokerFactory::class),
-    ParameterResolver::class => factory(ResolverChainFactory::class),
-    CallableResolver::class => factory(CallableResolverFactory::class),
-    EventDispatcherInterface::class => function (ContainerInterface $c): EventDispatcherInterface {
-        return new EventDispatcher($c->get(CallableResolver::class));
-    },
+        JwtAuthentication::class => factory(JwtMiddlewareFactory::class),
+        Invoker::class => factory(InvokerFactory::class),
+        ParameterResolver::class => factory(ResolverChainFactory::class),
+        CallableResolver::class => factory(CallableResolverFactory::class),
+        EventDispatcherInterface::class => function (ContainerInterface $c): EventDispatcherInterface {
+            return new EventDispatcher($c->get(CallableResolver::class));
+        },
     KernelEvent::class => function (ContainerInterface $c): KernelEvent {
         return new KernelEvent(
             $c->get(EventDispatcherInterface::class),

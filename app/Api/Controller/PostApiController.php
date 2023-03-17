@@ -34,10 +34,10 @@ class PostApiController
     private ObjectManager $em;
 
     public function __construct(
-        private ManagerRegistry               $om,
-        private SerializerInterface           $serializer,
+        private ManagerRegistry $om,
+        private SerializerInterface $serializer,
         private AuthorizationCheckerInterface $authChecker,
-        private PostUpload                    $postUpload
+        private PostUpload $postUpload
     ) {
         $this->em = $om->getManager();
     }
@@ -148,7 +148,7 @@ class PostApiController
         $id = $request->getAttribute('id');
         $repo = $this->em->getRepository(Post::class);
         $post = $repo->find($id);
-        if(!$post) {
+        if (!$post) {
             throw new NoRecordException("error: post with id $id not found");
         }
 
@@ -170,7 +170,12 @@ class PostApiController
      * @throws FailedAccessException
      * @throws NoRecordException
      */
-    #[Route('/posts/{id:\d+}', name: 'api.post.delete', methods: ['DELETE'], middlewares: [BodyParserMiddleware::class])]
+    #[Route(
+        '/posts/{id:\d+}',
+        name: 'api.post.delete',
+        methods: ['DELETE'],
+        middlewares: [BodyParserMiddleware::class]
+    )]
     public function delete(ServerRequestInterface $request): ResponseInterface
     {
         if (!$this->authChecker->isGranted('ROLE_ADMIN', $request)) {
@@ -179,7 +184,7 @@ class PostApiController
         $id = $request->getAttribute('id');
         /** @var Post $post */
         $post = $this->em->find(Post::class, $id);
-        if(!$post) {
+        if (!$post) {
             throw new NoRecordException("error: post with id $id not found");
         }
         $this->postUpload->delete($post->getImage());
@@ -237,16 +242,20 @@ class PostApiController
             $path = RequestUtils::getDomain($request) . $request->getUri()->getPath();
             $linkData = $this->getLinkData($countTotal, $offset, $limit);
             $first = (!empty($linkData['first'])) ?
-                "$path?offset=" . $linkData['first']['offset'] . "&limit=" . $linkData['first']['limit'] . "; rel=\"first\", " :
+                "$path?offset=" . $linkData['first']['offset'] .
+                "&limit=" . $linkData['first']['limit'] . "; rel=\"first\", " :
                 '';
             $prev = (!empty($linkData['prev'])) ?
-                "$path?offset=" . $linkData['prev']['offset'] . "&limit=" . $linkData['prev']['limit'] . "; rel=\"prev\", " :
+                "$path?offset=" . $linkData['prev']['offset'] .
+                "&limit=" . $linkData['prev']['limit'] . "; rel=\"prev\", " :
                 '';
             $next = (!empty($linkData['next'])) ?
-                "$path?offset=" . $linkData['next']['offset'] . "&limit=" . $linkData['next']['limit'] . "; rel=\"next\", " :
+                "$path?offset=" . $linkData['next']['offset'] .
+                "&limit=" . $linkData['next']['limit'] . "; rel=\"next\", " :
                 '';
             $last = (!empty($linkData['last'])) ?
-                "$path?offset=" . $linkData['last']['offset'] . "&limit=" . $linkData['last']['limit'] . "; rel=\"last\"" :
+                "$path?offset=" . $linkData['last']['offset'] .
+                "&limit=" . $linkData['last']['limit'] . "; rel=\"last\"" :
                 '';
             $response = $response
                 ->withStatus(206)

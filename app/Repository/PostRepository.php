@@ -99,7 +99,7 @@ class PostRepository extends PaginatedEntityRepository
     public function findAllForCategory(int $category_id): PaginatedQueryBuilder
     {
         return $this->findAllForApi()
-            ->join('p.category', 'c','c = p.category')
+            ->join('p.category', 'c', 'c = p.category')
             ->andWhere("p.category = $category_id");
     }
 }

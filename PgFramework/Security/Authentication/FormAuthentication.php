@@ -21,8 +21,8 @@ use PgFramework\Security\Hasher\PasswordHasherInterface;
 use PgFramework\Security\Authentication\Exception\AuthenticationFailureException;
 use PgFramework\Security\Authentication\Result\AuthenticateResult;
 use PgFramework\Security\Authentication\Result\AuthenticateResultInterface;
-
 use Symfony\Component\Serializer\SerializerInterface;
+
 use function is_string;
 
 class FormAuthentication implements AuthenticationInterface

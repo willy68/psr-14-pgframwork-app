@@ -39,7 +39,7 @@ class MethodOptionsListener implements EventSubscriberInterface
 
         $origin = $request->getHeaderLine('origin');
         if (empty($origin)) {
-            $origin = $request->getUri()->getScheme() .'://' .$request->getUri()->getHost() .
+            $origin = $request->getUri()->getScheme() . '://' . $request->getUri()->getHost() .
                 ($request->getUri()->getPort() ? ':' . $request->getUri()->getPort() : '');
         }
         $event->setResponse(new Response(200, [

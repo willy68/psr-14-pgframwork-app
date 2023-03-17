@@ -54,7 +54,7 @@ class RouteCallerMiddleware implements MiddlewareInterface
      * @throws Exception
      */
     public function process(
-        ServerRequestInterface  $request,
+        ServerRequestInterface $request,
         RequestHandlerInterface $handler
     ): ResponseInterface {
 

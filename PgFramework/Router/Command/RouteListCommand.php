@@ -17,7 +17,7 @@ use function strtolower;
 
 class RouteListCommand extends Command
 {
-    protected  const NAME = 'route:list';
+    protected const NAME = 'route:list';
     private RouteCollectionInterface $collector;
 
     public function __construct(RouteCollectionInterface $collector)
@@ -26,7 +26,7 @@ class RouteListCommand extends Command
         $this->collector = $collector;
     }
 
-    protected  function configure()
+    protected function configure()
     {
         $this->setDescription('List all Routes from RouteCollection')
             ->setHelp('Get Application Routes definition (route:list)');
@@ -75,5 +75,4 @@ class RouteListCommand extends Command
 
         return implode(', ', $result);
     }
-
 }

@@ -25,8 +25,8 @@ use PgFramework\Environnement\Environnement;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Annotation\AnnotationsLoader;
 use PgFramework\Router\Loader\DirectoryLoader;
-
 use Throwable;
+
 use function dirname;
 
 /**

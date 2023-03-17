@@ -40,5 +40,4 @@ class AuthorizationChecker implements AuthorizationCheckerInterface
         $this->exceptionOnNoUser = $exceptionOnNoUser;
         return $this;
     }
-
 }

@@ -11,5 +11,4 @@ class ApiModule extends Module
     public const ANNOTATIONS = [
         PostApiController::class
     ];
-
 }
