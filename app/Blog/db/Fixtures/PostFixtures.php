@@ -34,7 +34,7 @@ class PostFixtures implements FixtureInterface
                 ->setContent($faker->text(3000))
                 ->setCategory($categories[$faker->numberBetween(0, 4)])
                 ->setCreatedAt(DateTimeImmutable::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s', $date)))
-                ->setUpdatedAt(DateTimeImmutable::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s', $date)))
+                ->setUpdatedAt(DateTime::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s', $date)))
                 ->setPublished(1);
 
             $manager->persist($post);
