@@ -41,6 +41,8 @@ class FormExtension extends AbstractExtension
             'name'  => $key,
             'id'    => $key,
         ];
+        $div = "<div class=\"form-group\">";
+        $label = "<label for=\"$key\">$label</label>";
         if (isset($options['attributes'])) {
             foreach ($options['attributes'] as $attribute => $val) {
                 $attributes[$attribute] = $val;
@@ -57,6 +59,10 @@ class FormExtension extends AbstractExtension
             $input = $this->file($attributes);
         } elseif ($type === 'checkbox') {
             $input = $this->checkbox($value, $attributes);
+            $div = "<div class=\"form-check\">";
+            $label1 = $label;
+            $label = $input;
+            $input = $label1;
         } elseif (array_key_exists('options', $options)) {
             $input = $this->select($value, $options['options'], $attributes);
         } else {
@@ -64,8 +70,8 @@ class FormExtension extends AbstractExtension
             $input = $this->input($value, $attributes);
         }
         return "
-            <div class=\"form-group\">
-              <label for=\"$key\">$label</label>
+            $div
+              $label
               $input
               $error
             </div>";
@@ -148,6 +154,7 @@ class FormExtension extends AbstractExtension
      */
     private function checkbox(?string $value, array $attributes): string
     {
+        $attributes['class'] = str_replace('form-control', 'form-check-input', $attributes['class']);
         $html = "<input type=\"hidden\"" .
         " name=\"" . $attributes['name'] . "\"" .
         " value=\"0\"/>";
