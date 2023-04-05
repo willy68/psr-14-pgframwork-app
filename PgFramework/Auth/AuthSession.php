@@ -7,6 +7,7 @@ namespace PgFramework\Auth;
 use Exception;
 use Mezzio\Session\SessionInterface;
 use PgFramework\Auth\Provider\UserProviderInterface;
+use PgFramework\Security\Hasher\PasswordHasherInterface;
 
 class AuthSession implements Auth
 {
@@ -21,9 +22,12 @@ class AuthSession implements Auth
 
     protected UserProviderInterface $userProvider;
 
+    protected PasswordHasherInterface $hasher;
+
     public function __construct(
         SessionInterface $session,
         UserProviderInterface $userProvider,
+        PasswordHasherInterface $hasher,
         array $options = []
     ) {
         $this->session = $session;
@@ -31,6 +35,7 @@ class AuthSession implements Auth
         if (!empty($options)) {
             $this->options = array_merge($this->options, $options);
         }
+        $this->hasher = $hasher;
     }
 
     /**
@@ -46,7 +51,7 @@ class AuthSession implements Auth
 
         /** @var UserInterface $user */
         $user = $this->userProvider->getUser($this->options['field'], $identifier);
-        if ($user && password_verify($password, $user->getPassword())) {
+        if ($user && $this->hasher->verify($user->getPassword(), $password)) {
             $this->setUser($user);
             return $user;
         }
@@ -56,6 +61,7 @@ class AuthSession implements Auth
     public function logout(): void
     {
         $this->session->unset($this->options['sessionName']);
+        $this->session->regenerate();
         $this->user = null;
     }
 
@@ -72,6 +78,7 @@ class AuthSession implements Auth
                 return $this->user;
             } catch (Exception $e) {
                 $this->session->unset($this->options['sessionName']);
+                $this->session->regenerate();
             }
         }
         return null;
@@ -85,6 +92,7 @@ class AuthSession implements Auth
     public function setUser(UserInterface $user): Auth
     {
         $this->session->set($this->options['sessionName'], $user->getId());
+        $this->session->regenerate();
         $this->user = $user;
         return $this;
     }
