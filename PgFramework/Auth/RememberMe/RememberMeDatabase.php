@@ -170,7 +170,9 @@ class RememberMeDatabase extends AbstractRememberMe
         $cookie = $request->getAttribute($this->options['attribute']);
 
         if ($cookie) {
-            // Set new random password cookie
+            // Set new expiration date
+            assert($cookie instanceof SetCookie);
+            $cookie->withExpires(time() +  $this->options['lifetime']);
             $response = FigResponseCookies::set($response, $cookie);
         }
         return $response;
