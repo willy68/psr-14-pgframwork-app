@@ -192,7 +192,6 @@ class RememberMeDatabase extends AbstractRememberMe
     protected function cancelCookie(): SetCookie
     {
         return SetCookie::create($this->options['name'])
-            ->withValue('')
             ->withExpires(time() - 3600)
             ->withPath($this->options['path'])
             ->withDomain($this->options['domain'])

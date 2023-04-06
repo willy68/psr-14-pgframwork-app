@@ -98,7 +98,9 @@ class RememberMe extends AbstractRememberMe
         $cookie = $request->getAttribute($this->options['attribute']);
 
         if ($cookie) {
-            // Set new random password cookie
+            // Set new expiration date
+            assert($cookie instanceof SetCookie);
+            $cookie->withExpires(time() +  $this->options['lifetime']);
             $response = FigResponseCookies::set($response, $cookie);
         } else {
             $cookie = FigRequestCookies::get($request, $this->options['name']);
@@ -146,7 +148,6 @@ class RememberMe extends AbstractRememberMe
     protected function cancelCookie(ServerRequestInterface $request): ServerRequestInterface
     {
         $cookie = SetCookie::create($this->options['name'])
-            ->withValue('')
             ->withExpires(time() - 3600)
             ->withPath($this->options['path'])
             ->withDomain($this->options['domain'])
