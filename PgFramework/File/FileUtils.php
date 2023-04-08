@@ -29,14 +29,14 @@ class FileUtils
                     new RecursiveDirectoryIterator(
                         $path,
                         FilesystemIterator::FOLLOW_SYMLINKS | FilesystemIterator::SKIP_DOTS
-                    )
+                    ),
+                    RecursiveIteratorIterator::CHILD_FIRST
                 ),
                 function (SplFileInfo $file) use ($ext, $exclude) {
                     return $file->isFile() &&
-                        (!str_starts_with($file->getBasename(), '.') &&
-                            null !== $exclude ?
-                            !(stripos($file->getBasename(), $exclude)) :
-                            '.' . $ext === substr($file->getFilename(), -4));
+                        str_ends_with($file->getFilename(), '.' . $ext) &&
+                        !str_starts_with($file->getBasename(), '.') &&
+                        (null === $exclude || false === stripos($file->getBasename(), $exclude));
                 }
             )
         );
