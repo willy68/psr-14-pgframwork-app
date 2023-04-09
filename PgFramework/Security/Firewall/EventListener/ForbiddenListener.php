@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PgFramework\Security\Firewall\EventListener;
 
-use GuzzleHttp\Psr7\Response;
 use PgFramework\Event\Events;
 use League\Event\ListenerPriority;
 use PgFramework\Event\ExceptionEvent;
