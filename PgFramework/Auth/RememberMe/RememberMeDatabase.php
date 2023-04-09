@@ -170,10 +170,21 @@ class RememberMeDatabase extends AbstractRememberMe
         $cookie = $request->getAttribute($this->options['attribute']);
 
         if ($cookie) {
-            // Set new expiration date
             assert($cookie instanceof SetCookie);
-            $cookie->withExpires(time() +  $this->options['lifetime']);
             $response = FigResponseCookies::set($response, $cookie);
+        } else {
+            $cookie = FigRequestCookies::get($request, $this->options['name']);
+
+            if ($cookie->getValue()) {
+                $setCookie = SetCookie::create($this->options['name'])
+                    ->withValue($cookie->getValue())
+                    ->withExpires(time() + $this->options['lifetime'])
+                    ->withPath($this->options['path'])
+                    ->withDomain($this->options['domain'])
+                    ->withSecure($this->options['secure'])
+                    ->withHttpOnly($this->options['httpOnly']);
+                $response = FigResponseCookies::set($response, $setCookie);
+            }
         }
         return $response;
     }
