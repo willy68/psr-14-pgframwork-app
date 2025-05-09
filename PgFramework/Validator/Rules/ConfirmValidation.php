@@ -9,15 +9,14 @@ use PgFramework\Validator\ValidationInterface;
 
 class ConfirmValidation implements ValidationInterface, ValidationExtraParamsInterface
 {
-    protected string $error = 'Le champ %s doit être un E-mail identique avec le champ %s';
+    protected string $error = 'Le champ %s doit être identique avec le champ %s';
 
     protected string $fieldName;
 
-    protected $params = [];
+    protected array $params = [];
 
     /**
      * EmailConfirmValidation constructor.
-     * @param ServerRequestInterface $request
      * @param string|null $fieldName
      * @param string|null $error
      */
@@ -37,7 +36,7 @@ class ConfirmValidation implements ValidationInterface, ValidationExtraParamsInt
      * @param mixed $var
      * @return bool
      */
-    public function isValid($var): bool
+    public function isValid(mixed $var): bool
     {
         $confirmValue = $this->getValue($this->fieldName);
         return $confirmValue === $var;
@@ -47,16 +46,14 @@ class ConfirmValidation implements ValidationInterface, ValidationExtraParamsInt
      * @param string $param
      * @return $this
      */
-    public function parseParams($param): self
+    public function parseParams(string $param): self
     {
-        if (is_string($param)) {
-            list($fieldName, $message) = array_pad(explode(',', $param), 2, '');
-            if (!empty($message)) {
-                $this->error = $message;
-            }
-            if (!empty($fieldName)) {
-                $this->setFieldName($fieldName);
-            }
+        list($fieldName, $message) = array_pad(explode(',', $param), 2, '');
+        if (!empty($message)) {
+            $this->error = $message;
+        }
+        if (!empty($fieldName)) {
+            $this->setFieldName($fieldName);
         }
         return $this;
     }
@@ -104,7 +101,7 @@ class ConfirmValidation implements ValidationInterface, ValidationExtraParamsInt
      * @param string $key
      * @return mixed|null
      */
-    private function getValue(string $key)
+    private function getValue(string $key): mixed
     {
         if (array_key_exists($key, $this->params)) {
             return $this->params[$key];

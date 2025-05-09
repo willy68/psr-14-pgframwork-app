@@ -2,16 +2,18 @@
 
 namespace App\Entity;
 
+use App\Repository\PostRepository;
+use DateTime;
 use DateTimeImmutable;
-use Doctrine\ORM\Mapping\Id;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping\Table;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use App\Repository\PostRepository;
-use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\Table;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PostRepository")
@@ -27,84 +29,93 @@ class Post
      * @ORM\GeneratedValue
      * @var int
      */
+    #[Groups(['group1'])]
     #[Id]
-    #[GeneratedValue()]
+    #[GeneratedValue]
     #[Column(type: Types::INTEGER)]
-    protected $id;
+    protected int $id;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
+    #[Groups(['group1'])]
     #[Column(type: TYPES::STRING)]
-    protected $name;
+    protected string $name;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
+    #[Groups(['group1'])]
     #[Column(type: TYPES::STRING)]
-    protected $slug;
+    protected string $slug;
 
     /**
      * @ORM\Column(type="text")
      * @var string
      */
+    #[Groups(['group1'])]
     #[Column(type: TYPES::TEXT)]
-    protected $content;
+    protected string $content;
 
     /**
      * @ORM\Column(type="datetime_immutable")
      * @var DateTimeImmutable
      */
-    #[Column(type: TYPES::DATETIME_IMMUTABLE)]
-    protected $created_at;
+    #[Groups(['group1'])]
+    #[Column(name: 'created_at', type: TYPES::DATETIME_IMMUTABLE)]
+    protected DateTimeImmutable $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
      * @var DateTime
      */
-    #[Column(type: TYPES::DATETIME_MUTABLE)]
-    protected $updated_at;
+    #[Groups(['group1'])]
+    #[Column(name: 'updated_at', type: TYPES::DATETIME_MUTABLE)]
+    protected DateTime $updatedAt;
 
     /**
      * @ORM\Column(type="string")
-     * @var string
+     * @var string|null
      */
+    #[Groups(['group1'])]
     #[Column(type: TYPES::STRING, nullable: true)]
-    protected $image;
+    protected ?string $image = null;
 
     /**
      * @ORM\Column(type="boolean")
      * @var bool
      */
+    #[Groups(['group1'])]
     #[Column(type: TYPES::BOOLEAN)]
-    protected $published;
+    protected bool $published;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Category", inversedBy="addPost")
      */
+    #[Groups(['group2'])]
+    #[MaxDepth(1)]
     #[ManyToOne(targetEntity: Category::class, inversedBy: "addPost")]
-    protected $category;
+    protected ?Category $category = null;
 
     /**
-     * Get the value of id
+     * Get the value of ID
      *
      * @return  int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
-     * Set the value of id
+     * Set the value of ID
      *
-     * @param  int  $id
-     *
+     * @param int $id
      * @return  self
      */
-    public function setId(int $id)
+    public function setId(int $id): static
     {
         $this->id = $id;
 
@@ -117,7 +128,7 @@ class Post
      *
      * @return  string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -125,11 +136,10 @@ class Post
     /**
      * Set the value of name
      *
-     * @param  string  $name
-     *
+     * @param string $name
      * @return  self
      */
-    public function setName(string $name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -141,7 +151,7 @@ class Post
      *
      * @return  string
      */
-    public function getSlug()
+    public function getSlug(): string
     {
         return $this->slug;
     }
@@ -149,11 +159,10 @@ class Post
     /**
      * Set the value of slug
      *
-     * @param  string  $slug
-     *
+     * @param string $slug
      * @return  self
      */
-    public function setSlug(string $slug)
+    public function setSlug(string $slug): static
     {
         $this->slug = $slug;
 
@@ -165,7 +174,7 @@ class Post
      *
      * @return  string
      */
-    public function getContent()
+    public function getContent(): string
     {
         return $this->content;
     }
@@ -173,11 +182,10 @@ class Post
     /**
      * Set the value of content
      *
-     * @param  string  $content
-     *
+     * @param string $content
      * @return  self
      */
-    public function setContent(string $content)
+    public function setContent(string $content): static
     {
         $this->content = $content;
 
@@ -187,23 +195,25 @@ class Post
     /**
      * Get the value of createdAt
      *
-     * @return  DateTime
+     * @return  DateTimeImmutable
      */
-    public function getCreatedAt()
+    public function getCreatedAt(): DateTimeImmutable
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
     /**
      * Set the value of createdAt
      *
-     * @param  DateTime  $createdAt
-     *
+     * @param DateTimeImmutable|string $createdAt
      * @return  self
      */
-    public function setCreatedAt(DateTimeImmutable $createdAt)
+    public function setCreatedAt(DateTimeImmutable|string $createdAt): static
     {
-        $this->created_at = $createdAt;
+        if (is_string($createdAt)) {
+            $createdAt = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $createdAt);
+        }
+        $this->createdAt = $createdAt;
 
         return $this;
     }
@@ -213,21 +223,24 @@ class Post
      *
      * @return  DateTime
      */
-    public function getUpdatedAt()
+    public function getUpdatedAt(): DateTime
     {
-        return $this->updated_at;
+        return $this->updatedAt;
     }
 
     /**
      * Set the value of updatedAt
      *
-     * @param  DateTime  $updatedAt
+     * @param DateTime|string $updatedAt
      *
      * @return  self
      */
-    public function setUpdatedAt(DateTimeImmutable $updatedAt)
+    public function setUpdatedAt(DateTime|string $updatedAt): static
     {
-        $this->updated_at = $updatedAt;
+        if (is_string($updatedAt)) {
+            $updatedAt = DateTime::createFromFormat('Y-m-d H:i:s', $updatedAt);
+        }
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
@@ -235,9 +248,9 @@ class Post
     /**
      * Get the value of image
      *
-     * @return  string
+     * @return string|null
      */
-    public function getImage()
+    public function getImage(): ?string
     {
         return $this->image;
     }
@@ -245,11 +258,10 @@ class Post
     /**
      * Set the value of image
      *
-     * @param  string  $image
-     *
+     * @param string $image
      * @return  self
      */
-    public function setImage(string $image)
+    public function setImage(string $image): static
     {
         $this->image = $image;
 
@@ -257,20 +269,21 @@ class Post
     }
 
     /**
-     *
-     * @return void
+     * @return string|null
      */
-    public function getThumb()
+    public function getThumb(): string|null
     {
-        ['filename' => $filename, 'extension' => $extension] = pathinfo($this->image);
-        return '/uploads/posts/' . $filename . '_thumb.' . $extension;
+        if ($this->image) {
+            ['filename' => $filename, 'extension' => $extension] = pathinfo($this->image);
+            return '/uploads/posts/' . $filename . '_thumb.' . $extension;
+        }
+        return null;
     }
 
     /**
-     *
-     * @return void
+     * @return string
      */
-    public function getImageUrl()
+    public function getImageUrl(): string
     {
         return '/uploads/posts/' . $this->image;
     }
@@ -278,7 +291,7 @@ class Post
     /**
      * Get the value of category
      */
-    public function getCategory(): Category
+    public function getCategory(): ?Category
     {
         return $this->category;
     }
@@ -286,9 +299,10 @@ class Post
     /**
      * Set the value of category
      *
+     * @param Category $category
      * @return  self
      */
-    public function setCategory(Category $category)
+    public function setCategory(Category $category): static
     {
         $category->addPost($this);
         $this->category = $category;
@@ -297,11 +311,22 @@ class Post
     }
 
     /**
+     * Get Category ID
+     *
+     * @return int|null
+     */
+    #[Groups(['group3'])]
+    public function getCategoryId(): int|null
+    {
+        return $this?->category->getId();
+    }
+
+    /**
      * Get the value of published
      *
      * @return  bool
      */
-    public function getPublished()
+    public function getPublished(): bool
     {
         return $this->published;
     }
@@ -309,13 +334,12 @@ class Post
     /**
      * Set the value of published
      *
-     * @param  bool  $published
-     *
-     * @return  self
+     * @param $published
+     * @return self
      */
-    public function setPublished(bool $published)
+    public function setPublished($published): static
     {
-        $this->published = $published;
+        $this->published = (bool)$published;
 
         return $this;
     }

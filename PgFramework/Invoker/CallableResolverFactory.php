@@ -9,7 +9,7 @@ use Psr\Container\ContainerInterface;
 
 class CallableResolverFactory
 {
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): CallableResolver
     {
         return new CallableResolver($container);
     }

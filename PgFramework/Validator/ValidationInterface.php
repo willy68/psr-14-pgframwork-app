@@ -7,12 +7,10 @@ namespace PgFramework\Validator;
 interface ValidationInterface
 {
     /**
-     * Undocumented function
-     *
      * @param mixed $var
      * @return bool
      */
-    public function isValid($var): bool;
+    public function isValid(mixed $var): bool;
 
     /**
      * Get error message

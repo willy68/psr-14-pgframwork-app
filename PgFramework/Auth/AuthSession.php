@@ -4,41 +4,30 @@ declare(strict_types=1);
 
 namespace PgFramework\Auth;
 
-use PgFramework\Auth;
-use PgFramework\Auth\UserInterface;
-use PgFramework\Session\SessionInterface;
+use Exception;
+use Mezzio\Session\SessionInterface;
 use PgFramework\Auth\Provider\UserProviderInterface;
+use PgFramework\Security\Hasher\PasswordHasherInterface;
 
 class AuthSession implements Auth
 {
-    /**
-     * Cookie options
-     *
-     * @var array
-     */
-    private $options = [
+    private array $options = [
         'sessionName' => 'auth.user',
         'field' => 'username'
     ];
 
-    /**
-     * @var SessionInterface
-     */
-    private $session;
+    private SessionInterface $session;
 
-    /**
-     * @var User
-     */
-    private $user;
+    private ?UserInterface $user = null;
 
-    /**
-     * @var UserProviderInterface
-     */
-    protected $userProvider;
+    protected UserProviderInterface $userProvider;
+
+    protected PasswordHasherInterface $hasher;
 
     public function __construct(
         SessionInterface $session,
         UserProviderInterface $userProvider,
+        PasswordHasherInterface $hasher,
         array $options = []
     ) {
         $this->session = $session;
@@ -46,11 +35,11 @@ class AuthSession implements Auth
         if (!empty($options)) {
             $this->options = array_merge($this->options, $options);
         }
+        $this->hasher = $hasher;
     }
 
     /**
-     *
-     * @param string $username
+     * @param string $identifier
      * @param string $password
      * @return UserInterface|null
      */
@@ -62,7 +51,7 @@ class AuthSession implements Auth
 
         /** @var UserInterface $user */
         $user = $this->userProvider->getUser($this->options['field'], $identifier);
-        if ($user && password_verify($password, $user->getPassword())) {
+        if ($user && $this->hasher->verify($user->getPassword(), $password)) {
             $this->setUser($user);
             return $user;
         }
@@ -71,7 +60,8 @@ class AuthSession implements Auth
 
     public function logout(): void
     {
-        $this->session->delete($this->options['sessionName']);
+        $this->session->unset($this->options['sessionName']);
+        $this->session->regenerate();
         $this->user = null;
     }
 
@@ -80,15 +70,15 @@ class AuthSession implements Auth
         $userId = $this->session->get($this->options['sessionName']);
 
         if ($userId) {
-            if ($this->user && (int) $this->user->getId() === (int) $userId) {
+            if ($this->user && $this->user->getId() === (int) $userId) {
                 return $this->user;
             }
             try {
                 $this->user = $this->userProvider->getUser('id', $userId);
                 return $this->user;
-            } catch (\Exception $e) {
-                $this->session->delete($this->options['sessionName']);
-                return null;
+            } catch (Exception $e) {
+                $this->session->unset($this->options['sessionName']);
+                $this->session->regenerate();
             }
         }
         return null;
@@ -96,12 +86,13 @@ class AuthSession implements Auth
 
     /**
      *
-     * @param User $user
+     * @param UserInterface $user
      * @return Auth
      */
     public function setUser(UserInterface $user): Auth
     {
         $this->session->set($this->options['sessionName'], $user->getId());
+        $this->session->regenerate();
         $this->user = $user;
         return $this;
     }

@@ -3,6 +3,7 @@
 namespace App\Auth\Models;
 
 use ActiveRecord\Model;
+use DateTime;
 use PgFramework\Auth\TokenInterface;
 
 class UserToken extends Model implements TokenInterface
@@ -13,8 +14,6 @@ class UserToken extends Model implements TokenInterface
 
     /**
      * get token id
-     *
-     * @return int
      */
     public function getId(): int
     {
@@ -23,8 +22,6 @@ class UserToken extends Model implements TokenInterface
 
     /**
      * get the unique user credential (ex. username or email)
-     *
-     * @return string
      */
     public function getSeries(): string
     {
@@ -33,8 +30,6 @@ class UserToken extends Model implements TokenInterface
 
     /**
      * get the unique user credential (ex. username or email)
-     *
-     * @return string
      */
     public function getCredential(): string
     {
@@ -42,26 +37,22 @@ class UserToken extends Model implements TokenInterface
     }
 
     /**
-     * get the random pasword hash
-     *
-     * @return string
+     * Get the random pasword hash
      */
     public function getRandomPassword(): string
     {
         return $this->random_password;
     }
     /**
-     * get the expiration date
-     *
-     * @return \DateTime
+     * Get the expiration date
      */
-    public function getExpirationDate(): \DateTime
+    public function getExpirationDate(): DateTime
     {
         return $this->expiration_date;
     }
 
     /**
-     * get is_expired field as bool
+     * Get is_expired field as bool
      *
      * @return bool
      */

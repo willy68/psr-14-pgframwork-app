@@ -5,14 +5,17 @@ declare(strict_types=1);
 namespace PgFramework\DebugBar\Middleware;
 
 use DebugBar\DebugBar;
+use DebugBar\DebugBarException;
 use Mezzio\Router\RouteResult;
 use Mezzio\Router\RouterInterface;
 use PgFramework\DebugBar\PgDebugBar;
 use PgFramework\ApplicationInterface;
 use PgFramework\HttpUtils\RequestUtils;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use PgFramework\Session\SessionInterface;
+use Mezzio\Session\SessionInterface;
 use PgFramework\Environnement\Environnement;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -21,15 +24,9 @@ use PgFramework\DebugBar\DataCollector\RequestCollector;
 
 class DebugBarMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var PgDebugBar
-     */
-    protected $debugBar;
+    protected PgDebugBar|DebugBar $debugBar;
 
-    /**
-     * @var SessionInterface
-     */
-    protected $session;
+    protected SessionInterface $session;
 
     public function __construct(DebugBar $debugBar, SessionInterface $session)
     {
@@ -37,6 +34,11 @@ class DebugBarMiddleware implements MiddlewareInterface
         $this->session = $session;
     }
 
+    /**
+     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws DebugBarException
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (Environnement::getEnv('APP_ENV', 'prod') !== 'dev' || RequestUtils::isAjax($request)) {
@@ -45,7 +47,7 @@ class DebugBarMiddleware implements MiddlewareInterface
 
         $response = $handler->handle($request);
 
-        /** @var ApplicationInterface */
+        /** @var ApplicationInterface $app*/
         $app = $request->getAttribute(ApplicationInterface::class);
 
         $this->debugBar->addCollector(

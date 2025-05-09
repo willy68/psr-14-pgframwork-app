@@ -13,14 +13,14 @@ class UserFixtures implements FixtureInterface
         $user = new User();
         $user->setUsername('admin')
             ->setEmail('admin@admin.fr')
-            ->setPassword(password_hash('admin', PASSWORD_DEFAULT, []))
+            ->setPassword(password_hash('admin', PASSWORD_DEFAULT))
             ->setRoles(['ROLE_USER', 'ROLE_ADMIN']);
         $manager->persist($user);
 
         $user = new User();
         $user->setUsername('willy')
             ->setEmail('willy@willy.fr')
-            ->setPassword(password_hash('willy', PASSWORD_DEFAULT, []))
+            ->setPassword(password_hash('willy', PASSWORD_DEFAULT))
             ->setRoles(['ROLE_USER']);
         $manager->persist($user);
 

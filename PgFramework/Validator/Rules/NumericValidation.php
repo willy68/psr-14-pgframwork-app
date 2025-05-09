@@ -8,11 +8,11 @@ use PgFramework\Validator\ValidationInterface;
 
 class NumericValidation implements ValidationInterface
 {
-    protected $error = 'Le champ %s doit être entre %d et %d';
+    protected string $error = 'Le champ %s doit être entre %d et %d';
 
-    protected $min;
+    protected int $min;
 
-    protected $max;
+    protected int $max;
 
     public function __construct(int $min = 1, int $max = 255, string $errormsg = null)
     {
@@ -23,24 +23,22 @@ class NumericValidation implements ValidationInterface
         $this->setMax($max);
     }
 
-    public function isValid($var): bool
+    public function isValid(mixed $var): bool
     {
         return $this->checkNumeric($var);
     }
 
-    public function parseParams($param): self
+    public function parseParams(string $param): self
     {
-        if (is_string($param)) {
-            list($min, $max, $message) = array_pad(explode(',', $param), 3, '');
-            if (!empty($message)) {
-                $this->error = $message;
-            }
-            if (!empty($min)) {
-                $this->setMin($min);
-            }
-            if (!empty($max)) {
-                $this->setMax($max);
-            }
+        list($min, $max, $message) = array_pad(explode(',', $param), 3, '');
+        if (!empty($message)) {
+            $this->error = $message;
+        }
+        if (!empty($min)) {
+            $this->setMin($min);
+        }
+        if (!empty($max)) {
+            $this->setMax($max);
         }
         return $this;
     }
@@ -50,11 +48,6 @@ class NumericValidation implements ValidationInterface
         return [$this->min, $this->max];
     }
 
-    /**
-     *
-     *
-     * @return string
-     */
     public function getError(): string
     {
         return $this->error;
@@ -71,7 +64,7 @@ class NumericValidation implements ValidationInterface
                 $options['options']['max_range'] = $this->max;
             }
 
-            if (($val = filter_var($val, FILTER_VALIDATE_INT, $options)) !== false) {
+            if ((filter_var($val, FILTER_VALIDATE_INT, $options)) !== false) {
                 return true;
             }
         }
@@ -90,7 +83,7 @@ class NumericValidation implements ValidationInterface
         return $this;
     }
 
-    protected function getNumeric($val)
+    protected function getNumeric($val): float|int|string|null
     {
         if (is_numeric($val)) {
             return $val + 0;

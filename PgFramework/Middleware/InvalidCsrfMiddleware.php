@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace PgFramework\Middleware;
 
 use PgFramework\HttpUtils\RequestUtils;
+use PgFramework\Response\JsonResponse;
 use PgFramework\Response\ResponseRedirect;
+use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
 use PgFramework\Session\FlashService;
 use Grafikart\Csrf\InvalidCsrfException;
-use GuzzleHttp\Psr7\Response;
+use Dflydev\FigCookies\SetCookie;
+use Dflydev\FigCookies\FigResponseCookies;
 use Psr\Http\Message\{
     ResponseInterface,
     ServerRequestInterface
@@ -18,22 +21,33 @@ use Psr\Http\Server\{
     MiddlewareInterface
 };
 
+use function array_merge;
+
 class InvalidCsrfMiddleware implements MiddlewareInterface
 {
-    /**
-     * Undocumented variable
-     *
-     * @var FlashService
-     */
-    private $flashService;
+    protected array $config = [
+        'cookieName' => 'XSRF-TOKEN',
+        'header' => 'X-CSRF-TOKEN',
+        'field' => '_csrf',
+        'expiry' => null,
+        'secure' => false,
+        'httponly' => true,
+        'samesite' => null,
+    ];
+
+    private FlashService $flashService;
+    private CsrfTokenManagerInterface $tokenManager;
 
     /**
      * InvalidCsrfMiddleware constructor.
      * @param FlashService $flashService
+     * @param array $config
      */
-    public function __construct(FlashService $flashService)
+    public function __construct(CsrfTokenManagerInterface $tokenManager, FlashService $flashService, array $config = [])
     {
+        $this->tokenManager = $tokenManager;
         $this->flashService = $flashService;
+        $this->config = array_merge($this->config, $config);
     }
 
     /**
@@ -46,11 +60,36 @@ class InvalidCsrfMiddleware implements MiddlewareInterface
         try {
             return $handler->handle($request);
         } catch (InvalidCsrfException $e) {
-            if (RequestUtils::isJson($request)) {
-                return new Response(403, [], $e->getMessage() . ' ' . $e->getCode());
+            $token = $request->getAttribute($this->config['field']);
+            $tokenId = null;
+
+            if ($token) {
+                [$tokenId] = explode(CsrfTokenManagerInterface::DELIMITER, $token->getValue());
             }
-            $this->flashService->error('Vous n\'avez pas de token valid pour executer cette action');
-            return new ResponseRedirect('/');
+            if ($tokenId) {
+                $this->tokenManager->removeToken($tokenId);
+            }
+
+            if (RequestUtils::isJson($request) || RequestUtils::wantJson($request)) {
+                $response = new JsonResponse(403, json_encode($e->getMessage()));
+            } else {
+                $this->flashService->error('Vous n\'avez pas de token valid pour exécuter cette action');
+                $response = new ResponseRedirect('/');
+            }
+
+            $setCookie = $this->deleteCookie(time() - 3600);
+            return FigResponseCookies::set($response, $setCookie);
         }
+    }
+
+    private function deleteCookie(?int $expiry = null): SetCookie
+    {
+        return SetCookie::create($this->config['cookieName'])
+            ->withValue('')
+            ->withExpires(($expiry === null) ? $this->config['expiry'] : $expiry)
+            ->withPath('/')
+            ->withDomain()
+            ->withSecure($this->config['secure'])
+            ->withHttpOnly($this->config['httponly']);
     }
 }

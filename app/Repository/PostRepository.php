@@ -2,8 +2,6 @@
 
 namespace App\Repository;
 
-use App\Entity\Post;
-use Doctrine\ORM\Query;
 use Pagerfanta\Pagerfanta;
 use Doctrine\ORM\QueryBuilder;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
@@ -21,9 +19,9 @@ class PostRepository extends PaginatedEntityRepository
     {
         $builder = $this->createQueryBuilder();
         $builder->select('p')
-            ->from(Post::class, 'p')
+            ->from($this->getEntityName(), 'p')
             ->join('p.category', 'c', 'c = p.category')
-            ->orderBy('p.created_at', 'DESC');
+            ->orderBy('p.createdAt', 'DESC');
 
         return $builder;
     }
@@ -37,13 +35,13 @@ class PostRepository extends PaginatedEntityRepository
     {
         return $this->buildFindAll()
             ->where('p.published = 1')
-            ->andWhere('p.created_at < CURRENT_TIMESTAMP()');
+            ->andWhere('p.createdAt < CURRENT_TIMESTAMP()');
     }
     /**
      * Get all records for one category
      *
      * @param int $category_id
-     * @return Query
+     * @return PaginatedQueryBuilder
      */
     public function buildFindPublicForCategory(int $category_id): PaginatedQueryBuilder
     {
@@ -53,10 +51,10 @@ class PostRepository extends PaginatedEntityRepository
     /**
      * paginate Posts
      *
-     * @param \Doctrine\ORM\QueryBuilder $query
+     * @param QueryBuilder $query
      * @param int $perPage
      * @param int $currentPage
-     * @return \Pagerfanta\Pagerfanta
+     * @return Pagerfanta
      */
     public function paginate(QueryBuilder $query, int $perPage, int $currentPage = 1): Pagerfanta
     {
@@ -70,11 +68,38 @@ class PostRepository extends PaginatedEntityRepository
      * Get one record for one category
      *
      * @param int $id
+     * @return mixed
      */
-    public function findWithCategory(int $id)
+    public function findWithCategory(int $id): mixed
     {
         $builder = $this->buildFindPublic()->andWhere("p.id = $id");
         $query = $builder->getQuery();
         return $query->getResult();
+    }
+
+    /**
+     * Get all posts order by ID ASC for API
+     * @return PaginatedQueryBuilder
+     */
+    public function findAllForApi(): PaginatedQueryBuilder
+    {
+        $builder = $this->createQueryBuilder();
+        $builder->select('p')
+            ->from($this->getEntityName(), 'p');
+            //->orderBy('p.id,', 'ASC');
+        return $builder;
+    }
+
+    /**
+     * Get all records for one Category (API function usage)
+     *
+     * @param int $category_id
+     * @return PaginatedQueryBuilder
+     */
+    public function findAllForCategory(int $category_id): PaginatedQueryBuilder
+    {
+        return $this->findAllForApi()
+            ->join('p.category', 'c', 'c = p.category')
+            ->andWhere("p.category = $category_id");
     }
 }

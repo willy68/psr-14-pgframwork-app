@@ -24,7 +24,7 @@ use PgFramework\Router\RequestMatcherInterface;
  */
 class AccessMap implements AccessMapInterface
 {
-    private $map = [];
+    private array $map = [];
 
     /**
      * @param array     $attributes An array of attributes to pass to the access decision manager (like roles)
@@ -34,17 +34,13 @@ class AccessMap implements AccessMapInterface
         $this->map[] = [$requestMatcher, $attributes];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPatterns(ServerRequestInterface $request)
+    public function getPatterns(ServerRequestInterface $request): array
     {
         foreach ($this->map as $elements) {
             if (null === $elements[0] || $elements[0]->match($request)) {
                 return [$elements[1]];
             }
         }
-
         return [null];
     }
 }

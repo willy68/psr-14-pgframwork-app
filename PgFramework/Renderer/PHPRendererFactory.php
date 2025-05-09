@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace PgFramework\Renderer;
 
-use PgFramework\Renderer\PHPRenderer;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class PHPRendererFactory
 {
     /**
      * @param ContainerInterface $container
-     * @return \PgFramework\Renderer\PHPRenderer
+     * @return PHPRenderer
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $container): PHPRenderer
     {

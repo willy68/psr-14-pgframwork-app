@@ -6,29 +6,14 @@ namespace PgFramework\Validator;
 
 class ValidationError
 {
-    /**
-     * Undocumented variable
-     *
-     * @var string
-     */
-    private $key;
+    private string $key;
 
-    /**
-     * Undocumented variable
-     *
-     * @var string
-     */
-    private $rule;
+    private string $rule;
 
-    /**
-     * Undocumented variable
-     *
-     * @var array
-     */
-    private $messages = [
+    private array $messages = [
         'required' => "Le champ %s est requis",
         'empty' => "Le champ %s ne peut-être vide",
-        'slug' => "Le champ %s n\est pas un slug valide",
+        'slug' => "Le champ %s n\'est pas un slug valide",
         'minLength' => "Le champ %s doit contenir plus de %d caractères",
         'maxLength' => "Le champ %s doit contenir moins de %d caractères",
         'betweenLength' => "Le champ %s doit contenir entre %d et %d caractères",
@@ -36,10 +21,12 @@ class ValidationError
         'exists' => "Le champ %s n'existe pas dans la table %s",
         'unique' => "Le champ %s doit être unique",
         'filetype' => "Le champ %s n'est pas au format valide (%s)",
-        'uploaded' => "Vous devez uploaded un fichier"
+        'uploaded' => "Vous devez uploaded un fichier",
+        'email' => "Le champ %s doit être une adresse E-mail valide",
+        'confirm' => "Le champ %s doit être identique avec le champ %s",
     ];
 
-    private $attributes;
+    private array $attributes;
 
     /**
      * ValidationError constructor.
@@ -47,7 +34,7 @@ class ValidationError
      * @param string $rule
      * @param array $attributes
      */
-    public function __construct(string $key, string $rule, $attributes = [])
+    public function __construct(string $key, string $rule, array $attributes = [])
     {
         $this->key = $key;
         $this->rule = $rule;
@@ -73,13 +60,11 @@ class ValidationError
      */
     public function __toString()
     {
-        $params = array_merge(
-            [
-                $this->messages[$this->rule],
-                $this->key
-            ],
-            $this->attributes
-        );
-        return (string)call_user_func_array('sprintf', $params);
+        if (!array_key_exists($this->rule, $this->messages)) {
+            return "Le champs $this->key ne correspond pas à la règle $this->rule";
+        } else {
+            $params = array_merge([$this->messages[$this->rule], $this->key], $this->attributes);
+            return (string)call_user_func_array('sprintf', $params);
+        }
     }
 }

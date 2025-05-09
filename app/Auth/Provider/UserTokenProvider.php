@@ -4,80 +4,55 @@ namespace App\Auth\Provider;
 
 use App\Auth\Entity\UserToken;
 use Doctrine\ORM\EntityManagerInterface;
-use PgFramework\Database\Hydrator;
-use PgFramework\Auth\TokenInterface;
 use PgFramework\Auth\Provider\TokenProviderInterface;
+use PgFramework\Auth\TokenInterface;
+use PgFramework\Database\Hydrator;
 
 class UserTokenProvider implements TokenProviderInterface
 {
-    /**
-     * @var string
-     */
-    protected $entity;
+    protected string $entity;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $em;
+    protected EntityManagerInterface $em;
 
     public function __construct(EntityManagerInterface $em, string $entity = UserToken::class)
     {
         $this->em = $em;
         $this->entity = $entity;
     }
+
     /**
-     * get cookie token from database with Doctrine library
-     *
-     * use user series to find token
+     * Get cookie token from a database with Doctrine library
+     * use user series to find token.
      *
      * @param mixed $series
      * @return TokenInterface|null
      */
     public function getTokenBySeries($series): ?TokenInterface
     {
-        $token = null;
-        try {
-            $repo = $this->em->getRepository($this->entity);
-            $token = $repo->findOneBy(["series" => $series]);
-        } catch (\Exception $e) {
-            return null;
-        }
-        return $token;
+        $repo = $this->em->getRepository($this->entity);
+        return $repo->findOneBy(["series" => $series]);
     }
 
     /**
-     * get cookie token from database with Doctrine library
-     *
-     * use user credential (ex. username or email)
+     * Get token from a database
+     * use credential (ex. username or email).
      *
      * @param mixed $credential
      * @return TokenInterface|null
      */
-    public function getTokenByCredential($credential): ?TokenInterface
+    public function getTokenByCredential(mixed $credential): ?TokenInterface
     {
-        $token = null;
-        try {
-            $repo = $this->em->getRepository($this->entity);
-            $token = $repo->findOneBy(["credential" => $credential]);
-        } catch (\Exception $e) {
-            return null;
-        }
-        return $token;
+        $repo = $this->em->getRepository($this->entity);
+        return $repo->findOneBy(["credential" => $credential]);
     }
 
-    /**
-     * @inheritDoc
-     *
-     * @param array $token
-     * @return \PgFramework\Auth\TokenInterface|null
-     */
     public function saveToken(array $token): ?TokenInterface
     {
         if (empty($token)) {
             return null;
         }
 
-        /** @var UserToken */
+        /** @var UserToken $newToken */
         // ['credential', 'random_password', 'expiration_date', 'is_expired']
         $newToken = Hydrator::hydrate($this->getParams($token), $this->entity);
 
@@ -87,49 +62,7 @@ class UserTokenProvider implements TokenProviderInterface
     }
 
     /**
-     * Mise à jour du token en database
-     *
-     * @param array $token
-     * @param mixed $id
-     * @return TokenInterface|null
-     */
-    public function updateToken(array $token, $id): ?TokenInterface
-    {
-        try {
-            $userToken = $this->em->find($this->entity, $id);
-        } catch (\Exception $e) {
-            return null;
-        }
-
-        if (null === $userToken) {
-            return null;
-        }
-
-        $userToken = Hydrator::hydrate($this->getParams($token), $userToken);
-
-        $this->em->flush();
-
-        return $userToken;
-    }
-
-    public function deleteToken(int $id)
-    {
-        try {
-            $userToken = $this->em->find($this->entity, $id);
-        } catch (\Exception $e) {
-            return;
-        }
-
-        if (null === $userToken) {
-            return;
-        }
-
-        $this->em->remove($userToken);
-        $this->em->flush();
-    }
-
-    /**
-     * Get only the params needed by the array:
+     * Filter params with:
      * ['series', 'credential', 'random_password', 'expiration_date']
      *
      * @param array $params
@@ -137,9 +70,31 @@ class UserTokenProvider implements TokenProviderInterface
      */
     protected function getParams(array $params): array
     {
-        $params = array_filter($params, function ($key) {
+        return array_filter($params, function ($key) {
             return in_array($key, ['series', 'credential', 'random_password', 'expiration_date']);
         }, ARRAY_FILTER_USE_KEY);
-        return $params;
+    }
+
+    public function updateToken(array $token, mixed $id): ?TokenInterface
+    {
+        $userToken = $this->em->find($this->entity, $id);
+        if (null === $userToken) {
+            return null;
+        }
+
+        $userToken = Hydrator::hydrate($this->getParams($token), $userToken);
+        $this->em->flush();
+        return $userToken;
+    }
+
+    public function deleteToken(int $id): void
+    {
+        $userToken = $this->em->find($this->entity, $id);
+        if (null === $userToken) {
+            return;
+        }
+
+        $this->em->remove($userToken);
+        $this->em->flush();
     }
 }

@@ -15,9 +15,9 @@ class SessionListener implements EventSubscriberInterface
 {
     public const SESSION_ATTRIBUTE = '_session';
 
-    private $persistence;
+    private SessionPersistenceInterface $persistence;
 
-    private $session;
+    private SessionInterface $session;
 
     public function __construct(SessionPersistenceInterface $persistence, SessionInterface $session)
     {
@@ -41,7 +41,7 @@ class SessionListener implements EventSubscriberInterface
         $event->setResponse($this->persistence->persistSession($this->session, $response));
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::REQUEST  => ['onRequest', 1000],

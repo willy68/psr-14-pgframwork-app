@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PgFramework\DebugBar;
 
 use DebugBar\DebugBar;
+use DebugBar\DebugBarException;
 use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Message\ResponseInterface;
 use DebugBar\DataCollector\MemoryCollector;
@@ -18,6 +19,9 @@ use DebugBar\DataCollector\ExceptionsCollector;
  */
 class PgDebugBar extends DebugBar
 {
+    /**
+     * @throws DebugBarException
+     */
     public function __construct()
     {
         $this->addCollector(new PhpInfoCollector())
@@ -25,12 +29,10 @@ class PgDebugBar extends DebugBar
             ->addCollector(new TimeDataCollector())
             ->addCollector(new MemoryCollector());
 
-        try {
-            $exceptionCollector = new ExceptionsCollector();
-            $exceptionCollector->setChainExceptions(true);
-            $this->addCollector($exceptionCollector);
-        } catch (\Exception $e) {
-        }
+        $exceptionCollector = (new ExceptionsCollector())->useHtmlVarDumper(false);
+        $exceptionCollector->setChainExceptions();
+
+        $this->addCollector($exceptionCollector);
     }
 
     /**
@@ -39,7 +41,7 @@ class PgDebugBar extends DebugBar
      * @param ResponseInterface $response A Response instance
      * Based on https://github.com/symfony/WebProfilerBundle/blob/master/EventListener/WebDebugToolbarListener.php
      */
-    public function injectDebugbar(ResponseInterface $response)
+    public function injectDebugbar(ResponseInterface $response): ResponseInterface
     {
         $content = $response->getBody()->getContents();
 

@@ -26,14 +26,14 @@ class RequestUtils
     }
 
     /**
-     * Is json request?
+     * Is json request
      *
      * @param ServerRequestInterface $request
      * @return bool
      */
     public static function isJson(ServerRequestInterface $request): bool
     {
-        return 1 === preg_match('{^application/(?:\w+\++)*json$}i', $request->getHeaderLine('content-type'));
+        return 1 === preg_match('{^application/(?:\w+\++)*json}i', $request->getHeaderLine('content-type'));
     }
 
     /**
@@ -55,8 +55,6 @@ class RequestUtils
     }
 
     /**
-     *
-     *
      * @param ServerRequestInterface $request
      * @return string
      */
@@ -65,10 +63,31 @@ class RequestUtils
         $accepts = explode(',', $request->getHeaderLine('Accept'));
         $format = 'html';
         foreach ($accepts as $accept) {
-            if (1 === preg_match('{^application/(?:\w+\++)*json$}i', $accept)) {
+            if (1 === preg_match('{^application/(?:\w+\++)*json}i', $accept)) {
                 $format = 'json';
             }
         }
         return $format;
+    }
+
+    public static function wantJson(ServerRequestInterface $request): bool
+    {
+        $accepts = explode(',', $request->getHeaderLine('Accept'));
+        foreach ($accepts as $accept) {
+            if (1 === preg_match('{^application/(?:\w+\++)*json}i', $accept)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static function getDomain(ServerRequestInterface $request): string
+    {
+        return sprintf(
+            '%s://%s%s',
+            $request->getUri()->getScheme(),
+            $request->getUri()->getHost(),
+            $request->getUri()->getPort() ? ':' . $request->getUri()->getPort() : ''
+        );
     }
 }

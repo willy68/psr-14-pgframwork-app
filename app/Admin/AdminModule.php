@@ -2,22 +2,22 @@
 
 namespace App\Admin;
 
+use App\Admin\Actions\Blog\CategoryCrudController;
+use App\Admin\Actions\Blog\PostCrudController;
+use App\Admin\Actions\DashboardAction;
+use PgFramework\Auth\Middleware\LoggedInMiddleware;
 use PgFramework\Module;
-use Mezzio\Router\RouteCollector;
-use App\Blog\Actions\PostCrudAction;
-use PgFramework\Renderer\TwigRenderer;
-use App\Blog\Actions\CategoryCrudAction;
-use PgFramework\Auth\LoggedInMiddleware;
-use Mezzio\Router\RouteCollectionInterface;
 use PgFramework\Renderer\RendererInterface;
-use PgFramework\Auth\Middleware\CookieLoginMiddleware;
+use PgFramework\Renderer\TwigRenderer;
+use PgRouter\RouteCollectionInterface;
+use PgRouter\RouteCollector;
 
 class AdminModule extends Module
 {
     public const DEFINITIONS = __DIR__ . '/config.php';
 
     public const ANNOTATIONS = [
-        __DIR__
+        DashboardAction::class
     ];
 
     public function __construct(
@@ -29,11 +29,9 @@ class AdminModule extends Module
         $renderer->addPath('admin', __DIR__ . '/views');
 
         /** @var RouteCollector $router*/
-        $router->crud("$prefix/posts", PostCrudAction::class, 'blog.admin')
-            ->middleware(CookieLoginMiddleware::class)
+        $router->crud("$prefix/posts", PostCrudController::class, 'admin.blog')
             ->middleware(LoggedInMiddleware::class);
-        $router->crud("$prefix/categories", CategoryCrudAction::class, 'blog.admin.category')
-            ->middleware(CookieLoginMiddleware::class)
+        $router->crud("$prefix/categories", CategoryCrudController::class, 'admin.blog.category')
             ->middleware(LoggedInMiddleware::class);
         if ($renderer instanceof TwigRenderer) {
             $renderer->getTwig()->addExtension($adminTwigExtension);

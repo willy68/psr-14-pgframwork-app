@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Validator\Rules;
 
+use InvalidArgumentException;
 use PgFramework\Validator\ValidationInterface;
 
 class RangeValidation implements ValidationInterface
@@ -23,19 +24,17 @@ class RangeValidation implements ValidationInterface
         $this->setMax($max);
     }
 
-    public function parseParams($param): self
+    public function parseParams(string $param): self
     {
-        if (is_string($param)) {
-            list($min, $max, $message) = array_pad(explode(',', $param), 3, '');
-            if (!empty($min)) {
-                $this->setMin($min);
-            }
-            if (!empty($max)) {
-                $this->setMax($max);
-            }
-            if (!empty($message)) {
-                $this->error = $message;
-            }
+        list($min, $max, $message) = array_pad(explode(',', $param), 3, '');
+        if (!empty($min)) {
+            $this->setMin($min);
+        }
+        if (!empty($max)) {
+            $this->setMax($max);
+        }
+        if (!empty($message)) {
+            $this->error = $message;
         }
         return $this;
     }
@@ -45,17 +44,12 @@ class RangeValidation implements ValidationInterface
         return [$this->min, $this->max];
     }
 
-    /**
-     *
-     *
-     * @return string
-     */
     public function getError(): string
     {
         return $this->error;
     }
 
-    public function isValid($var): bool
+    public function isValid(mixed $var): bool
     {
         if (!isset($var)) {
             return false;
@@ -78,7 +72,6 @@ class RangeValidation implements ValidationInterface
         if ($len < $this->min || $len > $this->max) {
             return false;
         }
-
         return true;
     }
 
@@ -87,7 +80,6 @@ class RangeValidation implements ValidationInterface
         if ($var < $this->min || $var > $this->max) {
             return false;
         }
-
         return true;
     }
 
@@ -96,7 +88,6 @@ class RangeValidation implements ValidationInterface
         if ($var < $this->min || $var > $this->max) {
             return false;
         }
-
         return true;
     }
 
@@ -115,7 +106,7 @@ class RangeValidation implements ValidationInterface
         $this->max = $this->getNumeric($max);
         //lancer une exception si max === null;
         if ($this->max === null || $this->max <= 0) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Argument invalide, $max doit être de type numeric plus grand que 0 ex: 256 ou \'256\''
             );
         }
@@ -127,14 +118,14 @@ class RangeValidation implements ValidationInterface
         $this->min = $this->getNumeric($min);
         //lancer une exception si min === null;
         if ($this->min === null || $this->min < 0) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Argument invalide, $min doit être de type numeric plus grand ou égal a 0 ex: 2 ou \'2\''
             );
         }
         return $this;
     }
 
-    protected function getNumeric($val)
+    protected function getNumeric($val): float|int|string|null
     {
         if (is_numeric($val)) {
             return $val + 0;

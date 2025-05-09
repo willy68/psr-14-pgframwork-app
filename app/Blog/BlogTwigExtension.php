@@ -2,13 +2,13 @@
 
 namespace App\Blog;
 
-use Twig\TwigFunction;
 use App\Admin\AdminWidgetInterface;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 class BlogTwigExtension extends AbstractExtension
 {
-    private $widgets;
+    private array $widgets;
 
     public function __construct(array $widgets)
     {
@@ -22,7 +22,7 @@ class BlogTwigExtension extends AbstractExtension
         ];
     }
 
-    public function renderMenu()
+    public function renderMenu(): string
     {
         return array_reduce($this->widgets, function ($html, AdminWidgetInterface $widget) {
             return $html . $widget->renderMenu();

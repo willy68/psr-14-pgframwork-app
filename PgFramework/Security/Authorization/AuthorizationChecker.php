@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace PgFramework\Security\Authorization;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use PgFramework\Auth\ForbiddenException;
 
 class AuthorizationChecker implements AuthorizationCheckerInterface
 {
-    private $auth;
-    private $voterManager;
-    private $exceptionOnNoUser;
+    private Auth $auth;
+    private VoterManagerInterface $voterManager;
+    private bool $exceptionOnNoUser;
 
     public function __construct(Auth $auth, VoterManagerInterface $voterManager, bool $exceptionOnNoUser = false)
     {
@@ -20,7 +20,10 @@ class AuthorizationChecker implements AuthorizationCheckerInterface
         $this->exceptionOnNoUser = $exceptionOnNoUser;
     }
 
-    public function isGranted($attribute, $subject = null): bool
+    /**
+     * @throws ForbiddenException
+     */
+    public function isGranted(mixed $attribute, mixed $subject = null): bool
     {
         if (null === $this->auth->getUser()) {
             if ($this->exceptionOnNoUser) {
@@ -30,5 +33,11 @@ class AuthorizationChecker implements AuthorizationCheckerInterface
         }
 
         return $this->voterManager->decide($this->auth, [$attribute], $subject);
+    }
+
+    public function setExceptionOnNoUser(bool $exceptionOnNoUser): static
+    {
+        $this->exceptionOnNoUser = $exceptionOnNoUser;
+        return $this;
     }
 }

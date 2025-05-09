@@ -20,48 +20,32 @@ class SlugValidation implements ValidationInterface
     }
 
     /**
-     *
-     *
      * @param string $param
      * @return self
      */
     public function parseParams(string $param): self
     {
-        if (is_string($param)) {
-            $this->error = $param;
-        }
+        $this->error = $param;
         return $this;
     }
 
-    /**
-     *
-     *
-     * @return array
-     */
     public function getParams(): array
     {
         return [];
     }
 
-    /**
-     *
-     *
-     * @return string
-     */
     public function getError(): string
     {
         return $this->error;
     }
 
     /**
-     *
-     *
-     * @param mixed$value
+     * @param mixed $var
      * @return bool
      */
-    public function isValid($value): bool
+    public function isValid(mixed $var): bool
     {
-        if (is_null($value) || !preg_match($this->pattern, $value)) {
+        if (is_null($var) || !preg_match($this->pattern, $var)) {
             return false;
         }
         return true;

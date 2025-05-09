@@ -15,16 +15,25 @@ class PaginatedEntityRepository extends EntityRepository
         parent::__construct($em, $class);
     }
 
-    public function createQueryBuilder($alias = null, $indexBy = null)
+    public function createQueryBuilder($alias = null, $indexBy = null): PaginatedQueryBuilder
     {
-        $builder = new PaginatedQueryBuilder($this->_em);
+        $builder = new PaginatedQueryBuilder($this->getEntityManager());
 
         if (null !== $alias) {
             $builder
             ->select($alias)
-            ->from($this->_entityName, $alias, $indexBy);
+            ->from($this->getEntityName(), $alias, $indexBy);
         }
 
         return $builder;
+    }
+    /**
+     * Get all records
+     *
+     * @return PaginatedQueryBuilder
+     */
+    public function buildFindAll(): PaginatedQueryBuilder
+    {
+        return $this->createQueryBuilder();
     }
 }

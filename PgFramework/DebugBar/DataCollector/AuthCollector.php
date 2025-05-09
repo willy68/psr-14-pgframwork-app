@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace PgFramework\DebugBar\DataCollector;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use DebugBar\DataCollector\Renderable;
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;
 
 class AuthCollector extends DataCollector implements Renderable, AssetProvider
 {
-    protected $auth;
+    protected Auth $auth;
 
     public function __construct(Auth $auth)
     {
         $this->auth = $auth;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'auth';
     }
 
-    public function collect()
+    public function collect(): array
     {
         $user = $this->auth->getUser();
         if (null === $user) {
@@ -31,9 +31,7 @@ class AuthCollector extends DataCollector implements Renderable, AssetProvider
                 'data' => ['user' => 'Unknown']
             ];
             $text =  'Unknown';
-        }
-
-        if ($user) {
+        } else {
             $data['data'] = [
                 'Username' => $user->getUsername(),
                 'Email' => $user->getEmail(),
@@ -50,7 +48,7 @@ class AuthCollector extends DataCollector implements Renderable, AssetProvider
         return $data;
     }
 
-    public function getWidgets()
+    public function getWidgets(): array
     {
         return [
             "auth" => [
@@ -71,7 +69,7 @@ class AuthCollector extends DataCollector implements Renderable, AssetProvider
     /**
      * @return array
      */
-    public function getAssets()
+    public function getAssets(): array
     {
         return $this->getVarDumper()->getAssets();
     }

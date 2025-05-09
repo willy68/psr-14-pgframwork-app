@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace PgFramework\Router\Loader;
 
+use PgRouter\Route;
 use PgFramework\File\FileUtils;
 
 class DirectoryLoader extends FileLoader
 {
     /**
-     * Find all php files with @Route annotations
+     * Find all PHP files with @Route annotations
      *
      * @param string $dir
      * @return Route[]|null
@@ -29,6 +30,11 @@ class DirectoryLoader extends FileLoader
                 $routes[] = $res;
             }
         }
+
+        if (empty($routes)) {
+            return null;
+        }
+
         return $routes;
     }
 }

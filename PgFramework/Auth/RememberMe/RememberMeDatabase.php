@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PgFramework\Auth\RememberMe;
 
+use DateTime;
+use Exception;
 use PgFramework\Auth\UserInterface;
 use Dflydev\FigCookies\SetCookie;
 use Psr\Http\Message\ResponseInterface;
@@ -12,23 +14,14 @@ use Dflydev\FigCookies\FigResponseCookies;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Auth\Provider\UserProviderInterface;
 use PgFramework\Auth\Provider\TokenProviderInterface;
+use TypeError;
+
+use function count;
 
 class RememberMeDatabase extends AbstractRememberMe
 {
-    /**
-     * Token Repository
-     *
-     * @var TokenProviderInterface
-     */
-    private $tokenProvider;
+    private TokenProviderInterface $tokenProvider;
 
-    /**
-     * Constructeur: ajoute l'option pour le nom du cookie du mot de passe aléatoire
-     *
-     * @param \PgFramework\Auth\Provider\UserProviderInterface $userProvider
-     * @param \PgFramework\Auth\Provider\TokenProviderInterface $tokenProvider
-     * @param string $salt
-     */
     public function __construct(
         UserProviderInterface $userProvider,
         TokenProviderInterface $tokenProvider,
@@ -39,12 +32,13 @@ class RememberMeDatabase extends AbstractRememberMe
     }
 
     /**
-     * Crée un cookie d'authentification,
-     * un token en base données et un cookie avec un mot de passe aléatoire
+     * Crée un cookie d’authentification,
+     * un token en base donnée et un cookie avec un mot de passe aléatoire
      *
      * @param ResponseInterface $response
      * @param UserInterface $user
      * @return ResponseInterface
+     * @throws Exception
      */
     public function onLogin(ResponseInterface $response, UserInterface $user): ResponseInterface
     {
@@ -58,27 +52,22 @@ class RememberMeDatabase extends AbstractRememberMe
                 'series' => $series,
                 'credential' => $user->getUsername(),
                 'random_password' => $randomPassword,
-                'expiration_date' => new \DateTime()
+                'expiration_date' => (new DateTime())
+                    ->setTimestamp(time() +  $this->options['lifetime'])
             ]
         );
 
         // Create random password cookie [$series, $username, $randomPassword]
-        $cookie = SetCookie::create($this->options['name'])
-            ->withValue($this->encodeCookie([$series, $user->getUsername(), $randomPassword]))
-            ->withExpires(time() +  $this->options['lifetime'])
-            ->withPath($this->options['path'])
-            ->withDomain($this->options['domain'])
-            ->withSecure($this->options['secure'])
-            ->withHttpOnly($this->options['httpOnly']);
-        return FigResponseCookies::set($response, $cookie);
+        return FigResponseCookies::set($response, $this->createCookie($series, $user, $randomPassword));
     }
 
     /**
-     * Connecte l'utilisateur automatiquement avec le cookie reçu de la requète et
-     * vérifie le token en base de données s'il est valide
+     * Connecte l’utilisateur automatiquement avec le cookie reçu de la request et
+     * vérifie le token en base de données s’il est valide
      *
      * @param ServerRequestInterface $request
      * @return ServerRequestInterface
+     * @throws Exception
      */
     public function autoLogin(ServerRequestInterface $request): ServerRequestInterface
     {
@@ -86,29 +75,23 @@ class RememberMeDatabase extends AbstractRememberMe
 
         $cookie = FigRequestCookies::get($request, $this->options['name']);
         if (!$cookie->getValue()) {
-            return $this->cancelCookie($request);
+            return $request;
         }
 
         try {
             $cookieParts = $this->decodeCookie($cookie->getValue());
-            if (3 !== \count($cookieParts)) {
-                throw new \Exception();
+            if (3 !== count($cookieParts)) {
+                throw new Exception();
             }
 
             [$series,, $randomPassword] = $cookieParts;
             $token = $this->tokenProvider->getTokenBySeries($series);
 
             if (!$token) {
-                $authenticate = false;
+                throw new Exception();
             }
-        } catch (\Exception $e) {
-            $authenticate = false;
-        } catch (\TypeError $e) {
-            $authenticate = false;
-        }
-
-        if (!$authenticate) {
-            return $this->cancelCookie($request);
+        } catch (Exception | TypeError $e) {
+            return $request->withAttribute($this->options['attribute'], $this->cancelCookie());
         }
 
         $user = $this->userProvider->getUser($this->options['field'], $token->getCredential());
@@ -118,42 +101,35 @@ class RememberMeDatabase extends AbstractRememberMe
                 $authenticate = false;
             }
             // expiration outdated
-            if ($token->getExpirationDate()->getTimestamp() + $this->options['lifetime'] < time()) {
+            if ($token->getExpirationDate()->getTimestamp() < time()) {
                 $authenticate = false;
             }
             // Remove token from database
             if (!$authenticate) {
                 $this->tokenProvider->deleteToken($token->getId());
-                return $this->cancelCookie($request);
+                return $request->withAttribute($this->options['attribute'], $this->cancelCookie());
             }
 
             // Update cookie and database token
-            //["series', 'credential', 'random_password', 'expiration_date']
+            //['series', 'credential', 'random_password', 'expiration_date']
             $randomPassword = base64_encode(random_bytes(64));
             $this->tokenProvider->updateToken(
                 [
                     'random_password' => $randomPassword,
-                    'expiration_date' => new \DateTime()
+                    'expiration_date' => (new DateTime())
+                        ->setTimestamp(time() +  $this->options['lifetime'])
                 ],
                 $token->getId()
             );
 
-            $cookie = SetCookie::create($this->options['name'])
-                ->withValue($this->encodeCookie([$series, $user->getUsername(), $randomPassword]))
-                ->withExpires(time() +  $this->options['lifetime'])
-                ->withPath($this->options['path'])
-                ->withDomain($this->options['domain'])
-                ->withSecure($this->options['secure'])
-                ->withHttpOnly($this->options['httpOnly']);
-
             return $request->withAttribute('_user', $user)
-                ->withAttribute($this->options['attribute'], $cookie);
+                ->withAttribute($this->options['attribute'], $this->createCookie($series, $user, $randomPassword));
         }
         return $request;
     }
 
     /**
-     * Déconnecte l'utilisateur et invalide le cookie dans la response et
+     * Déconnecte l’utilisateur et invalide le cookie dans la response et
      * marque le token en base de données expiré
      *
      * @param ServerRequestInterface $request
@@ -165,7 +141,7 @@ class RememberMeDatabase extends AbstractRememberMe
         $cookie = FigRequestCookies::get($request, $this->options['name']);
         if ($cookie->getValue()) {
             $cookieParts = $this->decodeCookie($cookie->getValue());
-            if (3 === \count($cookieParts)) {
+            if (3 === count($cookieParts)) {
                 [$series] = $cookieParts;
 
                 $token = $this->tokenProvider->getTokenBySeries($series);
@@ -175,21 +151,14 @@ class RememberMeDatabase extends AbstractRememberMe
                     $this->tokenProvider->deleteToken($token->getId());
                 }
                 // Delete cookie
-                $cookiePassword = SetCookie::create($this->options['name'])
-                    ->withValue('')
-                    ->withExpires(time() - 3600)
-                    ->withPath($this->options['path'])
-                    ->withDomain($this->options['domain'])
-                    ->withSecure($this->options['secure'])
-                    ->withHttpOnly($this->options['httpOnly']);
-                $response = FigResponseCookies::set($response, $cookiePassword);
+                $response = FigResponseCookies::set($response, $this->cancelCookie());
             }
         }
         return $response;
     }
 
     /**
-     * Renouvelle la date d'expiration du cookie dans la response et le token en base de données
+     * Renouvelle la date d’expiration du cookie dans la response et le token en base de données
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
@@ -201,22 +170,43 @@ class RememberMeDatabase extends AbstractRememberMe
         $cookie = $request->getAttribute($this->options['attribute']);
 
         if ($cookie) {
-            // Set new random password cookie
+            assert($cookie instanceof SetCookie);
             $response = FigResponseCookies::set($response, $cookie);
+        } else {
+            $cookie = FigRequestCookies::get($request, $this->options['name']);
+
+            if ($cookie->getValue()) {
+                $setCookie = SetCookie::create($this->options['name'])
+                    ->withValue($cookie->getValue())
+                    ->withExpires(time() + $this->options['lifetime'])
+                    ->withPath($this->options['path'])
+                    ->withDomain($this->options['domain'])
+                    ->withSecure($this->options['secure'])
+                    ->withHttpOnly($this->options['httpOnly']);
+                $response = FigResponseCookies::set($response, $setCookie);
+            }
         }
         return $response;
     }
 
-
-    protected function cancelCookie(ServerRequestInterface $request): ServerRequestInterface
+    protected function createCookie(string $series, UserInterface $user, string $randomPassword): SetCookie
     {
-        $cookie = SetCookie::create($this->options['name'])
-            ->withValue('')
+        return SetCookie::create($this->options['name'])
+            ->withValue($this->encodeCookie([$series, $user->getUsername(), $randomPassword]))
+            ->withExpires(time() +  $this->options['lifetime'])
+            ->withPath($this->options['path'])
+            ->withDomain($this->options['domain'])
+            ->withSecure($this->options['secure'])
+            ->withHttpOnly($this->options['httpOnly']);
+    }
+
+    protected function cancelCookie(): SetCookie
+    {
+        return SetCookie::create($this->options['name'])
             ->withExpires(time() - 3600)
             ->withPath($this->options['path'])
             ->withDomain($this->options['domain'])
             ->withSecure($this->options['secure'])
             ->withHttpOnly($this->options['httpOnly']);
-        return $request->withAttribute($this->options['attribute'], $cookie);
     }
 }

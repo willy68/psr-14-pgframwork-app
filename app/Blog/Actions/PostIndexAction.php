@@ -2,6 +2,7 @@
 
 namespace App\Blog\Actions;
 
+use ActiveRecord\Exceptions\RecordNotFound;
 use App\Entity\Post;
 use App\Blog\Models\Posts;
 use App\Blog\Models\Categories;
@@ -16,25 +17,21 @@ use Psr\Http\Message\ServerRequestInterface as Request;
  */
 class PostIndexAction
 {
-    /**
-     * @var RendererInterface
-     */
-    private $renderer;
+    private RendererInterface $renderer;
 
-    /**
-     * @param RendererInterface $renderer
-     */
     public function __construct(RendererInterface $renderer)
     {
         $this->renderer = $renderer;
     }
 
     /**
+     * Get all public articles with ActiveRecord
      *
      * @Route("/dblog", name="blog.indexAR", methods={"GET"})
      *
      * @param Request $request
      * @return string
+     * @throws RecordNotFound
      */
     #[Route('/dblog', name:'blog.indexAR', methods:['GET'])]
     public function __invoke(Request $request): string
@@ -49,6 +46,7 @@ class PostIndexAction
     }
 
     /**
+     * Get All Articles with Doctrine
      *
      * @Route("/blog", name="blog.index", methods={"GET"})
      *
@@ -60,7 +58,7 @@ class PostIndexAction
     public function index(Request $request, EntityManagerInterface $em): string
     {
         $params = $request->getQueryParams();
-        /** @var PostRepository */
+        /** @var PostRepository $repo*/
         $repo = $em->getRepository(Post::class);
         $posts = $repo->buildFindPublic()->paginate(12, $params['p'] ?? 1);
         $categories = $em->getRepository(Category::class)->findAll();

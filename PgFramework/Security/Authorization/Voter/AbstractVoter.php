@@ -13,14 +13,12 @@ declare(strict_types=1);
 
 namespace PgFramework\Security\Authorization\Voter;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
+use TypeError;
 
 abstract class AbstractVoter implements VoterInterface
 {
-    /**
-    * {@inheritdoc}
-    */
-    public function vote(Auth $auth, array $attributes, $subject = null)
+    public function vote(Auth $auth, array $attributes, $subject = null): int
     {
         // abstain vote by default in case none of the attributes are supported
         $vote = self::ACCESS_ABSTAIN;
@@ -30,18 +28,13 @@ abstract class AbstractVoter implements VoterInterface
                 if (!$this->canVote($attribute, $subject)) {
                     continue;
                 }
-            } catch (\TypeError $e) {
-                if (\PHP_VERSION_ID < 80000) {
-                    if (
-                        0 === strpos($e->getMessage(), 'Argument 1 passed to')
-                        && false !== strpos($e->getMessage(), '::canVote() must be of the type string')
-                    ) {
-                        continue;
-                    }
-                } elseif (false !== strpos($e->getMessage(), 'canVote(): Argument #1')) {
+            } catch (TypeError $e) {
+                if (
+                    str_starts_with($e->getMessage(), 'Argument 1 passed to')
+                    && str_contains($e->getMessage(), '::canVote() must be of the type string')
+                ) {
                     continue;
                 }
-
                 throw $e;
             }
 

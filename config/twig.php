@@ -2,14 +2,15 @@
 
 /**
  * Add your own Twig extensions inside Array
- * use \DI\get
  * ex: \DI\get(MyExtension::class)
  */
+
+use function DI\add;
 
 return [
     'views.path' => dirname(__DIR__) . '/app/views',
     'twig.entrypoints' => dirname(__DIR__) . '/public/assets/js/entrypoints.json',
-    'twig.extensions' => \DI\add([
+    'twig.extensions' => add([
         /** Add your extensions here */
 
     ])

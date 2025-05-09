@@ -40,13 +40,11 @@ class ExtensionValidation implements ValidationInterface
      */
     public function parseParams(string $param): self
     {
-        if (is_string($param)) {
-            list($ext, $msg) = explode(']', $param);
-            $ext = substr($ext, 1);
-            $this->extensions = (explode(',', $ext)) ?: [];
-            if (!empty($msg)) {
-                $this->error = substr($msg, 1);
-            }
+        list($ext, $msg) = explode(']', $param);
+        $ext = substr($ext, 1);
+        $this->extensions = (explode(',', $ext)) ?: [];
+        if (!empty($msg)) {
+            $this->error = substr($msg, 1);
         }
         return $this;
     }
@@ -68,15 +66,15 @@ class ExtensionValidation implements ValidationInterface
     }
 
     /**
-     * @param mixed $file
+     * @param mixed $var
      * @return bool
      */
-    public function isValid($file): bool
+    public function isValid(mixed $var): bool
     {
-        /** @var UploadedFileInterface $file */
-        if ($file !== null && $file->getError() === UPLOAD_ERR_OK) {
-            $type = $file->getClientMediaType();
-            $extension = mb_strtolower(pathinfo($file->getClientFilename(), PATHINFO_EXTENSION));
+        /** @var UploadedFileInterface $var */
+        if ($var !== null && $var->getError() === UPLOAD_ERR_OK) {
+            $type = $var->getClientMediaType();
+            $extension = mb_strtolower(pathinfo($var->getClientFilename(), PATHINFO_EXTENSION));
             $expectedType = self::MIME_TYPES[$extension] ?? null;
             if (!in_array($extension, $this->extensions) || $expectedType !== $type) {
                 return false;

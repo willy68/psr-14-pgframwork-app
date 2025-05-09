@@ -10,20 +10,15 @@ use Doctrine\ORM\Mapping\Driver\RepeatableAttributeCollection;
 use Doctrine\Persistence\ManagerRegistry;
 use PgFramework\Annotation\AnnotationReaderTrait;
 use PgFramework\Annotation\AnnotationsLoader;
+use ReflectionFunctionAbstract;
 
 class DoctrineParamConverterAnnotations implements ParameterResolver
 {
     use AnnotationReaderTrait;
 
-    /**
-     * @var ManagerRegistry
-     */
-    private $mg;
+    private ManagerRegistry $mg;
 
-    /**
-     * @var AnnotationsLoader
-     */
-    private $annotationsLoader;
+    private AnnotationsLoader $annotationsLoader;
 
     public function __construct(ManagerRegistry $mg, AnnotationsLoader $annotationsLoader)
     {
@@ -33,7 +28,7 @@ class DoctrineParamConverterAnnotations implements ParameterResolver
     }
 
     public function getParameters(
-        \ReflectionFunctionAbstract $reflection,
+        ReflectionFunctionAbstract $reflection,
         array $providedParameters,
         array $resolvedParameters
     ): array {
@@ -49,7 +44,6 @@ class DoctrineParamConverterAnnotations implements ParameterResolver
             return $resolvedParameters;
         }
 
-        /** @var \ReflectionParameter[] $reflectionParameters */
         $reflectionParameters = $reflection->getParameters();
         // Skip parameters already resolved
         if (!empty($resolvedParameters)) {
@@ -70,7 +64,7 @@ class DoctrineParamConverterAnnotations implements ParameterResolver
     }
 
     /**
-     * Parse le tableau d'annotations
+     * Parse le tableau d’annotations
      *
      * @param iterable $annotations
      * @return ParameterResolver[]

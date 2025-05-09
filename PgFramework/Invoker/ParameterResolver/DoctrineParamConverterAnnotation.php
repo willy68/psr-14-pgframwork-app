@@ -7,28 +7,22 @@ namespace PgFramework\Invoker\ParameterResolver;
 use ActiveRecord\Exceptions\RecordNotFound;
 use Doctrine\Persistence\ManagerRegistry;
 use Invoker\ParameterResolver\ParameterResolver;
+use ReflectionFunctionAbstract;
+use ReflectionNamedType;
 
 class DoctrineParamConverterAnnotation implements ParameterResolver
 {
     /**
      * Nom du paramètre de la methode à injecter
-     *
-     * @var string
      */
-    private $methodParam;
+    private string $methodParam;
 
     /**
      * Other field to find Record
-     *
-     * @var array
      */
-    private $findBy;
+    private array $findBy;
 
-    /**
-     *
-     * @var ManagerRegistry
-     */
-    private $mg;
+    private ManagerRegistry $mg;
 
     public function __construct(ManagerRegistry $mg, string $methodParam, array $findBy)
     {
@@ -37,8 +31,11 @@ class DoctrineParamConverterAnnotation implements ParameterResolver
         $this->findBy = $findBy;
     }
 
+    /**
+     * @throws RecordNotFound
+     */
     public function getParameters(
-        \ReflectionFunctionAbstract $reflection,
+        ReflectionFunctionAbstract $reflection,
         array $providedParameters,
         array $resolvedParameters
     ): array {
@@ -47,7 +44,6 @@ class DoctrineParamConverterAnnotation implements ParameterResolver
             return $resolvedParameters;
         }
 
-        /** @var \ReflectionParameter[] $reflectionParameters */
         $reflectionParameters = $reflection->getParameters();
         // Skip parameters already resolved
         if (!empty($resolvedParameters)) {
@@ -63,7 +59,6 @@ class DoctrineParamConverterAnnotation implements ParameterResolver
             }
 
             if ($key === $this->findBy[$findByKey]) {
-                /** @var \ReflectionParameter[] $reflectionParameters */
                 foreach ($reflectionParameters as $index => $reflectionParameter) {
                     $name = $reflectionParameter->getName();
 
@@ -74,13 +69,13 @@ class DoctrineParamConverterAnnotation implements ParameterResolver
                             // No type
                             continue;
                         }
-                        /** @var \ReflectionNamedType $parameterType */
+                        /** @var ReflectionNamedType $parameterType */
                         if ($parameterType->isBuiltin()) {
-                            // Primitive types are not supported
+                            // Primitive types not supported
                             continue;
                         }
-                        if (!$parameterType instanceof \ReflectionNamedType) {
-                            // Union types are not supported
+                        if (!$parameterType instanceof ReflectionNamedType) {
+                            // Union types not supported
                             continue;
                         }
 

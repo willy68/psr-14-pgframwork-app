@@ -17,28 +17,27 @@ class NotEmptyValidation implements ValidationInterface
         }
     }
 
-    public function isValid($var): bool
+    public function isValid(mixed $var): bool
     {
         return $this->isNotEmpty($var);
     }
 
     /**
      *
-     * @Check if POST variable is set
+     * Check if POST variable is set
      *
-     * @access private
+     * @access protected
      *
-     * @param string $var The POST variable to check
+     * @param mixed $var The POST variable to check
      *
      */
-    protected function isNotEmpty($var): bool
+    protected function isNotEmpty(mixed $var): bool
     {
-        $check = true;
         if (!isset($var)) {
             $check = false;
         } elseif (is_array($var)) {
             $check = !empty($var);
-        } elseif (is_string($var)) { // une chaine constituée que d'espaces est considérée comme vide!
+        } elseif (is_string($var)) { // une chaine constituée que d’espaces est considérée comme vide
             $check = (bool) strlen(trim($var));
         } else {
             $check = !empty($var); // autre type de variable
@@ -50,7 +49,7 @@ class NotEmptyValidation implements ValidationInterface
     public function parseParams($param): self
     {
         if (is_string($param)) {
-            list($fieldName, $message) = array_pad(explode(',', $param), 2, '');
+            list(, $message) = array_pad(explode(',', $param), 2, '');
             if (!empty($message)) {
                 $this->error = $message;
             }

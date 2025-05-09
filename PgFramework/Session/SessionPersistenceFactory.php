@@ -6,10 +6,16 @@ namespace PgFramework\Session;
 
 use Mezzio\Session\Ext\PhpSessionPersistence;
 use Mezzio\Session\SessionPersistenceInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class SessionPersistenceFactory
 {
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function __invoke(ContainerInterface $c): SessionPersistenceInterface
     {
         $config = $c->has('session.persistence.ext') ? $c->get('session.persistence.ext') : null;

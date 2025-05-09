@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="./vendor/autoload.php" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd">
+  <coverage>
+    <include>
+      <directory suffix=".php">PgFramework</directory>
+      <directory suffix=".php">app</directory>
+    </include>
+      <exclude>
+        <directory suffix=".php">tests</directory>
+        <directory suffix=".php">*/Entity</directory>
+        <directory suffix=".php">*/*/Entity</directory>
+        <directory suffix=".php">*/Models</directory>
+        <directory suffix=".php">*/*/Models</directory>
+      </exclude>
+  </coverage>
+  <testsuites>
+    <testsuite name="Framework">
+      <directory>tests</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>

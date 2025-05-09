@@ -1,16 +1,16 @@
 <?php
 
-use App\Blog\BlogWidget;
-use App\Blog\BlogAdminWidget;
 use App\Blog\BlogTwigExtension;
+use App\Blog\BlogWidget;
+
+use function DI\add;
+use function DI\create;
+use function DI\get;
 
 return [
     'blog.prefix' => '/blog',
-    'admin.widgets' => \DI\add([
-       \DI\get(BlogAdminWidget::class)
+    'blog.widgets' => add([
+        get(BlogWidget::class)
     ]),
-    'blog.widgets' => \DI\add([
-        \DI\get(BlogWidget::class)
-     ]),
-     BlogTwigExtension::class => \DI\create()->constructor(\DI\get('blog.widgets')),
+    BlogTwigExtension::class => create()->constructor(get('blog.widgets')),
 ];

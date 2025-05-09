@@ -2,21 +2,24 @@
 
 namespace App\Entity;
 
+use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
  * @ORM\Table(name="categories")
  */
-#[Entity()]
+#[Entity(repositoryClass: CategoryRepository::class)]
 #[Table(name: 'categories')]
 class Category
 {
@@ -26,31 +29,36 @@ class Category
      * @ORM\GeneratedValue
      * @var int
      */
+    #[Groups(['group1'])]
     #[Id]
-    #[GeneratedValue()]
+    #[GeneratedValue]
     #[Column(type: Types::INTEGER)]
-    public $id;
+    public int $id;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
+    #[Groups(['group1'])]
     #[Column(type: TYPES::STRING)]
-    public $name;
+    public string $name;
 
     /**
      * @ORM\Column(type="string")
      * @var string
      */
+    #[Groups(['group1'])]
     #[Column(type: TYPES::STRING)]
-    public $slug;
+    public string $slug;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Post", mappedBy="category")
-     * @var ArrayCollection<Post> An ArrayCollection of Post objects.
+     * @var Collection<int, Post> An ArrayCollection of Post objects.
      */
+    #[Groups(['group2'])]
+    #[MaxDepth(1)]
     #[OneToMany(mappedBy: 'category', targetEntity: Post::class)]
-    public $posts;
+    public Collection $posts;
 
     public function __construct()
     {
@@ -59,23 +67,22 @@ class Category
 
 
     /**
-     * Get the value of id
+     * Get the value of ID
      *
      * @return  int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
-     * Set the value of id
+     * Set the value of ID
      *
-     * @param  int  $id
-     *
+     * @param int $id
      * @return  self
      */
-    public function setId(int $id)
+    public function setId(int $id): static
     {
         $this->id = $id;
 
@@ -87,7 +94,7 @@ class Category
      *
      * @return  string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -95,11 +102,10 @@ class Category
     /**
      * Set the value of name
      *
-     * @param  string  $name
-     *
+     * @param string $name
      * @return  self
      */
-    public function setName(string $name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -111,7 +117,7 @@ class Category
      *
      * @return  string
      */
-    public function getSlug()
+    public function getSlug(): string
     {
         return $this->slug;
     }
@@ -119,18 +125,17 @@ class Category
     /**
      * Set the value of slug
      *
-     * @param  string  $slug
-     *
+     * @param string $slug
      * @return  self
      */
-    public function setSlug(string $slug)
+    public function setSlug(string $slug): static
     {
         $this->slug = $slug;
 
         return $this;
     }
 
-    public function addPost(Post $post)
+    public function addPost(Post $post): void
     {
         $this->posts[] = $post;
     }

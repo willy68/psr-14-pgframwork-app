@@ -9,12 +9,13 @@ use DebugBar\DataCollector\Renderable;
 use DebugBar\DataCollector\DataCollector;
 use Mezzio\Router\RouteResult;
 use Mezzio\Router\RouterInterface;
+use PgRouter\Route;
 
 class RouteCollector extends DataCollector implements Renderable, AssetProvider
 {
-    protected $routeResult;
+    protected ?RouteResult $routeResult;
 
-    protected $router;
+    protected RouterInterface $router;
 
     public function __construct(RouterInterface $router, ?RouteResult $routeResult = null)
     {
@@ -22,19 +23,23 @@ class RouteCollector extends DataCollector implements Renderable, AssetProvider
         $this->router = $router;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'route';
     }
 
-    public function collect()
+    public function collect(): array
     {
+        $data = [
+            'text' => 'route fail',
+            'data' => []
+        ];
+
         if (null === $this->routeResult) {
-            return $data = [
-                'text' => 'route fail'
-            ];
+            return $data;
         }
 
+        /** @var false|Route $route */
         $route = $this->routeResult->getMatchedRoute();
         if ($route) {
             $data['data'] = [
@@ -43,20 +48,19 @@ class RouteCollector extends DataCollector implements Renderable, AssetProvider
                 'name' => $route->getName(),
                 'callback' => $route->getCallback(),
                 'params' => $this->routeResult->getMatchedParams(),
+                'middleware' => $route->getMiddlewareStack(),
             ];
             $methods = $data['data']['methods'] ?? [];
-            $text = implode(', ', $methods) . ' ' . $route->getPath();
+            $data['text'] = implode(', ', $methods) . ' ' . $route->getPath();
         }
-
         foreach ($data['data'] as $key => $value) {
             $data['data'][$key] = $this->getVarDumper()->renderVar($value);
         }
-        $data['text'] = $text;
 
         return $data;
     }
 
-    public function getWidgets()
+    public function getWidgets(): array
     {
         return [
             "route" => [
@@ -77,7 +81,7 @@ class RouteCollector extends DataCollector implements Renderable, AssetProvider
     /**
      * @return array
      */
-    public function getAssets()
+    public function getAssets(): array
     {
         return $this->getVarDumper()->getAssets();
     }

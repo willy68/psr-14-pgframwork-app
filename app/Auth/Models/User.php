@@ -11,32 +11,18 @@ class User extends Model implements UserInterface
 
     public static $table_name = 'users';
 
-    public static $before_save = array('encodeRoles'); # new OR updated records
+    public static array $before_save = array('encodeRoles'); # new OR updated records
 
-    /**
-     *
-     * @return int
-     */
     public function getId(): int
     {
         return (int)$this->id;
     }
 
-        /**
-     * Undocumented function
-     *
-     * @return string
-     */
     public function getUsername(): string
     {
         return $this->username;
     }
 
-    /**
-     * Undocumented function
-     *
-     * @return string[]
-     */
     public function getRoles(): array
     {
         if (is_string($this->roles)) {
@@ -52,18 +38,11 @@ class User extends Model implements UserInterface
         }
     }
 
-    /**
-     * Get the value of email
-     */
     public function getEmail(): string
     {
         return $this->email;
     }
 
-    /**
-     *
-     * @return string
-     */
     public function getPassword(): string
     {
         return $this->password;

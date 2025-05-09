@@ -9,12 +9,10 @@ use PgFramework\Validator\FilterInterface;
 class StriptagsFilter extends AbstractFilter implements FilterInterface
 {
     /**
-     *
-     *
      * @param mixed $var
      * @return mixed
      */
-    public function filter($var)
+    public function filter(mixed $var): mixed
     {
         if ($this->isSet($var)) {
             return strip_tags($var);

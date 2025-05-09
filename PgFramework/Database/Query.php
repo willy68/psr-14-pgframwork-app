@@ -4,31 +4,33 @@ declare(strict_types=1);
 
 namespace PgFramework\Database;
 
+use IteratorAggregate;
 use Pagerfanta\Pagerfanta;
 use PDO;
+use PDOStatement;
 use Traversable;
 
-class Query implements \IteratorAggregate
+class Query implements IteratorAggregate
 {
-    private $pdo;
+    private ?PDO $pdo;
 
-    private $select;
+    private array $select = [];
 
-    private $from = [];
+    private array $from = [];
 
-    private $entity;
+    private mixed $entity;
 
-    private $where = [];
+    private array $where = [];
 
-    private $group;
+    private mixed $group;
 
-    private $order = [];
+    private array $order = [];
 
-    private $limit;
+    private string $limit;
 
-    private $joins = [];
+    private array $joins = [];
 
-    private $params = [];
+    private array $params = [];
 
     /**
      * Query constructor.
@@ -66,7 +68,7 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * @param string[] ...$fields
+     * @param string ...$fields
      * @return self
      */
     public function select(string ...$fields): self
@@ -76,14 +78,12 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * @param $length
+     * @param int $length
      * @param int $offset
      * @return self
      */
-    public function limit($length, $offset = 0): self
+    public function limit(int $length, int $offset = 0): self
     {
-        $length = (int) $length;
-        $offset = (int) $offset;
         $this->limit = "$offset, $length";
         return $this;
     }
@@ -111,7 +111,7 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * @param string[] ...$condition
+     * @param string ...$condition
      * @return self
      */
     public function where(string ...$condition): self
@@ -123,7 +123,7 @@ class Query implements \IteratorAggregate
     /**
      * @return mixed
      */
-    public function count()
+    public function count(): mixed
     {
         $query = clone $this;
         $table = current($this->from);
@@ -154,7 +154,7 @@ class Query implements \IteratorAggregate
     /**
      * @return mixed
      */
-    public function fetch()
+    public function fetch(): mixed
     {
         $record = $this->execute()->fetch(PDO::FETCH_ASSOC);
         if ($record === false) {
@@ -170,7 +170,7 @@ class Query implements \IteratorAggregate
      * @return mixed
      * @throws NoRecordException
      */
-    public function fetchOrFail()
+    public function fetchOrFail(): mixed
     {
         $record = $this->fetch();
         if ($record === false) {
@@ -228,7 +228,7 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * get Where conditions
+     * Get Where conditions
      *
      * @return string
      */
@@ -241,7 +241,7 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * get Order conditions
+     * Get Order conditions
      *
      * @return string
      */
@@ -254,7 +254,7 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * get Limit conditions
+     * Get Limit conditions
      *
      * @return string
      */
@@ -285,9 +285,9 @@ class Query implements \IteratorAggregate
     }
 
     /**
-     * @return mixed
+     * @return PDOStatement|bool
      */
-    private function execute()
+    private function execute(): PDOStatement|bool
     {
         $query = $this->__toString();
         if (!empty($this->params)) {

@@ -8,9 +8,9 @@ use PgFramework\Auth\UserInterface;
 
 class AuthenticateResult implements AuthenticateResultInterface
 {
-    protected $credentials;
+    protected mixed $credentials;
 
-    protected $user;
+    protected UserInterface $user;
 
     public function __construct($credentials, UserInterface $user)
     {
@@ -21,7 +21,7 @@ class AuthenticateResult implements AuthenticateResultInterface
     /**
      * @inheritdoc
      */
-    public function getCredentials()
+    public function getCredentials(): mixed
     {
         return $this->credentials;
     }
@@ -37,9 +37,10 @@ class AuthenticateResult implements AuthenticateResultInterface
     /**
      * Set the value of credentials
      *
+     * @param mixed $credentials
      * @return  self
      */
-    public function setCredentials($credentials)
+    public function setCredentials(mixed $credentials): static
     {
         $this->credentials = $credentials;
 
@@ -49,9 +50,10 @@ class AuthenticateResult implements AuthenticateResultInterface
     /**
      * Set the value of user
      *
+     * @param UserInterface $user
      * @return  self
      */
-    public function setUser(UserInterface $user)
+    public function setUser(UserInterface $user): static
     {
         $this->user = $user;
 

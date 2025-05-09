@@ -40,16 +40,16 @@ class BodyParserMiddleware implements MiddlewareInterface
     /**
      * Registered Parsers
      *
-     * @var \Closure[]
+     * @var Closure[]
      */
-    protected $parsers = [];
+    protected array $parsers = [];
 
     /**
      * The HTTP methods to parse data on.
      *
      * @var string[]
      */
-    protected $methods = ['PUT', 'POST', 'PATCH', 'DELETE'];
+    protected array $methods = ['PUT', 'POST', 'PATCH', 'DELETE'];
 
     /**
      * Constructor
@@ -89,7 +89,7 @@ class BodyParserMiddleware implements MiddlewareInterface
      * @param string[] $methods The methods to parse data on.
      * @return $this
      */
-    public function setMethods(array $methods)
+    public function setMethods(array $methods): static
     {
         $this->methods = $methods;
 
@@ -122,11 +122,11 @@ class BodyParserMiddleware implements MiddlewareInterface
      * ```
      *
      * @param string[] $types An array of content-type header values to match. eg. application/json
-     * @param \Closure $parser The parser function. Must return an array of data to be inserted
+     * @param Closure $parser The parser function. Must return an array of data to be inserted
      *   into the request.
      * @return $this
      */
-    public function addParser(array $types, Closure $parser)
+    public function addParser(array $types, Closure $parser): static
     {
         foreach ($types as $type) {
             $type = strtolower($type);
@@ -139,7 +139,7 @@ class BodyParserMiddleware implements MiddlewareInterface
     /**
      * Get the current parsers
      *
-     * @return \Closure[]
+     * @return Closure[]
      */
     public function getParsers(): array
     {
@@ -151,9 +151,9 @@ class BodyParserMiddleware implements MiddlewareInterface
      *
      * Will modify the request adding a parsed body if the content-type is known.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request The request.
-     * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
-     * @return \Psr\Http\Message\ResponseInterface A response.
+     * @param ServerRequestInterface $request The request.
+     * @param RequestHandlerInterface $handler The request handler.
+     * @return ResponseInterface A response.
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -182,7 +182,7 @@ class BodyParserMiddleware implements MiddlewareInterface
      * @param string $body The request body to decode
      * @return array|null
      */
-    protected function decodeJson(string $body)
+    protected function decodeJson(string $body): ?array
     {
         if ($body === '') {
             return [];
@@ -205,7 +205,7 @@ class BodyParserMiddleware implements MiddlewareInterface
     {
         try {
             $xml = Xml::build($body, ['return' => 'domdocument', 'readFile' => false]);
-            // We might not get child nodes if there are nested inline entities.
+            // We might not get child nodes if there nested inline entities.
             if ((int)$xml->childNodes->length > 0) {
                 return Xml::toArray($xml);
             }

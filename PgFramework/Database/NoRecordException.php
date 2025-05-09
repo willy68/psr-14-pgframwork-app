@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PgFramework\Database;
 
-class NoRecordException extends \Exception
+use Exception;
+
+class NoRecordException extends Exception
 {
 }

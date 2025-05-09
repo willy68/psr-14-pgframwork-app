@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Security\Authorization;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 
 /**
  * VoterManagerInterface makes authorization decisions.
@@ -32,10 +32,10 @@ interface VoterManagerInterface
     /**
      * Decides whether the access is possible or not.
      *
-     * @param array  $attributes An array of attributes associated with the method being invoked
-     * @param object $object     The object to secure
-     *
-     * @return bool true if the access is granted, false otherwise
+     * @param Auth $auth
+     * @param array $attributes An array of attributes associated with the method being invoked
+     * @param mixed $subject
+     * @return bool True if the access is granted, false otherwise
      */
-    public function decide(Auth $auth, array $attributes, $subject = null);
+    public function decide(Auth $auth, array $attributes, mixed $subject = null): bool;
 }

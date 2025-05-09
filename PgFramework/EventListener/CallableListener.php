@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace PgFramework\EventListener;
 
+use Closure;
 use League\Event\Listener;
+use ReflectionException;
+use ReflectionMethod;
+use RuntimeException;
 
 /**
  * Listener that don't depend on Container
  */
 class CallableListener implements Listener
 {
-    protected $callback;
+    protected mixed $callback;
 
-    /**
-     *
-     * @param mixed $callback
-     */
-    public function __construct($callback)
+    public function __construct(mixed $callback)
     {
         $this->callback = $callback;
     }
@@ -27,18 +27,22 @@ class CallableListener implements Listener
      *
      * @param object $event
      * @return void
+     * @throws ReflectionException
      */
     public function __invoke(object $event): void
     {
         call_user_func_array($this->getCallback(), [$event]);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     protected function getCallback(): callable
     {
         $callback = $this->callback;
 
-        // Shortcut for a very common use case
-        if ($callback instanceof \Closure) {
+        // Shortcut for a common use case
+        if ($callback instanceof Closure) {
             return $callback;
         }
 
@@ -63,7 +67,7 @@ class CallableListener implements Listener
         }
 
         if (! is_callable($callback)) {
-            throw new \RuntimeException("Le callback $callback n'est pas un callable");
+            throw new RuntimeException("Le callback $callback n'est pas un callable");
         }
 
         return $callback;
@@ -73,13 +77,14 @@ class CallableListener implements Listener
      * Check if the callable represents a static call to a non-static method.
      *
      * @param mixed $callable
-     * @throws \ReflectionException
+     * @return bool
+     * @throws ReflectionException
      */
-    private function isStaticCallToNonStaticMethod($callable): bool
+    private function isStaticCallToNonStaticMethod(mixed $callable): bool
     {
         if (is_array($callable) && is_string($callable[0])) {
             [$class, $method] = $callable;
-            $reflection = new \ReflectionMethod($class, $method);
+            $reflection = new ReflectionMethod($class, $method);
 
             return !$reflection->isStatic();
         }

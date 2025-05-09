@@ -21,9 +21,9 @@ class CallableMiddleware implements MiddlewareInterface
     private $callable;
 
     /**
-     * @param string|callable $callable
+     * @param callable|string $callable
      */
-    public function __construct($callable)
+    public function __construct(callable|string $callable)
     {
         $this->callable = $callable;
     }
@@ -31,7 +31,7 @@ class CallableMiddleware implements MiddlewareInterface
     /**
      * @return string|callable
      */
-    public function getCallable()
+    public function getCallable(): callable|string
     {
         return $this->callable;
     }

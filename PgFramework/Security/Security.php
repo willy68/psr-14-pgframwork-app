@@ -4,7 +4,14 @@ declare(strict_types=1);
 
 namespace PgFramework\Security;
 
+use Exception;
 use PgFramework\Environnement\Environnement;
+
+use function base64_encode;
+use function chr;
+use function ord;
+use function random_bytes;
+use function strlen;
 
 class Security
 {
@@ -28,16 +35,15 @@ class Security
 
     /**
      * Last token created
-     *
-     * @var string
      */
-    protected static $lastToken;
+    protected static string $lastToken;
 
     /**
      * Create a random password
      *
      * @param int $length
      * @return string
+     * @throws Exception
      */
     public static function randomPassword(int $length): string
     {
@@ -48,15 +54,27 @@ class Security
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public static function randomBytes(int $length): string
     {
         return random_bytes($length);
     }
 
     /**
-     * Get a salt from Envirennement variable
+     * @throws Exception
+     */
+    public static function generateId(int $length = 8): string
+    {
+        return bin2hex(Security::randomBytes($length));
+    }
+
+    /**
+     * Get a salt from Environnement variable
      *
      * @return string|null
+     * @throws Exception
      */
     public static function getSalt(): ?string
     {
@@ -68,6 +86,7 @@ class Security
      *
      * @param int $length random bytes length default 16
      * @return string length = 40 (hash_hmac sha1) + $length (default 16) = 56
+     * @throws Exception
      */
     public static function createToken(int $length = Security::TOKEN_VALUE_LENGTH): string
     {
@@ -92,6 +111,7 @@ class Security
      *
      * @param string $token The token to salt.
      * @return string The salted token with the salt appended.
+     * @throws Exception
      */
     public static function saltToken(string $token): string
     {
@@ -113,7 +133,7 @@ class Security
      * If $length / 2 !== $expectedLenght $token is not salted token
      *
      * @param string $token The token that could be salty.
-     * @param int $expectedLength Default to Security::TOKEN_WITH_CHECKSUM_LENGTH (56)
+     * @param int $expectedLenght
      * @return string An unsalted token.
      */
     public static function unsaltToken(
@@ -145,6 +165,7 @@ class Security
      * @param string $token The unsalted CSRF token.
      * @param int $length Length from Security::createToken default to 16
      * @return bool
+     * @throws Exception
      */
     public static function verifyToken(string $token, int $length = Security::TOKEN_VALUE_LENGTH): bool
     {

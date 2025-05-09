@@ -12,7 +12,7 @@ class LoginSuccessEvent extends Event
 {
     public const NAME = FirewallEvents::LOGIN_SUCCESS;
 
-    protected $result;
+    protected AuthenticateResultInterface $result;
 
     public function __construct(AuthenticateResultInterface $result)
     {
@@ -22,7 +22,7 @@ class LoginSuccessEvent extends Event
     /**
      * Get the value of result
      */
-    public function getResult()
+    public function getResult(): AuthenticateResultInterface
     {
         return $this->result;
     }
@@ -30,9 +30,10 @@ class LoginSuccessEvent extends Event
     /**
      * Set the value of result
      *
+     * @param AuthenticateResultInterface $result
      * @return  self
      */
-    public function setResult($result)
+    public function setResult(AuthenticateResultInterface $result): static
     {
         $this->result = $result;
 

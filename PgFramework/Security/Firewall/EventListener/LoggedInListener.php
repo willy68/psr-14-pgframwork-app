@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Security\Firewall\EventListener;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use PgFramework\Event\Events;
 use League\Event\ListenerPriority;
 use PgFramework\Event\RequestEvent;
@@ -13,7 +13,7 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class LoggedInListener implements EventSubscriberInterface
 {
-    private $auth;
+    private Auth $auth;
 
     /**
      * LoggedInMiddleware constructor.
@@ -37,7 +37,7 @@ class LoggedInListener implements EventSubscriberInterface
         $event->setRequest($request->withAttribute('_user', $user));
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::REQUEST => ListenerPriority::HIGH

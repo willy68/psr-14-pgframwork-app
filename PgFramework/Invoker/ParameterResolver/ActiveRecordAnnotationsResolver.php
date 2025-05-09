@@ -4,24 +4,18 @@ declare(strict_types=1);
 
 namespace PgFramework\Invoker\ParameterResolver;
 
-use ReflectionParameter;
 use ReflectionFunctionAbstract;
 use PgFramework\Annotation\AnnotationsLoader;
 use Invoker\ParameterResolver\ParameterResolver;
 use PgFramework\Annotation\AnnotationReaderTrait;
 use PgFramework\Invoker\Annotation\ParameterConverter;
 use Doctrine\ORM\Mapping\Driver\RepeatableAttributeCollection;
-use PgFramework\Invoker\ParameterResolver\ActiveRecordAnnotationConverter;
 
 class ActiveRecordAnnotationsResolver implements ParameterResolver
 {
     use AnnotationReaderTrait;
 
-    /**
-     *
-     * @var AnnotationsLoader
-     */
-    private $annotationsLoader;
+    private AnnotationsLoader $annotationsLoader;
 
     public function __construct(AnnotationsLoader $annotationsLoader)
     {
@@ -46,7 +40,6 @@ class ActiveRecordAnnotationsResolver implements ParameterResolver
             return $resolvedParameters;
         }
 
-        /** @var ReflectionParameter[] $reflectionParameters */
         $reflectionParameters = $reflection->getParameters();
         // Skip parameters already resolved
         if (!empty($resolvedParameters)) {
@@ -67,7 +60,7 @@ class ActiveRecordAnnotationsResolver implements ParameterResolver
     }
 
     /**
-     * Parse le tableau d'annotations
+     * Parse le tableau d’annotations
      *
      * @param iterable $annotations
      * @return ParameterResolver[]

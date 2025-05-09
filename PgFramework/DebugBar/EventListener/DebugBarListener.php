@@ -4,32 +4,27 @@ declare(strict_types=1);
 
 namespace PgFramework\DebugBar\EventListener;
 
-use DebugBar\DebugBar;
-use PgFramework\Event\Events;
-use Mezzio\Router\RouteResult;
-use Mezzio\Router\RouterInterface;
-use PgFramework\ApplicationInterface;
-use PgFramework\DebugBar\DataCollector\AuthCollector;
+use DebugBar\{DataCollector\ExceptionsCollector, DebugBar, DebugBarException};
 use PgFramework\DebugBar\PgDebugBar;
-use PgFramework\Event\ResponseEvent;
-use PgFramework\HttpUtils\RequestUtils;
-use PgFramework\Session\SessionInterface;
+use PgFramework\Response\JsonResponse;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Mezzio\{Router\RouteResult, Router\RouterInterface, Session\SessionInterface};
+use PgFramework\DebugBar\DataCollector\AuthCollector;
 use PgFramework\DebugBar\DataCollector\RequestCollector;
 use PgFramework\DebugBar\DataCollector\RouteCollector;
 use PgFramework\Environnement\Environnement;
+use PgFramework\Event\Events;
+use PgFramework\Event\ExceptionEvent;
+use PgFramework\Event\ResponseEvent;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
+use PgFramework\HttpUtils\RequestUtils;
 
 class DebugBarListener implements EventSubscriberInterface
 {
-    /**
-     * @var PgDebugBar
-     */
-    protected $debugBar;
+    protected PgDebugBar|DebugBar $debugBar;
 
-    /**
-     * @var SessionInterface
-     */
-    protected $session;
+    protected SessionInterface $session;
 
     public function __construct(DebugBar $debugBar, SessionInterface $session)
     {
@@ -37,7 +32,14 @@ class DebugBarListener implements EventSubscriberInterface
         $this->session = $session;
     }
 
-    public function onResponse(ResponseEvent $event)
+    /**
+     * @param ResponseEvent $event
+     * @return void
+     * @throws DebugBarException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function onResponse(ResponseEvent $event): void
     {
         if (Environnement::getEnv('APP_ENV', 'prod') !== 'dev') {
             return;
@@ -50,31 +52,56 @@ class DebugBarListener implements EventSubscriberInterface
             return;
         }
 
-        /** @var ApplicationInterface */
-        $app = $request->getAttribute(ApplicationInterface::class);
+        if ($response instanceof JsonResponse) {
+            return;
+        }
+
+        if (1 === preg_match('{^application/(?:\w+\++)*json}i', $response->getHeaderLine('content-type'))) {
+            return;
+        }
+
+        $c = $event->getKernel()->getContainer();
 
         $this->debugBar->addCollector(
             (new RequestCollector($request, $response, $this->session))
-                ->useHtmlVarDumper(true)
+                ->useHtmlVarDumper()
         );
 
         $routeResult = $request->getAttribute(RouteResult::class);
         $this->debugBar->addCollector(
             new RouteCollector(
-                $app->getContainer()->get(RouterInterface::class),
+                $c->get(RouterInterface::class),
                 $routeResult
             )
         );
 
-        $this->debugBar->addCollector($app->getContainer()->get(AuthCollector::class));
+        $this->debugBar->addCollector($c->get(AuthCollector::class));
 
         $event->setResponse($this->debugBar->injectDebugbar($response));
     }
 
-    public static function getSubscribedEvents()
+    /**
+     * @param ExceptionEvent $event
+     * @return void
+     * @throws DebugBarException
+     */
+    public function onException(ExceptionEvent $event): void
+    {
+        if (Environnement::getEnv('APP_ENV', 'prod') !== 'dev') {
+            return;
+        }
+
+        $e = $event->getException();
+        /** @var ExceptionsCollector $exceptionsCollector*/
+        $exceptionsCollector = $this->debugBar->getCollector('exceptions');
+        $exceptionsCollector->addThrowable($e);
+    }
+
+    public static function getSubscribedEvents(): array
     {
         return [
-            Events::RESPONSE => ['onResponse', -1000]
+            Events::RESPONSE => ['onResponse', -1000],
+            Events::EXCEPTION => ['onException',1000]
         ];
     }
 }

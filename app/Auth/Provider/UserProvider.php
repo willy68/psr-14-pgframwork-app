@@ -3,49 +3,40 @@
 namespace App\Auth\Provider;
 
 use App\Auth\Entity\User;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use PgFramework\Auth\UserInterface;
 use PgFramework\Auth\Provider\UserProviderInterface;
+use PgFramework\Security\Hasher\PasswordHasherInterface;
+use Ramsey\Uuid\Uuid;
 
 class UserProvider implements UserProviderInterface
 {
-    /**
-     * @var string
-     */
-    protected $entity;
+    protected string $entity;
+    protected EntityManagerInterface $em;
+    private PasswordHasherInterface $hasher;
 
-    /**
-     *
-     * @var EntityManager
-     */
-    protected $em;
-
-    public function __construct(EntityManagerInterface $em, string $entity = User::class)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        PasswordHasherInterface $hasher,
+        string $entity = User::class
+    ) {
         $this->em = $em;
         $this->entity = $entity;
+        $this->hasher = $hasher;
     }
 
     public function getUser(string $field, $value): ?UserInterface
     {
-        try {
-            $repo = $this->em->getRepository($this->entity);
-            /** @var User $user */
-            $user = $repo->findOneBy([$field => $value]);
-        } catch (\Exception $e) {
-            return null;
-        }
+        $repo = $this->em->getRepository($this->entity);
+        /** @var User $user */
+        $user = $repo->findOneBy([$field => $value]);
         return $user;
     }
 
     public function updateUser(UserInterface $user): ?UserInterface
     {
-
-        try {
-            $dbUser = $this->em->find($this->entity, $user->getId());
-        } catch (\Exception $e) {
-            return null;
-        }
+        $dbUser = $this->em->find($this->entity, $user->getId());
 
         if (null === $dbUser) {
             return null;
@@ -54,5 +45,38 @@ class UserProvider implements UserProviderInterface
         $this->em->persist($user);
         $this->em->flush();
         return $user;
+    }
+    public function resetPassword(User $user): string
+    {
+        $token = Uuid::uuid4()->toString();
+        $user->setPasswordReset($token);
+        $user->setPasswordResetAt(new DateTime());
+        $this->em->persist($user);
+        $this->em->flush();
+        return $token;
+    }
+
+    public function updatePassword(User $user, string $password): UserInterface
+    {
+        $user->setPassword($this->hasher->hash($password));
+        $this->em->persist($user);
+        $this->em->flush();
+        return $user;
+    }
+
+    /**
+     * @return EntityManagerInterface
+     */
+    public function getEntityManager(): EntityManagerInterface
+    {
+        return $this->em;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntity(): string
+    {
+        return $this->entity;
     }
 }

@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace PgFramework;
 
 use Exception;
+use Invoker\Exception\NotCallableException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use ReflectionException;
 use RuntimeException;
 use DI\ContainerBuilder;
+use PgRouter\RouteCollector;
 use PgFramework\File\FileUtils;
-use Mezzio\Router\RouteCollector;
 use GuzzleHttp\Psr7\ServerRequest;
 use PgFramework\Kernel\KernelEvent;
 use Psr\Container\ContainerInterface;
@@ -20,9 +25,9 @@ use PgFramework\Environnement\Environnement;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Annotation\AnnotationsLoader;
 use PgFramework\Router\Loader\DirectoryLoader;
-use PgFramework\Middleware\DispatcherMiddleware;
-use PgFramework\Middleware\PageNotFoundMiddleware;
-use Doctrine\Common\Annotations\AnnotationRegistry;
+use Throwable;
+
+use function dirname;
 
 /**
  * Application
@@ -33,67 +38,24 @@ class App extends AbstractApplication
 
     public const COMPILED_CONTAINER_DIRECTORY = '/tmp/di';
 
-    /**
-     *
-     * @var ContainerInterface
-     */
-    private $container = null;
+    private ?ContainerInterface $container = null;
 
-    /**
-     * Kernel type
-     *
-     * @var KernelInterface
-     */
-    private $kernel;
+    private ?KernelInterface $kernel;
 
-    /**
-     *
-     * @var array
-     */
-    private $config = [];
+    private array $config = [];
 
-    /**
-     *
-     * @var array
-     */
-    private $modules = [];
+    private array $modules = [];
 
-    /**
-     *
-     * @var array
-     */
-    private $middlewares = [];
+    private array $middlewares = [];
 
-    /**
-     *
-     * @var array
-     */
-    private $listeners = [];
+    private array $listeners = [];
 
-    /**
-     *
-     * @var ServerRequestInterface
-     */
-    private $request;
+    private ServerRequestInterface $request;
 
-    /**
-     * Dir where the composer.json file is located
-     *
-     * @var string
-     */
-    private $projectDir;
+    private string $projectDir;
 
-    /**
-     * Dir where the container definitions files is located
-     *
-     * @var string
-     */
-    private $configDir;
+    private string $configDir;
 
-    /**
-     * App constructor
-     *
-     */
     public function __construct(?KernelInterface $kernel = null)
     {
         $this->config[] = __DIR__ . '/Container/config/config.php';
@@ -128,9 +90,8 @@ class App extends AbstractApplication
     }
 
     /**
-     *
      * @param string $listener
-     * @return self
+     * @return $this
      */
     public function addListener(string $listener): self
     {
@@ -150,11 +111,10 @@ class App extends AbstractApplication
     }
 
     /**
-     *
-     * @param string $middleware
-     * @return self
+     * @param string|callable|MiddlewareInterface $middleware
+     * @return $this
      */
-    public function addMiddleware(string $middleware): self
+    public function addMiddleware(string|callable|MiddlewareInterface $middleware): self
     {
         $this->middlewares[] = $middleware;
         return $this;
@@ -172,12 +132,13 @@ class App extends AbstractApplication
     }
 
     /**
-     *
-     * @param  ServerRequestInterface|null $request
-     * @return ResponseInterface
+     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotCallableException
+     * @throws ReflectionException
      * @throws Exception
      */
-    public function run(?ServerRequestInterface $request = null): ResponseInterface
+    public function init(?ServerRequestInterface $request = null): static
     {
         if ($request === null) {
             $request = ServerRequest::fromGlobals();
@@ -188,11 +149,7 @@ class App extends AbstractApplication
 
         $container = $this->getContainer();
 
-        if (class_exists(AnnotationRegistry::class)) {
-            AnnotationRegistry::registerLoader('class_exists');
-        }
-
-        /** @var Module */
+        /** @var Module $module*/
         foreach ($this->modules as $module) {
             if (!empty($module::ANNOTATIONS)) {
                 $loader = new DirectoryLoader(
@@ -203,7 +160,7 @@ class App extends AbstractApplication
                     $loader->load($dir);
                 }
             }
-            $module = $container->get((string)$module);
+            $container->get($module);
         }
 
         if (!empty($this->listeners)) {
@@ -226,18 +183,20 @@ class App extends AbstractApplication
             if (!$this->kernel instanceof KernelMiddleware) {
                 throw new RuntimeException('Aucun Kernel ou le Kernel ne gère pas les middlewares');
             }
-            $this->addMiddlewares(
-                [
-                    DispatcherMiddleware::class,
-                    PageNotFoundMiddleware::class
-                ]
-            );
             $this->kernel->setCallbacks($this->middlewares);
         }
+        return $this;
+    }
 
+    /**
+     *
+     * @return ResponseInterface
+     */
+    public function run(): ResponseInterface
+    {
         try {
             return $this->kernel->handle($this->request);
-        } catch (\Exception $e) {
+        } catch (Throwable $e) {
             return $this->kernel->handleException($e, $this->kernel->getRequest());
         }
     }
@@ -265,7 +224,7 @@ class App extends AbstractApplication
                 $builder->addDefinitions($config);
             }
 
-            /** @var Module */
+            /** @var Module $module*/
             foreach ($this->modules as $module) {
                 if ($module::DEFINITIONS) {
                     $builder->addDefinitions($module::DEFINITIONS);
@@ -278,16 +237,14 @@ class App extends AbstractApplication
 
     protected function getRunTimeDefinitions(): array
     {
-        $projectDir = realpath($this->getProjectDir()) ?: $this->getProjectDir();
-
         // Get all config file definitions
         $config = FileUtils::getFiles($this->getConfigDir(), 'php', '.dist.');
         $this->config = array_merge($this->config, array_keys($config));
 
         return [
             ApplicationInterface::class => $this,
-            'app.project.dir' => $projectDir,
-            'app.cache.dir'   => $projectDir . '/tmp/cache',
+            'app.project.dir' => $this->projectDir,
+            'app.cache.dir'   => $this->projectDir . '/tmp/cache',
         ];
     }
 
@@ -314,7 +271,7 @@ class App extends AbstractApplication
      *
      * @return  ServerRequestInterface
      */
-    public function getRequest()
+    public function getRequest(): ServerRequestInterface
     {
         return $this->request;
     }
@@ -326,7 +283,7 @@ class App extends AbstractApplication
      *
      * @return  self
      */
-    public function setRequest(ServerRequestInterface $request)
+    public function setRequest(ServerRequestInterface $request): self
     {
         $this->request = $request;
 
@@ -334,19 +291,19 @@ class App extends AbstractApplication
     }
 
     /**
-     * Gets the application root dir (path of the project's composer file).
+     * Gets the application root dir (path of the project composer file).
      *
      * https://github.com/symfony/symfony/blob/6.0/src/Symfony/Component/HttpKernel/Kernel.php#method_getProjectDir
      */
     public function getProjectDir(): string
     {
         if (!isset($this->projectDir)) {
-            $dir = $rootDir = \dirname(__DIR__);
+            $dir = $rootDir = dirname(__DIR__);
             while (!is_file($dir . '/composer.json')) {
-                if ($dir === \dirname($dir)) {
+                if ($dir === dirname($dir)) {
                     return $this->projectDir = $rootDir;
                 }
-                $dir = \dirname($dir);
+                $dir = dirname($dir);
             }
             $this->projectDir = $dir;
         }

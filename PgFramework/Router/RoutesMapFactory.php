@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 namespace PgFramework\Router;
 
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class RoutesMapFactory
 {
-    public function __invoke(ContainerInterface $c)
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function __invoke(ContainerInterface $c): RoutesMap
     {
         $map = new RoutesMap();
 
@@ -19,7 +25,7 @@ class RoutesMapFactory
                 $map->add(
                     new RequestMatcher(
                         $rule['path'] ?? null,
-                        $rule['method'] ?? null,
+                        $rule['methods'] ?? null,
                         $rule['host'] ?? null,
                         $rule['schemes'] ?? null,
                         $rule['port'] ?? null

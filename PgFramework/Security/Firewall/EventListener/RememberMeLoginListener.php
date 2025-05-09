@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace PgFramework\Security\Firewall\EventListener;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use PgFramework\Event\Events;
 use League\Event\ListenerPriority;
 use PgFramework\Event\RequestEvent;
 use PgFramework\Event\ResponseEvent;
-use PgFramework\Auth\ForbiddenException;
 use PgFramework\Auth\RememberMe\RememberMeInterface;
 use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class RememberMeLoginListener implements EventSubscriberInterface
 {
-    private $auth;
+    private Auth $auth;
 
-    private $rememberMe;
+    private RememberMeInterface $rememberMe;
 
     public function __construct(Auth $auth, RememberMeInterface $rememberMe)
     {
@@ -35,10 +34,9 @@ class RememberMeLoginListener implements EventSubscriberInterface
         }
         $request = $this->rememberMe->autoLogin($request);
         $event->setRequest($request);
-        if (!($user = $request->getAttribute('_user'))) {
-            throw new ForbiddenException("Cookie invalid");
+        if (($user = $request->getAttribute('_user'))) {
+            $this->auth->setUser($user);
         }
-        $this->auth->setUser($user);
     }
 
     public function onResponse(ResponseEvent $event)
@@ -48,10 +46,10 @@ class RememberMeLoginListener implements EventSubscriberInterface
         $event->setResponse($this->rememberMe->resume($request, $response));
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
-            Events::REQUEST => ['onAuthentication', ListenerPriority::HIGH],
+            Events::REQUEST => ['onAuthentication', 450],
             Events::RESPONSE => ['onResponse', ListenerPriority::LOW]
         ];
     }

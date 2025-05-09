@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Security\Authentication;
 
+use PgFramework\Auth\UserInterface;
 use PgFramework\Security\Authentication\Exception\AuthenticationFailureException;
 use PgFramework\Security\Authentication\Result\AuthenticateResultInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -25,6 +26,7 @@ interface AuthenticationInterface
      *
      * If this returns false, the authenticator will be skipped.
      *
+     * @param ServerRequestInterface $request
      * @return bool
      */
     public function supports(ServerRequestInterface $request): bool;
@@ -47,7 +49,7 @@ interface AuthenticationInterface
      * @param ServerRequestInterface $request
      * @return array|mixed|null
      */
-    public function getCredentials(ServerRequestInterface $request);
+    public function getCredentials(ServerRequestInterface $request): mixed;
 
     /**
      * Get user with $credentials
@@ -55,7 +57,7 @@ interface AuthenticationInterface
      * @param mixed $credentials
      * @return UserInterface|mixed
      */
-    public function getUser($credentials);
+    public function getUser(mixed $credentials): mixed;
 
     /**
      * Action to do when success (generally redirect)
@@ -67,7 +69,7 @@ interface AuthenticationInterface
      * @param mixed $user
      * @return ResponseInterface|null
      */
-    public function onAuthenticateSuccess(ServerRequestInterface $request, $user): ?ResponseInterface;
+    public function onAuthenticateSuccess(ServerRequestInterface $request, mixed $user): ?ResponseInterface;
 
     /**
      * Action to do when failed (generally redirect to login page)

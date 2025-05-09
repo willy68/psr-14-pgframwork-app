@@ -4,22 +4,15 @@ declare(strict_types=1);
 
 namespace PgFramework\Session;
 
+use Mezzio\Session\SessionInterface;
+
 class FlashService
 {
-    /**
-     * @var SessionInterface
-     */
-    private $session;
+    private SessionInterface $session;
 
-    /**
-     * @var string
-     */
-    private $sessionKey = 'flash';
+    private string $sessionKey = 'flash';
 
-    /**
-     * @var string
-     */
-    private $messages;
+    private ?array $messages = null;
 
     /**
      * @param SessionInterface $session
@@ -33,7 +26,7 @@ class FlashService
      * @param string $message
      * @return void
      */
-    public function success(string $message)
+    public function success(string $message): void
     {
         $flash = $this->session->get($this->sessionKey, []);
         $flash['success'] = $message;
@@ -44,7 +37,7 @@ class FlashService
      * @param string $message
      * @return void
      */
-    public function error(string $message)
+    public function error(string $message): void
     {
         $flash = $this->session->get($this->sessionKey, []);
         $flash['error'] = $message;
@@ -59,7 +52,7 @@ class FlashService
     {
         if (is_null($this->messages)) {
             $this->messages = $this->session->get($this->sessionKey, []);
-            $this->session->delete($this->sessionKey);
+            $this->session->unset($this->sessionKey);
         }
 
         if (array_key_exists($type, $this->messages)) {

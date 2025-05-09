@@ -7,34 +7,29 @@ namespace PgFramework\Invoker\ParameterResolver;
 use ActiveRecord\Exceptions\RecordNotFound;
 use Doctrine\Persistence\ManagerRegistry;
 use Invoker\ParameterResolver\ParameterResolver;
+use ReflectionFunctionAbstract;
+use ReflectionNamedType;
 
 class DoctrineEntityResolver implements ParameterResolver
 {
     /**
-     * nom du champ id par défaut id
-     *
-     * @var string
+     * Nom du champ id par défaut id
      */
-    private $id = 'id';
+    private string $id = 'id';
 
     /**
      * Alias pour le champ $id par défaut null
      *
-     * @var string|null Si non null sera utilsé à la place de $id
+     * @var string|null Si non null sera utilisé à la place de $id
      */
-    private $alias;
+    private ?string $alias;
 
-    /**
-     * ManagerRegistry
-     *
-     * @var ManagerRegistry
-     */
-    private $mg;
+    private ManagerRegistry $mg;
 
     /**
      * Constructor
      *
-     * @param string $key
+     * @param ManagerRegistry $mg
      * @param string|null $alias
      */
     public function __construct(ManagerRegistry $mg, ?string $alias = null)
@@ -43,12 +38,14 @@ class DoctrineEntityResolver implements ParameterResolver
         $this->alias = $alias;
     }
 
+    /**
+     * @throws RecordNotFound
+     */
     public function getParameters(
-        \ReflectionFunctionAbstract $reflection,
+        ReflectionFunctionAbstract $reflection,
         array $providedParameters,
         array $resolvedParameters
     ): array {
-        /** @var \ReflectionParameter[] $reflectionParameters */
         $reflectionParameters = $reflection->getParameters();
         // Skip parameters already resolved
         if (!empty($resolvedParameters)) {
@@ -64,20 +61,19 @@ class DoctrineEntityResolver implements ParameterResolver
 
             if ($key === $id) {
                 foreach ($reflectionParameters as $index => $reflectionParameter) {
-                    /** @var ReflectionParameter $reflectionParameter */
                     $parameterType = $reflectionParameter->getType();
 
                     if (!$parameterType) {
                         // No type
                         continue;
                     }
-                    /** @var \ReflectionNamedType $parameterType */
+                    /** @var ReflectionNamedType $parameterType */
                     if ($parameterType->isBuiltin()) {
-                        // Primitive types are not supported
+                        // Primitive types not supported
                         continue;
                     }
-                    if (!$parameterType instanceof \ReflectionNamedType) {
-                        // Union types are not supported
+                    if (!$parameterType instanceof ReflectionNamedType) {
+                        // Union types not supported
                         continue;
                     }
 

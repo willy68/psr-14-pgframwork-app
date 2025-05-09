@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Auth\Middleware;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use Psr\Http\Message\ResponseInterface;
 use PgFramework\Auth\ForbiddenException;
 use Psr\Http\Server\MiddlewareInterface;
@@ -16,9 +16,9 @@ use PgFramework\Security\Authorization\VoterManagerInterface;
 
 class AuthorizationMiddleware implements MiddlewareInterface
 {
-    protected $auth;
-    protected $voterManager;
-    protected $map;
+    protected Auth $auth;
+    protected VoterManagerInterface $voterManager;
+    protected AccessMapInterface $map;
 
     public function __construct(
         Auth $auth,
@@ -30,9 +30,15 @@ class AuthorizationMiddleware implements MiddlewareInterface
         $this->map = $map;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @param RequestHandlerInterface $handler
+     * @return ResponseInterface
+     * @throws FailedAccessException
+     * @throws ForbiddenException
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-
         [$attributes] = $this->map->getPatterns($request);
 
         if (!$attributes) {
@@ -44,7 +50,7 @@ class AuthorizationMiddleware implements MiddlewareInterface
         }
 
         if (!$this->voterManager->decide($this->auth, $attributes, $request)) {
-            throw new FailedAccessException('Vous n\'avez pas l\'authorisation pour executer cette action');
+            throw new FailedAccessException('Vous n\'avez pas l\'authorisation pour exécuter cette action');
         }
         return $handler->handle($request);
     }

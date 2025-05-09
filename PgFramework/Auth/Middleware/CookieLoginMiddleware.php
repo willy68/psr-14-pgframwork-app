@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Auth\Middleware;
 
-use PgFramework\Auth;
-use PgFramework\Auth\ForbiddenException;
+use PgFramework\Auth\Auth;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -14,18 +13,9 @@ use PgFramework\Auth\RememberMe\RememberMeInterface;
 
 class CookieLoginMiddleware implements MiddlewareInterface
 {
-    /**
-     *
-     * @var Auth
-     */
-    private $auth;
+    private Auth $auth;
 
-    /**
-     *
-     *
-     * @var RememberMeInterface
-     */
-    private $cookie;
+    private RememberMeInterface $cookie;
 
     public function __construct(Auth $auth, RememberMeInterface $cookie)
     {
@@ -40,10 +30,9 @@ class CookieLoginMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
         $request = $this->cookie->autoLogin($request);
-        if (!($user = $request->getAttribute('_user'))) {
-            throw new ForbiddenException("Cookie invalid");
+        if (($user = $request->getAttribute('_user'))) {
+            $this->auth->setUser($user);
         }
-        $this->auth->setUser($user);
         $response = $handler->handle($request);
         return $this->cookie->resume($request, $response);
     }

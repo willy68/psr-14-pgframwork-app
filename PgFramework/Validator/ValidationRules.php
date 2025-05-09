@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace PgFramework\Validator;
 
 use PgFramework\AbstractApplication;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 /**
- * new ValidationRules( 'auteur', 'required|max:50|min:3|filter:trim');
+ * New ValidationRules( 'auteur', 'required|max:50|min:3|filter:trim');
  *
- * Valide un champs de formulaire avec plusieurs règles
+ * Valide un champ de formulaire avec plusieurs règles
  *
  * Dépend de App et ContainerInterface
  */
@@ -27,29 +29,25 @@ class ValidationRules
 
     /**
      * Filter rules
-     *
-     * @var array
      */
     protected array $filterRules = [];
 
     /**
      * Request Parsed Body
-     *
-     * @var array
      */
     protected array $params;
 
     /**
      * FieldName
-     *
-     * @var string
      */
     protected string $fieldName = '';
 
     /**
      * ValidationRules constructor.
+     *
      * @param string $fieldName
      * @param string $rules
+     * @param array $params
      */
     public function __construct(string $fieldName = '', string $rules = '', array $params = [])
     {
@@ -114,6 +112,7 @@ class ValidationRules
     /**
      * Clean object
      *
+     * @param bool $excludeParams
      * @return self
      */
     public function clean(bool $excludeParams = true): self
@@ -131,9 +130,10 @@ class ValidationRules
     /**
      * @param mixed $var
      * @return bool
-     * @throws \Exception
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function isValid($var): bool
+    public function isValid(mixed $var): bool
     {
         $container = AbstractApplication::getApp()->getContainer();
         $validations = $container->get('form.validations');
@@ -141,23 +141,24 @@ class ValidationRules
 
         foreach ($this->filterRules as $filter => $param) {
             if (array_key_exists($filter, $filters)) {
-                /** @var FilterInterface $filter*/
                 $filter = $container->get($filters[$filter]);
             } else {
                 continue;
             }
+            /** @var FilterInterface $filter */
             $var = $filter->filter($var);
         }
 
+        /** @var string $param */
         foreach ($this->validationRules as $rule => $param) {
             if (array_key_exists($rule, $validations)) {
-                /** @var ValidationInterface $validation*/
                 $validation = $container->get($validations[$rule]);
             } else {
                 continue;
             }
 
-            $validation->parseParams((string) $param);
+            /** @var ValidationInterface $validation*/
+            $validation->parseParams($param);
 
             if ($validation instanceof ValidationExtraParamsInterface) {
                 $validation->setBodyParams($this->params);

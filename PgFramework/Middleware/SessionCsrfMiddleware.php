@@ -11,18 +11,13 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use PgFramework\Security\Csrf\CsrfTokenManagerInterface;
 
+use function in_array;
+
 class SessionCsrfMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var string
-     */
-    private $formKey;
+    private string $formKey;
 
-    /**
-     *
-     * @var CsrfTokenManagerInterface
-     */
-    private $tokenManager;
+    private CsrfTokenManagerInterface $tokenManager;
 
     /**
      * @param CsrfTokenManagerInterface $tokenManager
@@ -37,16 +32,16 @@ class SessionCsrfMiddleware implements MiddlewareInterface
     }
 
     /**
-     *
-     *
-     * @param object $event
-     * @return void
+     * @param ServerRequestInterface $request
+     * @param RequestHandlerInterface $handler
+     * @return ResponseInterface
+     * @throws InvalidCsrfException
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $method = $request->getMethod();
 
-        if (\in_array($method, ['DELETE', 'PATCH', 'POST', 'PUT'], true)) {
+        if (in_array($method, ['DELETE', 'PATCH', 'POST', 'PUT'], true)) {
             $params = $request->getParsedBody() ?: [];
             if (!array_key_exists($this->formKey, $params)) {
                 throw new InvalidCsrfException();

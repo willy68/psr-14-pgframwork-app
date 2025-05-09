@@ -45,6 +45,7 @@
 
 			<div class="collapse navbar-collapse" id="navbarsExampleDefault">
 				<ul class="navbar-nav mr-auto">
+					{{ blog_menu() }}
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
 						<div class="dropdown-menu" aria-labelledby="dropdown01">
@@ -54,6 +55,22 @@
 						</div>
 					</li>
 				</ul>
+				{% if current_user() %}
+					<div class="navbar-test mr-2 text-white">{{ current_user().username }}</div>
+					<form class="form-inline mr-2 my-2 my-lg-0" action="{{ path('auth.logout') }}" method="POST">
+						{{ csrf_input() }}
+						<button class="btn btn-secondary mr-2 mr-sm-0" type="submit">Se deconnecter</button>
+					</form>
+				{% else %}
+					<ul class="navbar-nav ml-auto">
+						<li class="nav-item">
+							<a class="nav-link" href="{{ path('auth.login') }}">Se connecter</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{{ path('auth.register') }}">S'enregistrer</a>
+						</li>
+					</ul>
+				{% endif %}
 			</div>
 		</nav>
 		<main role="main" class="container"> 

@@ -7,7 +7,7 @@ namespace PgFramework\Auth\RememberMe;
 trait RememberMeCookieAwareTraits
 {
     // Can't use const!
-    private $delimiter = ':';
+    private string $delimiter = ':';
 
     /**
      * Get the cookie parts
@@ -17,8 +17,7 @@ trait RememberMeCookieAwareTraits
      */
     protected function decodeCookie(string $cookie): array
     {
-        $cookieParts = explode($this->delimiter, base64_decode($cookie));
-        return $cookieParts;
+        return explode($this->delimiter, base64_decode($cookie));
     }
 
     /**

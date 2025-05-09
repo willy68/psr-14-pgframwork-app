@@ -19,27 +19,20 @@ class KernelMiddleware implements KernelInterface, RequestHandlerInterface
 {
     use MiddlewareAwareStackTrait;
 
-    /**
-     * Actual Request
-     *
-     * @var ServerRequestInterface
-     */
-    protected $request;
+    protected ServerRequestInterface $request;
 
-    /**
-     * Injection Container
-     *
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
-    private $index = 0;
+    private int $index = 0;
 
     public function __construct(ContainerInterface $c)
     {
         $this->container = $c;
     }
 
+    /**
+     * @throws Exception
+     */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $this->request = $request;
@@ -49,14 +42,16 @@ class KernelMiddleware implements KernelInterface, RequestHandlerInterface
             throw new Exception('Aucun middleware n\'a intercepté cette requête');
         }
 
-        return (new CombinedMiddleware($this->container, (array)$this->getMiddlewareStack(), $this))
-            ->process($request, $this);
+        $middleware = new CombinedMiddleware($this->container, (array)$this->getMiddlewareStack());
+        return $middleware->process($request, $this);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function handleException(Throwable $e, ServerRequestInterface $request): ResponseInterface
     {
         throw $e;
-        return $this->handle($request);
     }
 
     /**
@@ -72,7 +67,7 @@ class KernelMiddleware implements KernelInterface, RequestHandlerInterface
 
     /**
      *
-     * @param string[]|MiddlewareInterface[]|callable[]
+     * @param string[]|MiddlewareInterface[]|callable[] $callbacks
      * @return self
      */
     public function setCallbacks(array $callbacks): self
@@ -90,11 +85,14 @@ class KernelMiddleware implements KernelInterface, RequestHandlerInterface
      * @return object
      * @throws Exception
      */
-    private function getMiddleware()
+    private function getMiddleware(): object
     {
         return $this->shiftMiddleware($this->getContainer());
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getContainer(): ContainerInterface
     {
         return $this->container;

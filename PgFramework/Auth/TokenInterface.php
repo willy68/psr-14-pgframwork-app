@@ -4,40 +4,42 @@ declare(strict_types=1);
 
 namespace PgFramework\Auth;
 
+use DateTime;
+
 interface TokenInterface
 {
     /**
-     * get token id
+     * Get token ID
      *
      * @return int
      */
     public function getId(): int;
 
     /**
-     * get the unique user series
+     * Get unique user series
      *
      * @return string
      */
     public function getSeries(): string;
 
     /**
-     * get user credential (ex. username or email)
+     * Get user credential (ex. username or email)
      *
      * @return string
      */
     public function getCredential(): string;
 
     /**
-     * get the random pasword hash
+     * Get the random password hash
      *
      * @return string
      */
     public function getRandomPassword(): string;
 
     /**
-     * get the expiration date
+     * Get the expiration date
      *
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getExpirationDate(): \DateTime;
+    public function getExpirationDate(): DateTime;
 }

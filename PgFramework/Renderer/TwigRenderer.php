@@ -8,13 +8,11 @@ use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
+use Twig\Loader\FilesystemLoader;
 
 class TwigRenderer implements RendererInterface
 {
-  /**
-   * @var Environment
-   */
-    private $twig;
+    private Environment $twig;
 
     /**
      * @param Environment $twig
@@ -26,12 +24,13 @@ class TwigRenderer implements RendererInterface
 
     /**
      * @param string $namespace
-     * @param string $path
+     * @param string|null $path
      * @return void
+     * @throws LoaderError
      */
-    public function addPath(string $namespace, string $path = null)
+    public function addPath(string $namespace, string $path = null): void
     {
-        /** @var $loader \Twig\Loader\LoaderInterface */
+        /** @var $loader FilesystemLoader */
         $loader = $this->twig->getLoader();
         $loader->addPath($path, $namespace);
     }
@@ -55,7 +54,7 @@ class TwigRenderer implements RendererInterface
      * @param mixed $value
      * @return void
      */
-    public function addGlobal(string $key, $value)
+    public function addGlobal(string $key, mixed $value): void
     {
         $this->twig->addGlobal($key, $value);
     }

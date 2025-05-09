@@ -3,29 +3,24 @@
 namespace App\Auth\Actions;
 
 use PgFramework\Auth\AuthSession;
-use PgFramework\Session\FlashService;
-use PgFramework\Router\Annotation\Route;
+use PgFramework\Auth\Middleware\CookieLogoutMiddleware;
+use PgFramework\HttpUtils\RequestUtils;
+use PgFramework\Response\JsonResponse;
 use PgFramework\Response\ResponseRedirect;
+use PgFramework\Router\Annotation\Route;
+use PgFramework\Session\FlashService;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * @Route("/logout", name="auth.logout", methods={"POST"})
+ * @Route("/logout", name="auth.logout", methods={"POST"}, middlewares={CookieLogoutMiddleware::class})
  */
-#[Route('/logout', name:'auth.logout', methods:['POST'])]
+#[Route('/logout', name: 'auth.logout', methods: ['POST'], middlewares: [CookieLogoutMiddleware::class])]
 class LogoutAction
 {
-    /**
-     * Undocumented variable
-     *
-     * @var AuthSession
-     */
-    private $auth;
+    private AuthSession $auth;
 
-    /**
-     * Undocumented variable
-     *
-     * @var FlashService
-     */
-    private $flashService;
+    private FlashService $flashService;
 
     public function __construct(
         AuthSession $auth,
@@ -35,10 +30,13 @@ class LogoutAction
         $this->flashService = $flashService;
     }
 
-    public function __invoke()
+    public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
         $this->auth->logout();
-        $this->flashService->success('Vous êtes maintenant déconnecté');
+        if (RequestUtils::isJson($request) || RequestUtils::wantJson($request)) {
+            return new JsonResponse(200, json_encode('Vous êtes maintenant déconnecté.'));
+        }
+        $this->flashService->success('Vous êtes maintenant déconnecté.');
         return new ResponseRedirect('/blog');
     }
 }

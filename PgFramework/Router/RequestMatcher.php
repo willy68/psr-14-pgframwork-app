@@ -6,35 +6,37 @@ namespace PgFramework\Router;
 
 use Psr\Http\Message\ServerRequestInterface;
 
+use function in_array;
+
 class RequestMatcher implements RequestMatcherInterface
 {
-    protected $path;
-    protected $method = [];
-    protected $host;
-    protected $schemes = [];
-    protected $port;
+    protected ?string $path;
+    protected array $methods = [];
+    protected ?string $host;
+    protected array $schemes = [];
+    protected ?string $port;
 
     public function __construct(
         string $path = null,
-        array $method = null,
+        array $methods = null,
         string $host = null,
-        string $scheme = null,
+        array $schemes = null,
         string $port = null
     ) {
         $this->setPath($path);
-        $this->setMethod($method);
+        $this->setMethod($methods);
         $this->setHost($host);
-        $this->setSchemes($scheme);
+        $this->setSchemes($schemes);
         $this->setPort($port);
     }
 
     public function match(ServerRequestInterface $request): bool
     {
-        if (!empty($this->schemes) && !\in_array($request->getUri()->getScheme(), $this->schemes, true)) {
+        if (!empty($this->schemes) && !in_array($request->getUri()->getScheme(), $this->schemes, true)) {
             return false;
         }
 
-        if (!empty($this->methods) && !\in_array($request->getMethod(), $this->methods, true)) {
+        if (!empty($this->methods) && !in_array($request->getMethod(), $this->methods, true)) {
             return false;
         }
 
@@ -56,9 +58,10 @@ class RequestMatcher implements RequestMatcherInterface
     /**
      * Set the value of path
      *
+     * @param string|null $path
      * @return  self
      */
-    public function setPath(?string $path)
+    public function setPath(?string $path): static
     {
         $this->path = $path;
 
@@ -68,9 +71,10 @@ class RequestMatcher implements RequestMatcherInterface
     /**
      * Set the value of method
      *
+     * @param $method
      * @return  self
      */
-    public function setMethod($method)
+    public function setMethod($method): static
     {
         $this->methods = null !== $method ? array_map('strtoupper', (array) $method) : [];
 
@@ -80,9 +84,10 @@ class RequestMatcher implements RequestMatcherInterface
     /**
      * Set the value of host
      *
+     * @param string|null $host
      * @return  self
      */
-    public function setHost(?string $host)
+    public function setHost(?string $host): static
     {
         $this->host = $host;
 
@@ -92,9 +97,10 @@ class RequestMatcher implements RequestMatcherInterface
     /**
      * Set the value of scheme
      *
+     * @param $scheme
      * @return  self
      */
-    public function setSchemes($scheme)
+    public function setSchemes($scheme): static
     {
         $this->schemes = null !== $scheme ? array_map('strtolower', (array) $scheme) : [];
 
@@ -104,9 +110,10 @@ class RequestMatcher implements RequestMatcherInterface
     /**
      * Set the value of port
      *
+     * @param string|null $port
      * @return  self
      */
-    public function setPort(?string $port)
+    public function setPort(?string $port): static
     {
         $this->port = $port;
 

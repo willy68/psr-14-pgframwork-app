@@ -11,9 +11,9 @@ class ControllerEvent extends RequestEvent
 {
     public const NAME = Events::CONTROLLER;
 
-    private $controller;
+    private mixed $controller;
 
-    public function __construct(KernelInterface $kernel, $controller, ServerRequestInterface $request)
+    public function __construct(KernelInterface $kernel, mixed $controller, ServerRequestInterface $request)
     {
         parent::__construct($kernel, $request);
         $this->controller = $controller;

@@ -1,20 +1,22 @@
 <?php
 
-use App\Middleware\RecordNotFoundMiddleware;
-use PgFramework\Middleware\InvalidCsrfMiddleware;
-use PgFramework\Middleware\ActiveRecordMiddleware;
-use PgFramework\Auth\Middleware\ForbidenMiddleware;
-use PgFramework\Middleware\CsrfGetCookieMiddleware;
 use PgFramework\Auth\Middleware\AuthorizationMiddleware;
+use PgFramework\Auth\Middleware\ForbiddenMiddleware;
+use PgFramework\Middleware\ActiveRecordMiddleware;
+use PgFramework\Middleware\CsrfCookieMiddleware;
+use PgFramework\Middleware\InvalidCsrfMiddleware;
+use PgFramework\Middleware\RecordNotFoundMiddleware;
+
+use function DI\add;
 
 return [
     /**
      * Add your own router middlewares
      */
-    'router.middlewares' => \DI\add([
-        ForbidenMiddleware::class,
+    'router.middlewares' => add([
+        ForbiddenMiddleware::class,
         InvalidCsrfMiddleware::class,
-        CsrfGetCookieMiddleware::class,
+        CsrfCookieMiddleware::class,
         ActiveRecordMiddleware::class,
         RecordNotFoundMiddleware::class,
         AuthorizationMiddleware::class,

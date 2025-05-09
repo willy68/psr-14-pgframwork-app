@@ -2,65 +2,64 @@
 
 namespace App\Blog\Entity;
 
+use DateTime;
+use Exception;
+
 class Post
 {
-    public $id;
+    public int $id;
 
-    public $name;
+    public string $name;
 
-    public $slug;
+    public string $slug;
 
-    public $content;
+    public string $content;
 
-    public $createdAt;
+    public DateTime $createdAt;
 
-    public $updatedAt;
+    public DateTime $updatedAt;
 
-    public $image;
+    public string $image;
 
     /**
-     * Undocumented function
-     *
-     * @param [type] $datetime
+     * @param DateTime|string $datetime
      * @return void
+     * @throws Exception
      */
-    public function setCreatedAt($datetime)
+    public function setCreatedAt(DateTime|string $datetime): void
     {
         if (is_string($datetime)) {
-            $this->createdAt = new \DateTime($datetime);
+            $this->createdAt = new DateTime($datetime);
         }
     }
 
     /**
-     * Undocumented function
-     *
-     * @param [type] $datetime
+     * @param DateTime|string $datetime
      * @return void
+     * @throws Exception
      */
-    public function setUpdatedAt($datetime)
+    public function setUpdatedAt(DateTime|string $datetime): void
     {
         if (is_string($datetime)) {
-            $this->updatedAt = new \DateTime($datetime);
+            $this->updatedAt = new DateTime($datetime);
+        } else {
+            $this->updatedAt = $datetime;
         }
     }
 
     /**
-     * Undocumented function
-     *
-     * @return void
+     * @return string
      */
-    public function getThumb()
+    public function getThumb(): string
     {
         ['filename' => $filename, 'extension' => $extension] = pathinfo($this->image);
         return '/uploads/posts/' . $filename . '_thumb.' . $extension;
     }
 
     /**
-     * Undocumented function
-     *
-     * @return void
+     * @return string
      */
-    public function getImageUrl()
+    public function getImageUrl(): string
     {
         return '/uploads/posts/' . $this->image;
     }

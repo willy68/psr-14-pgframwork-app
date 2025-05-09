@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace PgFramework\Router\Annotation;
 
 use Attribute;
-use Doctrine\ORM\Mapping\Annotation;
+use Doctrine\ORM\Mapping\MappingAttribute;
 use PgFramework\Router\Annotation\Exception\RouteAnnotationException;
+
+use function is_null;
+use function is_string;
 
 /**
  *
- * Ex: @Route("/route/{id:\d+}", name="path.route", methods={"GET"})
+ * Ex: @Route("/route/{id:\d+}", name="path.route", methods={"GET"}, middlewares={loginMiddleware::class})
  *
  * @Annotation
  * @NamedArgumentConstructor
@@ -18,31 +21,37 @@ use PgFramework\Router\Annotation\Exception\RouteAnnotationException;
  *
  */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::TARGET_FUNCTION | Attribute::IS_REPEATABLE)]
-class Route implements Annotation
+class Route implements MappingAttribute
 {
-    private $parameters = [];
+    private mixed $parameters;
 
-    private $path;
-    private $name;
-    private $host;
-    private $methods = [];
-    private $schemes = [];
+    private mixed $path;
+    private mixed $name;
+    private mixed $host;
+    private mixed $methods;
+    private mixed $schemes;
+    private mixed $middlewares;
 
+    /**
+     * @throws RouteAnnotationException
+     */
     public function __construct(
         $parameters = [],
         $path = null,
         string $name = null,
         string $host = null,
         $methods = [],
-        $schemes = []
+        $schemes = [],
+        $middlewares = []
     ) {
         $this->parameters = $parameters;
 
-        $this->path = $parameters['value'] ?? (\is_string($parameters) ? $parameters : $path);
-        $this->name = $parameters['name'] ?? (!\is_null($name) ? $name : null);
-        $this->host = $parameters['host'] ??  (!\is_null($host) ? $host : null);
+        $this->path = $parameters['value'] ?? (is_string($parameters) ? $parameters : $path);
+        $this->name = $parameters['name'] ?? (!is_null($name) ? $name : null);
+        $this->host = $parameters['host'] ??  (!is_null($host) ? $host : null);
         $this->methods = $parameters['methods'] ?? ([] !== $methods ? $methods : null);
         $this->schemes = $parameters['schemes'] ?? ([] !== $schemes ? $schemes : null);
+        $this->middlewares = $middlewares;
 
         // Method param name
         if (null === $this->path) {
@@ -97,5 +106,13 @@ class Route implements Annotation
     public function getSchemes(): ?array
     {
         return $this->schemes;
+    }
+
+    /**
+     * Get the middlewares value
+     */
+    public function getMiddlewares(): array
+    {
+        return $this->middlewares;
     }
 }

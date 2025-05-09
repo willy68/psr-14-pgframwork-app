@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Auth\Middleware;
 
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -13,15 +13,9 @@ use PgFramework\Auth\RememberMe\RememberMeInterface;
 
 class CookieLogoutMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var Auth
-     */
-    private $auth;
+    private Auth $auth;
 
-    /**
-     * @var RememberMeInterface
-     */
-    private $cookie;
+    private RememberMeInterface $cookie;
 
     public function __construct(Auth $auth, RememberMeInterface $cookie)
     {

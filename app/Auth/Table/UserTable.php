@@ -2,12 +2,12 @@
 
 namespace App\Auth\Table;
 
-use App\Auth\User;
+use App\Auth\Entity\User;
 use PgFramework\Database\Table;
 
 class UserTable extends Table
 {
-    protected $table = 'users';
+    protected string $table = 'users';
 
-    protected $entity = User::class;
+    protected ?string $entity = User::class;
 }

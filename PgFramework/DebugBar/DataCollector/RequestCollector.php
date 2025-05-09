@@ -12,8 +12,7 @@ use DebugBar\DataCollector\Renderable;
 use Psr\Http\Message\ResponseInterface;
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;
-use Dflydev\FigCookies\FigResponseCookies;
-use PgFramework\Session\SessionInterface;
+use Mezzio\Session\SessionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -24,18 +23,15 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class RequestCollector extends DataCollector implements Renderable, AssetProvider
 {
-    /** @var ServerRequestInterface $request */
-    protected $request;
+    protected ServerRequestInterface $request;
 
-    /** @var  ResponseInterface $response */
-    protected $response;
+    protected ResponseInterface $response;
 
-    /** @var  SessionInterface $session */
-    protected $session;
+    protected ?SessionInterface $session;
 
     // The HTML var dumper requires debug bar users to support the new inline assets, which not all
-    // may support yet - so return false by default for now.
-    protected $useHtmlVarDumper = false;
+    // may support yet — so return false by default for now.
+    protected bool $useHtmlVarDumper = false;
 
     /**
      * Create a new SymfonyRequestCollector
@@ -54,7 +50,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return 'request';
     }
@@ -62,7 +58,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
     /**
      * @return array
      */
-    public function getAssets()
+    public function getAssets(): array
     {
         return $this->isHtmlVarDumperUsed() ? $this->getVarDumper()->getAssets() : array();
     }
@@ -70,7 +66,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
     /**
      * {@inheritDoc}
      */
-    public function getWidgets()
+    public function getWidgets(): array
     {
         $widget = $this->isHtmlVarDumperUsed()
             ? "PhpDebugBar.Widgets.HtmlVariableListWidget"
@@ -92,7 +88,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
     /**
      * {@inheritdoc}
      */
-    public function collect()
+    public function collect(): array
     {
         $request = $this->request;
         $response = $this->response;
@@ -120,7 +116,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
 
         if ($this->session) {
             $sessionAttributes = [];
-            foreach ($this->session as $key => $value) {
+            foreach ($this->session->toArray() as $key => $value) {
                 $sessionAttributes[$key] = $value;
             }
             $data['data']['session_attributes'] = $sessionAttributes;
@@ -154,7 +150,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
         return $data;
     }
 
-    private function getCookieHeader($name, $value, $expires, $path, $domain, $secure, $httponly)
+    private function getCookieHeader($name, $value, $expires, $path, $domain, $secure, $httponly): string
     {
         $cookie = sprintf('%s=%s', $name, urlencode($value));
 
@@ -167,7 +163,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
                 $expires = strtotime($expires);
                 if (false === $expires || -1 == $expires) {
                     throw new InvalidArgumentException(
-                        sprintf('The "expires" cookie parameter is not valid.', $expires)
+                        sprintf('The "expires" %d cookie parameter is not valid.', $expires)
                     );
                 }
             }
@@ -203,7 +199,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
      * @param bool $value
      * @return $this
      */
-    public function useHtmlVarDumper($value = true)
+    public function useHtmlVarDumper(bool $value = true): self
     {
         $this->useHtmlVarDumper = $value;
         return $this;
@@ -213,9 +209,9 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
      * Indicates whether the Symfony HtmlDumper will be used to dump variables for rich variable
      * rendering.
      *
-     * @return mixed
+     * @return bool
      */
-    public function isHtmlVarDumperUsed()
+    public function isHtmlVarDumperUsed(): bool
     {
         return $this->useHtmlVarDumper;
     }

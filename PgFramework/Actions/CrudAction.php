@@ -1,17 +1,14 @@
 <?php
 
-declare(strict_types=1);
-
 namespace PgFramework\Actions;
 
-use ActiveRecord\Model;
+use PgFramework\Database\NoRecordException;
 use PgFramework\Database\Table;
-use PgFramework\Validator\Validator;
 use Mezzio\Router\RouterInterface;
+use PgFramework\Database\Hydrator;
+use PgFramework\Validator\Validator;
 use PgFramework\Session\FlashService;
 use Psr\Http\Message\ResponseInterface;
-use PgFramework\Actions\RouterAwareAction;
-use PgFramework\Database\NoRecordException;
 use PgFramework\Renderer\RendererInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -19,210 +16,162 @@ class CrudAction
 {
     use RouterAwareAction;
 
-    /**
-     * @var RendererInterface
-     */
-    private $renderer;
+    private RendererInterface $renderer;
 
-    /**
-     * @var Table
-     */
-    protected $table;
+    private RouterInterface $router;
 
-    /**
-     * Model class
-     *
-     * @var string
-     */
-    protected $model = Model::class;
+    protected Table $table;
 
-    /**
-     * @var RouterInterface
-     */
-    private $router;
+    private FlashService $flash;
 
-    /**
-     * @var FlashService
-     */
-    private $flash;
+    protected string $viewPath;
 
-    /**
-     * @var string
-     */
-    protected $viewPath;
+    protected string $routePrefix;
 
-    /**
-     * @var string
-     */
-    protected $routePrefix;
-
-    /**
-     * @var array
-     */
-    protected $messages = [
+    protected array $messages = [
         'create' => "L'élément a bien été créé",
-        'edit' => "L'élément a bien été modifié",
-        'delete' => "L'élément a bien été supprimé"
+        'edit'   => "L'élément a bien été modifié"
     ];
 
-    /**
-     * @param RendererInterface $renderer
-     * @param Table $table
-     * @param RouterInterface $router
-     * @param FlashService $flash
-     */
+    protected array $acceptedParams = [];
+
     public function __construct(
         RendererInterface $renderer,
-        Table $table,
         RouterInterface $router,
+        Table $table,
         FlashService $flash
     ) {
         $this->renderer = $renderer;
-        $this->table = $table;
         $this->router = $router;
+        $this->table = $table;
         $this->flash = $flash;
-
-        $this->renderer->addGlobal('viewPath', $this->viewPath);
-        $this->renderer->addGlobal('routePrefix', $this->routePrefix);
     }
 
     /**
-     * Liste les entitys Method GET
-     *
+     * @throws NoRecordException
+     */
+    public function __invoke(Request $request): string|ResponseInterface
+    {
+        $this->renderer->addGlobal('viewPath', $this->viewPath);
+        $this->renderer->addGlobal('routePrefix', $this->routePrefix);
+        if ($request->getMethod() === 'DELETE') {
+            return $this->delete($request);
+        }
+        if (str_ends_with((string)$request->getUri(), 'new')) {
+            return $this->create($request);
+        }
+        if ($request->getAttribute('id')) {
+            return $this->edit($request);
+        }
+        return $this->index($request);
+    }
+
+    /**
+     * Affiche la liste des éléments
      * @param Request $request
      * @return string
      */
     public function index(Request $request): string
     {
         $params = $request->getQueryParams();
-        // $items = $this->table->findAll()->paginate(12, $params['p'] ?? 1);
-        $items = $this->model::setPaginatedQuery($this->model::findAll())
-                ::paginate(12, $params['p'] ?? 1);
+        $items = $this->table->findAll()->paginate(12, $params['p'] ?? 1);
 
         return $this->renderer->render($this->viewPath . '/index', compact('items'));
     }
 
     /**
-     * Edite un entity Method POST
-     *
+     * Edite un élément
      * @param Request $request
      * @return ResponseInterface|string
      * @throws NoRecordException
      */
-    public function edit(Request $request)
+    public function edit(Request $request): string|ResponseInterface
     {
-        // $item = $this->table->find($request->getAttribute('id'));
-        /** @var \ActiveRecord\Model */
-        $item = $this->model::find($request->getAttribute('id'));
-        $errors = false;
-        $submited = false;
+        $id = (int)$request->getAttribute('id');
+        $item = $this->table->find($id);
+        $errors = null;
 
         if ($request->getMethod() === 'POST') {
             $validator = $this->getValidator($request);
             if ($validator->isValid()) {
-                $item->update_attributes($this->getParams($request, $item));
-                // $this->table->update($item->id, $this->getParams($request, $item));
+                $this->table->update($id, $this->prePersist($request, $item));
+                $this->postPersist($request, $item);
                 $this->flash->success($this->messages['edit']);
                 return $this->redirect($this->routePrefix . '.index');
             }
-            $submited = true;
-            // Hydrator::hydrate($request->getParsedBody(), $item);
-            $item->set_attributes(
-                $this->getFilteredParams($request, $item->attributes(), true)
-            );
             $errors = $validator->getErrors();
+            Hydrator::hydrate($request->getParsedBody(), $item);
         }
 
         return $this->renderer->render(
             $this->viewPath . '/edit',
-            $this->formParams(compact('item', 'errors', 'submited'))
+            $this->formParams(compact('item', 'errors'))
         );
     }
 
     /**
-     * Crée un entity Method POST
-     *
+     * Crée un nouvel élément
      * @param Request $request
      * @return ResponseInterface|string
      */
-    public function create(Request $request)
+    public function create(Request $request): string|ResponseInterface
     {
-        // $item = $this->getNewEntity();
-        /** @var \ActiveRecord\Model */
-        $item = new $this->model();
-        $errors = false;
-        $submited = false;
+        $item = $this->getNewEntity();
+        $errors = null;
         if ($request->getMethod() === 'POST') {
             $validator = $this->getValidator($request);
             if ($validator->isValid()) {
-                // $this->table->insert($this->getParams($request, $item));
-                $item->create($this->getParams($request, $item));
+                $this->table->insert($this->prePersist($request, $item));
+                $this->postPersist($request, $item);
                 $this->flash->success($this->messages['create']);
                 return $this->redirect($this->routePrefix . '.index');
             }
-            $submited = true;
-            // Hydrator::hydrate($request->getParsedBody(), $item);
-            $item->set_attributes(
-                $this->getFilteredParams($request, $item->attributes(), true)
-            );
+            Hydrator::hydrate($request->getParsedBody(), $item);
             $errors = $validator->getErrors();
         }
-
         return $this->renderer->render(
             $this->viewPath . '/create',
-            $this->formParams(compact('item', 'errors', 'submited'))
+            $this->formParams(compact('item', 'errors'))
         );
     }
 
     /**
-     * Supprime un entity Method POST
+     * Action de suppression
      *
      * @param Request $request
-     * @return ResponseInterface|string
+     * @return ResponseInterface
      */
-    public function delete(Request $request)
+    public function delete(Request $request): ResponseInterface
     {
-        /** @var \ActiveRecord\Model */
-        $item = $this->model::find($request->getAttribute('id'));
-        // $this->table->delete($request->getAttribute('id'));
-        $item->delete($request->getAttribute('id'));
+        $this->table->delete($request->getAttribute('id'));
         return $this->redirect($this->routePrefix . '.index');
     }
 
     /**
-     * Récupère les paramètres POST
+     * Filtre les paramètres reçu par la requête
      *
      * @param Request $request
-     * @param mixed|null $item
+     * @param $item
      * @return array
      */
-    protected function getParams(Request $request, $item = null): array
+    protected function prePersist(Request $request, $item): array
     {
-        return array_filter($request->getParsedBody(), function ($key) {
-            return in_array($key, []);
+        return array_filter(array_merge($request->getParsedBody(), $request->getUploadedFiles()), function ($key) {
+            return in_array($key, $this->acceptedParams);
         }, ARRAY_FILTER_USE_KEY);
     }
 
     /**
-     * get filtered Post params
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param array $filter
-     * @param bool $useKey
-     * @return array
+     * Permet d’effectuer un traitement après la persistence
+     * @param Request $request
+     * @param $item
      */
-    protected function getFilteredParams(Request $request, array $filter, bool $useKey = false): array
+    protected function postPersist(Request $request, $item): void
     {
-        if ($useKey) {
-            $filter = array_keys($filter);
-        }
-        return array_filter($request->getParsedBody(), function ($key) use ($filter) {
-            return in_array($key, $filter);
-        }, ARRAY_FILTER_USE_KEY);
     }
 
     /**
-     * Get validator form fields
+     * Génère le validateur pour valider les données
      *
      * @param Request $request
      * @return Validator
@@ -233,14 +182,17 @@ class CrudAction
     }
 
     /**
-     * @return mixed
+     * Génère une nouvelle entité pour l’action de création
      */
     protected function getNewEntity()
     {
-        return [];
+        $entity = $this->table->getEntity();
+        return new $entity();
     }
 
     /**
+     * Permet de traiter les paramètres à envoyer à la vue
+     *
      * @param array $params
      * @return array
      */

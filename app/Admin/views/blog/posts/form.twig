@@ -1,0 +1,32 @@
+{{ csrf_input() }}
+<div class="row">
+  <div class="col-md-4">
+    {{ field('name', item.getName, "Titre de l'article") }}
+  </div>
+  <div class="col-md-4">
+    {% if item.getCategory.getId %}
+      {{ field('category_id', item.getCategory.getId, "Catégorie", {options: categories}) }}
+    {% endif %}
+  </div>
+  <div class="col-md-4">
+    {{ field('published', item.getPublished, "En ligne?", {type: 'checkbox'}) }}
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-4">
+    {% if item.getImage %}
+      <img src="{{ item.getThumb }}" alt="" style="width: 100%;">
+    {% endif %}
+  </div>
+  <div class="col-md-4">
+    {{ field('image', item.getSlug, "Image", {type: 'file'}) }}
+    {% if item.getImage %}
+      {{ field('delete', "0", "Supprimer l'image", {type: 'checkbox'}) }}
+    {% endif %}
+  </div>
+  <div class="col-md-4">
+    {{ field('slug', item.getSlug, "Lien") }}
+  </div>
+</div>
+{{ field('content', item.getContent, "Contenu", {type: 'textarea'}) }}
+{{ field('created_at', item.getCreatedAt.format("Y-m-d H:i:s"), "Date de création", {class: 'datepicker'}) }}

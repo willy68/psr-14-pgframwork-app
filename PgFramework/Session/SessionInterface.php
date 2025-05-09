@@ -8,21 +8,29 @@ interface SessionInterface
 {
     /**
      * @param string $key
-     * @param mixed $default
+     * @param mixed|null $default
      * @return mixed
      */
-    public function get(string $key, $default = null);
+    public function get(string $key, mixed $default = null): mixed;
 
     /**
      * @param string $key
      * @param mixed $value
      * @return void
      */
-    public function set(string $key, $value): void;
+    public function set(string $key, mixed $value): void;
 
     /**
      * @param string $key
      * @return void
      */
-    public function delete(string $key): void;
+    public function unset(string $key): void;
+
+    /**
+     * Check session has key
+     *
+     * @param string $key
+     * @return boolean
+     */
+    public function has(string $key): bool;
 }

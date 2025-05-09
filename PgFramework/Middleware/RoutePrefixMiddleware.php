@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace PgFramework\Middleware;
 
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -12,20 +14,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class RoutePrefixMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
 
-    /**
-     * @var string
-     */
-    private $routePrefix;
+    private string $routePrefix;
 
-    /**
-     * @var string
-     */
-    private $middleware;
+    private string $middleware;
 
     /**
      * RoutePrefixMiddleware constructor.
@@ -54,6 +47,8 @@ class RoutePrefixMiddleware implements MiddlewareInterface
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
      * @return ResponseInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

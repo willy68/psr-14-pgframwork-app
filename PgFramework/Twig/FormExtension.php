@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Twig;
 
+use DateTime;
 use Twig\TwigFunction;
 use Twig\Extension\AbstractExtension;
 
@@ -30,16 +31,23 @@ class FormExtension extends AbstractExtension
      * @param array $options
      * @return string
      */
-    public function field(array $context, string $key, $value, ?string $label = null, array $options = []): string
+    public function field(array $context, string $key, mixed $value, ?string $label = null, array $options = []): string
     {
         $type = $options['type'] ?? 'text';
         $error = $this->getErrorHTML($context, $key);
         $value = $this->convertValue($value);
         $attributes = [
-            'class' => ($options['class'] ?? '') . 'form-control',
+            'class' => 'form-control' . (isset($options['class']) ? ' ' . $options['class'] : ''),
             'name'  => $key,
-            'id'    => $key
+            'id'    => $key,
         ];
+        $div = "<div class=\"form-group\">";
+        $label = "<label for=\"$key\">$label</label>";
+        if (isset($options['attributes'])) {
+            foreach ($options['attributes'] as $attribute => $val) {
+                $attributes[$attribute] = $val;
+            }
+        }
         if ($error) {
             $attributes['class'] .= ' is-invalid';
         } elseif (isset($context['submited']) && $context['submited']) {
@@ -51,17 +59,22 @@ class FormExtension extends AbstractExtension
             $input = $this->file($attributes);
         } elseif ($type === 'checkbox') {
             $input = $this->checkbox($value, $attributes);
+            $div = "<div class=\"form-check\">";
+            $label1 = $label;
+            $label = $input;
+            $input = $label1;
         } elseif (array_key_exists('options', $options)) {
             $input = $this->select($value, $options['options'], $attributes);
         } else {
             $attributes['type'] = $options['type'] ?? 'text';
             $input = $this->input($value, $attributes);
         }
-        return "<div class=\"form-group\">
-        <label for=\"{$key}\">{$label}</label>
-        {$input}
-        {$error}
-      </div>";
+        return "
+            $div
+              $label
+              $input
+              $error
+            </div>";
     }
 
     /**
@@ -70,7 +83,7 @@ class FormExtension extends AbstractExtension
      */
     private function convertValue($value): string
     {
-        if ($value instanceof \DateTime) {
+        if ($value instanceof DateTime) {
             return $value->format('Y-m-d H:i:s');
         }
         return (string)$value;
@@ -85,7 +98,7 @@ class FormExtension extends AbstractExtension
     {
         $error = $context['errors'][$key] ?? false;
         if ($error) {
-            return "<div class=\"invalid-feedback\">{$error}</div>";
+            return "<div class=\"invalid-feedback\">$error</div>";
         }
         return "";
     }
@@ -99,9 +112,8 @@ class FormExtension extends AbstractExtension
     {
         return "<textarea " .
             $this->getHtmlFromArray($attributes) .
-            " rows=\"10\">{$value}</textarea>";
+            ">$value</textarea>";
     }
-
 
     /**
      * @param string|null $value
@@ -111,19 +123,18 @@ class FormExtension extends AbstractExtension
      */
     public function select(?string $value, array $options, array $attributes): string
     {
-
         $htmlOptions = array_reduce(
             array_keys($options),
             function (string $html, string $key) use ($options, $value) {
                 $params = ['value' => $key, 'selected' => $key === $value];
                 return $html .
-                "<option " . $this->getHtmlFromArray($params) . " > {$options[$key]} </option>";
+                "<option " . $this->getHtmlFromArray($params) . ">$options[$key]</option>";
             },
             ""
         );
         return "<select " .
         $this->getHtmlFromArray($attributes) .
-        ">{$htmlOptions}</select>";
+        ">$htmlOptions</select>";
     }
 
     /**
@@ -133,7 +144,7 @@ class FormExtension extends AbstractExtension
      */
     private function input(?string $value, array $attributes): string
     {
-        return "<input " . $this->getHtmlFromArray($attributes) . " value=\"{$value}\"/>";
+        return "<input " . $this->getHtmlFromArray($attributes) . " value=\"$value\"/>";
     }
 
     /**
@@ -143,6 +154,7 @@ class FormExtension extends AbstractExtension
      */
     private function checkbox(?string $value, array $attributes): string
     {
+        $attributes['class'] = str_replace('form-control', 'form-check-input', $attributes['class']);
         $html = "<input type=\"hidden\"" .
         " name=\"" . $attributes['name'] . "\"" .
         " value=\"0\"/>";
@@ -157,9 +169,9 @@ class FormExtension extends AbstractExtension
 
     /**
      * @param array $attributes
-     * @return void
+     * @return string
      */
-    public function file(array $attributes)
+    public function file(array $attributes): string
     {
         return "<input type=\"file\"" .
             $this->getHtmlFromArray($attributes) .

@@ -5,6 +5,8 @@ declare(strict_types=1);
 use PgFramework\App;
 use PgFramework\Environnement\Environnement;
 use Symfony\Component\Dotenv\Dotenv;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run;
 
 return (static function (): App {
     if (!class_exists(Dotenv::class)) {
@@ -28,9 +30,10 @@ return (static function (): App {
         ->addListeners($bootstrap['listeners']);
 
     if (Environnement::getEnv('APP_ENV', 'prod') === 'dev') {
-        $whoops = new \Whoops\Run();
-        $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler());
+        $whoops = new Run();
+        $whoops->pushHandler(new PrettyPageHandler());
         $whoops->register();
     }
+    $app->init();
     return $app;
 })();

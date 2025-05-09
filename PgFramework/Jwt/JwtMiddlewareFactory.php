@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace PgFramework\Jwt;
 
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Container\ContainerInterface;
 use Tuupola\Middleware\JwtAuthentication;
+use UnexpectedValueException;
 
 class JwtMiddlewareFactory
 {
@@ -15,6 +18,8 @@ class JwtMiddlewareFactory
      *
      * @param ContainerInterface $c
      * @return JwtAuthentication
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $c): JwtAuthentication
     {
@@ -28,7 +33,7 @@ class JwtMiddlewareFactory
                     $jwt = $arguments['token'];
                     try {
                         $jwt = JwtExt::refreshToken($jwt, $c->get('jwt.secret'));
-                    } catch (\UnexpectedValueException $e) {
+                    } catch (UnexpectedValueException $e) {
                     }
                     /** @var ResponseInterface $response */
                     $response = $response

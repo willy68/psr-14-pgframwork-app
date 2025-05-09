@@ -1,15 +1,20 @@
 <?php
 
 use App\Admin\AdminModule;
-use App\Admin\DashboardAction;
+use App\Admin\BlogAdminWidget;
 use App\Admin\AdminTwigExtension;
+
+use function DI\add;
+use function DI\autowire;
+use function DI\create;
+use function DI\get;
 
 return [
     'admin.prefix' => '/admin',
-    'admin.widgets' => [],
-    AdminTwigExtension::class => \DI\create()->constructor(\DI\get('admin.widgets')),
-    AdminModule::class => \DI\autowire()
-        ->constructorParameter('prefix', \DI\get('admin.prefix')),
-    DashboardAction::class => \DI\autowire()
-        ->constructorParameter('widgets', \DI\get('admin.widgets')),
+    'admin.widgets' => add([
+       get(BlogAdminWidget::class)
+    ]),
+    AdminTwigExtension::class => create()->constructor(get('admin.widgets')),
+    AdminModule::class => autowire()
+        ->constructorParameter('prefix', get('admin.prefix')),
 ];

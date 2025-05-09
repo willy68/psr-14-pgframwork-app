@@ -2,10 +2,13 @@
 
 namespace App\Auth;
 
+use App\Auth\Actions\LoginAction;
+use App\Auth\Actions\LoginAttemptAction;
+use App\Auth\Actions\LogoutAction;
+use App\Auth\Actions\PasswordForgetController;
+use App\Auth\Actions\PasswordResetController;
 use PgFramework\Module;
 use PgFramework\Renderer\RendererInterface;
-use PgFramework\Auth\Middleware\CookieLogoutMiddleware;
-use Mezzio\Router\RouteCollector;
 
 class AuthModule extends Module
 {
@@ -16,16 +19,15 @@ class AuthModule extends Module
     public const SEEDS = __DIR__ . '/db/seeds';
 
     public const ANNOTATIONS = [
-        __DIR__ . '/Actions'
+        LoginAction::class,
+        LoginAttemptAction::class,
+        LogoutAction::class,
+        PasswordForgetController::class,
+        PasswordResetController::class,
     ];
 
-    public function __construct(RendererInterface $renderer, RouteCollector $collector)
+    public function __construct(RendererInterface $renderer)
     {
         $renderer->addPath('auth', __DIR__ . '/views');
-
-        $route = $collector->getRouteName('auth.logout');
-        if ($route) {
-            $route->middleware(CookieLogoutMiddleware::class);
-        }
     }
 }

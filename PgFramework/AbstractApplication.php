@@ -8,10 +8,8 @@ abstract class AbstractApplication implements ApplicationInterface
 {
     /**
      * Self static
-     *
-     * @var ApplicationInterface
      */
-    protected static $app = null;
+    protected static ?ApplicationInterface $app = null;
 
     /**
      * Get Self instance

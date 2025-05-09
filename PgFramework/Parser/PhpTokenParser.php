@@ -4,61 +4,100 @@ declare(strict_types=1);
 
 namespace PgFramework\Parser;
 
+use LogicException;
+
+use function count;
+use function defined;
+use function function_exists;
+use function in_array;
+use function is_array;
+
+use const T_CLASS;
+use const T_DOUBLE_COLON;
+use const T_NAMESPACE;
+use const T_NS_SEPARATOR;
+use const T_STRING;
+
 class PhpTokenParser
 {
-    public function __construct()
-    {
-        if (!\function_exists('token_get_all')) {
-            throw new \LogicException("Function token_get_all don't exists in this system");
-        }
-    }
-
     /**
      * Returns the full class name for the first class in the file.
      *
      * @param string $file A PHP file path
      * @return string|false Full class name if found, false otherwise
+     * @throws LogicException
      */
-    public static function findClass($file)
+    public static function findClass(string $file): bool|string
     {
-        $class = false;
-        $namespace = false;
-        $tokens = token_get_all(file_get_contents($file));
-
-        $nsToken = [\T_NS_SEPARATOR, \T_STRING];
-        if (\defined('T_NAME_QUALIFIED')) {
-            $nsToken[] = T_NAME_QUALIFIED;
+        if (!function_exists('token_get_all')) {
+            throw new LogicException("Function token_get_all don't exists in this system");
         }
 
-        for ($i = 0, $count = \count($tokens); $i < $count; $i++) {
+        $class = false;
+        $namespace = false;
+        $doubleColon = false;
+        $tokens = token_get_all(file_get_contents($file));
+
+        $nsToken = [T_NS_SEPARATOR, T_STRING];
+        if (PHP_VERSION_ID >= 80000) {
+            if (defined('T_NAME_QUALIFIED')) {
+                $nsToken[] = T_NAME_QUALIFIED;
+            }
+            if (defined('T_NAME_FULLY_QUALIFIED')) {
+                $nsToken[] = T_NAME_FULLY_QUALIFIED;
+            }
+        }
+
+        $skipToken = [T_DOC_COMMENT, T_WHITESPACE, T_COMMENT];
+
+        for ($i = 0, $count = count($tokens); $i < $count; $i++) {
             $token = $tokens[$i];
 
-            if (!\is_array($token)) {
+            if (!is_array($token)) {
                 continue;
             }
 
-            if (true === $class && \T_STRING === $token[0]) {
+            if (true === $doubleColon) {
+                $doubleColon = false;
+                do {
+                    if (T_CLASS === $token[0]) {
+                        $doubleColon = true;
+                        break;
+                    } elseif (!in_array($token[0], $skipToken, true)) {
+                        break;
+                    }
+                    $token = $tokens[++$i];
+                } while ($i < $count && is_array($token));
+            }
+
+            if (true === $class && T_STRING === $token[0]) {
                 return $namespace . '\\' . $token[1];
             }
 
-            if (true === $namespace && \in_array($token[0], $nsToken)) {
+            if (true === $namespace && in_array($token[0], $nsToken)) {
                 $namespace = '';
                 do {
                     $namespace .= $token[1];
                     $token = $tokens[++$i];
-                } while ($i < $count && \is_array($token) && \in_array($token[0], $nsToken));
+                } while ($i < $count && is_array($token) && in_array($token[0], $nsToken));
             }
-            if (\T_CLASS === $token[0]) {
-                $class = true;
+            if (T_DOUBLE_COLON === $token[0]) {
+                $doubleColon = true;
             }
-            if (\T_NAMESPACE === $token[0]) {
+            if (T_CLASS === $token[0]) {
+                if ($doubleColon === false) {
+                    $class = true;
+                }
+                $doubleColon = false;
+            }
+            if (T_NAMESPACE === $token[0]) {
                 $namespace = true;
             }
         }
         return false;
     }
     /*
-    public function extractPhpClasses(string $path)
+    public function findClasses(string $path)
     {
         $code = file_get_contents($path);
         $tokens = @token_get_all($code);

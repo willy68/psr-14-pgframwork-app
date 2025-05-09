@@ -8,20 +8,15 @@ class PHPRenderer implements RendererInterface
 {
     public const DEFAULT_NAMESPACE = '__MAIN';
 
-    /**
-     * @var string[]
-     */
-    private $paths = [];
+    private array $paths = [];
 
     /**
      * Paramètres globale a envoyer à la vue
-     *
-     * @var array
      */
-    private $globals = [];
+    private array $globals = [];
 
     /**
-     * @param string $defaultPath
+     * @param string|null $defaultPath
      */
     public function __construct(string $defaultPath = null)
     {
@@ -32,10 +27,10 @@ class PHPRenderer implements RendererInterface
 
     /**
      * @param string $namespace
-     * @param string $path
+     * @param string|null $path
      * @return void
      */
-    public function addPath(string $namespace, string $path = null)
+    public function addPath(string $namespace, string $path = null): void
     {
         if (is_null($path)) {
             $this->paths[self::DEFAULT_NAMESPACE] = $namespace;
@@ -70,7 +65,7 @@ class PHPRenderer implements RendererInterface
      * @param mixed $value
      * @return void
      */
-    public function addGlobal(string $key, $value)
+    public function addGlobal(string $key, mixed $value): void
     {
         $this->globals[$key] = $value;
     }

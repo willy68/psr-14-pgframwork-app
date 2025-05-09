@@ -12,7 +12,7 @@ class EncryptFilter extends AbstractFilter implements FilterInterface
 
     public const CUSTOM = 'CUSTOM';
 
-    protected $method = self::MD5;
+    protected string $method = self::MD5;
 
     protected $customMethod;
 
@@ -40,12 +40,11 @@ class EncryptFilter extends AbstractFilter implements FilterInterface
      * filter $var method
      * return $var after filter if is set or just $var without filter
      */
-    public function filter($var)
+    public function filter(mixed $var): mixed
     {
         if ($this->isSet($var)) {
-            switch ($this->method) {
-                case self::MD5:
-                    return md5($var);
+            if ($this->method == self::MD5) {
+                return md5($var);
             }
         } else {
             return $var;

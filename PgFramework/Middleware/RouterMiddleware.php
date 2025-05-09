@@ -12,10 +12,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class RouterMiddleware implements MiddlewareInterface
 {
-  /**
-   * @var RouterInterface
-   */
-    private $router;
+    private RouterInterface $router;
 
     public function __construct(RouterInterface $router)
     {
@@ -24,22 +21,22 @@ class RouterMiddleware implements MiddlewareInterface
 
     /**
      * @param ServerRequestInterface $request
-     * @param RequestHandlerInterface $next
+     * @param RequestHandlerInterface $handler
      * @return ResponseInterface
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $result = $this->router->match($request);
 
-        if ($result->isFailure()) {
-            return $next->handle($request);
-        }
         if ($result->isMethodFailure()) {
             $request = $request->withAttribute(
                 get_class($result),
                 $result
             );
-            return $next->handle($request);
+            return $handler->handle($request);
+        }
+        if ($result->isFailure()) {
+            return $handler->handle($request);
         }
         $params = $result->getMatchedParams();
         $request = array_reduce(
@@ -53,6 +50,6 @@ class RouterMiddleware implements MiddlewareInterface
 
         /** @var ServerRequestInterface $request */
         $request = $request->withAttribute(get_class($result), $result);
-        return $next->handle($request);
+        return $handler->handle($request);
     }
 }

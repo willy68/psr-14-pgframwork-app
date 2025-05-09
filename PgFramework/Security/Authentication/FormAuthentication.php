@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace PgFramework\Security\Authentication;
 
 use Mezzio\Router\RouteResult;
-use PgFramework\Auth;
+use PgFramework\Auth\Auth;
 use PgFramework\Auth\UserInterface;
 use Mezzio\Router\RouterInterface;
+use PgFramework\HttpUtils\RequestUtils;
+use PgFramework\Response\JsonResponse;
 use PgFramework\Session\FlashService;
 use Psr\Http\Message\ResponseInterface;
-use PgFramework\Session\SessionInterface;
+use Mezzio\Session\SessionInterface;
 use PgFramework\Actions\RouterAwareAction;
 use PgFramework\Response\ResponseRedirect;
 use Psr\Http\Message\ServerRequestInterface;
@@ -19,27 +21,33 @@ use PgFramework\Security\Hasher\PasswordHasherInterface;
 use PgFramework\Security\Authentication\Exception\AuthenticationFailureException;
 use PgFramework\Security\Authentication\Result\AuthenticateResult;
 use PgFramework\Security\Authentication\Result\AuthenticateResultInterface;
+use Symfony\Component\Serializer\SerializerInterface;
+
+use function is_string;
 
 class FormAuthentication implements AuthenticationInterface
 {
     use RouterAwareAction;
 
-    protected $auth;
+    protected Auth $auth;
 
-    protected $userProvider;
+    protected UserProviderInterface $userProvider;
 
-    protected $session;
+    protected SessionInterface $session;
 
-    protected $router;
+    protected RouterInterface $router;
 
-    protected $hasher;
+    protected PasswordHasherInterface $hasher;
 
-    protected $options = [
+    protected SerializerInterface $serializer;
+
+    protected array $options = [
         'identifier' => 'username',
         'password' => 'password',
         'rememberMe' => 'rememberMe',
         'auth.login' => 'auth.login',
-        'redirect.success' => 'admin'
+        'redirect.success' => 'account',
+        'matched.route.name' => 'auth.login.post'
     ];
 
     public function __construct(
@@ -48,6 +56,7 @@ class FormAuthentication implements AuthenticationInterface
         SessionInterface $session,
         RouterInterface $router,
         PasswordHasherInterface $hasher,
+        SerializerInterface $serializer,
         array $options = []
     ) {
         $this->auth = $auth;
@@ -59,13 +68,14 @@ class FormAuthentication implements AuthenticationInterface
         if (!empty($options)) {
             $this->options = array_merge($this->options, $options);
         }
+        $this->serializer = $serializer;
     }
 
     public function supports(ServerRequestInterface $request): bool
     {
         /** @var RouteResult $routeResult */
         $routeResult = $request->getAttribute(RouteResult::class);
-        return $routeResult->getMatchedRouteName() === 'auth.login.post';
+        return $routeResult->getMatchedRouteName() === $this->options['matched.route.name'];
     }
 
     public function authenticate(ServerRequestInterface $request): AuthenticateResultInterface
@@ -78,7 +88,7 @@ class FormAuthentication implements AuthenticationInterface
 
         $user = $this->getUser($credentials);
 
-        if (!$user || !$user instanceof UserInterface) {
+        if (!$user instanceof UserInterface) {
             throw new AuthenticationFailureException('User not found');
         }
 
@@ -89,7 +99,11 @@ class FormAuthentication implements AuthenticationInterface
         return new AuthenticateResult($credentials, $user);
     }
 
-    public function getCredentials(ServerRequestInterface $request)
+    /**
+     * @param ServerRequestInterface $request
+     * @return array|null
+     */
+    public function getCredentials(ServerRequestInterface $request): ?array
     {
         $params = $request->getParsedBody();
 
@@ -100,27 +114,36 @@ class FormAuthentication implements AuthenticationInterface
             $credentials['rememberMe'] = true;
         }
 
-        if (!\is_string($credentials['identifier'])) {
+        if (!is_string($credentials['identifier'])) {
             return null;
         }
 
         return $credentials;
     }
 
-    public function getUser($credentials)
+    /**
+     * @param mixed $credentials
+     * @return UserInterface|null
+     */
+    public function getUser(mixed $credentials): ?UserInterface
     {
         return $this->userProvider->getUser($this->options['identifier'], $credentials['identifier']);
     }
 
     /**
-     * @param UserInterface $user
+     * @param ServerRequestInterface $request
+     * @param mixed $user
+     * @return ResponseInterface|null
      */
-    public function onAuthenticateSuccess(ServerRequestInterface $request, $user): ?ResponseInterface
+    public function onAuthenticateSuccess(ServerRequestInterface $request, mixed $user): ?ResponseInterface
     {
         $this->auth->setUser($user);
+        if (RequestUtils::isJson($request) || RequestUtils::wantJson($request)) {
+            return new JsonResponse(200, json_encode($this->serializer->serialize($user, 'json')));
+        }
 
         $path = $this->session->get('auth.redirect') ?: $this->router->generateUri($this->options['redirect.success']);
-        $this->session->delete('auth.redirect');
+        $this->session->unset('auth.redirect');
         return new ResponseRedirect($path);
     }
 
@@ -128,6 +151,10 @@ class FormAuthentication implements AuthenticationInterface
         ServerRequestInterface $request,
         AuthenticationFailureException $e
     ): ?ResponseInterface {
+        if (RequestUtils::isJson($request) || RequestUtils::wantJson($request)) {
+            return new JsonResponse(403, json_encode($e->getMessage() . ' ' . $e->getCode()));
+        }
+
         (new FlashService($this->session))->error('Identifiant ou mot de passe incorrect');
         return $this->redirect($this->options['auth.login']);
     }

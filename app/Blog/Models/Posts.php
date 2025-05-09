@@ -11,7 +11,7 @@ class Posts extends PaginatedModel
 
     public static $table_name = 'posts';
 
-    public static $belongs_to = [
+    public static array $belongs_to = [
         [
             'category',
             'class_name' => 'Categories',
@@ -22,7 +22,7 @@ class Posts extends PaginatedModel
     /**
      * set paginated options conditions
      *
-     * @param \PgFramework\Database\Query $query
+     * @param Query $query
      * @return string Class name
      */
     public static function setPaginatedQuery(Query $query): string
@@ -39,8 +39,6 @@ class Posts extends PaginatedModel
     }
 
     /**
-     * Undocumented function
-     *
      * @return string
      */
     public function getThumb(): string
@@ -50,8 +48,6 @@ class Posts extends PaginatedModel
     }
 
     /**
-     * Undocumented function
-     *
      * @return string
      */
     public function getImageUrl(): string

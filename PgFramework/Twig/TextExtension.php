@@ -23,7 +23,7 @@ class TextExtension extends AbstractExtension
     }
 
     /**
-     * @param string $content
+     * @param string|null $content
      * @param int $maxlength
      * @return string
      */
@@ -34,8 +34,8 @@ class TextExtension extends AbstractExtension
         }
         if (mb_strlen($content) > $maxlength) {
             $excerpt = mb_substr($content, 0, $maxlength);
-            $lastspace = mb_strrpos($excerpt, ' ');
-            return mb_substr($excerpt, 0, $lastspace) . '...';
+            $lastSpace = mb_strrpos($excerpt, ' ');
+            return mb_substr($excerpt, 0, $lastSpace) . '...';
         }
         return $content;
     }

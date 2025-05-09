@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace PgFramework\Middleware;
 
-use Mezzio\Router\Route;
-use Mezzio\Router\RouteGroup;
+use PgRouter\Route;
+use PgRouter\Router;
+use PgRouter\RouteGroup;
 use Mezzio\Router\RouteResult;
-use Mezzio\Router\FastRouteRouter;
 use Mezzio\Router\RouterInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -17,23 +19,12 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class DispatcherMiddleware implements MiddlewareInterface
 {
-    /**
-     * Injection container
-     *
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
 
-    /**
-     * Router
-     *
-     * @var FastRouteRouter
-     */
-    private $router;
+    private Router $router;
 
     /**
      * @param ContainerInterface $container
-     * @param Invoker $invoker
      */
     public function __construct(ContainerInterface $container)
     {
@@ -44,27 +35,27 @@ class DispatcherMiddleware implements MiddlewareInterface
      * Psr15 middleware process method
      *
      * @param ServerRequestInterface $request
-     * @param RequestHandlerInterface $next
+     * @param RequestHandlerInterface $handler
      * @return ResponseInterface
-     * @throws DependencyException
-     * @throws NotFoundException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $next): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         /** @var RouteResult $result */
         $result = $request->getAttribute(RouteResult::class);
         if (is_null($result)) {
-            return $next->handle($request);
+            return $handler->handle($request);
         }
         if ($result->isMethodFailure()) {
-            return $next->handle($request);
+            return $handler->handle($request);
         }
 
         $this->router = $this->container->get(RouterInterface::class);
         $this->prepareMiddlewareStack($result);
 
-        return (new CombinedMiddleware($this->container, $this->router->getMiddlewareStack(), $next))
-            ->process($request, $next);
+        $middleware = new CombinedMiddleware($this->container, (array)$this->router->getMiddlewareStack());
+        return $middleware->process($request, $handler);
     }
 
     /**
@@ -72,6 +63,8 @@ class DispatcherMiddleware implements MiddlewareInterface
      *
      * @param RouteResult $result
      * @return void
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     protected function prepareMiddlewareStack(RouteResult $result): void
     {

@@ -9,6 +9,7 @@ use PgFramework\Event\Events;
 use Mezzio\Router\RouteResult;
 use Mezzio\Router\RouterInterface;
 use PgFramework\Event\RequestEvent;
+use PgRouter\Route;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Router\Exception\PageNotFoundException;
@@ -19,7 +20,7 @@ class RouterListener implements EventSubscriberInterface
     /**
      * @var RouterInterface
      */
-    private $router;
+    private RouterInterface $router;
 
     /**
      * RouterListener constructor.
@@ -30,6 +31,9 @@ class RouterListener implements EventSubscriberInterface
         $this->router = $router;
     }
 
+    /**
+     * @throws PageNotFoundException
+     */
     public function __invoke(RequestEvent $event): void
     {
         $request = $event->getRequest();
@@ -56,6 +60,8 @@ class RouterListener implements EventSubscriberInterface
             throw new PageNotFoundException();
         }
 
+        /** @var Route $route */
+        $route = $result->getMatchedRoute();
         $params = $result->getMatchedParams();
         $request = array_reduce(
             array_keys($params),
@@ -65,7 +71,7 @@ class RouterListener implements EventSubscriberInterface
             $request
         );
         $event->setRequest($request->withAttribute(get_class($result), $result)
-                            ->withAttribute('_controller', $result->getMatchedRoute()->getCallback())
+                            ->withAttribute('_controller', $route->getCallback())
                             ->withAttribute('_params', $result->getMatchedParams()));
     }
 
@@ -93,17 +99,25 @@ class RouterListener implements EventSubscriberInterface
         return $request;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @param RouteResult $result
+     * @param ResponseInterface|null $response
+     * @return ResponseInterface|null
+     */
     private function redirectHttps(
         ServerRequestInterface $request,
         RouteResult $result,
-        ?ResponseInterface $response = null
+        ?ResponseInterface $response
     ): ?ResponseInterface {
         $scheme = $request->getUri()->getScheme();
-        if (! $result->getMatchedRoute()->allowsScheme($scheme)) {
+        /** @var Route $route */
+        $route = $result->getMatchedRoute();
+        if (! $route->allowsScheme($scheme)) {
             $uriClass = $request->getUri();
-            $newScheme = in_array('https', $result->getMatchedRoute()->getSchemes(), true)
+            $newScheme = in_array('https', $route->getSchemes(), true)
                 ? 'https'
-                : $result->getMatchedRoute()->getSchemes()[0];
+                : $route->getSchemes()[0];
             $path = $response ? $response->getHeaderLine('Location') : $uriClass->getPath();
             $uri = $uriClass
                 ->withScheme($newScheme)
@@ -118,7 +132,7 @@ class RouterListener implements EventSubscriberInterface
         return $response;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::REQUEST => 900

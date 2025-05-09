@@ -9,7 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 interface RoutesMapInterface
 {
     /**
-     * @return array of the format [$listeners]
+     * @return array of the format [[$listeners1, $listeners2]]
      */
-    public function getListeners(ServerRequestInterface $request);
+    public function getListeners(ServerRequestInterface $request): array;
 }

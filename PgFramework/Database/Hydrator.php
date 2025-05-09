@@ -11,7 +11,7 @@ class Hydrator
      * @param $object
      * @return mixed
      */
-    public static function hydrate(array $array, $object)
+    public static function hydrate(array $array, $object): mixed
     {
         if (is_string($object)) {
             $instance = new $object();

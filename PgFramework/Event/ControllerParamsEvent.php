@@ -11,7 +11,7 @@ class ControllerParamsEvent extends ControllerEvent
 {
     public const NAME = Events::PARAMETERS;
 
-    private $params;
+    private array $params;
 
     public function __construct(
         KernelInterface $kernel,
