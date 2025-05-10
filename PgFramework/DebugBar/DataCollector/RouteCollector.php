@@ -7,9 +7,9 @@ namespace PgFramework\DebugBar\DataCollector;
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\Renderable;
 use DebugBar\DataCollector\DataCollector;
-use Mezzio\Router\RouteResult;
-use Mezzio\Router\RouterInterface;
-use PgRouter\Route;
+use Pg\Router\Route;
+use Pg\Router\RouteResult;
+use Pg\Router\RouterInterface;
 
 class RouteCollector extends DataCollector implements Renderable, AssetProvider
 {
@@ -43,11 +43,11 @@ class RouteCollector extends DataCollector implements Renderable, AssetProvider
         $route = $this->routeResult->getMatchedRoute();
         if ($route) {
             $data['data'] = [
-                'uri' => $this->router->generateUri($route->getName(), $this->routeResult->getMatchedParams()),
+                'uri' => $this->router->generateUri($route->getName(), $this->routeResult->getMatchedAttributes()),
                 'methods' => $route->getAllowedMethods(),
                 'name' => $route->getName(),
                 'callback' => $route->getCallback(),
-                'params' => $this->routeResult->getMatchedParams(),
+                'params' => $this->routeResult->getMatchedAttributes(),
                 'middleware' => $route->getMiddlewareStack(),
             ];
             $methods = $data['data']['methods'] ?? [];

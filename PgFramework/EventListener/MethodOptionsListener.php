@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Response;
-use Mezzio\Router\RouteResult;
+use Pg\Router\RouteResult;
 use PgFramework\Event\RequestEvent;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use PgFramework\Event\Events;
@@ -13,8 +13,8 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class MethodOptionsListener implements EventSubscriberInterface
 {
-    public function __invoke(RequestEvent $event)
-    {
+    public function __invoke(RequestEvent $event): void
+	{
         $request = $event->getRequest();
 
         if ($request->getMethod() !== RequestMethod::METHOD_OPTIONS) {

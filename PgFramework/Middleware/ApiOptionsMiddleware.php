@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace PgFramework\Middleware;
 
+use Pg\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
-use Mezzio\Router\RouteResult;
 use GuzzleHttp\Psr7\Response;
 
 class ApiOptionsMiddleware implements MiddlewareInterface

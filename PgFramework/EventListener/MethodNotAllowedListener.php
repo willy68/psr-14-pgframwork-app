@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Response;
-use Mezzio\Router\RouteResult;
+use Pg\Router\RouteResult;
 use PgFramework\Event\RequestEvent;
 use Fig\Http\Message\StatusCodeInterface as StatusCode;
 use PgFramework\Event\Events;

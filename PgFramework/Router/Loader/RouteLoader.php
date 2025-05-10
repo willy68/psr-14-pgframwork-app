@@ -2,10 +2,10 @@
 
 namespace PgFramework\Router\Loader;
 
-use PgRouter\Route;
+use Pg\Router\Route;
 use ReflectionClass;
 use ReflectionMethod;
-use PgRouter\RouteCollectionInterface;
+use Pg\Router\RouteCollectionInterface;
 use PgFramework\Annotation\AnnotationsLoader;
 use PgFramework\Router\Annotation\Route as AnnotRoute;
 

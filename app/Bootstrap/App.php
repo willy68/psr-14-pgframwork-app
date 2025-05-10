@@ -42,12 +42,12 @@ return [
     'modules' => [
         ConsoleModule::class,
         DemoModule::class,
-        AdminModule::class,
         BlogModule::class,
+		AuthModule::class,
+		AdminModule::class,
         ContactModule::class,
         AccountModule::class,
-        AuthModule::class,
-        ApiModule::class,
+        //ApiModule::class,
         //ApiClientModule::class,
     ],
 

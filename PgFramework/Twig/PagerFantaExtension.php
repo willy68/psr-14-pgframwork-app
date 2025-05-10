@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace PgFramework\Twig;
 
-use Mezzio\Router\RouterInterface;
 use Pagerfanta\Pagerfanta;
+use Pg\Router\RouterInterface;
 use Twig\Extension\AbstractExtension;
 use Pagerfanta\View\TwitterBootstrap4View;
 use Twig\TwigFunction;

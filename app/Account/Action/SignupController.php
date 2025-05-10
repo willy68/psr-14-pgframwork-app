@@ -4,7 +4,7 @@ namespace App\Account\Action;
 
 use App\Auth\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Mezzio\Router\RouterInterface;
+use Pg\Router\RouterInterface;
 use PgFramework\Auth\Auth;
 use PgFramework\Renderer\RendererInterface;
 use PgFramework\Response\ResponseRedirect;
@@ -49,10 +49,11 @@ class SignupController
         $this->passwordHasher = $passwordHasher;
     }
 
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
+	/**
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
+	 * @throws \Exception
+	 */
     public function __invoke(ServerRequestInterface $request): ResponseInterface|string
     {
         if ($request->getMethod() === 'GET') {

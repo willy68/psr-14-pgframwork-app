@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace PgFramework\Router\Command;
 
-use Mezzio\Router\Route as RouteAlias;
-use PgRouter\Route;
-use PgRouter\RouteCollectionInterface;
+use Pg\Router\Route;
+use Pg\Router\RouteCollectionInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,8 +25,8 @@ class RouteListCommand extends Command
         $this->collector = $collector;
     }
 
-    protected function configure()
-    {
+    protected function configure(): void
+	{
         $this->setDescription('List all Routes from RouteCollection')
             ->setHelp('Get Application Routes definition (route:list)');
     }
@@ -58,7 +57,7 @@ class RouteListCommand extends Command
 
     private function getMethods(Route $route): string
     {
-        if ($route->getAllowedMethods() === RouteAlias::HTTP_METHOD_ANY) {
+        if ($route->getAllowedMethods() === Route::HTTP_METHOD_ANY) {
             return '*';
         }
 

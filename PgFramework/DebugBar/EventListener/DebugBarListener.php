@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace PgFramework\DebugBar\EventListener;
 
 use DebugBar\{DataCollector\ExceptionsCollector, DebugBar, DebugBarException};
+use Pg\Router\RouteResult;
+use Pg\Router\RouterInterface;
 use PgFramework\DebugBar\PgDebugBar;
 use PgFramework\Response\JsonResponse;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Mezzio\{Router\RouteResult, Router\RouterInterface, Session\SessionInterface};
+use Mezzio\Session\SessionInterface;
 use PgFramework\DebugBar\DataCollector\AuthCollector;
 use PgFramework\DebugBar\DataCollector\RequestCollector;
 use PgFramework\DebugBar\DataCollector\RouteCollector;

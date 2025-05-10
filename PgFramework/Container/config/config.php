@@ -11,9 +11,12 @@ use Grafikart\Csrf\CsrfMiddleware;
 use Invoker\CallableResolver;
 use Invoker\Invoker;
 use Invoker\ParameterResolver\ParameterResolver;
-use Mezzio\Router\RouterInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionPersistenceInterface;
+use Pg\Router\RouteCollectionInterface;
+use Pg\Router\RouteCollector;
+use Pg\Router\Router;
+use Pg\Router\RouterInterface;
 use PgFramework\Auth\Auth;
 use PgFramework\Auth\Middleware\AuthenticationMiddleware;
 use PgFramework\Database\ActiveRecord\ActiveRecordFactory;
@@ -89,9 +92,6 @@ use PgFramework\Validator\Rules\{ConfirmValidation,
     UniqueValidation,
     UploadedValidation
 };
-use PgRouter\RouteCollectionInterface;
-use PgRouter\RouteCollector;
-use PgRouter\Router;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -196,8 +196,7 @@ return [
     RouterInterface::class => factory(RouterFactory::class),
     Router::class => factory(RouterFactory::class),
     'duplicate.route' => true,
-    RouteCollector::class => autowire()
-        ->constructorParameter("detectDuplicates", get('duplicate.route')),
+    RouteCollector::class => autowire(),
     RouteCollectionInterface::class => get(RouteCollector::class),
     RendererInterface::class => factory(TwigRendererFactory::class),
     'database.sgdb' => Environnement::getEnv('DATABASE_SGDB', 'mysql'),

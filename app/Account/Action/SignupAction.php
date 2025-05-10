@@ -5,7 +5,7 @@ namespace App\Account\Action;
 use App\Auth\Entity\User;
 use App\Auth\UserTable;
 use App\Auth\DatabaseAuth;
-use Mezzio\Router\RouterInterface;
+use Pg\Router\RouterInterface;
 use PgFramework\Database\Hydrator;
 use PgFramework\Security\Hasher\PasswordHasherInterface;
 use PgFramework\Validator\Validator;
@@ -47,7 +47,10 @@ class SignupAction
         $this->hasher = $hasher;
     }
 
-    public function __invoke(ServerRequestInterface $request): ResponseRedirect|string
+	/**
+	 * @throws \Exception
+	 */
+	public function __invoke(ServerRequestInterface $request): ResponseRedirect|string
     {
         if ($request->getMethod() === 'GET') {
             return $this->renderer->render('@account/signup');

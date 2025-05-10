@@ -5,12 +5,12 @@ namespace App\Admin;
 use App\Admin\Actions\Blog\CategoryCrudController;
 use App\Admin\Actions\Blog\PostCrudController;
 use App\Admin\Actions\DashboardAction;
+use Pg\Router\RouteCollectionInterface;
+use Pg\Router\RouteCollector;
 use PgFramework\Auth\Middleware\LoggedInMiddleware;
 use PgFramework\Module;
 use PgFramework\Renderer\RendererInterface;
 use PgFramework\Renderer\TwigRenderer;
-use PgRouter\RouteCollectionInterface;
-use PgRouter\RouteCollector;
 
 class AdminModule extends Module
 {

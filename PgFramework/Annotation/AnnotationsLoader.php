@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace PgFramework\Annotation;
 
+use Doctrine\Common\Annotations\Reader;
+use PgFramework\Router\Annotation\Route;
+use Doctrine\ORM\Mapping\Driver\RepeatableAttributeCollection;
+
 use ReflectionClass;
 use ReflectionMethod;
-use Doctrine\ORM\Mapping\MappingAttribute;
-use Doctrine\ORM\Mapping\Driver\AttributeReader;
-use Doctrine\ORM\Mapping\Driver\RepeatableAttributeCollection;
 
 class AnnotationsLoader
 {
     use AnnotationReaderTrait;
 
-    protected ?string $annotationClass;
+    protected string $annotationClass;
 
-    public function __construct(string $annotationClass = null, $reader = null)
+    public function __construct(string $annotationClass = null, Reader $reader = null)
     {
-        $this->annotationClass = $annotationClass;
+        $this->annotationClass = $annotationClass ?? Route::class;
         $this->reader = $reader;
     }
 
@@ -26,38 +27,36 @@ class AnnotationsLoader
      * Change Annotation class
      *
      * @param string $class
-     * @return self
+     * @return void
      */
-    public function setAnnotation(string $class): static
-    {
+    public function setAnnotation(string $class): void
+	{
         $this->annotationClass = $class;
-        return $this;
     }
 
-    /**
-     * Recherche l’annotation de method pour une classe precise
-     *
-     * @param ReflectionMethod $method
-     * @return MappingAttribute|null
-     */
-    public function getMethodAnnotation(ReflectionMethod $method): ?MappingAttribute
+	/**
+	 * Recherche la première annotation de method
+	 *
+	 * @param ReflectionMethod $method
+	 * @return object|null
+	 */
+    public function getMethodAnnotation(ReflectionMethod $method):?object
     {
         // Look for class annotation
-        if (null === $this->reader) {
-            $this->reader = $this->getReader();
-        }
-        if ($this->reader instanceof AttributeReader) {
-            $annotations = $this->reader->getMethodAttributes($method)[$this->annotationClass] ?? null;
-        } else {
-            $annotations = $this->reader->getMethodAnnotation($method, $this->annotationClass);
-        }
+        $annotation = $this->getReader()
+            ->getMethodAnnotation(
+                $method,
+                $this->annotationClass
+            );
 
-        if ($annotations instanceof RepeatableAttributeCollection) {
-            foreach ($annotations as $annot) {
+        if ($annotation instanceof RepeatableAttributeCollection) {
+            foreach ($annotation as $annot) {
                 return $annot;
             }
+        } else {
+            return $annotation;
         }
-        return $annotations;
+        return null;
     }
 
     /**
@@ -69,15 +68,10 @@ class AnnotationsLoader
     public function getMethodAnnotations(ReflectionMethod $method): ?iterable
     {
         // Look for class annotation
-        if (null === $this->reader) {
-            $this->reader = $this->getReader();
-        }
-
-        if ($this->reader instanceof AttributeReader) {
-            $annotations = $this->reader->getMethodAttributes($method);
-        } else {
-            $annotations = $this->reader->getMethodAnnotations($method);
-        }
+        $annotations = $this->getReader()
+            ->getMethodAnnotations(
+                $method
+            );
 
         foreach ($annotations as $annotation) {
             if ($annotation instanceof RepeatableAttributeCollection) {
@@ -93,28 +87,29 @@ class AnnotationsLoader
         return null;
     }
 
-    /**
-     * Recherche la première annotation de class
-     *
-     * @param ReflectionClass $class
-     * @return MappingAttribute|null
-     */
-    public function getClassAnnotation(ReflectionClass $class): ?MappingAttribute
+	/**
+	 * Recherche la première annotation de class
+	 *
+	 * @param ReflectionClass $class
+	 * @return object|null
+	 */
+    public function getClassAnnotation(ReflectionClass $class): ?object
     {
         if ($class->isAbstract()) {
             return null;
         }
 
         // Look for class annotation
-        if (null === $this->reader) {
-            $this->reader = $this->getReader();
-        }
-
-        if ($this->reader instanceof AttributeReader) {
-            $annotation = $this->reader->getClassAttributes($class)[$this->annotationClass] ?? null;
-        } else {
-            $annotation = $this->reader->getClassAnnotation($class, $this->annotationClass);
-        }
+        $reader = $this->getReader();
+        /*if ($reader instanceof AttributeReader) {
+            $annotations = $reader->getClassAnnotations($class) ?? null;
+			$annotation = $annotations[$class->getName()] ?? null;
+			if ($class->getName() === LoginAction::class) {
+				dd($annotations, $annotation, $class, $this->annotationClass);
+			}
+        } else {*/
+            $annotation = $reader->getClassAnnotation($class, $this->annotationClass);
+        //}
 
         if ($annotation instanceof RepeatableAttributeCollection) {
             foreach ($annotation as $annot) {
@@ -137,15 +132,8 @@ class AnnotationsLoader
         }
 
         // Look for class annotation
-        if (null === $this->reader) {
-            $this->reader = $this->getReader();
-        }
-
-        if ($this->reader instanceof AttributeReader) {
-            $annotations = $this->reader->getClassAttributes($class);
-        } else {
-            $annotations = $this->reader->getClassAnnotations($class);
-        }
+        $annotations = $this->getReader()
+            ->getClassAnnotations($class);
 
         foreach ($annotations as $annotation) {
             if ($annotation instanceof RepeatableAttributeCollection) {

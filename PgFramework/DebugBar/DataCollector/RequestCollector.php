@@ -31,7 +31,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
 
     // The HTML var dumper requires debug bar users to support the new inline assets, which not all
     // may support yet — so return false by default for now.
-    protected bool $useHtmlVarDumper = false;
+    protected $useHtmlVarDumper = false;
 
     /**
      * Create a new SymfonyRequestCollector
@@ -199,7 +199,7 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
      * @param bool $value
      * @return $this
      */
-    public function useHtmlVarDumper(bool $value = true): self
+    public function useHtmlVarDumper($value = true): self
     {
         $this->useHtmlVarDumper = $value;
         return $this;

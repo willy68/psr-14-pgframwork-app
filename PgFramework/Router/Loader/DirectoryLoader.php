@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace PgFramework\Router\Loader;
 
-use PgRouter\Route;
 use PgFramework\File\FileUtils;
+use PgFramework\Router\Annotation\Route;
 
 class DirectoryLoader extends FileLoader
 {
@@ -22,7 +22,6 @@ class DirectoryLoader extends FileLoader
         }
 
         $files = FileUtils::getFiles($dir);
-
         $routes = [];
         foreach ($files as $file) {
             $res = parent::load((string)$file);

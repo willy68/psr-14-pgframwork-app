@@ -7,6 +7,7 @@ use App\Auth\Actions\LoginAttemptAction;
 use App\Auth\Actions\LogoutAction;
 use App\Auth\Actions\PasswordForgetController;
 use App\Auth\Actions\PasswordResetController;
+use App\Auth\Actions\RegisterAction;
 use PgFramework\Module;
 use PgFramework\Renderer\RendererInterface;
 
@@ -24,6 +25,7 @@ class AuthModule extends Module
         LogoutAction::class,
         PasswordForgetController::class,
         PasswordResetController::class,
+		RegisterAction::class,
     ];
 
     public function __construct(RendererInterface $renderer)

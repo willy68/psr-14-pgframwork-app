@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Utils;
-use Mezzio\Router\RouteResult;
-use Mezzio\Router\RouterInterface;
+use Pg\Router\RouteResult;
+use Pg\Router\RouterInterface;
 use PgFramework\Event\RequestEvent;
 use PgFramework\Event\ResponseEvent;
-use Psr\Http\Message\StreamInterface;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use League\Event\ListenerPriority;
 use PgFramework\Event\Events;
@@ -26,8 +25,8 @@ class MethodHeadListener implements EventSubscriberInterface
         $this->router = $router;
     }
 
-    public function onRequest(RequestEvent $event)
-    {
+    public function onRequest(RequestEvent $event): void
+	{
         $request = $event->getRequest();
 
         if ($request->getMethod() !== RequestMethod::METHOD_HEAD) {
@@ -49,7 +48,7 @@ class MethodHeadListener implements EventSubscriberInterface
         }
 
         // Copy matched parameters like RouteMiddleware does
-        foreach ($routeResult->getMatchedParams() as $param => $value) {
+        foreach ($routeResult->getMatchedAttributes() as $param => $value) {
             $request = $request->withAttribute($param, $value);
         }
 
@@ -64,8 +63,8 @@ class MethodHeadListener implements EventSubscriberInterface
         );
     }
 
-    public function onResponse(ResponseEvent $event)
-    {
+    public function onResponse(ResponseEvent $event): void
+	{
         $request = $event->getRequest();
 
         if ($request->getAttribute(self::FORWARDED_HTTP_METHOD_ATTRIBUTE)) {

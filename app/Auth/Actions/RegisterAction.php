@@ -4,8 +4,8 @@ namespace App\Auth\Actions;
 
 use App\Auth\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Mezzio\Router\RouterInterface;
 use Mezzio\Session\SessionInterface;
+use Pg\Router\RouterInterface;
 use PgFramework\Actions\RouterAwareAction;
 use PgFramework\Auth\AuthSession;
 use PgFramework\Renderer\RendererInterface;

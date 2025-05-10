@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace PgFramework\Annotation;
 
-use Doctrine\ORM\Mapping\Driver\AttributeReader;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\Reader;
+use Koriym\Attributes\AttributeReader;
 
 trait AnnotationReaderTrait
 {
     protected mixed $reader = null;
 
-    protected function getReader()
+    protected function getReader():Reader
     {
         if ($this->reader === null) {
             if (PHP_VERSION_ID >= 80000) {

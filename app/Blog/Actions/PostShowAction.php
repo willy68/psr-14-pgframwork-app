@@ -6,7 +6,7 @@ namespace App\Blog\Actions;
 
 use App\Entity\Category;
 use App\Entity\Post;
-use Mezzio\Router\RouterInterface;
+use Pg\Router\RouterInterface;
 use PgFramework\Router\Annotation\Route;
 use PgFramework\Actions\RouterAwareAction;
 use PgFramework\Renderer\RendererInterface;

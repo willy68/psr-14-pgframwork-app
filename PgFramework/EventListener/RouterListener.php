@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace PgFramework\EventListener;
 
 use GuzzleHttp\Psr7\Response;
+use Pg\Router\Route;
+use Pg\Router\RouteResult;
+use Pg\Router\RouterInterface;
 use PgFramework\Event\Events;
-use Mezzio\Router\RouteResult;
-use Mezzio\Router\RouterInterface;
 use PgFramework\Event\RequestEvent;
-use PgRouter\Route;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Router\Exception\PageNotFoundException;
@@ -62,7 +62,7 @@ class RouterListener implements EventSubscriberInterface
 
         /** @var Route $route */
         $route = $result->getMatchedRoute();
-        $params = $result->getMatchedParams();
+        $params = $result->getMatchedAttributes();
         $request = array_reduce(
             array_keys($params),
             function ($request, $key) use ($params) {
@@ -72,7 +72,7 @@ class RouterListener implements EventSubscriberInterface
         );
         $event->setRequest($request->withAttribute(get_class($result), $result)
                             ->withAttribute('_controller', $route->getCallback())
-                            ->withAttribute('_params', $result->getMatchedParams()));
+                            ->withAttribute('_params', $result->getMatchedAttributes()));
     }
 
     private function trailingSlash(ServerRequestInterface $request): ?ResponseInterface
