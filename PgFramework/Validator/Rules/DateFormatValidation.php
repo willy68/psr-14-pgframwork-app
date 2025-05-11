@@ -82,9 +82,9 @@ class DateFormatValidation implements ValidationInterface
         $datetime = DateTime::createFromFormat($this->format, $var);
         $errors = DateTime::getLastErrors();
         if (
-            $errors['error_count'] > 0 ||
-            $errors['warning_count'] > 0 ||
-            $datetime === false
+			is_array($errors) &&
+			($errors['error_count'] > 0 || $errors['warning_count'] > 0) ||
+			$datetime === false
         ) {
             return false;
         }

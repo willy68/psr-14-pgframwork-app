@@ -43,6 +43,8 @@ class CrudController
         'delete' => "L'élément a bien été supprimé"
     ];
 
+	protected array $filteredKeys = [];
+
     /**
      * @param RendererInterface $renderer
      * @param ManagerRegistry $om
@@ -104,7 +106,10 @@ class CrudController
                 return $this->redirect($this->routePrefix . '.index');
             }
             $submitted = true;
-            Hydrator::hydrate($request->getParsedBody(), $item);
+			Hydrator::hydrate(
+				$this->getFilteredParams($this->getParams($request, $item), $this->filteredKeys),
+				$item
+			);
             $errors = $validator->getErrors();
         }
 
@@ -135,7 +140,10 @@ class CrudController
                 return $this->redirect($this->routePrefix . '.index');
             }
             $submitted = true;
-            Hydrator::hydrate($request->getParsedBody(), $item);
+			Hydrator::hydrate(
+				$this->getFilteredParams($this->getParams($request, $item), $this->filteredKeys),
+				$item
+			);
             $errors = $validator->getErrors();
         }
 
@@ -174,21 +182,21 @@ class CrudController
         }, ARRAY_FILTER_USE_KEY);
     }
 
-    /**
-     * get filtered Post params
-     *
-     * @param ServerRequestInterface $request
-     * @param array $filter
-     * @param bool $useKey
-     * @return array
-     */
-    protected function getFilteredParams(ServerRequestInterface $request, array $filter, bool $useKey = false): array
+	/**
+	 * get filtered Post params
+	 *
+	 * @param array $params
+	 * @param array $filter
+	 * @param bool $useKey
+	 * @return array
+	 */
+    protected function getFilteredParams(array $params, array $filter, bool $useKey = false): array
     {
         if ($useKey) {
             $filter = array_keys($filter);
         }
         return array_filter(
-            array_merge($request->getParsedBody(), $request->getUploadedFiles()),
+            $params,
             function ($key) use ($filter) {
                 return in_array($key, $filter);
             },

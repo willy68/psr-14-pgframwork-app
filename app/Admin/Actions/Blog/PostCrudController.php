@@ -26,6 +26,8 @@ class PostCrudController extends CrudController
 
     protected string $entity = Post::class;
 
+	protected array $filteredKeys = ['name', 'slug', 'content', 'created_at', 'category_id', 'image', 'published'];
+
     protected PostUpload $postUpload;
 
     /**
