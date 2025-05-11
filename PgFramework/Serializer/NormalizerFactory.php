@@ -43,7 +43,7 @@ class NormalizerFactory
             new JsonSerializableNormalizer(),
             new DateTimeNormalizer(),
             new ConstraintViolationListNormalizer(),
-            new MimeMessageNormalizer(new PropertyNormalizer()),
+            //new MimeMessageNormalizer(new PropertyNormalizer()),
             new DateTimeZoneNormalizer(),
             new DateIntervalNormalizer(),
             new FormErrorNormalizer(),

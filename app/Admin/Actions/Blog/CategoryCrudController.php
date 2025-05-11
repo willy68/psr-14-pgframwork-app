@@ -3,7 +3,7 @@
 namespace App\Admin\Actions\Blog;
 
 use App\Entity\Category;
-use Mezzio\Router\RouterInterface;
+use Pg\Router\RouterInterface;
 use PgFramework\Validator\Validator;
 use PgFramework\Session\FlashService;
 use Doctrine\Persistence\ManagerRegistry;

@@ -7,7 +7,7 @@ use App\Blog\PostUpload;
 use App\Entity\Category;
 use DateTime;
 use DateTimeImmutable;
-use Mezzio\Router\RouterInterface;
+use Pg\Router\RouterInterface;
 use PgFramework\Validator\Validator;
 use PgFramework\Session\FlashService;
 use Doctrine\Persistence\ManagerRegistry;

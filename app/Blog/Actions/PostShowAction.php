@@ -42,7 +42,7 @@ class PostShowAction
      * @param Post $post
      * @return string|ResponseInterface
      */
-    #[Route('/{slug:[a-z\-0-9]+}-{id:[0-9]+}', name:'blog.show', methods:['GET'])]
+    #[Route('/{slug:[a-z\-]+[a-z0-9]*}-{id:[0-9]+}', name:'blog.show', methods:['GET'])]
     public function __invoke(string $slug, Post $post): string|ResponseInterface
     {
         if ($post->getSlug() !== $slug) {
@@ -94,14 +94,14 @@ class PostShowAction
     /**
      * Show blog post
      *
-     * @Route("/category/{category_slug:[a-z\-0-9]+}/post/{id:[0-9]+}", name="blog.postCategoryShow", methods={"GET"})
+     * @Route("/category/{category_slug:[a-z\-]+[a-z0-9]*}/post/{id:[0-9]+}", name="blog.postCategoryShow", methods={"GET"})
      * @ParameterConverter("category", options={"slug"="category_slug"})
      *
      * @param Category $category
      * @param Post $post
      * @return string
      */
-    #[Route('/category/{category_slug:[a-z\-0-9]+}/post/{id:[0-9]+}', name:'blog.postCategoryShow', methods:['GET'])]
+    #[Route('/category/{category_slug:[a-z\-]+[a-z0-9]*}/post/{id:[0-9]+}', name:'blog.postCategoryShow', methods:['GET'])]
     #[ParameterConverter('category', options:['slug' => 'category_slug'])]
     public function postCategoryShow(Category $category, Post $post): string
     {

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace PgFramework\Controller;
 
+use Pg\Router\RouterInterface;
 use Psr\Http\Message\ResponseInterface;
 use stdClass;
-use Mezzio\Router\RouterInterface;
 use PgFramework\Database\Hydrator;
 use PgFramework\Validator\Validator;
 use PgFramework\Session\FlashService;

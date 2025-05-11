@@ -101,15 +101,7 @@ class AnnotationsLoader
 
         // Look for class annotation
         $reader = $this->getReader();
-        /*if ($reader instanceof AttributeReader) {
-            $annotations = $reader->getClassAnnotations($class) ?? null;
-			$annotation = $annotations[$class->getName()] ?? null;
-			if ($class->getName() === LoginAction::class) {
-				dd($annotations, $annotation, $class, $this->annotationClass);
-			}
-        } else {*/
-            $annotation = $reader->getClassAnnotation($class, $this->annotationClass);
-        //}
+		$annotation = $reader->getClassAnnotation($class, $this->annotationClass);
 
         if ($annotation instanceof RepeatableAttributeCollection) {
             foreach ($annotation as $annot) {

@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use PgFramework\Auth\UserInterface;
 use PgFramework\Auth\Provider\UserProviderInterface;
 use PgFramework\Security\Hasher\PasswordHasherInterface;
-use Ramsey\Uuid\Uuid;
+//use Ramsey\Uuid\Uuid;
 
 class UserProvider implements UserProviderInterface
 {
@@ -48,7 +48,8 @@ class UserProvider implements UserProviderInterface
     }
     public function resetPassword(User $user): string
     {
-        $token = Uuid::uuid4()->toString();
+        //$token = Uuid::uuid4()->toString();
+		$token = random_bytes(64);
         $user->setPasswordReset($token);
         $user->setPasswordResetAt(new DateTime());
         $this->em->persist($user);
