@@ -25,7 +25,7 @@
         "symfony/dotenv": "^6.0",
         "doctrine/orm": "^2.8",
         "guzzlehttp/psr7": "^2.7.0",
-        "php-di/php-di": "^6.0",
+        "php-di/php-di": "^7.0",
         "php-di/invoker": "^2.2",
         "twig/twig": "^3.0",
         "willy68/response-sender": "^1.0.0",
@@ -36,7 +36,6 @@
         "grafikart/psr15-csrf-middleware": "^1.0",
         "intervention/image": "^2.5",
         "dflydev/fig-cookies": "^3.0",
-        "tuupola/slim-jwt-auth": "^3.4",
         "league/event": "^3.0",
         "symfony/cache": "^5.4",
         "mezzio/mezzio-session": "^1.6",
@@ -55,7 +54,7 @@
     "require-dev": {
         "middlewares/whoops": "^2.0",
         "squizlabs/php_codesniffer": "^3.5",
-        "phpunit/phpunit": "^8.5",
+        "phpunit/phpunit": "^11",
         "robmorgan/phinx": "^0.12.4",
         "odan/phinx-migrations-generator": "^5.3.1",
         "symfony/console": "^6.0",
@@ -63,7 +62,7 @@
         "symfony/var-dumper": "^6.0",
         "doctrine/migrations": "^3.1",
         "fakerphp/faker": "^1.13",
-        "maximebf/debugbar": "^1.18"
+        "php-debugbar/php-debugbar": "^2.2"
     },
     "config": {
         "bin-dir": "bin"

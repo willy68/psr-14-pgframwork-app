@@ -31,15 +31,13 @@ class ResolverChainFactory
     public function __invoke(ContainerInterface $container): ParameterResolver
     {
         $proxyDir = null;
-		$writeToFile = false;
         if ($container->get('env') === 'prod') {
             $projectDir = $container->get(ApplicationInterface::class)->getProjectDir();
             $projectDir = realpath($projectDir) ?: $projectDir;
             $proxyDir = $projectDir . App::PROXY_DIRECTORY;
-			$writeToFile = true;
         }
 
-        $definitionResolver = new ResolverDispatcher($container, new ProxyFactory($writeToFile, $proxyDir));
+        $definitionResolver = new ResolverDispatcher($container, new ProxyFactory($proxyDir));
 
         return new ControllerParamsResolver([
             new DoctrineParamConverterAnnotations(

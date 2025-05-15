@@ -27,26 +27,49 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
      */
     public function collect(): array
     {
-        $queries = array();
-        $totalExecTime = 0;
-        foreach ($this->debugStack->queries as $q) {
-            $queries[] = array(
-                'connection' => $q['connection'],
-                'sql' => $q['sql'],
-                'params' => (object) $q['params'],
-                'duration' => $q['executionMS'],
-                'duration_str' => $this->getDataFormatter()->formatDuration($q['executionMS'])
-            );
-            $totalExecTime += $q['executionMS'];
-        }
+		$queries = array();
+		$totalExecTime = 0;
+		foreach ($this->debugStack->queries as $q) {
+			$queries[] = array(
+				'sql' => $q['sql'],
+				'params' => (object) $this->getParameters($q['params'] ?? []),
+				'duration' => $q['executionMS'],
+				'duration_str' => $this->getDataFormatter()->formatDuration($q['executionMS'])
+			);
+			$totalExecTime += $q['executionMS'];
+		}
 
-        return array(
-            'nb_statements' => count($queries),
-            'accumulated_duration' => $totalExecTime,
-            'accumulated_duration_str' => $this->getDataFormatter()->formatDuration($totalExecTime),
-            'statements' => $queries
-        );
+		return array(
+			'nb_statements' => count($queries),
+			'accumulated_duration' => $totalExecTime,
+			'accumulated_duration_str' => $this->getDataFormatter()->formatDuration($totalExecTime),
+			'statements' => $queries
+		);
     }
+
+	/**
+	 * Returns an array of parameters used with the query
+	 *
+	 * @param $params
+	 * @return array
+	 */
+	public function getParameters($params) : array
+	{
+		return array_map(function ($param) {
+			if (is_string($param)) {
+				return htmlentities($param, ENT_QUOTES, 'UTF-8', false);
+			} elseif (is_array($param)) {
+				return '[' . implode(', ', $this->getParameters($param)) . ']';
+			} elseif (is_numeric($param)) {
+				return strval($param);
+			} elseif ($param instanceof \DateTimeInterface) {
+				return $param->format('Y-m-d H:i:s');
+			} elseif (is_object($param)) {
+				return json_encode($param);
+			}
+			return $param ?: '';
+		}, $params);
+	}
 
     /**
      * @return string
