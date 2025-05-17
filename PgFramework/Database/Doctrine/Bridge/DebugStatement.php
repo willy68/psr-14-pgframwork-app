@@ -42,38 +42,9 @@ class DebugStatement extends AbstractStatementMiddleware
 
     /**
      * {@inheritdoc}
-     *
-     * @deprecated Use {@see bindValue()} instead.
      */
-    public function bindParam($param, &$variable, $type = ParameterType::STRING, $length = null): bool
-    {
-        Deprecation::trigger(
-            'doctrine/dbal',
-            'https://github.com/doctrine/dbal/pull/5563',
-            '%s is deprecated. Use bindValue() instead.',
-            __METHOD__,
-        );
-
-        if (func_num_args() < 3) {
-            Deprecation::trigger(
-                'doctrine/dbal',
-                'https://github.com/doctrine/dbal/pull/5558',
-                'Not passing $type to Statement::bindParam() is deprecated.'
-                . ' Pass the type corresponding to the parameter being bound.',
-            );
-        }
-
-        $this->params[$param] = &$variable;
-        $this->types[$param] = $type;
-
-        return parent::bindParam($param, $variable, $type, ...array_slice(func_get_args(), 3));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function bindValue($param, $value, $type = ParameterType::STRING): bool
-    {
+    public function bindValue($param, $value, $type = ParameterType::STRING): void
+	{
         if (func_num_args() < 3) {
             Deprecation::trigger(
                 'doctrine/dbal',
@@ -86,7 +57,7 @@ class DebugStatement extends AbstractStatementMiddleware
         $this->params[$param] = $value;
         $this->types[$param] = $type;
 
-        return parent::bindValue($param, $value, $type);
+        parent::bindValue($param, $value, $type);
     }
 
     /**

@@ -76,51 +76,48 @@ class DebugConnection extends AbstractConnectionMiddleware
     /**
      * {@inheritDoc}
      */
-    public function beginTransaction(): bool
-    {
+    public function beginTransaction(): void
+	{
         if (1 === ++$this->level) {
             $this->debugStack->startQuery($this->connectionName, 'START TRANSACTION');
         }
 
         try {
-            $ret = parent::beginTransaction();
+            parent::beginTransaction();
         } finally {
             $this->debugStack->stopQuery();
         }
-        return $ret;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function commit(): bool
-    {
+    public function commit(): void
+	{
         if (1 === $this->level--) {
             $this->debugStack->startQuery($this->connectionName, 'COMMIT');
         }
 
         try {
-            $ret = parent::commit();
+            parent::commit();
         } finally {
             $this->debugStack->stopQuery();
         }
-        return $ret;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function rollBack(): bool
-    {
+    public function rollBack(): void
+	{
         if (1 === $this->level--) {
             $this->debugStack->startQuery($this->connectionName, 'ROLLBACK');
         }
 
         try {
-            $ret = parent::rollBack();
+            parent::rollBack();
         } finally {
             $this->debugStack->stopQuery();
         }
-        return $ret;
     }
 }

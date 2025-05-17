@@ -7,6 +7,7 @@ namespace PgFramework\Database\Doctrine;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Tools\DsnParser;
 use PgFramework\Database\Doctrine\Bridge\DebugMiddleware;
 use PgFramework\Database\Doctrine\Bridge\DebugStack;
 use Psr\Container\ContainerExceptionInterface;
@@ -29,6 +30,8 @@ class DbalConnectionFactory
             $config->setMiddlewares([new DebugMiddleware($debugStack, $connectionName)]);
         }
 
-        return DriverManager::getConnection($c->get($url), $config);
+		$dsnParser = new DsnParser();
+		$connectionParams = $dsnParser->parse($c->get($url)['url']);
+        return DriverManager::getConnection($connectionParams, $config);
     }
 }

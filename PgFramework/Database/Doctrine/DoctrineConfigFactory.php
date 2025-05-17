@@ -4,15 +4,10 @@ declare(strict_types=1);
 
 namespace PgFramework\Database\Doctrine;
 
-use Doctrine\Common\Annotations\AnnotationException;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\DocParser;
-use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Configuration;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
-use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 use Symfony\Component\Cache\Exception\CacheException;
@@ -20,10 +15,8 @@ use Symfony\Component\Cache\Exception\CacheException;
 class DoctrineConfigFactory
 {
     /**
-     * @throws ContainerExceptionInterface
-     * @throws AnnotationException
-     * @throws NotFoundExceptionInterface|CacheException
-     */
+     * @throws ContainerExceptionInterface|CacheException
+	 */
     public function __invoke(ContainerInterface $c): Configuration
     {
         // Create a simple "default" Doctrine ORM configuration for Annotations
@@ -49,14 +42,7 @@ class DoctrineConfigFactory
         $config->setHydrationCache($hydrateCache);
         $config->setResultCache($resultCache);
 
-        if (PHP_VERSION_ID >= 80000) {
-            $annotDriver = new AttributeDriver($c->get('doctrine.entity.path'));
-        } else {
-            $annotDriver = new AnnotationDriver(
-                new AnnotationReader(new DocParser()),
-                $c->get('doctrine.entity.path')
-            );
-        }
+		$annotDriver = new AttributeDriver($c->get('doctrine.entity.path'));
 
         $config->setMetadataDriverImpl($annotDriver);
         $config->setProxyDir($c->get('app.cache.dir') . $c->get('doctrine.proxies.dir'));

@@ -96,7 +96,6 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
-use Tuupola\Middleware\JwtAuthentication;
 
 use function DI\add;
 use function DI\autowire;
@@ -106,7 +105,6 @@ use function DI\get;
 
 return [
     'env' => Environnement::getEnv('APP_ENV', 'dev'),
-    //'env' => env('ENV', 'production'),
     'app' => Environnement::getEnv('APP', 'web'),
     'jwt.secret' => Environnement::getEnv('APP_KEY', 'abcdefghijklmnop123456789'),
     'twig.entrypoints' => '',
@@ -167,22 +165,21 @@ return [
             get(TokenStorageInterface::class),
             get(TokenGeneratorInterface::class)
         ),
-        PasswordHasherInterface::class =>
-        autowire(DefaultPasswordHasher::class)
-            ->constructorParameter('config', get('password.hasher.config')),
-        AuthenticationListener::class => autowire()
-        ->constructorParameter('authenticators', get('security.authenticators')),
-        AuthenticationMiddleware::class => autowire()
-        ->constructorParameter('authenticators', get('security.authenticators')),
-        AuthorizationCheckerInterface::class => autowire(AuthorizationChecker::class)
-        ->constructorParameter('exceptionOnNoUser', true),
-        JwtAuthentication::class => factory(JwtMiddlewareFactory::class),
-        Invoker::class => factory(InvokerFactory::class),
-        ParameterResolver::class => factory(ResolverChainFactory::class),
-        CallableResolver::class => factory(CallableResolverFactory::class),
-        EventDispatcherInterface::class => function (ContainerInterface $c): EventDispatcherInterface {
-            return new EventDispatcher($c->get(CallableResolver::class));
-        },
+	PasswordHasherInterface::class =>
+	autowire(DefaultPasswordHasher::class)
+		->constructorParameter('config', get('password.hasher.config')),
+	AuthenticationListener::class => autowire()
+	->constructorParameter('authenticators', get('security.authenticators')),
+	AuthenticationMiddleware::class => autowire()
+	->constructorParameter('authenticators', get('security.authenticators')),
+	AuthorizationCheckerInterface::class => autowire(AuthorizationChecker::class)
+	->constructorParameter('exceptionOnNoUser', true),
+	Invoker::class => factory(InvokerFactory::class),
+	ParameterResolver::class => factory(ResolverChainFactory::class),
+	CallableResolver::class => factory(CallableResolverFactory::class),
+	EventDispatcherInterface::class => function (ContainerInterface $c): EventDispatcherInterface {
+		return new EventDispatcher($c->get(CallableResolver::class));
+	},
     KernelEvent::class => function (ContainerInterface $c): KernelEvent {
         return new KernelEvent(
             $c->get(EventDispatcherInterface::class),
@@ -204,7 +201,7 @@ return [
     'database.user' => Environnement::getEnv('DATABASE_USER', 'root'),
     'database.password' => Environnement::getEnv('DATABASE_PASSWORD', 'root'),
     'database.name' => Environnement::getEnv('DATABASE_NAME', 'my_database'),
-    'database.driver' => Environnement::getEnv('DATABASE_DRIVER'),
+    'database.driver' => Environnement::getEnv('DATABASE_DRIVER', 'pdo-mysql'),
     'ActiveRecord' => factory(ActiveRecordFactory::class),
     'ActiveRecord.connections' => function (ContainerInterface $c): array {
         return [
@@ -236,7 +233,7 @@ return [
     'doctrine.entity.namespace' => add([]),
     'doctrine.connection.default.url' => function (ContainerInterface $c): array {
         return [
-            'url' => $c->get('database.sgdb') . "://" .
+            'url' => $c->get('database.driver') . "://" .
                 $c->get('database.user') . ":" .
                 $c->get('database.password') . "@" .
                 $c->get('database.host') . "/" .

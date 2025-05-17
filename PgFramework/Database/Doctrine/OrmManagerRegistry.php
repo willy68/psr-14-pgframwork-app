@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace PgFramework\Database\Doctrine;
 
 use DI\Container;
-use Doctrine\ORM\Proxy\Proxy;
+use Doctrine\Persistence\Proxy;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Exception\ORMException;
 use Doctrine\Persistence\AbstractManagerRegistry;
-use Doctrine\ORM\Exception\UnknownEntityNamespace;
+use Psr\Container\NotFoundExceptionInterface;
 
 class OrmManagerRegistry extends AbstractManagerRegistry
 {
@@ -40,21 +40,25 @@ class OrmManagerRegistry extends AbstractManagerRegistry
      */
     protected function getService($name)
     {
-        return $this->container->get($name);
-    }
+		try {
+			return $this->container->get($name);
+		} catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
+			return null;
+		}
+	}
 
     /**
      * @inheritdoc
      */
-    protected function resetService($name)
-    {
+    protected function resetService($name): void
+	{
         if ($this->container instanceof Container) {
             $this->container->set($name, null);
         }
     }
 
-    public function setContainer(ContainerInterface $container = null)
-    {
+    public function setContainer(ContainerInterface $container = null): void
+	{
         $this->container = $container;
     }
 
@@ -62,7 +66,7 @@ class OrmManagerRegistry extends AbstractManagerRegistry
     /**
      * From Doctrine bundle Registry.php
      */
-    public function getAliasNamespace($alias)
+    public function getAliasNamespaces()
     {
         foreach (array_keys($this->getManagers()) as $name) {
             $objectManager = $this->getManager($name);
@@ -71,12 +75,8 @@ class OrmManagerRegistry extends AbstractManagerRegistry
                 continue;
             }
 
-            try {
-                return $objectManager->getConfiguration()->getEntityNamespace($alias);
-            } catch (ORMException $e) {
-            }
-        }
-
-        throw UnknownEntityNamespace::fromNamespaceAlias($alias);
+			return $objectManager->getConfiguration()->getEntityNamespaces();
+		}
+		return [];
     }
 }
