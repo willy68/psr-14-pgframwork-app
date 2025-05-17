@@ -1,4 +1,3 @@
-.project
 .buildpath
 .settings
 *.log
@@ -6,6 +5,7 @@
 *.swp
 vendor/*
 composer.lock
+yarn.lock
 .phpunit.result.cache
 tests/html
 
