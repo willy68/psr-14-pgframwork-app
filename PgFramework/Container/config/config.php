@@ -233,7 +233,7 @@ return [
     'doctrine.entity.namespace' => add([]),
     'doctrine.connection.default.url' => function (ContainerInterface $c): array {
         return [
-            'url' => $c->get('database.driver') . "://" .
+            'default' => $c->get('database.driver') . "://" .
                 $c->get('database.user') . ":" .
                 $c->get('database.password') . "@" .
                 $c->get('database.host') . "/" .

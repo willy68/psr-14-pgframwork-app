@@ -14,7 +14,7 @@ class PaginatedModel extends ActiveRecord\Model
 {
     public static array $paginatedCondition = [];
 
-    public static Query $query;
+    public static ?Query $query = null;
 
     /**
      * @param int $perPage

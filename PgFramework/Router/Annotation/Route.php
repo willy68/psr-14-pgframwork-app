@@ -13,11 +13,8 @@ use function is_string;
 
 /**
  *
- * Ex: @Route("/route/{id:\d+}", name="path.route", methods={"GET"}, middlewares={loginMiddleware::class})
+ * Ex: #Route("/route/{id:\d+}", name:"path.route", methods:["GET"], middlewares:[loginMiddleware::class])
  *
- * @Annotation
- * @NamedArgumentConstructor
- * @Target({"CLASS", "METHOD"})
  *
  */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::TARGET_FUNCTION | Attribute::IS_REPEATABLE)]
@@ -56,8 +53,8 @@ class Route implements MappingAttribute
         // Method param name
         if (null === $this->path) {
             throw new RouteAnnotationException(sprintf(
-                '@Route("/route/{id:\d+}", name="path.route",
-                methods={"GET"}) expects first parameter "path", %s given.',
+                '#Route("/route/{id:\d+}", name:"path.route",
+                methods:["GET"]) expects first parameter "path", %s given.',
                 $this->path
             ));
         }

@@ -31,7 +31,7 @@ class DbalConnectionFactory
         }
 
 		$dsnParser = new DsnParser();
-		$connectionParams = $dsnParser->parse($c->get($url)['url']);
+		$connectionParams = $dsnParser->parse($c->get($url)[$connectionName]);
         return DriverManager::getConnection($connectionParams, $config);
     }
 }
