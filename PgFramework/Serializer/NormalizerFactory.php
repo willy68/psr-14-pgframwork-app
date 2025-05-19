@@ -8,7 +8,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
-use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
+use Symfony\Component\Serializer\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer;
 use Symfony\Component\Serializer\Normalizer\ConstraintViolationListNormalizer;
@@ -35,8 +35,12 @@ class NormalizerFactory
     {
 
         $debug = $c->get('env') !== 'prod';
-        $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader());
-        $normalizers =  [
+        $classMetadataFactory = new ClassMetadataFactory(new AttributeLoader());
+		// Normalizer from symfony/messenger, if exists
+        /*if (\class_exists(FlattenExceptionNormalizer::class)) {
+            $normalizers[] = new FlattenExceptionNormalizer();
+        }*/
+        return [
             new UnwrappingDenormalizer(),
             new ProblemNormalizer(debug: $debug),
             new UidNormalizer(),
@@ -52,11 +56,5 @@ class NormalizerFactory
             new ArrayDenormalizer(),
             new ObjectNormalizer($classMetadataFactory)
         ];
-
-        // Normalizer from symfony/messenger, if exists
-        /*if (\class_exists(FlattenExceptionNormalizer::class)) {
-            $normalizers[] = new FlattenExceptionNormalizer();
-        }*/
-        return $normalizers;
     }
 }
