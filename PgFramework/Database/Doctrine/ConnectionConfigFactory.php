@@ -18,7 +18,7 @@ class ConnectionConfigFactory
     public function __invoke(ContainerInterface $c): Configuration
     {
         $config = new Configuration();
-        if ($c->get('env') !== 'prod') {
+        if ($c->get('env') !== 'prod' && $c->has(DebugStack::class)) {
             /** @var DebugStack $debugStack */
             $debugStack = $c->get(DebugStack::class);
             $config->setMiddlewares([new DebugMiddleware($debugStack)]);

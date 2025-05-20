@@ -24,14 +24,19 @@ class DbalConnectionFactory
     public function __invoke(ContainerInterface $c, string $url, string $connectionName)
     {
         $config = new Configuration();
-        if ($c->get('env') !== 'prod') {
+        if ($c->get('env') !== 'prod' && $c->has(DebugStack::class)) {
             /** @var DebugStack $debugStack */
             $debugStack = $c->get(DebugStack::class);
             $config->setMiddlewares([new DebugMiddleware($debugStack, $connectionName)]);
         }
 
+		$urls = $c->get($url);
+		if (!isset($urls[$connectionName])) {
+			throw new \RuntimeException('Connection name "' . $connectionName . '" don\'t exists.');
+		}
+
 		$dsnParser = new DsnParser();
-		$connectionParams = $dsnParser->parse($c->get($url)[$connectionName]);
+		$connectionParams = $dsnParser->parse($urls[$connectionName]);
         return DriverManager::getConnection($connectionParams, $config);
     }
 }
