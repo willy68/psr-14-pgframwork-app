@@ -39,17 +39,24 @@ class ResolverChainFactory
 
         $definitionResolver = new ResolverDispatcher($container, new ProxyFactory($proxyDir));
 
-        return new ControllerParamsResolver([
-            new DoctrineParamConverterAnnotations(
-                $container->get(ManagerRegistry::class),
-                $container->get(AnnotationsLoader::class)
-            ),
-            new DoctrineEntityResolver($container->get(ManagerRegistry::class)),
-            new DefinitionParameterResolver($definitionResolver),
-            new NumericArrayResolver(),
-            new AssociativeArrayResolver(),
-            new DefaultValueResolver(),
-            new TypeHintContainerResolver($container)
-        ]);
+		$defaultResolvers = [
+			new DefinitionParameterResolver($definitionResolver),
+			new NumericArrayResolver(),
+			new AssociativeArrayResolver(),
+			new DefaultValueResolver(),
+			new TypeHintContainerResolver($container)
+		];
+
+		$doctrineResolvers = [];
+		if ($container->has(ManagerRegistry::class)) {
+			$om = $container->get(ManagerRegistry::class);
+			$doctrineResolvers = [
+				new DoctrineParamConverterAnnotations($om, $container->get(AnnotationsLoader::class)),
+				new DoctrineEntityResolver($om),
+			];
+		}
+
+		$resolvers = array_merge($doctrineResolvers, $defaultResolvers);
+        return new ControllerParamsResolver($resolvers);
     }
 }
