@@ -56,7 +56,6 @@ class ResolverChainFactory
 			];
 		}
 
-		$resolvers = array_merge($doctrineResolvers, $defaultResolvers);
-        return new ControllerParamsResolver($resolvers);
+        return new ControllerParamsResolver(array_merge($doctrineResolvers, $defaultResolvers));
     }
 }
