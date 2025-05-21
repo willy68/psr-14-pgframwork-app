@@ -12,85 +12,103 @@ use ReflectionNamedType;
 
 class DoctrineEntityResolver implements ParameterResolver
 {
-    /**
-     * Nom du champ id par défaut id
-     */
-    private string $id = 'id';
+	private string $id = 'id';
+	private ?string $alias;
+	private ManagerRegistry $mg;
 
-    /**
-     * Alias pour le champ $id par défaut null
-     *
-     * @var string|null Si non null sera utilisé à la place de $id
-     */
-    private ?string $alias;
+	/**
+	 * Constructor
+	 *
+	 * @param ManagerRegistry $mg
+	 * @param string|null $alias
+	 */
+	public function __construct(ManagerRegistry $mg, ?string $alias = null)
+	{
+		$this->mg = $mg;
+		$this->alias = $alias;
+	}
 
-    private ManagerRegistry $mg;
+	/**
+	 * @throws RecordNotFound
+	 */
+	public function getParameters(
+		ReflectionFunctionAbstract $reflection,
+		array $providedParameters,
+		array $resolvedParameters
+	): array {
+		$reflectionParameters = $reflection->getParameters();
+		// Exclure les paramètres déjà résolus
+		$reflectionParameters = array_diff_key($reflectionParameters, $resolvedParameters);
 
-    /**
-     * Constructor
-     *
-     * @param ManagerRegistry $mg
-     * @param string|null $alias
-     */
-    public function __construct(ManagerRegistry $mg, ?string $alias = null)
-    {
-        $this->mg = $mg;
-        $this->alias = $alias;
-    }
+		// Vérification de l'alias ou du champ par défaut (id)
+		$id = $this->alias ?? $this->id;
 
-    /**
-     * @throws RecordNotFound
-     */
-    public function getParameters(
-        ReflectionFunctionAbstract $reflection,
-        array $providedParameters,
-        array $resolvedParameters
-    ): array {
-        $reflectionParameters = $reflection->getParameters();
-        // Skip parameters already resolved
-        if (!empty($resolvedParameters)) {
-            $reflectionParameters = array_diff_key($reflectionParameters, $resolvedParameters);
-        }
+		// Itérer sur les paramètres fournis pour trouver celui qui correspond à l'id
+		foreach ($providedParameters as $key => $parameter) {
+			if (!is_int($key) && $key === $id) {
+				return $this->resolveEntityParameter($reflectionParameters, $parameter, $resolvedParameters);
+			}
+		}
 
-        foreach ($providedParameters as $key => $parameter) {
-            if (is_int($key)) {
-                continue;
-            }
+		return $resolvedParameters;
+	}
 
-            $id = $this->alias ?: $this->id;
+	/**
+	 * Résoudre le paramètre d'entité
+	 * @throws RecordNotFound
+	 */
+	private function resolveEntityParameter(
+		array $reflectionParameters,
+			  $parameter,
+		array $resolvedParameters
+	): array {
+		// Vérification des types des paramètres et de leur résolution
+		foreach ($reflectionParameters as $index => $reflectionParameter) {
+			$parameterType = $reflectionParameter->getType();
 
-            if ($key === $id) {
-                foreach ($reflectionParameters as $index => $reflectionParameter) {
-                    $parameterType = $reflectionParameter->getType();
+			// Ignorer les paramètres sans type ou de type primitif
+			if ($this->isValidType($parameterType)) {
+				$class = $parameterType->getName();
+				$entity = $this->findEntity($class, $parameter);
 
-                    if (!$parameterType) {
-                        // No type
-                        continue;
-                    }
-                    /** @var ReflectionNamedType $parameterType */
-                    if ($parameterType->isBuiltin()) {
-                        // Primitive types not supported
-                        continue;
-                    }
-                    if (!$parameterType instanceof ReflectionNamedType) {
-                        // Union types not supported
-                        continue;
-                    }
+				if ($entity) {
+					$resolvedParameters[$index] = $entity;
+				} else {
+					throw new RecordNotFound("Couldn't find $class with id=$parameter");
+				}
+			}
+		}
 
-                    $class = $parameterType->getName();
-                    if (null === ($em = $this->mg->getManagerForClass($class))) {
-                        continue;
-                    }
-                    $repo = $em->getRepository($class);
-                    $entity = $repo->find($parameter);
-                    if ($entity) {
-                        $resolvedParameters[$index] = $entity;
-                    } else {
-                        throw new RecordNotFound("Couldn't find $class with id=$parameter");
-                    }
-                }
-            }
-        }
-        return $resolvedParameters;
-    }
+		return $resolvedParameters;
+	}
+
+	/**
+	 * Vérifie si le type du paramètre est valide (non primitif et non union).
+	 */
+	private function isValidType(?ReflectionNamedType $parameterType): bool
+	{
+		if (!$parameterType) {
+			return false; // Pas de type
+		}
+
+		if ($parameterType->isBuiltin()) {
+			return false; // Types primitifs non supportés
+		}
+
+		return $parameterType instanceof ReflectionNamedType;
+	}
+
+	/**
+	 * Trouver l'entité en utilisant le repository de Doctrine
+	 */
+	private function findEntity(string $class, $parameter)
+	{
+		$em = $this->mg->getManagerForClass($class);
+		if ($em === null) {
+			return null; // Pas de gestionnaire pour cette classe
+		}
+
+		$repo = $em->getRepository($class);
+		return $repo->find($parameter);
+	}
 }

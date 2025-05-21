@@ -12,91 +12,99 @@ use ReflectionNamedType;
 
 class DoctrineParamConverterAnnotation implements ParameterResolver
 {
-    /**
-     * Nom du paramètre de la methode à injecter
-     */
-    private string $methodParam;
+	private string $methodParam;
+	private array $findBy;
+	private ManagerRegistry $mg;
 
-    /**
-     * Other field to find Record
-     */
-    private array $findBy;
+	public function __construct(ManagerRegistry $mg, string $methodParam, array $findBy)
+	{
+		$this->mg = $mg;
+		$this->methodParam = $methodParam;
+		$this->findBy = $findBy;
+	}
 
-    private ManagerRegistry $mg;
+	/**
+	 * @throws RecordNotFound
+	 */
+	public function getParameters(
+		ReflectionFunctionAbstract $reflection,
+		array $providedParameters,
+		array $resolvedParameters
+	): array {
+		// Si findBy est vide, on retourne directement les paramètres résolus
+		if (empty($this->findBy)) {
+			return $resolvedParameters;
+		}
 
-    public function __construct(ManagerRegistry $mg, string $methodParam, array $findBy)
-    {
-        $this->mg = $mg;
-        $this->methodParam = $methodParam;
-        $this->findBy = $findBy;
-    }
+		$reflectionParameters = $reflection->getParameters();
+		// Supprime les paramètres déjà résolus de la réflexion
+		$reflectionParameters = array_diff_key($reflectionParameters, $resolvedParameters);
 
-    /**
-     * @throws RecordNotFound
-     */
-    public function getParameters(
-        ReflectionFunctionAbstract $reflection,
-        array $providedParameters,
-        array $resolvedParameters
-    ): array {
+		// On récupère la première clé de findBy
+		$findByKey = array_key_first($this->findBy);
 
-        if (empty($this->findBy)) {
-            return $resolvedParameters;
-        }
+		foreach ($providedParameters as $key => $parameter) {
+			if (is_int($key)) {
+				continue; // Ignore les paramètres par position (index)
+			}
 
-        $reflectionParameters = $reflection->getParameters();
-        // Skip parameters already resolved
-        if (!empty($resolvedParameters)) {
-            $reflectionParameters = array_diff_key($reflectionParameters, $resolvedParameters);
-        }
+			// Si le paramètre correspond à la clé de findBy, on traite le paramètre
+			if ($key === $this->findBy[$findByKey]) {
+				foreach ($reflectionParameters as $index => $reflectionParameter) {
+					$name = $reflectionParameter->getName();
 
-        /** @todo best annotation parse */
-        $findByKey = array_key_first($this->findBy);
+					// Si c'est le paramètre que nous cherchons à résoudre
+					if ($name === $this->methodParam) {
+						$parameterType = $reflectionParameter->getType();
 
-        foreach ($providedParameters as $key => $parameter) {
-            if (is_int($key)) {
-                continue;
-            }
+						// Si aucun type n'est spécifié ou si le type est primitif, on ignore
+						if ($this->isValidType($parameterType)) {
+							$class = $parameterType->getName();
+							$obj = $this->findEntity($class, $parameter, $findByKey);
+							if ($obj) {
+								$resolvedParameters[$index] = $obj;
+							} else {
+								throw new RecordNotFound("Couldn't find $class with $findByKey=$parameter");
+							}
+						}
+					}
+				}
+			}
+		}
+		return $resolvedParameters;
+	}
 
-            if ($key === $this->findBy[$findByKey]) {
-                foreach ($reflectionParameters as $index => $reflectionParameter) {
-                    $name = $reflectionParameter->getName();
+	/**
+	 * Vérifie si le type du paramètre est valide (non primitif et non union).
+	 */
+	private function isValidType(?ReflectionNamedType $parameterType): bool
+	{
+		if (!$parameterType) {
+			return false; // Pas de type
+		}
 
-                    if ($name === $this->methodParam) {
-                        $parameterType = $reflectionParameter->getType();
+		if ($parameterType->isBuiltin()) {
+			return false; // Types primitifs non supportés
+		}
 
-                        if (!$parameterType) {
-                            // No type
-                            continue;
-                        }
-                        /** @var ReflectionNamedType $parameterType */
-                        if ($parameterType->isBuiltin()) {
-                            // Primitive types not supported
-                            continue;
-                        }
-                        if (!$parameterType instanceof ReflectionNamedType) {
-                            // Union types not supported
-                            continue;
-                        }
+		return $parameterType instanceof ReflectionNamedType;
+	}
 
-                        $class = $parameterType->getName();
-                        if (null === ($em = $this->mg->getManagerForClass($class))) {
-                            continue;
-                        }
-                        $repo = $em->getRepository($class);
-                        if ($findByKey === 'id') {
-                            $obj = $repo->find((int) $parameter);
-                        } else {
-                            $obj = $repo->findOneBy([$findByKey => $parameter]);
-                        }
-                        if (!$obj) {
-                            throw new RecordNotFound("Couldn't find $class with $findByKey=$parameter");
-                        }
-                        $resolvedParameters[$index] = $obj;
-                    }
-                }
-            }
-        }
-        return $resolvedParameters;
-    }
+	/**
+	 * Trouve l'entité correspondante dans le repository.
+	 */
+	private function findEntity(string $class, $parameter, string $findByKey)
+	{
+		$em = $this->mg->getManagerForClass($class);
+		if ($em === null) {
+			return null; // Pas de gestionnaire pour cette classe
+		}
+
+		$repo = $em->getRepository($class);
+		if ($findByKey === 'id') {
+			return $repo->find((int)$parameter);
+		}
+
+		return $repo->findOneBy([$findByKey => $parameter]);
+	}
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Invoker;
 
+use Faker\Container\ContainerException;
 use PgFramework\App;
 use DI\Proxy\ProxyFactory;
 use PgFramework\ApplicationInterface;
@@ -24,38 +25,78 @@ use Psr\Container\NotFoundExceptionInterface;
 
 class ResolverChainFactory
 {
-    /**
-     * @throws NotFoundExceptionInterface
-     * @throws ContainerExceptionInterface
-     */
-    public function __invoke(ContainerInterface $container): ParameterResolver
-    {
-        $proxyDir = null;
-        if ($container->get('env') === 'prod') {
-            $projectDir = $container->get(ApplicationInterface::class)->getProjectDir();
-            $projectDir = realpath($projectDir) ?: $projectDir;
-            $proxyDir = $projectDir . App::PROXY_DIRECTORY;
-        }
+	/**
+	 * @param ContainerInterface $container
+	 * @return ParameterResolver
+	 */
+	public function __invoke(ContainerInterface $container): ParameterResolver
+	{
+		$proxyDir = $this->getProxyDirectory($container);
+		$definitionResolver = new ResolverDispatcher($container, new ProxyFactory($proxyDir));
 
-        $definitionResolver = new ResolverDispatcher($container, new ProxyFactory($proxyDir));
+		// Résolveurs par défaut
+		$defaultResolvers = $this->getDefaultResolvers($container, $definitionResolver);
 
-		$defaultResolvers = [
+		// Résolveurs Doctrine
+		$doctrineResolvers = $this->getDoctrineResolvers($container);
+
+		return new ControllerParamsResolver(array_merge($doctrineResolvers, $defaultResolvers));
+	}
+
+	/**
+	 * @param ContainerInterface $container
+	 * @return string|null
+	 */
+	private function getProxyDirectory(ContainerInterface $container): ?string
+	{
+		try {
+			if ($container->get('env') !== 'prod') {
+				return null;
+			}
+			$projectDir = realpath($container->get(ApplicationInterface::class)->getProjectDir()) ?:
+				$container->get(ApplicationInterface::class)->getProjectDir();
+		} catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
+			throw new ContainerException($e->getMessage(), $e->getCode(), $e);
+		}
+		return $projectDir . App::PROXY_DIRECTORY;
+	}
+
+	/**
+	 * @param ContainerInterface $container
+	 * @param ResolverDispatcher $definitionResolver
+	 * @return array
+	 */
+	private function getDefaultResolvers(ContainerInterface $container, ResolverDispatcher $definitionResolver): array
+	{
+		return [
 			new DefinitionParameterResolver($definitionResolver),
 			new NumericArrayResolver(),
 			new AssociativeArrayResolver(),
 			new DefaultValueResolver(),
-			new TypeHintContainerResolver($container)
+			new TypeHintContainerResolver($container),
 		];
+	}
 
-		$doctrineResolvers = [];
-		if ($container->has(ManagerRegistry::class)) {
-			$om = $container->get(ManagerRegistry::class);
-			$doctrineResolvers = [
-				new DoctrineParamConverterAnnotations($om, $container->get(AnnotationsLoader::class)),
-				new DoctrineEntityResolver($om),
-			];
+	/**
+	 * @param ContainerInterface $container
+	 * @return array
+	 */
+	private function getDoctrineResolvers(ContainerInterface $container): array
+	{
+		if (!$container->has(ManagerRegistry::class)) {
+			return [];
 		}
 
-        return new ControllerParamsResolver(array_merge($doctrineResolvers, $defaultResolvers));
-    }
+		try {
+			$managerRegistry = $container->get(ManagerRegistry::class);
+			return [
+				new DoctrineParamConverterAnnotations($managerRegistry, $container->get(AnnotationsLoader::class)),
+				new DoctrineEntityResolver($managerRegistry),
+			];
+		} catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
+			throw new ContainerException($e->getMessage(), $e->getCode(), $e);
+		}
+	}
 }
+
+

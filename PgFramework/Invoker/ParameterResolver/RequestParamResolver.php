@@ -28,24 +28,31 @@ class RequestParamResolver implements ParameterResolver
 
         foreach ($reflectionParameters as $index => $reflectionParameter) {
             $parameterType = $reflectionParameter->getType();
-            if (!$parameterType) {
-                // No type
-                continue;
-            }
-            if (!$parameterType instanceof ReflectionNamedType) {
-                // Union types not supported
-                continue;
-            }
-            if ($parameterType->isBuiltin()) {
-                // Primitive types not supported
-                continue;
-            }
 
-            $class = $parameterType->getName();
-            if ($class === ServerRequestInterface::class) {
-                $resolvedParameters[$index] = $this->request;
-            }
+			// Ignorer les paramètres sans type ou de type primitif
+			if ($this->isValidType($parameterType)) {
+				$class = $parameterType->getName();
+				if ($class === ServerRequestInterface::class) {
+					$resolvedParameters[$index] = $this->request;
+				}
+			}
         }
         return $resolvedParameters;
     }
+
+	/**
+	 * Vérifie si le type du paramètre est valide (non primitif et non union).
+	 */
+	private function isValidType(?ReflectionNamedType $parameterType): bool
+	{
+		if (!$parameterType) {
+			return false; // Pas de type
+		}
+
+		if ($parameterType->isBuiltin()) {
+			return false; // Types primitifs non supportés
+		}
+
+		return $parameterType instanceof ReflectionNamedType;
+	}
 }

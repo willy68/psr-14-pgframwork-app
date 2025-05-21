@@ -14,8 +14,9 @@ use Symfony\Component\Cache\Exception\CacheException;
 
 class DoctrineConfigFactory
 {
-    /**
-     * @throws ContainerExceptionInterface|CacheException
+	/**
+	 * @throws ContainerExceptionInterface
+	 * @throws CacheException
 	 */
     public function __invoke(ContainerInterface $c): Configuration
     {
