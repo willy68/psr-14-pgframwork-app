@@ -11,6 +11,7 @@ use PgFramework\Annotation\AnnotationReaderTrait;
 use PgFramework\Annotation\AnnotationsLoader;
 use ReflectionFunctionAbstract;
 use Doctrine\ORM\Mapping\Driver\RepeatableAttributeCollection;
+use ReflectionMethod;
 
 class DoctrineParamConverterAnnotations implements ParameterResolver
 {
@@ -41,6 +42,7 @@ class DoctrineParamConverterAnnotations implements ParameterResolver
 	): array {
 
 		// Récupérer les annotations de la méthode
+		/** @var  $reflection ReflectionMethod */
 		$annotations = $this->annotationsLoader->getMethodAnnotations($reflection);
 		if (empty($annotations)) {
 			return $resolvedParameters;
