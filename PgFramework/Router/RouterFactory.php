@@ -1,47 +1,66 @@
 <?php
 
-/**
- * @see       https://github.com/mezzio/mezzio-fastroute for the canonical source repository
- * @copyright https://github.com/mezzio/mezzio-fastroute/blob/master/COPYRIGHT.md
- * @license   https://github.com/mezzio/mezzio-fastroute/blob/master/LICENSE.md New BSD License
- */
+/** @see       https://github.com/willy68/pg-router for the canonical source repository */
 
 declare(strict_types=1);
 
 namespace PgFramework\Router;
 
 use Pg\Router\Router;
+use Psr\Cache\CacheException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 /**
- * Create and return an instance of FastRouteRouter.
+ * Create and return an instance of PgRouter.
  *
  * Configuration should look like the following:
  *
  * <code>
- * 'router' => [
- *     'fastroute' => [
- *         'cache_enabled' => true, // true|false
- *         'cache_file'   => '(/absolute/)path/to/cache/file', // optional
- *     ],
- * ]
+ *  $router = new Router(
+ *      null,
+ *      null,
+ *      [
+ *           Router::CONFIG_CACHE_ENABLED => ($env === 'prod'),
+ *           Router::CONFIG_CACHE_DIR => '/tmp/cache/router',
+ *           Router::CONFIG_CACHE_POOL_FACTORY => function (): CacheItemPoolInterface {...},
+ *      ]
+ *  );
  * </code>
  */
 class RouterFactory
 {
-	/**
-	 * @param ContainerInterface $container
-	 * @return Router
-	 */
+    /**
+     * @param ContainerInterface $container
+     * @return Router
+     * @throws CacheException
+     */
     public function __invoke(ContainerInterface $container): Router
     {
-        /*$cache = null;
-        if ($container->get('env') === 'prod') {
-            $cache = $container->get('app.cache.dir') . '/route';
-        }*/
+        $cacheEnable = false;
+        try {
+            $cacheEnable = $container->get('env') === 'prod';
+        } catch (ContainerExceptionInterface) {
+        }
 
-        return new Router();
+        $config = null;
+        if ($cacheEnable && $container->has('app.cache.dir')) {
+            try {
+                $cacheDir = $container->get('app.cache.dir');
+            } catch (ContainerExceptionInterface) {
+                $cacheDir = null;
+            }
+            $config = [
+                Router::CONFIG_CACHE_ENABLED => true,
+                Router::CONFIG_CACHE_DIR => $cacheDir . '/Router',
+                Router::CONFIG_CACHE_POOL_FACTORY => null,
+            ];
+        }
+
+        return new Router(
+            null,
+            null,
+            $config
+        );
     }
 }
