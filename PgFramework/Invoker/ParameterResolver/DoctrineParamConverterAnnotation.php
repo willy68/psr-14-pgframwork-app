@@ -61,10 +61,9 @@ class DoctrineParamConverterAnnotation implements ParameterResolver
 						if ($this->isValidType($parameterType)) {
 							$class = $parameterType->getName();
 							$obj = $this->findEntity($class, $parameter, $findByKey);
+
 							if ($obj) {
 								$resolvedParameters[$index] = $obj;
-							} else {
-								throw new RecordNotFound("Couldn't find $class with $findByKey=$parameter");
 							}
 						}
 					}
@@ -90,10 +89,11 @@ class DoctrineParamConverterAnnotation implements ParameterResolver
 		return $parameterType instanceof ReflectionNamedType;
 	}
 
-	/**
-	 * Trouve l'entité correspondante dans le repository.
-	 */
-	private function findEntity(string $class, $parameter, string $findByKey)
+    /**
+     * Trouve l'entité correspondante dans le repository.
+     * @throws RecordNotFound
+     */
+	private function findEntity(string $class, $parameter, string $findByKey): null|object|string
 	{
 		$em = $this->mg->getManagerForClass($class);
 		if ($em === null) {
@@ -102,9 +102,14 @@ class DoctrineParamConverterAnnotation implements ParameterResolver
 
 		$repo = $em->getRepository($class);
 		if ($findByKey === 'id') {
-			return $repo->find((int)$parameter);
-		}
+			$entity = $repo->find((int)$parameter);
+		} else {
+            $entity = $repo->findOneBy([$findByKey => $parameter]);
+        }
 
-		return $repo->findOneBy([$findByKey => $parameter]);
-	}
+        if (!$entity) {
+            throw new RecordNotFound("Couldn't find $class with $findByKey=$parameter");
+        }
+        return $entity;
+    }
 }

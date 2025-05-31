@@ -37,7 +37,7 @@
         "intervention/image": "^2.5",
         "dflydev/fig-cookies": "^3.0",
         "league/event": "^3.0",
-        "symfony/cache": "^5.4",
+        "symfony/cache": "^7.2",
         "mezzio/mezzio-session": "^1.6",
         "mezzio/mezzio-session-ext": "^1.12",
         "symfony/serializer": "^6.2",

@@ -73,8 +73,6 @@ class DoctrineEntityResolver implements ParameterResolver
 
 				if ($entity) {
 					$resolvedParameters[$index] = $entity;
-				} else {
-					throw new RecordNotFound("Couldn't find $class with id=$parameter");
 				}
 			}
 		}
@@ -98,10 +96,11 @@ class DoctrineEntityResolver implements ParameterResolver
 		return $parameterType instanceof ReflectionNamedType;
 	}
 
-	/**
-	 * Trouver l'entité en utilisant le repository de Doctrine
-	 */
-	private function findEntity(string $class, $parameter)
+    /**
+     * Trouver l'entité en utilisant le repository de Doctrine
+     * @throws RecordNotFound
+     */
+	private function findEntity(string $class, $parameter): null|object|string
 	{
 		$em = $this->mg->getManagerForClass($class);
 		if ($em === null) {
@@ -109,6 +108,10 @@ class DoctrineEntityResolver implements ParameterResolver
 		}
 
 		$repo = $em->getRepository($class);
-		return $repo->find($parameter);
+        $entity = $repo->find($parameter);
+        if (!$entity) {
+            throw new RecordNotFound(sprintf('Could\'t find %s with id= %s',$class, $parameter));
+        }
+		return $entity;
 	}
 }
