@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PgFramework;
 
-use App\Auth\AuthModule;
 use Exception;
 use Invoker\Exception\NotCallableException;
 use Pg\Router\RouteCollector;
@@ -26,7 +25,6 @@ use PgFramework\Router\RoutesMapInterface;
 use PgFramework\Environnement\Environnement;
 use Psr\Http\Message\ServerRequestInterface;
 use PgFramework\Annotation\AnnotationsLoader;
-use PgFramework\Router\Loader\DirectoryLoader;
 use Throwable;
 
 use function dirname;
@@ -151,7 +149,6 @@ class App extends AbstractApplication
 
 		$container = $this->getContainer();
 
-		/** @var Module $module*/
 		foreach ($this->modules as $module) {
 			if (!empty($module::ANNOTATIONS)) {
 				$loader = new RouteLoader(
