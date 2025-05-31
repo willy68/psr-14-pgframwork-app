@@ -46,7 +46,11 @@ class DoctrineEntityResolver implements ParameterResolver
 		// Itérer sur les paramètres fournis pour trouver celui qui correspond à l'id
 		foreach ($providedParameters as $key => $parameter) {
 			if (!is_int($key) && $key === $id) {
-				return $this->resolveEntityParameter($reflectionParameters, $parameter, $resolvedParameters);
+				$resolvedParameters = $this->resolveEntityParameter(
+                    $reflectionParameters,
+                    $parameter,
+                    $resolvedParameters
+                );
 			}
 		}
 
