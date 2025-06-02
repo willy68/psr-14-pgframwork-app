@@ -23,24 +23,25 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class DemoController
 {
-	/**
-	 * Montre l'index de l'application
-	 * $renderer est injecté automatiquement, comme toutes les classes
-	 * renseignées dans config/config.php
-	 * Il est possible d'injecter la ServerRequestInterface
-	 * et les paramètres de la route (ex. $id).
-	 * Ce type d'injection est possible avec \DI\Container de PHP-DI
-	 *
-	 * @Route("/", name="demo.index", methods={"GET"})
-	 *
-	 * @param ServerRequestInterface $request
-	 * @param RendererInterface $renderer
-	 * @param PDO $pdo
-	 * @param EntityManagerInterface $em
-	 * @param ContainerInterface $c
-	 * @param ManagerRegistry $managerRegistry
-	 * @return string
-	 */
+    /**
+     * Montre l'index de l'application
+     * $renderer est injecté automatiquement, comme toutes les classes
+     * renseignées dans config/config.php
+     * Il est possible d'injecter la ServerRequestInterface
+     * et les paramètres de la route (ex. $id).
+     * Ce type d'injection est possible avec \DI\Container de PHP-DI
+     *
+     * @Route("/", name="demo.index", methods={"GET"})
+     *
+     * @param ServerRequestInterface $request
+     * @param RendererInterface $renderer
+     * @param PDO $pdo
+     * @param EntityManagerInterface $em
+     * @param ContainerInterface $c
+     * @param ManagerRegistry $managerRegistry
+     * @param SerializerInterface $serializer
+     * @return string
+     */
     #[Route('/', name: 'demo.index', methods: ['GET'])]
     public function index(
         ServerRequestInterface $request,
@@ -106,5 +107,18 @@ class DemoController
     {
         $client = $client->to_array(['include' => 'adresses']);
         return $renderer->render('@demo/client', compact('client'));
+    }
+
+    /**
+     * @param string $name
+     * @param int $years
+     * @param RendererInterface $renderer
+     * @return string
+     */
+    #[Route('/test/{name:\w+}/{years:\d+}', name:'blog.test', methods:['GET'])]
+    public function testRequestParams(string $name, int $years, RendererInterface $renderer): string
+    {
+        $params = ['name' => $name, 'years' => $years];
+        return $renderer->render('@demo/index', compact('params'));
     }
 }

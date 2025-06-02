@@ -8,6 +8,7 @@ use Faker\Container\ContainerException;
 use PgFramework\App;
 use DI\Proxy\ProxyFactory;
 use PgFramework\ApplicationInterface;
+use PgFramework\Invoker\ParameterResolver\AssociativeArrayTypeHintResolver;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use DI\Invoker\DefinitionParameterResolver;
@@ -17,7 +18,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Invoker\ParameterResolver\ParameterResolver;
 use Invoker\ParameterResolver\DefaultValueResolver;
 use Invoker\ParameterResolver\NumericArrayResolver;
-use Invoker\ParameterResolver\AssociativeArrayResolver;
 use PgFramework\Invoker\ParameterResolver\DoctrineEntityResolver;
 use Invoker\ParameterResolver\Container\TypeHintContainerResolver;
 use PgFramework\Invoker\ParameterResolver\DoctrineParamConverterAnnotations;
@@ -71,7 +71,7 @@ class ResolverChainFactory
 		return [
 			new DefinitionParameterResolver($definitionResolver),
 			new NumericArrayResolver(),
-			new AssociativeArrayResolver(),
+			new AssociativeArrayTypeHintResolver(),
 			new DefaultValueResolver(),
 			new TypeHintContainerResolver($container),
 		];

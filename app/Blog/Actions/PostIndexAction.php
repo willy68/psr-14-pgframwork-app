@@ -11,6 +11,7 @@ use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use PgFramework\Router\Annotation\Route;
 use PgFramework\Renderer\RendererInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 /**
