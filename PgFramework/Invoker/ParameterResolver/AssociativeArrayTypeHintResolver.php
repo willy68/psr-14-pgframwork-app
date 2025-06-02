@@ -24,12 +24,21 @@ class AssociativeArrayTypeHintResolver implements ParameterResolver
         }
 
         foreach ($parameters as $index => $parameter) {
-            if (array_key_exists($parameter->name, $providedParameters)) {
-                $resolvedParam = $parameter->getType()->getName() === 'int' &&
-                    is_numeric($providedParameters[$parameter->name]) ?
-                    $providedParameters[$parameter->name] + 0 :
-                    $providedParameters[$parameter->name];
-                $resolvedParameters[$index] = $resolvedParam;
+            $name = $parameter->getName();
+            if (array_key_exists($name, $providedParameters)) {
+                $type = $parameter->getType();
+                $value = $providedParameters[$name];
+
+                if ($type && !$type->isBuiltin()) {
+                    // If not a built-in type, just assign the value
+                    $resolvedParameters[$index] = $value;
+                } elseif ($type && $type->getName() === 'int' && is_numeric($value)) {
+                    // Convert to int if required
+                    $resolvedParameters[$index] = (int)$value;
+                } else {
+                    // Otherwise, assign as is
+                    $resolvedParameters[$index] = $value;
+                }
             }
         }
 
