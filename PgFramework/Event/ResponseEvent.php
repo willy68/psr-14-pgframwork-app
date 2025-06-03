@@ -13,7 +13,6 @@ class ResponseEvent extends AppEvent
     public const NAME = Events::RESPONSE;
 
     private ServerRequestInterface $request;
-
     private ResponseInterface $response;
 
     public function __construct(KernelInterface $kernel, ServerRequestInterface $request, ResponseInterface $response)
@@ -28,7 +27,7 @@ class ResponseEvent extends AppEvent
         return $this->request;
     }
 
-    public function setRequest(ServerRequestInterface $request)
+    public function setRequest(ServerRequestInterface $request): void
     {
         $this->request = $request;
         $this->getKernel()->setRequest($request);
@@ -39,7 +38,7 @@ class ResponseEvent extends AppEvent
         return $this->response;
     }
 
-    public function setResponse(ResponseInterface $response)
+    public function setResponse(ResponseInterface $response): void
     {
         $this->response = $response;
     }

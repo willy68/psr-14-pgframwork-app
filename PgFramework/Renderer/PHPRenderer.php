@@ -9,7 +9,6 @@ class PHPRenderer implements RendererInterface
     public const DEFAULT_NAMESPACE = '__MAIN';
 
     private array $paths = [];
-
     /**
      * Paramètres globale a envoyer à la vue
      */

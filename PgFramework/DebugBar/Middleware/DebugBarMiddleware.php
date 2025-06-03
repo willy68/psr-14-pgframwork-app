@@ -6,8 +6,8 @@ namespace PgFramework\DebugBar\Middleware;
 
 use DebugBar\DebugBar;
 use DebugBar\DebugBarException;
-use Mezzio\Router\RouteResult;
-use Mezzio\Router\RouterInterface;
+use Pg\Router\RouteResult;
+use Pg\Router\RouterInterface;
 use PgFramework\DebugBar\PgDebugBar;
 use PgFramework\ApplicationInterface;
 use PgFramework\HttpUtils\RequestUtils;
@@ -25,7 +25,6 @@ use PgFramework\DebugBar\DataCollector\RequestCollector;
 class DebugBarMiddleware implements MiddlewareInterface
 {
     protected PgDebugBar|DebugBar $debugBar;
-
     protected SessionInterface $session;
 
     public function __construct(DebugBar $debugBar, SessionInterface $session)
@@ -52,7 +51,7 @@ class DebugBarMiddleware implements MiddlewareInterface
 
         $this->debugBar->addCollector(
             (new RequestCollector($request, $response, $app->getContainer()->get(SessionInterface::class)))
-                ->useHtmlVarDumper(true)
+                ->useHtmlVarDumper()
         );
 
         $routeResult = $request->getAttribute(RouteResult::class);

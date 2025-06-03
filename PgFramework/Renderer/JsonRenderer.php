@@ -15,7 +15,7 @@ class JsonRenderer implements RendererInterface
      * @param array|int|null $options
      * @return string
      */
-    public function render($view, $options = null): string
+    public function render(mixed $view, mixed $options = null): string
     {
         return $this->toJson($view, $options);
     }

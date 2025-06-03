@@ -31,6 +31,7 @@ class ExceptionEvent extends RequestEvent
     /**
      * Set the value of exception
      *
+     * @param Throwable $exception
      * @return  self
      */
     public function setException(Throwable $exception): static

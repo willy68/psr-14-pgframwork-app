@@ -24,7 +24,7 @@ class ControllerEvent extends RequestEvent
         return $this->controller;
     }
 
-    public function setController($controller)
+    public function setController($controller): void
     {
         $this->controller = $controller;
     }

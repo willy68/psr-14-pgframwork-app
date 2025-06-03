@@ -24,7 +24,7 @@ class ViewEvent extends RequestEvent
         return $this->result;
     }
 
-    public function setResult($result)
+    public function setResult($result): void
     {
         $this->result = $result;
     }

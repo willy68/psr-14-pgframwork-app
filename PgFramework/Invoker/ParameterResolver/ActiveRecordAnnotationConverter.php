@@ -16,7 +16,6 @@ class ActiveRecordAnnotationConverter implements ParameterResolver
      * Nom du paramètre de la methode à injecter
      */
     private string $methodParam;
-
     /**
      * Other field to find Record
      */

@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace PgFramework\Router\Loader;
 
+use LogicException;
 use Pg\Router\RouteCollectionInterface;
-use \PgFramework\Router\Annotation\Route as AnnotRoute;
+use PgFramework\Router\Annotation\Route as AnnotRoute;
 use Pg\Router\Route;
 use PgFramework\Annotation\AnnotationsLoader;
 use PgFramework\Parser\PhpTokenParser;
 
+use ReflectionClass;
 use ReflectionMethod;
+use function function_exists;
 
 class FileLoader
 {
@@ -22,8 +25,8 @@ class FileLoader
         RouteCollectionInterface $collector,
         AnnotationsLoader $annotationsLoader
     ) {
-        if (!\function_exists('token_get_all')) {
-            throw new \LogicException("Function token_get_all don't exists in this system");
+        if (!function_exists('token_get_all')) {
+            throw new LogicException("Function token_get_all don't exists in this system");
         }
         $this->collector = $collector;
         $this->annotationsLoader = $annotationsLoader;
@@ -32,21 +35,21 @@ class FileLoader
     /**
      * Parse annotations @Route and add routes to the router
      *
-     * @param string $file
+     * @param string $dirOrFile
      * @return Route[]|null
      */
-    public function load(string $file): ?array
+    public function load(string $dirOrFile): ?array
     {
-        if (!is_file($file)) {
+        if (!is_file($dirOrFile)) {
             return null;
         }
 
-        $class = PhpTokenParser::findClass($file);
+        $class = PhpTokenParser::findClass($dirOrFile);
         if (!$class || !class_exists($class)) {
             return null;
         }
 
-        $reflectionClass = new \ReflectionClass($class);
+        $reflectionClass = new ReflectionClass($class);
         if ($reflectionClass->isAbstract()) {
             return null;
         }
@@ -63,7 +66,7 @@ class FileLoader
         }
 
         if (empty($routes) && $classAnnotation && $reflectionClass->hasMethod('__invoke')) {
-            $route[] = $this->collector->route(
+            $routes[] = $this->collector->route(
                 $classAnnotation->getPath(),
                 $reflectionClass->getName(),
                 $classAnnotation->getName(),

@@ -10,7 +10,7 @@ class RoutesMap implements RoutesMapInterface
 {
     private array $map = [];
 
-    public function add(RequestMatcherInterface $requestMatcher = null, array $listeners = [])
+    public function add(RequestMatcherInterface $requestMatcher = null, array $listeners = []): void
     {
         $this->map[] = [$requestMatcher, $listeners];
     }

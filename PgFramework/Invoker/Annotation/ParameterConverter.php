@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Invoker\Annotation;
 
+use Attribute;
 use Doctrine\ORM\Mapping\MappingAttribute;
 use PgFramework\Invoker\Exception\InvalidAnnotation;
 
@@ -26,7 +27,7 @@ use function is_string;
  * @Target({"METHOD"})
  *
  */
-#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION | \Attribute::IS_REPEATABLE)]
+#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_FUNCTION | Attribute::IS_REPEATABLE)]
 final class ParameterConverter implements MappingAttribute
 {
     /**

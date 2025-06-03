@@ -7,6 +7,7 @@ namespace PgFramework\DebugBar\DataCollector;
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\Renderable;
 use DebugBar\DataCollector\DataCollector;
+use Exception;
 use Pg\Router\Route;
 use Pg\Router\RouteResult;
 use Pg\Router\RouterInterface;
@@ -28,6 +29,9 @@ class RouteCollector extends DataCollector implements Renderable, AssetProvider
         return 'route';
     }
 
+    /**
+     * @throws Exception
+     */
     public function collect(): array
     {
         $data = [

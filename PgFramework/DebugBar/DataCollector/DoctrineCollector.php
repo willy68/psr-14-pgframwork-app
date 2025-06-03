@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\DebugBar\DataCollector;
 
+use DateTimeInterface;
 use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
@@ -62,7 +63,7 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
 				return '[' . implode(', ', $this->getParameters($param)) . ']';
 			} elseif (is_numeric($param)) {
 				return strval($param);
-			} elseif ($param instanceof \DateTimeInterface) {
+			} elseif ($param instanceof DateTimeInterface) {
 				return $param->format('Y-m-d H:i:s');
 			} elseif (is_object($param)) {
 				return json_encode($param);

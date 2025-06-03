@@ -115,10 +115,9 @@ class RequestCollector extends DataCollector implements Renderable, AssetProvide
         ];
 
         if ($this->session) {
-            $sessionAttributes = [];
-            foreach ($this->session->toArray() as $key => $value) {
-                $sessionAttributes[$key] = $value;
-            }
+            $sessionAttributes = array_map(function ($value) {
+                return $value;
+            }, $this->session->toArray());
             $data['data']['session_attributes'] = $sessionAttributes;
         }
 

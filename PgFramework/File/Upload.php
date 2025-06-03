@@ -10,7 +10,6 @@ use Psr\Http\Message\UploadedFileInterface;
 class Upload
 {
     protected string $path;
-
     protected array $formats = [];
 
     public function __construct(?string $path = null)

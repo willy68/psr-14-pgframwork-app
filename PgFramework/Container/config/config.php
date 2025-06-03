@@ -17,7 +17,6 @@ use Pg\Router\RouteCollectionInterface;
 use Pg\Router\RouteCollector;
 use Pg\Router\Router;
 use Pg\Router\RouterInterface;
-use PgFramework\Auth\Auth;
 use PgFramework\Auth\Middleware\AuthenticationMiddleware;
 use PgFramework\Database\ActiveRecord\ActiveRecordFactory;
 use PgFramework\Database\Doctrine\Bridge\DebugStack;
@@ -33,7 +32,6 @@ use PgFramework\EventDispatcher\EventDispatcher;
 use PgFramework\Invoker\CallableResolverFactory;
 use PgFramework\Invoker\InvokerFactory;
 use PgFramework\Invoker\ResolverChainFactory;
-use PgFramework\Jwt\JwtMiddlewareFactory;
 use PgFramework\Kernel\KernelEvent;
 use PgFramework\Mailer\MailerFactory;
 use PgFramework\Renderer\RendererInterface;
@@ -106,7 +104,6 @@ use function DI\get;
 return [
     'env' => Environnement::getEnv('APP_ENV', 'dev'),
     'app' => Environnement::getEnv('APP', 'web'),
-    'jwt.secret' => Environnement::getEnv('APP_KEY', 'abcdefghijklmnop123456789'),
     'twig.entrypoints' => '',
     WebpackExtension::class => autowire()
         ->constructorParameter('entryPoints', get('twig.entrypoints')),

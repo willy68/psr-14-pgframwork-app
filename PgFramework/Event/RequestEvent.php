@@ -25,7 +25,7 @@ class RequestEvent extends AppEvent
         return $this->request;
     }
 
-    public function setRequest(ServerRequestInterface $request)
+    public function setRequest(ServerRequestInterface $request): void
     {
         $this->request = $request;
         $this->getKernel()->setRequest($request);
@@ -36,7 +36,7 @@ class RequestEvent extends AppEvent
         return $this->response;
     }
 
-    public function setResponse(ResponseInterface $response)
+    public function setResponse(ResponseInterface $response): void
     {
         $this->response = $response;
         $this->stopPropagation();

@@ -20,7 +20,6 @@ class KernelMiddleware implements KernelInterface, RequestHandlerInterface
     use MiddlewareAwareStackTrait;
 
     protected ServerRequestInterface $request;
-
     protected ContainerInterface $container;
 
     private int $index = 0;
