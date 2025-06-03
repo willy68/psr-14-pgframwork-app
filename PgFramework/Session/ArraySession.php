@@ -9,9 +9,7 @@ use Mezzio\Session\SessionInterface;
 class ArraySession implements SessionInterface
 {
     private array $session = [];
-
     private bool $changed = false;
-
     private bool $regenerated = false;
 
     /**

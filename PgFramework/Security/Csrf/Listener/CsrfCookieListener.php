@@ -46,7 +46,7 @@ class CsrfCookieListener implements EventSubscriberInterface
     /**
      * @throws InvalidCsrfException
      */
-    public function onRequest(RequestEvent $event)
+    public function onRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
         $method = $request->getMethod();
@@ -80,7 +80,7 @@ class CsrfCookieListener implements EventSubscriberInterface
         $event->setRequest($request);
     }
 
-    public function onResponse(ResponseEvent $event)
+    public function onResponse(ResponseEvent $event): void
     {
         $response = $event->getResponse();
         $request = $event->getRequest();
@@ -99,7 +99,7 @@ class CsrfCookieListener implements EventSubscriberInterface
         }
     }
 
-    public function onException(ExceptionEvent $event)
+    public function onException(ExceptionEvent $event): void
     {
         $e = $event->getException();
         $request = $event->getRequest();
@@ -137,7 +137,7 @@ class CsrfCookieListener implements EventSubscriberInterface
     /**
      * @throws InvalidCsrfException
      */
-    protected function validateToken(?string $token = null, ?string $cookie = null)
+    protected function validateToken(?string $token = null, ?string $cookie = null): void
     {
         if (!$token) {
             throw new InvalidCsrfException('Le cookie Csrf n\'existe pas ou est incorrect');

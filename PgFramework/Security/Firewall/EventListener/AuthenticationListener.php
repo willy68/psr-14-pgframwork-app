@@ -39,7 +39,7 @@ class AuthenticationListener implements EventSubscriberInterface
         $this->dispatcher = $dispatcher;
     }
 
-    public function onAuthentication(RequestEvent $event)
+    public function onAuthentication(RequestEvent $event): void
     {
         $request = $event->getRequest();
 

@@ -35,7 +35,7 @@ class Firewall extends EventDispatcher implements EventSubscriberInterface
      * @throws ReflectionException
      * @throws NotCallableException
      */
-    public function __invoke(RequestEvent $event)
+    public function __invoke(RequestEvent $event): void
     {
         $request = $event->getRequest();
 

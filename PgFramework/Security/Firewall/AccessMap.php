@@ -29,7 +29,7 @@ class AccessMap implements AccessMapInterface
     /**
      * @param array     $attributes An array of attributes to pass to the access decision manager (like roles)
      */
-    public function add(RequestMatcherInterface $requestMatcher, array $attributes = [])
+    public function add(RequestMatcherInterface $requestMatcher, array $attributes = []): void
     {
         $this->map[] = [$requestMatcher, $attributes];
     }

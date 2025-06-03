@@ -14,9 +14,7 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 class SessionListener implements EventSubscriberInterface
 {
     public const SESSION_ATTRIBUTE = '_session';
-
     private SessionPersistenceInterface $persistence;
-
     private SessionInterface $session;
 
     public function __construct(SessionPersistenceInterface $persistence, SessionInterface $session)
@@ -25,7 +23,7 @@ class SessionListener implements EventSubscriberInterface
         $this->session = $session;
     }
 
-    public function onRequest(RequestEvent $event)
+    public function onRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
         $event->setRequest(
@@ -35,7 +33,7 @@ class SessionListener implements EventSubscriberInterface
         );
     }
 
-    public function onResponse(ResponseEvent $event)
+    public function onResponse(ResponseEvent $event): void
     {
         $response = $event->getResponse();
         $event->setResponse($this->persistence->persistSession($this->session, $response));

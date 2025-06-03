@@ -9,9 +9,7 @@ use Mezzio\Session\SessionInterface;
 class FlashService
 {
     private SessionInterface $session;
-
     private string $sessionKey = 'flash';
-
     private ?array $messages = null;
 
     /**

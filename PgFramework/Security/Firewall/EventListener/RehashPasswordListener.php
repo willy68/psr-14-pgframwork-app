@@ -13,7 +13,6 @@ use PgFramework\Security\Firewall\Event\LoginSuccessEvent;
 class RehashPasswordListener implements EventSubscriberInterface
 {
     protected PasswordHasherInterface $hasher;
-
     protected EntityManagerInterface $em;
 
     public function __construct(PasswordHasherInterface $hasher, EntityManagerInterface $em)
@@ -22,7 +21,7 @@ class RehashPasswordListener implements EventSubscriberInterface
         $this->em = $em;
     }
 
-    public function onLoginSuccess(LoginSuccessEvent $event)
+    public function onLoginSuccess(LoginSuccessEvent $event): void
     {
         $result = $event->getResult();
         /** @var User $user */

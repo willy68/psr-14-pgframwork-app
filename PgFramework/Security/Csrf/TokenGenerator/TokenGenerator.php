@@ -21,6 +21,9 @@ class TokenGenerator implements TokenGeneratorInterface
         return Security::saltToken(Security::createToken());
     }
 
+    /**
+     * @throws Exception
+     */
     public function generateId(int $length = 8): string
     {
         return bin2hex(Security::randomBytes($length));

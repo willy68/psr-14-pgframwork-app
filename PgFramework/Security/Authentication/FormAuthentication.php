@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Security\Authentication;
 
+use Exception;
 use Pg\Router\RouteResult;
 use Pg\Router\RouterInterface;
 use PgFramework\Auth\Auth;
@@ -30,15 +31,10 @@ class FormAuthentication implements AuthenticationInterface
     use RouterAwareAction;
 
     protected Auth $auth;
-
     protected UserProviderInterface $userProvider;
-
     protected SessionInterface $session;
-
     protected RouterInterface $router;
-
     protected PasswordHasherInterface $hasher;
-
     protected SerializerInterface $serializer;
 
     protected array $options = [
@@ -134,6 +130,7 @@ class FormAuthentication implements AuthenticationInterface
      * @param ServerRequestInterface $request
      * @param mixed $user
      * @return ResponseInterface|null
+     * @throws Exception
      */
     public function onAuthenticateSuccess(ServerRequestInterface $request, mixed $user): ?ResponseInterface
     {

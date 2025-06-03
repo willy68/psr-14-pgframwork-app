@@ -15,16 +15,11 @@ use function is_array;
 class TokenSessionStorage implements TokenStorageInterface
 {
     private SessionInterface $session;
-
     private string $sessionKey;
-
     private int $limit;
-
     private string $lastIdField = 'csrf.lastid';
 
     /**
-     * CsrfMiddleware constructor.
-     *
      * @param SessionInterface $session
      * @param int $limit Limit the number of token to store in the session
      * @param string $sessionKey

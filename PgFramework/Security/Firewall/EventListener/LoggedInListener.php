@@ -16,7 +16,6 @@ class LoggedInListener implements EventSubscriberInterface
     private Auth $auth;
 
     /**
-     * LoggedInMiddleware constructor.
      * @param Auth $auth
      */
     public function __construct(Auth $auth)
@@ -27,7 +26,7 @@ class LoggedInListener implements EventSubscriberInterface
     /**
      * @throws ForbiddenException
      */
-    public function __invoke(RequestEvent $event)
+    public function __invoke(RequestEvent $event): void
     {
         $request = $event->getRequest();
         $user = $this->auth->getUser();

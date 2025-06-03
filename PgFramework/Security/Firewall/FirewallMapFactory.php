@@ -4,12 +4,18 @@ declare(strict_types=1);
 
 namespace PgFramework\Security\Firewall;
 
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use PgFramework\Router\RequestMatcher;
+use Psr\Container\NotFoundExceptionInterface;
 
 class FirewallMapFactory
 {
-    public function __invoke(ContainerInterface $c)
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function __invoke(ContainerInterface $c): FirewallMapInterface
     {
         $map = new FirewallMap();
 

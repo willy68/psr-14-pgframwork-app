@@ -21,7 +21,6 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 class ForbiddenListener implements EventSubscriberInterface
 {
     private string $loginPath;
-
     private SessionInterface $session;
 
     public function __construct(string $loginPath, SessionInterface $session)
@@ -30,7 +29,7 @@ class ForbiddenListener implements EventSubscriberInterface
         $this->session = $session;
     }
 
-    public function __invoke(ExceptionEvent $event)
+    public function __invoke(ExceptionEvent $event): void
     {
         $e = $event->getException();
         $request = $event->getRequest();

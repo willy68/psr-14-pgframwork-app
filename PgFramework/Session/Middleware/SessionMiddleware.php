@@ -14,9 +14,7 @@ use Mezzio\Session\SessionPersistenceInterface;
 class SessionMiddleware implements MiddlewareInterface
 {
     public const SESSION_ATTRIBUTE = '_session';
-
     private SessionPersistenceInterface $persistence;
-
     private SessionInterface $session;
 
     public function __construct(SessionPersistenceInterface $persistence, SessionInterface $session)

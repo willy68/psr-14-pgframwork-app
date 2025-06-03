@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PgFramework\Security\Hasher;
 
+use Exception;
 use PgFramework\Security\Security;
 
 use function array_merge;
@@ -43,12 +44,18 @@ class PepperPasswordHasher implements PasswordHasherInterface
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function hash(string $plainPassword): string
     {
         $plainPassword = hash_hmac("sha256", $plainPassword, Security::getSalt());
         return password_hash($plainPassword, $this->config['algo'], $this->config['options']);
     }
 
+    /**
+     * @throws Exception
+     */
     public function verify(string $hashedPassword, string $plainPassword): bool
     {
         $plainPassword = hash_hmac("sha256", $plainPassword, Security::getSalt());

@@ -8,6 +8,7 @@ use ArrayAccess;
 use Countable;
 use Iterator;
 
+use ReturnTypeWillChange;
 use function count;
 
 class PHPSession implements SessionInterface, ArrayAccess, Iterator, Countable
@@ -53,7 +54,7 @@ class PHPSession implements SessionInterface, ArrayAccess, Iterator, Countable
         return array_key_exists($key, $_SESSION);
     }
 
-    private function ensureStarted()
+    private function ensureStarted(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -64,7 +65,7 @@ class PHPSession implements SessionInterface, ArrayAccess, Iterator, Countable
      * @param mixed $offset
      * @return bool
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function offsetExists(mixed $offset)
     {
         $this->ensureStarted();
@@ -75,7 +76,7 @@ class PHPSession implements SessionInterface, ArrayAccess, Iterator, Countable
      * @param mixed $offset
      * @return mixed
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function offsetGet(mixed $offset)
     {
         return $this->get($offset);
@@ -85,7 +86,7 @@ class PHPSession implements SessionInterface, ArrayAccess, Iterator, Countable
      * @param mixed $offset
      * @param mixed $value
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function offsetSet(mixed $offset, mixed $value)
     {
         $this->set($offset, $value);
@@ -94,47 +95,47 @@ class PHPSession implements SessionInterface, ArrayAccess, Iterator, Countable
     /**
      * @param mixed $offset
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function offsetUnset(mixed $offset)
     {
         $this->unset($offset);
     }
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function count()
     {
         $this->ensureStarted();
         return count($_SESSION);
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function rewind()
     {
         $this->ensureStarted();
         reset($_SESSION);
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function current()
     {
         $this->ensureStarted();
         return current($_SESSION);
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function next()
     {
         $this->ensureStarted();
         next($_SESSION);
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function key()
     {
         $this->ensureStarted();
         return key($_SESSION);
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function valid()
     {
         return $this->key() !== null;

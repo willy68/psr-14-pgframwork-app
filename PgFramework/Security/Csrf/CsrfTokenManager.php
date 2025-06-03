@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace PgFramework\Security\Csrf;
 
+use Exception;
 use PgFramework\Security\Security;
 use PgFramework\Security\Csrf\TokenStorage\TokenStorageInterface;
 use PgFramework\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
 class CsrfTokenManager implements CsrfTokenManagerInterface
 {
-    private $storage;
-    private $generator;
-    private $sessionKey;
+    private TokenStorageInterface $storage;
+    private TokenGeneratorInterface $generator;
+    private string $sessionKey;
 	private string $formKey;
 
 	public function __construct(
@@ -27,6 +28,9 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
         $this->formKey = $formKey;
     }
 
+    /**
+     * @throws Exception
+     */
     public function getToken(?string $tokenId = null): string
     {
         if (null !== $tokenId) {
@@ -47,6 +51,7 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
 
     /**
      * {@inheritdoc}
+     * @throws Exception
      */
     public function refreshToken(string $tokenId): string
     {
@@ -64,6 +69,7 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
 
     /**
      * {@inheritdoc}
+     * @throws Exception
      */
     public function isTokenValid(string $token): bool
     {
@@ -98,20 +104,23 @@ class CsrfTokenManager implements CsrfTokenManagerInterface
         return $this->formKey;
     }
 
+    /**
+     * @throws Exception
+     */
     public function generateId(): string
     {
         return bin2hex(Security::randomBytes(8));
     }
 
+    /**
+     * @throws Exception
+     */
     public function generateToken(?string $tokenId = null): string
     {
-        $token = null;
-        if (null !== $tokenId) {
-            $token = $tokenId . self::DELIMITER . $this->generator->generateToken();
-        } else {
+        if (null === $tokenId) {
             $tokenId = $this->generateId();
-            $token = $tokenId . self::DELIMITER . $this->generator->generateToken();
         }
+        $token = $tokenId . self::DELIMITER . $this->generator->generateToken();
 
         $this->storage->setToken($tokenId, $token);
         return $token;

@@ -34,7 +34,7 @@ class AuthorizationListener implements EventSubscriberInterface
      * @throws ForbiddenException
      * @throws FailedAccessException
      */
-    public function __invoke(RequestEvent $event)
+    public function __invoke(RequestEvent $event): void
     {
         $request = $event->getRequest();
 
