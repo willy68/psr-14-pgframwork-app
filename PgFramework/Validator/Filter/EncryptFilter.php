@@ -14,7 +14,7 @@ class EncryptFilter extends AbstractFilter implements FilterInterface
 
     protected string $method = self::MD5;
 
-    protected $customMethod;
+    protected mixed $customMethod;
 
     public function __construct($method = self::MD5, $customName = null)
     {
@@ -22,14 +22,14 @@ class EncryptFilter extends AbstractFilter implements FilterInterface
         $this->setCustomMethod($customName);
     }
 
-    public function setMethod($method)
+    public function setMethod($method): void
     {
         if (is_string($method)) {
             $this->method = $method;
         }
     }
 
-    public function setCustomMethod($customName)
+    public function setCustomMethod($customName): void
     {
         if (is_string($customName)) {
             $this->customMethod = $customName;
@@ -46,8 +46,8 @@ class EncryptFilter extends AbstractFilter implements FilterInterface
             if ($this->method == self::MD5) {
                 return md5($var);
             }
-        } else {
-            return $var;
         }
+
+        return $var;
     }
 }

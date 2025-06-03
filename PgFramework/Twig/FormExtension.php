@@ -50,7 +50,7 @@ class FormExtension extends AbstractExtension
         }
         if ($error) {
             $attributes['class'] .= ' is-invalid';
-        } elseif (isset($context['submited']) && $context['submited']) {
+        } elseif (isset($context['submitted']) && $context['submitted']) {
             $attributes['class'] .= ' is-valid';
         }
         if ($type === 'textarea') {

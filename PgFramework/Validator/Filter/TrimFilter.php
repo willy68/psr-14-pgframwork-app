@@ -18,8 +18,8 @@ class TrimFilter extends AbstractFilter implements FilterInterface
     {
         if ($this->isSet($var)) {
             return trim($var);
-        } else {
-            return $var;
         }
+
+        return $var;
     }
 }

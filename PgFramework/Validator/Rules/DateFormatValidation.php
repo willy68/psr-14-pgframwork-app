@@ -10,7 +10,6 @@ use PgFramework\Validator\ValidationInterface;
 class DateFormatValidation implements ValidationInterface
 {
     protected string $format;
-
     protected string $error = "Le champ %s doit être une date valide %s";
 
     /**

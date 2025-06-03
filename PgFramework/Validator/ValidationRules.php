@@ -21,22 +21,18 @@ class ValidationRules
      * @var ValidationError[]
      */
     protected array $errors = [];
-
     /**
      * @var ValidationInterface[]
      */
     protected array $validationRules = [];
-
     /**
      * Filter rules
      */
     protected array $filterRules = [];
-
     /**
      * Request Parsed Body
      */
     protected array $params;
-
     /**
      * FieldName
      */

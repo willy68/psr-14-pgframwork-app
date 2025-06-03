@@ -25,10 +25,10 @@ class TimeExtension extends AbstractExtension
      * @param string $format
      * @return string
      */
-    public function ago(DateTimeInterface $date, string $format = 'd/m/Y H:i')
+    public function ago(DateTimeInterface $date, string $format = 'd/m/Y H:i'): string
     {
         return '<time class="timeago" datetime="'  .
-        $date->format(DateTimeInterface::ISO8601) .
+        $date->format(DateTimeInterface::ATOM) .
         '">' .
         $date->format($format) .
         '</time>';

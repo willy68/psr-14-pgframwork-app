@@ -10,9 +10,7 @@ use PgFramework\Validator\ValidationInterface;
 class ConfirmValidation implements ValidationInterface, ValidationExtraParamsInterface
 {
     protected string $error = 'Le champ %s doit être identique avec le champ %s';
-
     protected string $fieldName;
-
     protected array $params = [];
 
     /**

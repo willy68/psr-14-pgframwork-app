@@ -150,7 +150,7 @@ class KernelEvent implements KernelInterface
      * operations such as {@link RequestStack::getParentRequest()} can lead to
      * weird results.
      */
-    private function finishRequest(ServerRequestInterface $request)
+    private function finishRequest(ServerRequestInterface $request): void
     {
         $this->dispatcher->dispatch(new FinishRequestEvent($this, $request));
     }

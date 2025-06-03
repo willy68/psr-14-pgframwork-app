@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PgFramework\Validator\Rules;
 
 use ActiveRecord\Model;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use InvalidArgumentException;
@@ -14,23 +15,17 @@ use PgFramework\Validator\ValidationInterface;
 class UniqueValidation implements ValidationInterface
 {
     protected string $error = "Le champ %s doit être unique";
-
     /**
      * Table name
      */
     protected ?string $table;
-
-    protected PDO $pdo;
-
+    private PDO $pdo;
     protected string $column;
-
     /**
      * Column value
      */
     protected string $value;
-
     protected ?int $exclude;
-
     protected ManagerRegistry $mr;
 
     /**
@@ -82,11 +77,12 @@ class UniqueValidation implements ValidationInterface
      *
      * unique:table,columnName,excludeId,errorMessage or
      * unique:App\Models\modelClass,columnName,excludeId,errorMessage
-     * optionnal:excludeId and errorMessage
+     * optional:excludeId and errorMessage
      * ex:unique:App\Models\Posts,slug,23,errorMessage
      *
      * @param string $param
      * @return $this
+     * @throws Exception
      */
     public function parseParams(string $param): self
     {
@@ -105,11 +101,12 @@ class UniqueValidation implements ValidationInterface
             /** @var EntityManagerInterface $em */
             if (null !== ($em = $this->mr->getManagerForClass($tableOrModel))) {
                 $this->table = $em->getClassMetadata($tableOrModel)->getTableName();
+                /** @var PDO $this->pdo */
                 $this->pdo = $em->getConnection()->getNativeConnection();
             } else {
                 /** @var Model $tableOrModel */
                 $this->table = $tableOrModel::table_name();
-                /** @var PDO $pdo */
+                /** @var PDO $this->pdo */
                 $this->pdo = $tableOrModel::connection()->connection;
             }
         } else {

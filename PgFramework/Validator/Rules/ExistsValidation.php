@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PgFramework\Validator\Rules;
 
 use ActiveRecord\Model;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use PDO;
@@ -17,11 +18,9 @@ class ExistsValidation implements ValidationInterface
     /**
      * Table name
      */
-    protected ?string $table;
-
-    protected PDO $pdo;
-
-    protected ManagerRegistry $mr;
+    private ?string $table;
+    private PDO $pdo;
+    private ManagerRegistry $mr;
 
     /**
      *
@@ -60,6 +59,7 @@ class ExistsValidation implements ValidationInterface
      *
      * @param string $param
      * @return $this
+     * @throws Exception
      */
     public function parseParams(string $param): self
     {
@@ -71,11 +71,12 @@ class ExistsValidation implements ValidationInterface
             /** @var EntityManagerInterface $em */
             if (null !== ($em = $this->mr->getManagerForClass($tableOrModel))) {
                 $this->table = $em->getClassMetadata($tableOrModel)->getTableName();
+                /** @var PDO $this->pdo */
                 $this->pdo = $em->getConnection()->getNativeConnection();
             } else {
                 /** @var Model $tableOrModel */
                 $this->table = $tableOrModel::table_name();
-                /** @var PDO $pdo */
+                /** @var PDO $this->pdo */
                 $this->pdo = $tableOrModel::connection()->connection;
             }
         } else {

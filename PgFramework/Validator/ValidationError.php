@@ -7,7 +7,6 @@ namespace PgFramework\Validator;
 class ValidationError
 {
     private string $key;
-
     private string $rule;
 
     private array $messages = [

@@ -18,7 +18,6 @@ class ExtensionValidation implements ValidationInterface
     ];
 
     protected array $extensions = [];
-
     protected string $error = "Le champ %s n'est pas au format valide (%s)";
 
     /**

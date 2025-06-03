@@ -16,8 +16,8 @@ class StriptagsFilter extends AbstractFilter implements FilterInterface
     {
         if ($this->isSet($var)) {
             return strip_tags($var);
-        } else {
-            return $var;
         }
+
+        return $var;
     }
 }

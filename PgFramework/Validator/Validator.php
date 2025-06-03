@@ -20,9 +20,7 @@ class Validator
         'ico' => 'image/ico',
         'pdf' => 'application/pdf'
     ];
-
     private array $params;
-
     private array $errors = [];
 
     public function __construct(array $params)

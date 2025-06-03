@@ -22,7 +22,7 @@ use PgFramework\Validator\Rules\DateFormatValidation;
 
 class ValidationsRules
 {
-    public static $validations = [
+    public static array $validations = [
         'required' => RequiredValidation::class,
         'min' => MinValidation::class,
         'max' => MaxValidation::class,

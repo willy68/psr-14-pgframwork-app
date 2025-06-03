@@ -9,7 +9,6 @@ use PgFramework\Validator\ValidationInterface;
 class SlugValidation implements ValidationInterface
 {
     protected string $pattern = '/^[0-9a-z-]+(-[0-9a-z]*)$/';
-
     protected string $error = 'Le champ %s n\'est pas un slug valide';
 
     public function __construct(string $error = null)

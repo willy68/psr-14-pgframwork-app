@@ -10,7 +10,6 @@ use PgFramework\Validator\ValidationInterface;
 class MaxValidation implements ValidationInterface
 {
     protected int $max;
-
     protected string $error = 'Le champ %s doit avoir maximum %d caractères';
 
     public function __construct(int $max = 255, string $error = '')
