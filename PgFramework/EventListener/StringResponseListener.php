@@ -11,7 +11,7 @@ use PgFramework\EventDispatcher\EventSubscriberInterface;
 
 class StringResponseListener implements EventSubscriberInterface
 {
-    public function __invoke(ViewEvent $event)
+    public function __invoke(ViewEvent $event): void
     {
         $result = $event->getResult();
 
@@ -23,7 +23,7 @@ class StringResponseListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            ViewEvent::class => ListenerPriority::HIGH
+            ViewEvent::NAME => ListenerPriority::HIGH
         ];
     }
 }
