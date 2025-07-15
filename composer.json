@@ -19,7 +19,7 @@
         }
     ],
     "require": {
-        "php": "^8.0 || ^8.1 || ^8.2",
+        "php": ">=8.1",
         "ext-json": "*",
         "ext-pdo": "*",
         "symfony/dotenv": "^6.0",
@@ -56,8 +56,8 @@
         "middlewares/whoops": "^2.0",
         "squizlabs/php_codesniffer": "^3.5",
         "phpunit/phpunit": "^11",
-        "robmorgan/phinx": "^0.12.4",
-        "odan/phinx-migrations-generator": "^5.3.1",
+        "robmorgan/phinx": "^0.16",
+        "odan/phinx-migrations-generator": "^6.2",
         "symfony/console": "^6.0",
         "willy68/pgconsole": "dev-master",
         "symfony/var-dumper": "^6.0",
