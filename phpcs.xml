@@ -17,6 +17,5 @@
   <exclude-pattern>*/Proxies/*$</exclude-pattern>
 
   <rule ref="PSR12">
-    <exclude/>
   </rule>
 </ruleset>
