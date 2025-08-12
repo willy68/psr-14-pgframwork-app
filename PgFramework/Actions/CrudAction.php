@@ -4,7 +4,7 @@ namespace PgFramework\Actions;
 
 use PgFramework\Database\NoRecordException;
 use PgFramework\Database\Table;
-use Mezzio\Router\RouterInterface;
+use Pg\Router\RouterInterface;
 use PgFramework\Database\Hydrator;
 use PgFramework\Validator\Validator;
 use PgFramework\Session\FlashService;

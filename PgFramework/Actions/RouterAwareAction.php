@@ -12,13 +12,14 @@ use Psr\Http\Message\ResponseInterface;
  */
 trait RouterAwareAction
 {
-  /**
-   * Redirection
-   *
-   * @param string $path
-   * @param array $params
-   * @return ResponseInterface
-   */
+    /**
+     * Redirection
+     *
+     * @param string $path
+     * @param array $params
+     * @return ResponseInterface
+     * @throws \Exception
+     */
     public function redirect(string $path, array $params = []): ResponseInterface
     {
         $redirectUri = $this->router->generateUri($path, $params);

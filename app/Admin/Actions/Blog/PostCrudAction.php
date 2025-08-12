@@ -3,7 +3,7 @@
 namespace App\Admin\Actions\Blog;
 
 use DateTime;
-use Mezzio\Router\RouterInterface;
+use Pg\Router\RouterInterface;
 use App\Blog\PostUpload;
 use PgFramework\Validator\Validator;
 use App\Blog\Entity\Post;

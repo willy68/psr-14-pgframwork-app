@@ -6,7 +6,7 @@ use App\Blog\Models\Categories;
 use App\Blog\Table\CategoryTable;
 use PgFramework\Actions\CrudAction;
 use PgFramework\Validator\Validator;
-use Mezzio\Router\RouterInterface;
+use Pg\Router\RouterInterface;
 use PgFramework\Session\FlashService;
 use PgFramework\Renderer\RendererInterface;
 use Psr\Container\ContainerExceptionInterface;

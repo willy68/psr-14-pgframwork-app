@@ -7,6 +7,8 @@ use App\Blog\PostUpload;
 use App\Entity\Category;
 use DateTime;
 use DateTimeImmutable;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use Pg\Router\RouterInterface;
 use PgFramework\Validator\Validator;
 use PgFramework\Session\FlashService;
@@ -26,7 +28,7 @@ class PostCrudController extends CrudController
 
     protected string $entity = Post::class;
 
-	protected array $filteredKeys = ['name', 'slug', 'content', 'created_at', 'category_id', 'image', 'published'];
+    protected array $filteredKeys = ['name', 'slug', 'content', 'created_at', 'category_id', 'image', 'published'];
 
     protected PostUpload $postUpload;
 
@@ -46,20 +48,6 @@ class PostCrudController extends CrudController
     ) {
         parent::__construct($renderer, $om, $router, $flash);
         $this->postUpload = $postUpload;
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     * @return ResponseInterface|string
-     */
-    public function delete(ServerRequestInterface $request): string|ResponseInterface
-    {
-        /** @var Post $post */
-        $post = $this->em->find($this->entity, $request->getAttribute('id'));
-        $this->postUpload->delete($post->getImage());
-        $this->em->remove($post);
-        $this->em->flush();
-        return $this->redirect($this->routePrefix . '.index');
     }
 
     /**
@@ -130,6 +118,22 @@ class PostCrudController extends CrudController
 
     /**
      * @param ServerRequestInterface $request
+     * @return ResponseInterface|string
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function delete(ServerRequestInterface $request): string|ResponseInterface
+    {
+        /** @var Post $post */
+        $post = $this->em->find($this->entity, $request->getAttribute('id'));
+        $this->postUpload->delete($post->getImage());
+        $this->em->remove($post);
+        $this->em->flush();
+        return $this->redirect($this->routePrefix . '.index');
+    }
+
+    /**
+     * @param ServerRequestInterface $request
      * @return Validator
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
@@ -140,10 +144,10 @@ class PostCrudController extends CrudController
             ->required('name', 'slug', 'content', 'created_at', 'category_id')
             ->addRules([
                 'content' => 'min:2',
-                'name'    => 'range:2,250',
-                'slug'    => 'slug|range:2,100',
+                'name' => 'range:2,250',
+                'slug' => 'slug|range:2,100',
                 'created_at' => 'date:Y-m-d H:i:s',
-                'image'   => 'filetype:[jpg,png]',
+                'image' => 'filetype:[jpg,png]',
                 'category_id' => 'exists:' . Category::class
             ]);
         //if (is_null($request->getAttribute('id'))) {
