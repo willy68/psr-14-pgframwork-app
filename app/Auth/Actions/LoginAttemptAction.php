@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Auth\Actions;
 
-use Mezzio\Router\RouterInterface;
+use Exception;
+use Pg\Router\RouterInterface;
 use Mezzio\Session\SessionInterface;
 use PgFramework\Actions\RouterAwareAction;
 use PgFramework\Auth\AuthSession;
@@ -54,6 +55,9 @@ class LoginAttemptAction
         $this->router = $router;
     }
 
+    /**
+     * @throws Exception
+     */
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
         $params = $request->getParsedBody();

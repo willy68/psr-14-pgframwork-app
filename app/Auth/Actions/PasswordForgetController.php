@@ -4,7 +4,8 @@ namespace App\Auth\Actions;
 
 use App\Auth\Entity\User;
 use App\Auth\Mailer\PasswordResetMailer;
-use Mezzio\Router\RouterInterface;
+use Exception;
+use Pg\Router\RouterInterface;
 use PgFramework\Auth\Provider\UserProviderInterface;
 use PgFramework\Renderer\RendererInterface;
 use PgFramework\Response\ResponseRedirect;
@@ -42,6 +43,7 @@ class PasswordForgetController
 
     /**
      * @throws TransportExceptionInterface
+     * @throws Exception
      */
     public function __invoke(ServerRequestInterface $request): ResponseRedirect|string
     {

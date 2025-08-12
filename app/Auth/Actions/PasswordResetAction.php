@@ -4,7 +4,7 @@ namespace App\Auth\Actions;
 
 use App\Auth\Entity\User;
 use App\Auth\UserTable;
-use Mezzio\Router\RouterInterface;
+use Pg\Router\RouterInterface;
 use PgFramework\Database\NoRecordException;
 use PgFramework\Renderer\RendererInterface;
 use PgFramework\Response\ResponseRedirect;
@@ -44,6 +44,7 @@ class PasswordResetAction
      * @param ServerRequestInterface $request
      * @return ResponseRedirect|string
      * @throws NoRecordException
+     * @throws \Exception
      */
     public function __invoke(ServerRequestInterface $request): ResponseRedirect|string
     {

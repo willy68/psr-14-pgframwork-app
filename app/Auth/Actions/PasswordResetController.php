@@ -3,7 +3,7 @@
 namespace App\Auth\Actions;
 
 use App\Auth\Entity\User;
-use Mezzio\Router\RouterInterface;
+use Pg\Router\RouterInterface;
 use PgFramework\Auth\Provider\UserProviderInterface;
 use PgFramework\Renderer\RendererInterface;
 use PgFramework\Response\ResponseRedirect;
@@ -39,6 +39,9 @@ class PasswordResetController
         $this->router       = $router;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function __invoke(ServerRequestInterface $request): ResponseRedirect|string
     {
         /** @var User $user */

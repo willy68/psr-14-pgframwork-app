@@ -4,6 +4,7 @@ namespace App\Auth\Actions;
 
 use App\Auth\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Mezzio\Session\SessionInterface;
 use Pg\Router\RouterInterface;
 use PgFramework\Actions\RouterAwareAction;
@@ -58,6 +59,11 @@ class RegisterAction
     /**
      * @Route("/register", name="auth.register", methods={"GET"})
      * @Route("/register", methods={"POST"})
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface|string
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws Exception
      */
     #[Route(path: "/register", name: "auth.register", methods: ['GET'])]
     #[Route(path: "/register", methods: ['POST'])]
